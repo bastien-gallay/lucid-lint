@@ -24,13 +24,13 @@ This document captures ideas that emerged while designing v0.1. They are intenti
 
 Backlog of everything that must ship before tagging `v0.1.0`. The implementation order mirrors the phases agreed during the bootstrap session: start with the cheapest, most deterministic signals, work up to the trickiest heuristics.
 
-### Rules (1 / 16)
+### Rules (2 / 16)
 
 #### Phase 1 — Deterministic structural rules
 
 | Status | Rule | Notes |
 |---|---|---|
-| ☐ | `paragraph-too-long` | |
+| ✅ | `paragraph-too-long` | Sentence-count + word-count thresholds per profile (`src/rules/paragraph_too_long.rs`) |
 | ☐ | `deeply-nested-lists` | |
 | ☐ | `heading-jump` | |
 

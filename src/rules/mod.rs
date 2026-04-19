@@ -9,8 +9,10 @@ use crate::config::Profile;
 use crate::parser::Document;
 use crate::types::{Diagnostic, Language};
 
+pub mod paragraph_too_long;
 pub mod sentence_too_long;
 
+pub use paragraph_too_long::ParagraphTooLong;
 pub use sentence_too_long::SentenceTooLong;
 
 /// Common interface for a lint rule.
@@ -38,11 +40,14 @@ pub trait Rule {
 
 /// Build the default set of rules for a given profile.
 ///
-/// v0.1 ships a single reference rule: [`SentenceTooLong`]. The other 15 rules
-/// will be added incrementally following the same pattern.
+/// Rules are added incrementally following the pattern established by
+/// [`SentenceTooLong`].
 #[must_use]
 pub fn default_rules(profile: Profile) -> Vec<Box<dyn Rule>> {
-    vec![Box::new(SentenceTooLong::for_profile(profile))]
+    vec![
+        Box::new(SentenceTooLong::for_profile(profile)),
+        Box::new(ParagraphTooLong::for_profile(profile)),
+    ]
 }
 
 #[cfg(test)]

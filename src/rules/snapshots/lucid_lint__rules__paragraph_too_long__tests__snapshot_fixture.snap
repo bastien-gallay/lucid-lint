@@ -1,0 +1,14 @@
+---
+source: src/rules/paragraph_too_long.rs
+assertion_line: 216
+expression: diags
+---
+- rule_id: paragraph-too-long
+  severity: warning
+  location:
+    file: "<input>"
+    line: 1
+    column: 1
+    length: 40
+  section: ~
+  message: Paragraph is 7 sentences (max 5). Consider splitting it.
