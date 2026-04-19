@@ -1,0 +1,68 @@
+name: Bug report
+description: Report a bug in lucid-lint
+title: "[bug] "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report! Please fill in the details below.
+
+  - type: input
+    id: version
+    attributes:
+      label: lucid-lint version
+      description: Output of `lucid-lint --version`
+      placeholder: "0.1.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Linux
+        - macOS
+        - Windows
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: A minimal input file or command that reproduces the issue.
+      placeholder: |
+        Input text:
+        ```markdown
+        Your minimal example here.
+        ```
+
+        Command:
+        ```
+        lucid-lint check input.md
+        ```
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Anything else relevant — logs, config files, recent changes.

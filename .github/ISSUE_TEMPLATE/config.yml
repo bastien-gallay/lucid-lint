@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 💬 Discussions
+    url: https://github.com/YOUR_USER/lucid-lint/discussions
+    about: Ask questions, share ideas, discuss design decisions.
+  - name: 🔐 Security vulnerability
+    url: https://github.com/YOUR_USER/lucid-lint/security/advisories/new
+    about: Report a security vulnerability privately.

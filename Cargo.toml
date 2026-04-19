@@ -1,0 +1,110 @@
+[package]
+name = "lucid-lint"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+authors = ["Bastien Gallay <bastien@example.com>"]
+description = "A cognitive accessibility linter for prose. Bilingual EN/FR. CI-native."
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/YOUR_USER/lucid-lint"
+homepage = "https://github.com/YOUR_USER/lucid-lint"
+documentation = "https://YOUR_USER.github.io/lucid-lint"
+keywords = ["linter", "prose", "accessibility", "readability", "markdown"]
+categories = ["text-processing", "command-line-utilities", "accessibility"]
+exclude = [
+    ".github/",
+    ".agent/",
+    "docs/",
+    "tests/corpus/",
+    ".pre-commit-config.yaml",
+    "justfile",
+]
+
+[[bin]]
+name = "lucid-lint"
+path = "src/main.rs"
+
+[lib]
+name = "lucid_lint"
+path = "src/lib.rs"
+
+[dependencies]
+# CLI
+clap = { version = "4.5", features = ["derive", "env"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+toml = "0.8"
+
+# Parsing
+pulldown-cmark = { version = "0.12", default-features = false }
+unicode-segmentation = "1.12"
+
+# Language detection
+# Simple heuristic for v0.1; revisit with `whatlang` if needed.
+
+# Errors
+thiserror = "1.0"
+anyhow = "1.0"
+
+# Output
+owo-colors = { version = "4.1", features = ["supports-colors"] }
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[dev-dependencies]
+insta = { version = "1.41", features = ["yaml", "filters", "redactions"] }
+assert_cmd = "2.0"
+predicates = "3.1"
+tempfile = "3.14"
+proptest = "1.5"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+strip = "symbols"
+
+[profile.dev]
+opt-level = 0
+
+# cargo-dist config for releases
+[workspace.metadata.dist]
+cargo-dist-version = "0.25.1"
+ci = ["github"]
+installers = ["shell", "powershell"]
+targets = [
+    "aarch64-apple-darwin",
+    "x86_64-apple-darwin",
+    "x86_64-unknown-linux-gnu",
+    "x86_64-unknown-linux-musl",
+    "x86_64-pc-windows-msvc",
+]
+pr-run-mode = "plan"
+
+[lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+unreachable_pub = "warn"
+
+[lints.clippy]
+# Enable pedantic and nursery groups as warnings; selectively allow noisy ones.
+pedantic = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+
+# Allows that are pragmatic.
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+
+# Denies for hygiene.
+unwrap_used = "warn"
+expect_used = "warn"
+panic = "warn"
+todo = "warn"
+unimplemented = "warn"

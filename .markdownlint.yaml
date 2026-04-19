@@ -1,0 +1,25 @@
+# markdownlint configuration
+# See https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
+
+default: true
+
+# MD013: Line length
+MD013:
+  line_length: 120
+  tables: false
+  code_blocks: false
+  headings: false
+
+# MD033: Inline HTML — allowed for intentional formatting
+MD033: false
+
+# MD041: First line in file should be a top-level heading
+MD041: false
+
+# MD024: Multiple headings with the same content — allow different nesting
+MD024:
+  siblings_only: true
+
+# MD029: Ordered list prefix — allow either ordered or one-numbered
+MD029:
+  style: ordered

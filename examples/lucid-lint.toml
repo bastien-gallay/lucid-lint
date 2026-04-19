@@ -1,0 +1,20 @@
+# Example lucid-lint configuration
+#
+# Copy this file to the root of your project as `lucid-lint.toml`
+# and adjust the values. All fields are optional.
+
+[default]
+# The default profile applied when `--profile` is not specified on the CLI.
+# One of: "dev-doc", "public", "falc"
+profile = "public"
+
+# Per-rule overrides below. Rule id goes in the section header.
+# Fields inside depend on the rule. See the rule's documentation.
+
+[rules.sentence-too-long]
+max_words = 22
+
+# Example: disable a rule entirely (not yet supported in v0.1 engine,
+# but the config shape is ready).
+# [rules.passive-voice]
+# enabled = false

@@ -1,0 +1,89 @@
+name: Rule proposal
+description: Propose a new lint rule
+title: "[rule] "
+labels: ["rule-proposal", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing a new rule! Please think through the questions below before we invest time in implementation.
+
+  - type: input
+    id: name
+    attributes:
+      label: Proposed rule name
+      description: kebab-case identifier, e.g. `repeated-word`, `low-verb-density`
+      placeholder: "my-new-rule"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Cognitive load problem addressed
+      description: What specific reading friction does this rule reduce?
+    validations:
+      required: true
+
+  - type: textarea
+    id: example-bad
+    attributes:
+      label: Example that should be flagged
+      description: A short text snippet where the rule should trigger.
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: example-good
+    attributes:
+      label: Example that should NOT be flagged
+      description: A short text snippet that might look similar but is legitimate.
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: detection
+    attributes:
+      label: Detection approach
+      description: How would the rule detect the issue? Deterministic pattern, heuristic, or LLM?
+    validations:
+      required: true
+
+  - type: textarea
+    id: false-positives
+    attributes:
+      label: False positive risks
+      description: When might this rule trigger incorrectly? How can that be mitigated?
+    validations:
+      required: true
+
+  - type: textarea
+    id: research
+    attributes:
+      label: Research references
+      description: Papers, style guides, or references supporting this rule.
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - length
+        - structure
+        - rhythm
+        - lexical
+        - style
+        - global
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: bilingual
+    attributes:
+      label: Language support
+      options:
+        - label: Works for English
+        - label: Works for French
+        - label: Language-agnostic

@@ -1,0 +1,34 @@
+[book]
+title = "lucid-lint"
+authors = ["Bastien Gallay and contributors"]
+description = "A cognitive accessibility linter for prose."
+language = "en"
+multilingual = false
+src = "src"
+
+[build]
+build-dir = "book"
+create-missing = false
+
+[output.html]
+default-theme = "rust"
+preferred-dark-theme = "navy"
+git-repository-url = "https://github.com/YOUR_USER/lucid-lint"
+edit-url-template = "https://github.com/YOUR_USER/lucid-lint/edit/main/docs/{path}"
+site-url = "/lucid-lint/"
+
+[output.html.fold]
+enable = true
+level = 1
+
+[output.html.search]
+enable = true
+limit-results = 30
+teaser-word-count = 30
+use-boolean-and = true
+
+[output.html.playground]
+editable = false
+copyable = true
+copy-js = true
+line-numbers = true

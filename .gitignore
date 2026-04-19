@@ -1,0 +1,49 @@
+# Rust
+/target
+**/*.rs.bk
+*.pdb
+Cargo.lock.bak
+
+# insta snapshot pending files
+**/*.pending-snap
+**/.*.pending-snap
+
+# mdBook
+/docs/book
+/docs/.mdbook-cache
+
+# Coverage
+/lcov.info
+/coverage/
+*.profraw
+*.profdata
+
+# IDE
+.idea/
+.vscode/
+!.vscode/extensions.json
+*.iml
+
+# Agent-specific working files (not tracked by default)
+.agent/scratch/
+.agent/local.md
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# Env
+.env
+.env.local
+
+# Logs
+*.log
+
+# Generated docs
+/target/doc
