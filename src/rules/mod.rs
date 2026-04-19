@@ -9,10 +9,12 @@ use crate::config::Profile;
 use crate::parser::Document;
 use crate::types::{Diagnostic, Language};
 
+pub mod deeply_nested_lists;
 pub mod heading_jump;
 pub mod paragraph_too_long;
 pub mod sentence_too_long;
 
+pub use deeply_nested_lists::DeeplyNestedLists;
 pub use heading_jump::HeadingJump;
 pub use paragraph_too_long::ParagraphTooLong;
 pub use sentence_too_long::SentenceTooLong;
@@ -50,6 +52,7 @@ pub fn default_rules(profile: Profile) -> Vec<Box<dyn Rule>> {
         Box::new(SentenceTooLong::for_profile(profile)),
         Box::new(ParagraphTooLong::for_profile(profile)),
         Box::new(HeadingJump::for_profile(profile)),
+        Box::new(DeeplyNestedLists::for_profile(profile)),
     ]
 }
 

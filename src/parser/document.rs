@@ -22,30 +22,38 @@ pub struct Document {
     /// Inline-disable directives extracted from the source. Each directive
     /// silences one rule on one target line. See [`Directive`].
     pub directives: Vec<Directive>,
+
+    /// List items captured during parsing, with their nesting depth and line.
+    /// Empty for plain-text inputs (which have no list structure).
+    pub list_items: Vec<ListItem>,
 }
 
 impl Document {
-    /// Create a new document with no directives.
+    /// Create a new document with no directives and no list items.
     #[must_use]
     pub const fn new(source: SourceFile, sections: Vec<Section>) -> Self {
         Self {
             source,
             sections,
             directives: Vec::new(),
+            list_items: Vec::new(),
         }
     }
 
-    /// Create a new document carrying inline-disable directives.
+    /// Create a new document carrying parser-captured metadata (directives
+    /// and list items).
     #[must_use]
-    pub const fn with_directives(
+    pub const fn with_metadata(
         source: SourceFile,
         sections: Vec<Section>,
         directives: Vec<Directive>,
+        list_items: Vec<ListItem>,
     ) -> Self {
         Self {
             source,
             sections,
             directives,
+            list_items,
         }
     }
 
@@ -153,6 +161,28 @@ pub struct Directive {
 
     /// 1-based line the directive targets.
     pub target_line: u32,
+}
+
+/// A list item position captured during parsing.
+///
+/// Emitted once per `<li>` (or ordered-list item), carrying the 1-based
+/// nesting depth (outermost list is 1) and the 1-based source line where
+/// the item starts.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ListItem {
+    /// 1-based nesting depth: outermost list items are depth 1.
+    pub depth: u32,
+
+    /// 1-based line where the item starts in the source.
+    pub line: u32,
+}
+
+impl ListItem {
+    /// Create a new list item.
+    #[must_use]
+    pub const fn new(depth: u32, line: u32) -> Self {
+        Self { depth, line }
+    }
 }
 
 impl Directive {

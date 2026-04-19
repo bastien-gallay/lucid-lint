@@ -10,7 +10,7 @@
 
 use pulldown_cmark::{Event, HeadingLevel, Options, Parser, Tag, TagEnd};
 
-use super::document::{Directive, Document, Paragraph, Section};
+use super::document::{Directive, Document, ListItem, Paragraph, Section};
 use crate::types::SourceFile;
 
 /// Parse a Markdown text into a [`Document`].
@@ -23,6 +23,8 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
 
     let mut sections: Vec<Section> = Vec::new();
     let mut directives: Vec<Directive> = Vec::new();
+    let mut list_items: Vec<ListItem> = Vec::new();
+    let mut list_depth: u32 = 0;
     let mut current_title: Option<String> = None;
     let mut current_depth: u32 = 0;
     let mut current_heading_line: Option<u32> = None;
@@ -78,8 +80,18 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
                     paragraph_start_line,
                 );
             },
+            Event::Start(Tag::List(_)) => {
+                list_depth = list_depth.saturating_add(1);
+            },
+            Event::End(TagEnd::List(_)) => {
+                list_depth = list_depth.saturating_sub(1);
+            },
             Event::Start(Tag::Item) => {
                 in_list_item = true;
+                list_items.push(ListItem::new(
+                    list_depth.max(1),
+                    offset_to_line(text, range.start),
+                ));
                 // List items are not treated as paragraphs in v0.1: they don't
                 // contribute to paragraph-level rules. However their text could
                 // still feed sentence-level rules in a future iteration.
@@ -147,7 +159,7 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
         sections.push(Section::new(None, 0, Vec::new()));
     }
 
-    Document::with_directives(source, sections, directives)
+    Document::with_metadata(source, sections, directives, list_items)
 }
 
 /// Parse an HTML comment into a `disable-next-line` directive.
