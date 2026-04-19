@@ -15,6 +15,7 @@ pub mod excessive_commas;
 pub mod heading_jump;
 pub mod paragraph_too_long;
 pub mod sentence_too_long;
+pub mod unexplained_abbreviation;
 pub mod weasel_words;
 
 pub use consecutive_long_sentences::ConsecutiveLongSentences;
@@ -23,6 +24,7 @@ pub use excessive_commas::ExcessiveCommas;
 pub use heading_jump::HeadingJump;
 pub use paragraph_too_long::ParagraphTooLong;
 pub use sentence_too_long::SentenceTooLong;
+pub use unexplained_abbreviation::UnexplainedAbbreviation;
 pub use weasel_words::WeaselWords;
 
 /// Common interface for a lint rule.
@@ -62,6 +64,7 @@ pub fn default_rules(profile: Profile) -> Vec<Box<dyn Rule>> {
         Box::new(ExcessiveCommas::for_profile(profile)),
         Box::new(ConsecutiveLongSentences::for_profile(profile)),
         Box::new(WeaselWords::for_profile(profile)),
+        Box::new(UnexplainedAbbreviation::for_profile(profile)),
     ]
 }
 

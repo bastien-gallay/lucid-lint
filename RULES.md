@@ -402,6 +402,8 @@ Walk sentences sequentially. Count consecutive sentences exceeding a length thre
 
 Lexical diversity is a measure of writing quality. This is NOT an anti-jargon rule: technical terms (`API`, `request`, `cache`) are expected to repeat. The rule targets non-technical content words that recur without reason.
 
+<!-- lucid-lint disable-next-line unexplained-abbreviation -->
+
 Reference: *type-token ratio* (TTR), classical metric in corpus linguistics (Herdan, 1960).
 
 **Detection**
