@@ -71,17 +71,38 @@ pub struct Section {
     /// Heading depth (1 for H1, 2 for H2, etc.). 0 for the synthetic pre-heading section.
     pub depth: u32,
 
+    /// 1-based line of the heading in the source. `None` for the synthetic
+    /// pre-heading section.
+    pub heading_line: Option<u32>,
+
     /// Paragraphs under this section.
     pub paragraphs: Vec<Paragraph>,
 }
 
 impl Section {
-    /// Create a new section.
+    /// Create a new section without a heading line (synthetic or plain text).
     #[must_use]
     pub const fn new(title: Option<String>, depth: u32, paragraphs: Vec<Paragraph>) -> Self {
         Self {
             title,
             depth,
+            heading_line: None,
+            paragraphs,
+        }
+    }
+
+    /// Create a new section rooted at a heading on a specific line.
+    #[must_use]
+    pub const fn with_heading_line(
+        title: Option<String>,
+        depth: u32,
+        heading_line: u32,
+        paragraphs: Vec<Paragraph>,
+    ) -> Self {
+        Self {
+            title,
+            depth,
+            heading_line: Some(heading_line),
             paragraphs,
         }
     }

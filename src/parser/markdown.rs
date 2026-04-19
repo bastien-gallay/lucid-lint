@@ -25,6 +25,7 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
     let mut directives: Vec<Directive> = Vec::new();
     let mut current_title: Option<String> = None;
     let mut current_depth: u32 = 0;
+    let mut current_heading_line: Option<u32> = None;
     let mut current_paragraphs: Vec<Paragraph> = Vec::new();
 
     let mut in_heading: Option<HeadingLevel> = None;
@@ -50,9 +51,11 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
                     &mut sections,
                     &mut current_title,
                     &mut current_depth,
+                    &mut current_heading_line,
                     &mut current_paragraphs,
                 );
                 in_heading = Some(level);
+                current_heading_line = Some(offset_to_line(text, range.start));
                 buf.clear();
             },
             Event::End(TagEnd::Heading(level)) => {
@@ -136,6 +139,7 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
         &mut sections,
         &mut current_title,
         &mut current_depth,
+        &mut current_heading_line,
         &mut current_paragraphs,
     );
 
@@ -227,6 +231,7 @@ fn finish_section(
     sections: &mut Vec<Section>,
     title: &mut Option<String>,
     depth: &mut u32,
+    heading_line: &mut Option<u32>,
     paragraphs: &mut Vec<Paragraph>,
 ) {
     if title.is_none() && paragraphs.is_empty() && sections.is_empty() {
@@ -234,11 +239,13 @@ fn finish_section(
         return;
     }
     if title.is_some() || !paragraphs.is_empty() {
-        sections.push(Section::new(
-            title.take(),
-            *depth,
-            std::mem::take(paragraphs),
-        ));
+        let section = match heading_line.take() {
+            Some(line) => {
+                Section::with_heading_line(title.take(), *depth, line, std::mem::take(paragraphs))
+            },
+            None => Section::new(title.take(), *depth, std::mem::take(paragraphs)),
+        };
+        sections.push(section);
         *depth = 0;
     }
 }
