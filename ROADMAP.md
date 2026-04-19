@@ -24,7 +24,7 @@ This document captures ideas that emerged while designing v0.1. They are intenti
 
 Backlog of everything that must ship before tagging `v0.1.0`. The implementation order mirrors the phases agreed during the bootstrap session: start with the cheapest, most deterministic signals, work up to the trickiest heuristics.
 
-### Rules (5 / 16)
+### Rules (6 / 16)
 
 #### Phase 1 — Deterministic structural rules
 
@@ -40,7 +40,7 @@ Backlog of everything that must ship before tagging `v0.1.0`. The implementation
 |---|---|---|
 | ✅ | `sentence-too-long` | Reference implementation — template for the 15 others (`src/rules/sentence_too_long.rs`) |
 | ✅ | `excessive-commas` | Per-profile comma-per-sentence threshold (`src/rules/excessive_commas.rs`) |
-| ☐ | `consecutive-long-sentences` | |
+| ✅ | `consecutive-long-sentences` | Intra-paragraph streak of long sentences (`src/rules/consecutive_long_sentences.rs`) |
 
 #### Phase 3 — Lexical rules with word lists
 
