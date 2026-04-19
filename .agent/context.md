@@ -21,6 +21,10 @@ One reference rule is fully implemented: `sentence-too-long`. Use it as the temp
 
 The authoritative v0.1 backlog (rules + cross-cutting features, with current status) lives in [ROADMAP.md — v0.1 — In progress](../ROADMAP.md#v01--in-progress). Consult it before picking up work, and update the checkbox when a rule lands.
 
+## Design context
+
+Brand voice, palette, typography shortlist, audience, and the WCAG AAA accessibility bar live in [.impeccable.md](../.impeccable.md) at the repo root. Consult it before any frontend, mdBook, branding, or marketing-surface work.
+
 ## Design decisions to respect
 
 See also [ROADMAP.md](../ROADMAP.md) section "Design decisions from v0.1 session".

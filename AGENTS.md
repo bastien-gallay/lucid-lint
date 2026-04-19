@@ -131,8 +131,13 @@ Prose is Unicode. Use `unicode-segmentation` for graphemes and words. Never inde
 - Ask a maintainer before adding a dependency.
 - Prefer small PRs over sweeping ones.
 
+## Design context
+
+Brand voice, palette, typography shortlist, audience, and the WCAG AAA accessibility bar live in [.impeccable.md](.impeccable.md). Read it before any frontend, mdBook, branding, or marketing-surface work. The `/impeccable` skill also reads it automatically.
+
 ## For Claude specifically
 
 - The project owner uses `.agent/` instead of `.claude/` for agent-specific files.
 - This file (`AGENTS.md`) replaces `CLAUDE.md`.
 - Project-specific agent context lives in `.agent/context.md`.
+- Design context lives in [.impeccable.md](.impeccable.md) (see above).
