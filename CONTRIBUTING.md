@@ -39,6 +39,8 @@ cd lucid-lint
 just setup
 ```
 
+<!-- lucid-lint disable-next-line excessive-commas -->
+
 `just setup` installs required Cargo components (`rustfmt`, `clippy`, `cargo-insta`, `cargo-llvm-cov`), installs pre-commit hooks, and runs a sanity check.
 
 ### Common commands

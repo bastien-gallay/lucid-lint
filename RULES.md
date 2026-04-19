@@ -683,6 +683,8 @@ Expect ~70-80% precision in v0.1. False positives handled via inline disable com
 
 **Rationale**
 
+<!-- lucid-lint disable-next-line excessive-commas -->
+
 Logical connectors guide the reader: opposition, cause, consequence, sequence, illustration, addition. Used well, they are attentional anchors. Repeated, they become noise.
 
 **Bad example**

@@ -14,6 +14,8 @@
 
 `lucid-lint` reads your Markdown, plain-text, or piped prose and reports issues that increase **cognitive load** — the mental effort a reader spends to understand you.
 
+<!-- lucid-lint disable-next-line excessive-commas -->
+
 Most prose linters measure style (`write-good`), grammar (`Antidote`), or surface readability (Flesch score). `lucid-lint` focuses on one thing: **how hard is this text to read for someone whose attention is already stretched**. That could be ADHD, fatigue, a second language, a noisy environment, or an accessibility-sensitive context (EAA, RGAA, FALC).
 
 It's fast, CI-native, bilingual EN/FR, and designed to be extended.
@@ -64,6 +66,8 @@ lucid-lint check --format=json docs/
 - Plain text (`.txt`)
 - stdin
 
+<!-- lucid-lint disable-next-line excessive-commas -->
+
 For other formats (AsciiDoc, reStructuredText, HTML, docx, PDF), convert first with [Pandoc](https://pandoc.org):
 
 ```bash
@@ -83,6 +87,8 @@ Native support for more formats is on the [roadmap](ROADMAP.md).
 See [RULES.md](RULES.md) for per-rule thresholds.
 
 ## Rules
+
+<!-- lucid-lint disable-next-line excessive-commas -->
 
 16 rules in v0.1, covering length, structure, rhythm, lexical choice, style, and global readability. Full reference in [RULES.md](RULES.md).
 
