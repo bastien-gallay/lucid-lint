@@ -39,7 +39,12 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
     for (event, range) in offsets {
         match event {
             Event::Start(Tag::Heading { level, .. }) => {
-                finish_paragraph(&mut in_paragraph, &mut buf, &mut current_paragraphs, paragraph_start_line);
+                finish_paragraph(
+                    &mut in_paragraph,
+                    &mut buf,
+                    &mut current_paragraphs,
+                    paragraph_start_line,
+                );
                 finish_section(
                     &mut sections,
                     &mut current_title,
@@ -48,43 +53,48 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
                 );
                 in_heading = Some(level);
                 buf.clear();
-            }
+            },
             Event::End(TagEnd::Heading(level)) => {
                 current_title = Some(buf.trim().to_string()).filter(|s| !s.is_empty());
                 current_depth = heading_depth(level);
                 current_paragraphs = Vec::new();
                 in_heading = None;
                 buf.clear();
-            }
+            },
             Event::Start(Tag::Paragraph) => {
                 in_paragraph = true;
                 buf.clear();
                 paragraph_start_line = offset_to_line(text, range.start);
-            }
+            },
             Event::End(TagEnd::Paragraph) => {
-                finish_paragraph(&mut in_paragraph, &mut buf, &mut current_paragraphs, paragraph_start_line);
-            }
+                finish_paragraph(
+                    &mut in_paragraph,
+                    &mut buf,
+                    &mut current_paragraphs,
+                    paragraph_start_line,
+                );
+            },
             Event::Start(Tag::Item) => {
                 in_list_item = true;
                 // List items are not treated as paragraphs in v0.1: they don't
                 // contribute to paragraph-level rules. However their text could
                 // still feed sentence-level rules in a future iteration.
-            }
+            },
             Event::End(TagEnd::Item) => {
                 in_list_item = false;
-            }
+            },
             Event::Start(Tag::CodeBlock(_)) => {
                 in_code = true;
-            }
+            },
             Event::End(TagEnd::CodeBlock) => {
                 in_code = false;
-            }
+            },
             Event::Code(_) => {
                 // Inline code: skip contents.
-            }
+            },
             Event::Html(_) | Event::InlineHtml(_) => {
                 // Skip raw HTML in v0.1.
-            }
+            },
             Event::Text(s) => {
                 if in_code {
                     continue;
@@ -92,18 +102,18 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
                 if in_heading.is_some() || in_paragraph {
                     buf.push_str(&s);
                 }
-            }
+            },
             Event::SoftBreak => {
                 if in_heading.is_some() || in_paragraph {
                     buf.push(' ');
                 }
-            }
+            },
             Event::HardBreak => {
                 if in_heading.is_some() || in_paragraph {
                     buf.push('\n');
                 }
-            }
-            _ => {}
+            },
+            _ => {},
         }
     }
     // `in_list_item` is currently tracked but not yet consumed by a rule;
@@ -111,8 +121,18 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
     let _ = in_list_item;
 
     // Flush any remaining content.
-    finish_paragraph(&mut in_paragraph, &mut buf, &mut current_paragraphs, paragraph_start_line);
-    finish_section(&mut sections, &mut current_title, &mut current_depth, &mut current_paragraphs);
+    finish_paragraph(
+        &mut in_paragraph,
+        &mut buf,
+        &mut current_paragraphs,
+        paragraph_start_line,
+    );
+    finish_section(
+        &mut sections,
+        &mut current_title,
+        &mut current_depth,
+        &mut current_paragraphs,
+    );
 
     if sections.is_empty() {
         sections.push(Section::new(None, 0, Vec::new()));
@@ -149,7 +169,11 @@ fn finish_section(
         return;
     }
     if title.is_some() || !paragraphs.is_empty() {
-        sections.push(Section::new(title.take(), *depth, std::mem::take(paragraphs)));
+        sections.push(Section::new(
+            title.take(),
+            *depth,
+            std::mem::take(paragraphs),
+        ));
         *depth = 0;
     }
 }

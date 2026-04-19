@@ -115,16 +115,14 @@ mod tests {
                 assert_eq!(a.paths.len(), 1);
                 assert!(matches!(a.profile, CliProfile::Public));
                 assert!(matches!(a.format, CliFormat::Tty));
-            }
+            },
         }
     }
 
     #[test]
     fn check_args_parse_profile() {
-        let args = Cli::try_parse_from([
-            "lucid-lint", "check", "--profile", "falc", "file.md",
-        ])
-        .unwrap();
+        let args =
+            Cli::try_parse_from(["lucid-lint", "check", "--profile", "falc", "file.md"]).unwrap();
         match args.command {
             Command::Check(a) => assert!(matches!(a.profile, CliProfile::Falc)),
         }
@@ -132,10 +130,8 @@ mod tests {
 
     #[test]
     fn check_args_parse_format() {
-        let args = Cli::try_parse_from([
-            "lucid-lint", "check", "--format", "json", "file.md",
-        ])
-        .unwrap();
+        let args =
+            Cli::try_parse_from(["lucid-lint", "check", "--format", "json", "file.md"]).unwrap();
         match args.command {
             Command::Check(a) => assert!(matches!(a.format, CliFormat::Json)),
         }

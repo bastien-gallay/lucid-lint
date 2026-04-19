@@ -119,11 +119,17 @@ impl Category {
     pub fn for_rule(rule_id: &str) -> Self {
         match rule_id {
             "sentence-too-long" | "paragraph-too-long" => Self::Length,
-            "excessive-commas" | "long-enumeration" | "deep-subordination"
-            | "deeply-nested-lists" | "heading-jump" => Self::Structure,
+            "excessive-commas"
+            | "long-enumeration"
+            | "deep-subordination"
+            | "deeply-nested-lists"
+            | "heading-jump" => Self::Structure,
             "consecutive-long-sentences" => Self::Rhythm,
-            "low-lexical-diversity" | "excessive-nominalization"
-            | "unexplained-abbreviation" | "weasel-words" | "jargon-undefined" => Self::Lexical,
+            "low-lexical-diversity"
+            | "excessive-nominalization"
+            | "unexplained-abbreviation"
+            | "weasel-words"
+            | "jargon-undefined" => Self::Lexical,
             "passive-voice" | "repetitive-connectors" | "unclear-antecedent" => Self::Style,
             "readability-score" => Self::Global,
             _ => Self::Style,
@@ -163,8 +169,13 @@ pub struct Location {
 impl Location {
     /// Build a location with explicit line, column, and length.
     #[must_use]
-    pub fn new(file: SourceFile, line: u32, column: u32, length: u32) -> Self {
-        Self { file, line, column, length }
+    pub const fn new(file: SourceFile, line: u32, column: u32, length: u32) -> Self {
+        Self {
+            file,
+            line,
+            column,
+            length,
+        }
     }
 }
 
@@ -229,7 +240,10 @@ mod tests {
     fn category_for_rule_maps_known_ids() {
         assert_eq!(Category::for_rule("sentence-too-long"), Category::Length);
         assert_eq!(Category::for_rule("excessive-commas"), Category::Structure);
-        assert_eq!(Category::for_rule("consecutive-long-sentences"), Category::Rhythm);
+        assert_eq!(
+            Category::for_rule("consecutive-long-sentences"),
+            Category::Rhythm
+        );
         assert_eq!(Category::for_rule("weasel-words"), Category::Lexical);
         assert_eq!(Category::for_rule("passive-voice"), Category::Style);
         assert_eq!(Category::for_rule("readability-score"), Category::Global);

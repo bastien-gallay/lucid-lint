@@ -24,7 +24,10 @@ impl Engine {
     /// Build an engine with the default rule set for the given profile.
     #[must_use]
     pub fn with_profile(profile: Profile) -> Self {
-        Self { profile, rules: default_rules(profile) }
+        Self {
+            profile,
+            rules: default_rules(profile),
+        }
     }
 
     /// Build an engine with a custom rule set.

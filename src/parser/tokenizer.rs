@@ -22,14 +22,10 @@ use super::document::Sentence;
 static ABBREVIATIONS: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     [
         // Titles
-        "mr", "mrs", "ms", "dr", "prof", "sr", "jr",
-        "m", "mme", "mlle",
+        "mr", "mrs", "ms", "dr", "prof", "sr", "jr", "m", "mme", "mlle",
         // Common Latin abbreviations
-        "e.g", "i.e", "etc", "cf", "vs",
-        "e", "g", "i",
-        // Measurement and misc
-        "no", "vol", "pp", "fig", "ca",
-        // French
+        "e.g", "i.e", "etc", "cf", "vs", "e", "g", "i", // Measurement and misc
+        "no", "vol", "pp", "fig", "ca", // French
         "ex", "av", "apr", "p",
     ]
     .into_iter()
@@ -109,7 +105,11 @@ pub fn split_sentences(text: &str, start_line: u32, start_column: u32) -> Vec<Se
 
     let trailing = current.trim();
     if !trailing.is_empty() {
-        sentences.push(Sentence::new(trailing.to_string(), sentence_line, sentence_column));
+        sentences.push(Sentence::new(
+            trailing.to_string(),
+            sentence_line,
+            sentence_column,
+        ));
     }
 
     sentences
@@ -136,7 +136,8 @@ fn is_real_sentence_end(chars: &[char], idx: usize, current: &str) -> bool {
     }
 
     // Check for decimal number: digit before AND digit after.
-    if idx > 0 && chars[idx - 1].is_ascii_digit()
+    if idx > 0
+        && chars[idx - 1].is_ascii_digit()
         && idx + 1 < chars.len()
         && chars[idx + 1].is_ascii_digit()
     {

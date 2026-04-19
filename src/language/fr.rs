@@ -15,44 +15,26 @@ use std::collections::HashSet;
 pub static STOPWORDS: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     [
         // Articles
-        "le", "la", "les", "un", "une", "des",
-        "du", "au", "aux",
-        "l'", "d'",
+        "le", "la", "les", "un", "une", "des", "du", "au", "aux", "l'", "d'",
         // Contracted articles and elisions appearing as standalone tokens
-        "l", "d", "j", "m", "t", "s", "n", "c", "qu",
-        // Pronouns
-        "je", "tu", "il", "elle", "on", "nous", "vous", "ils", "elles",
-        "me", "te", "se", "lui", "leur", "leurs",
-        "mon", "ton", "son", "ma", "ta", "sa", "mes", "tes", "ses",
-        "notre", "votre", "nos", "vos",
-        "ce", "cet", "cette", "ces", "celui", "celle", "ceux", "celles",
-        "ça", "cela", "ceci",
-        // Common verbs: être
-        "suis", "es", "est", "sommes", "êtes", "sont",
-        "était", "étaient", "étais", "étions", "étiez",
-        "été",
-        // Common verbs: avoir
-        "ai", "as", "a", "avons", "avez", "ont",
-        "avait", "avaient", "avais", "avions", "aviez",
-        "eu",
-        // Modal-ish verbs
-        "peut", "peux", "pouvez", "pouvons", "peuvent",
-        "doit", "dois", "devez", "devons", "doivent",
-        "va", "vais", "vas", "allons", "allez", "vont",
-        // Prepositions
-        "de", "à", "en", "dans", "sur", "sous", "par", "pour", "avec",
-        "sans", "entre", "vers", "chez", "contre", "depuis",
-        // Conjunctions
-        "et", "ou", "mais", "donc", "or", "ni", "car",
-        "que", "qui", "quoi", "dont", "où",
-        "si", "comme", "parce", "puisque", "lorsque", "quand",
-        // Common adverbs and fillers
-        "pas", "ne", "non", "oui", "plus", "moins", "très", "trop",
-        "ici", "là", "bien", "mal",
-        "aussi", "encore", "déjà",
-        // Common frequent words
-        "tout", "tous", "toute", "toutes",
-        "même", "mêmes", "autre", "autres",
+        "l", "d", "j", "m", "t", "s", "n", "c", "qu", // Pronouns
+        "je", "tu", "il", "elle", "on", "nous", "vous", "ils", "elles", "me", "te", "se", "lui",
+        "leur", "leurs", "mon", "ton", "son", "ma", "ta", "sa", "mes", "tes", "ses", "notre",
+        "votre", "nos", "vos", "ce", "cet", "cette", "ces", "celui", "celle", "ceux", "celles",
+        "ça", "cela", "ceci", // Common verbs: être
+        "suis", "es", "est", "sommes", "êtes", "sont", "était", "étaient", "étais", "étions",
+        "étiez", "été", // Common verbs: avoir
+        "ai", "as", "a", "avons", "avez", "ont", "avait", "avaient", "avais", "avions", "aviez",
+        "eu", // Modal-ish verbs
+        "peut", "peux", "pouvez", "pouvons", "peuvent", "doit", "dois", "devez", "devons",
+        "doivent", "va", "vais", "vas", "allons", "allez", "vont", // Prepositions
+        "de", "à", "en", "dans", "sur", "sous", "par", "pour", "avec", "sans", "entre", "vers",
+        "chez", "contre", "depuis", // Conjunctions
+        "et", "ou", "mais", "donc", "or", "ni", "car", "que", "qui", "quoi", "dont", "où", "si",
+        "comme", "parce", "puisque", "lorsque", "quand", // Common adverbs and fillers
+        "pas", "ne", "non", "oui", "plus", "moins", "très", "trop", "ici", "là", "bien", "mal",
+        "aussi", "encore", "déjà", // Common frequent words
+        "tout", "tous", "toute", "toutes", "même", "mêmes", "autre", "autres",
     ]
     .into_iter()
     .collect()

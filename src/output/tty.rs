@@ -64,19 +64,37 @@ fn format_diagnostic(diag: &Diagnostic, color_mode: ColorMode) -> String {
 }
 
 fn summary(diagnostics: &[Diagnostic], color_mode: ColorMode) -> String {
-    let info_count = diagnostics.iter().filter(|d| d.severity == Severity::Info).count();
-    let warn_count = diagnostics.iter().filter(|d| d.severity == Severity::Warning).count();
-    let error_count = diagnostics.iter().filter(|d| d.severity == Severity::Error).count();
+    let info_count = diagnostics
+        .iter()
+        .filter(|d| d.severity == Severity::Info)
+        .count();
+    let warn_count = diagnostics
+        .iter()
+        .filter(|d| d.severity == Severity::Warning)
+        .count();
+    let error_count = diagnostics
+        .iter()
+        .filter(|d| d.severity == Severity::Error)
+        .count();
 
     let mut parts = Vec::new();
     if error_count > 0 {
-        parts.push(format!("{} errors", red(&error_count.to_string(), color_mode)));
+        parts.push(format!(
+            "{} errors",
+            red(&error_count.to_string(), color_mode)
+        ));
     }
     if warn_count > 0 {
-        parts.push(format!("{} warnings", yellow(&warn_count.to_string(), color_mode)));
+        parts.push(format!(
+            "{} warnings",
+            yellow(&warn_count.to_string(), color_mode)
+        ));
     }
     if info_count > 0 {
-        parts.push(format!("{} info", cyan(&info_count.to_string(), color_mode)));
+        parts.push(format!(
+            "{} info",
+            cyan(&info_count.to_string(), color_mode)
+        ));
     }
 
     if parts.is_empty() {
@@ -116,7 +134,8 @@ const fn supports_color() -> bool {
 
 fn green(s: &str, mode: ColorMode) -> String {
     if should_color(mode) {
-        s.if_supports_color(Stream::Stdout, OwoColorize::green).to_string()
+        s.if_supports_color(Stream::Stdout, OwoColorize::green)
+            .to_string()
     } else {
         s.to_string()
     }
@@ -124,7 +143,8 @@ fn green(s: &str, mode: ColorMode) -> String {
 
 fn red(s: &str, mode: ColorMode) -> String {
     if should_color(mode) {
-        s.if_supports_color(Stream::Stdout, OwoColorize::red).to_string()
+        s.if_supports_color(Stream::Stdout, OwoColorize::red)
+            .to_string()
     } else {
         s.to_string()
     }
@@ -132,7 +152,8 @@ fn red(s: &str, mode: ColorMode) -> String {
 
 fn yellow(s: &str, mode: ColorMode) -> String {
     if should_color(mode) {
-        s.if_supports_color(Stream::Stdout, OwoColorize::yellow).to_string()
+        s.if_supports_color(Stream::Stdout, OwoColorize::yellow)
+            .to_string()
     } else {
         s.to_string()
     }
@@ -140,7 +161,8 @@ fn yellow(s: &str, mode: ColorMode) -> String {
 
 fn cyan(s: &str, mode: ColorMode) -> String {
     if should_color(mode) {
-        s.if_supports_color(Stream::Stdout, OwoColorize::cyan).to_string()
+        s.if_supports_color(Stream::Stdout, OwoColorize::cyan)
+            .to_string()
     } else {
         s.to_string()
     }
@@ -148,7 +170,8 @@ fn cyan(s: &str, mode: ColorMode) -> String {
 
 fn bold(s: &str, mode: ColorMode) -> String {
     if should_color(mode) {
-        s.if_supports_color(Stream::Stdout, OwoColorize::bold).to_string()
+        s.if_supports_color(Stream::Stdout, OwoColorize::bold)
+            .to_string()
     } else {
         s.to_string()
     }
@@ -156,7 +179,8 @@ fn bold(s: &str, mode: ColorMode) -> String {
 
 fn dim(s: &str, mode: ColorMode) -> String {
     if should_color(mode) {
-        s.if_supports_color(Stream::Stdout, OwoColorize::dimmed).to_string()
+        s.if_supports_color(Stream::Stdout, OwoColorize::dimmed)
+            .to_string()
     } else {
         s.to_string()
     }

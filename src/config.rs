@@ -105,7 +105,9 @@ pub struct DefaultConfig {
 
 impl Default for DefaultConfig {
     fn default() -> Self {
-        Self { profile: Profile::DEFAULT }
+        Self {
+            profile: Profile::DEFAULT,
+        }
     }
 }
 
@@ -178,20 +180,22 @@ mod tests {
 
     #[test]
     fn config_parses_default_section() {
-        let config = Config::from_toml_str(r#"[default]
+        let config = Config::from_toml_str(
+            r#"[default]
 profile = "falc"
-"#)
-            .unwrap();
+"#,
+        )
+        .unwrap();
         assert_eq!(config.default.profile, Profile::Falc);
     }
 
     #[test]
     fn config_parses_rule_overrides() {
         let config = Config::from_toml_str(
-            r#"
+            r"
 [rules.sentence-too-long]
 max_words = 25
-"#,
+",
         )
         .unwrap();
         assert!(config.rules.entries.contains_key("sentence-too-long"));
@@ -199,6 +203,9 @@ max_words = 25
 
     #[test]
     fn config_rejects_invalid_toml() {
-        assert!(matches!(Config::from_toml_str("not valid toml ="), Err(ConfigError::Parse(_))));
+        assert!(matches!(
+            Config::from_toml_str("not valid toml ="),
+            Err(ConfigError::Parse(_))
+        ));
     }
 }

@@ -59,7 +59,10 @@ mod tests {
     fn each_rule_has_a_nonempty_id() {
         for rule in default_rules(Profile::Public) {
             assert!(!rule.id().is_empty());
-            assert!(rule.id().chars().all(|c| c.is_ascii_lowercase() || c == '-'));
+            assert!(rule
+                .id()
+                .chars()
+                .all(|c| c.is_ascii_lowercase() || c == '-'));
         }
     }
 }

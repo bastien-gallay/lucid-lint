@@ -43,8 +43,14 @@ pub fn detect_language(text: &str) -> Language {
     let total = words.len() as f64;
     let lower: Vec<String> = words.iter().map(|w| w.to_lowercase()).collect();
 
-    let en_hits = lower.iter().filter(|w| en::STOPWORDS.contains(w.as_str())).count() as f64;
-    let fr_hits = lower.iter().filter(|w| fr::STOPWORDS.contains(w.as_str())).count() as f64;
+    let en_hits = lower
+        .iter()
+        .filter(|w| en::STOPWORDS.contains(w.as_str()))
+        .count() as f64;
+    let fr_hits = lower
+        .iter()
+        .filter(|w| fr::STOPWORDS.contains(w.as_str()))
+        .count() as f64;
 
     let en_ratio = en_hits / total;
     let fr_ratio = fr_hits / total;

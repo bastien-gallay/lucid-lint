@@ -23,7 +23,7 @@ pub struct Document {
 impl Document {
     /// Create a new document.
     #[must_use]
-    pub fn new(source: SourceFile, sections: Vec<Section>) -> Self {
+    pub const fn new(source: SourceFile, sections: Vec<Section>) -> Self {
         Self { source, sections }
     }
 
@@ -56,8 +56,12 @@ pub struct Section {
 impl Section {
     /// Create a new section.
     #[must_use]
-    pub fn new(title: Option<String>, depth: u32, paragraphs: Vec<Paragraph>) -> Self {
-        Self { title, depth, paragraphs }
+    pub const fn new(title: Option<String>, depth: u32, paragraphs: Vec<Paragraph>) -> Self {
+        Self {
+            title,
+            depth,
+            paragraphs,
+        }
     }
 }
 
@@ -74,7 +78,7 @@ pub struct Paragraph {
 impl Paragraph {
     /// Create a new paragraph.
     #[must_use]
-    pub fn new(text: String, start_line: u32) -> Self {
+    pub const fn new(text: String, start_line: u32) -> Self {
         Self { text, start_line }
     }
 }
@@ -98,7 +102,11 @@ impl Sentence {
     /// Create a new sentence with explicit position.
     #[must_use]
     pub fn new(text: impl Into<String>, line: u32, column: u32) -> Self {
-        Self { text: text.into(), line, column }
+        Self {
+            text: text.into(),
+            line,
+            column,
+        }
     }
 }
 
@@ -118,7 +126,10 @@ mod tests {
             .paragraphs_with_section()
             .map(|(p, title)| (p.text.clone(), title.map(ToOwned::to_owned)))
             .collect();
-        assert_eq!(collected, vec![("Hello.".to_string(), Some("Intro".to_string()))]);
+        assert_eq!(
+            collected,
+            vec![("Hello.".to_string(), Some("Intro".to_string()))]
+        );
     }
 
     #[test]

@@ -86,8 +86,7 @@ impl Rule for SentenceTooLong {
         document
             .paragraphs_with_section()
             .flat_map(|(paragraph, section_title)| {
-                let sentences =
-                    split_sentences(&paragraph.text, paragraph.start_line, 1);
+                let sentences = split_sentences(&paragraph.text, paragraph.start_line, 1);
                 sentences.into_iter().filter_map(move |sentence| {
                     let count = word_count(&sentence.text);
                     if count > max {
@@ -145,7 +144,10 @@ mod tests {
     #[test]
     fn id_is_kebab_case() {
         assert_eq!(SentenceTooLong::ID, "sentence-too-long");
-        assert_eq!(SentenceTooLong::for_profile(Profile::Public).id(), "sentence-too-long");
+        assert_eq!(
+            SentenceTooLong::for_profile(Profile::Public).id(),
+            "sentence-too-long"
+        );
     }
 
     #[test]
@@ -195,7 +197,10 @@ mod tests {
         let falc = lint(text, Profile::Falc);
         let public = lint(text, Profile::Public);
         assert!(!falc.is_empty(), "FALC should have flagged: {falc:?}");
-        assert!(public.is_empty(), "Public should not have flagged: {public:?}");
+        assert!(
+            public.is_empty(),
+            "Public should not have flagged: {public:?}"
+        );
     }
 
     #[test]
