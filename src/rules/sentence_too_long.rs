@@ -192,8 +192,8 @@ mod tests {
     #[test]
     fn falc_profile_is_stricter() {
         // 17 words: does not trigger Public (22) but triggers FALC (15).
-        let text = "This sentence contains exactly seventeen words so FALC flags it while \
-                    Public lets it pass.";
+        let text = "This sentence really contains exactly seventeen words so FALC \
+                    completely flags it while Public lets it pass.";
         let falc = lint(text, Profile::Falc);
         let public = lint(text, Profile::Public);
         assert!(!falc.is_empty(), "FALC should have flagged: {falc:?}");
@@ -206,8 +206,8 @@ mod tests {
     #[test]
     fn multiple_sentences_each_checked() {
         let text = "Short one. This is a rather long sentence that keeps adding more and \
-                    more words until it definitely exceeds the public profile threshold. \
-                    Short again.";
+                    more words until it definitely exceeds the public profile threshold \
+                    by a very comfortable margin indeed. Short again.";
         let diags = lint(text, Profile::Public);
         assert_eq!(diags.len(), 1);
     }

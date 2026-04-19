@@ -117,10 +117,27 @@ pub fn split_sentences(text: &str, start_line: u32, start_column: u32) -> Vec<Se
 
 /// Count words in a text using Unicode word segmentation.
 ///
-/// Contractions (`don't`) and elisions (`l'accessibilité`) are counted as one word.
+/// English contractions (`don't`) and French article/preposition elisions
+/// (`l'accessibilité`, `d'une`) are counted as one word. French
+/// pronoun/conjunction elisions (`c'est`, `j'ai`, `qu'il`) count as two,
+/// because the elided clitic stands in for a full grammatical word.
 #[must_use]
 pub fn word_count(text: &str) -> u32 {
-    text.unicode_words().count().try_into().unwrap_or(u32::MAX)
+    text.unicode_words().map(count_unicode_word).sum()
+}
+
+/// Return how many grammatical words a single Unicode-segmented word is worth.
+fn count_unicode_word(word: &str) -> u32 {
+    let lower = word.to_lowercase();
+    let Some((head, tail)) = lower.split_once('\'') else {
+        return 1;
+    };
+    let tail_starts_with_letter = tail.chars().next().is_some_and(char::is_alphabetic);
+    if tail_starts_with_letter && matches!(head, "c" | "j" | "m" | "n" | "qu" | "s" | "t") {
+        2
+    } else {
+        1
+    }
 }
 
 const fn is_sentence_terminator(c: char) -> bool {
@@ -142,6 +159,16 @@ fn is_real_sentence_end(chars: &[char], idx: usize, current: &str) -> bool {
         && chars[idx + 1].is_ascii_digit()
     {
         return false;
+    }
+
+    // Ellipsis followed by lowercase: the thought continues, not a real end.
+    // `current` already contains all the dots we just consumed.
+    if current.ends_with("..") {
+        if let Some(next) = chars[idx + 1..].iter().find(|c| !c.is_whitespace()) {
+            if next.is_lowercase() {
+                return false;
+            }
+        }
     }
 
     // Check for abbreviation: token before the period matches.

@@ -190,7 +190,7 @@ impl fmt::Display for Location {
 /// Distinguishes real files from stdin and from synthetic string inputs used
 /// in tests and library contexts.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(tag = "kind", rename_all = "lowercase")]
+#[serde(tag = "kind", content = "path", rename_all = "lowercase")]
 pub enum SourceFile {
     /// Real file on disk.
     Path(PathBuf),
