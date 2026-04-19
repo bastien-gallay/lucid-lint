@@ -6,7 +6,7 @@
 [![Crates.io](https://img.shields.io/crates/v/lucid-lint.svg)](https://crates.io/crates/lucid-lint)
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
 
-**Status:** 🚧 v0.1 under active development. Not ready for production use.
+**Status:** 🚧 v0.1 under active development. Not ready for production use. Current backlog and rule-by-rule progress: [ROADMAP.md — v0.1 — In progress](ROADMAP.md#v01--in-progress).
 
 ---
 
@@ -134,5 +134,7 @@ Licensed under either of
 at your option.
 
 ### Contribution
+
+<!-- lucid-lint disable-next-line sentence-too-long -->
 
 Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you, as defined in the Apache-2.0 license, shall be dual licensed as above, without any additional terms or conditions.

@@ -4,6 +4,14 @@ The full roadmap lives in [`ROADMAP.md`](https://github.com/bastien-gallay/lucid
 
 ## Summary
 
+### v0.1 — In progress
+
+Current status: **1 / 16 rules implemented** (`sentence-too-long`, used as the template for the others). The 15 remaining rules are grouped in 5 phases — structural, simple text, lexical, global metric, then heuristics. Full checklist in [`ROADMAP.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/ROADMAP.md#v01--in-progress).
+
+Also in flight for v0.1:
+
+- Minimal inline-disable — next-line and block suppression comments for Markdown
+
 ### v0.2 — First major iteration
 
 - Hybrid scoring model (global score + per-category sub-scores + diagnostics)

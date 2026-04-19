@@ -6,11 +6,73 @@ This document captures ideas that emerged while designing v0.1. They are intenti
 
 ## Legend
 
+| Status | Meaning |
+|---|---|
+| ✅ | Done (merged on `main`) |
+| 🚧 | In progress |
+| ☐ | Not started |
+
 | Priority | Meaning |
 |---|---|
 | 🔴 High | Expected to land in v0.2 |
 | 🟡 Medium | Likely v0.3 or plugin |
 | 🟢 Low | Nice-to-have, speculative |
+
+---
+
+## v0.1 — In progress
+
+Backlog of everything that must ship before tagging `v0.1.0`. The implementation order mirrors the phases agreed during the bootstrap session: start with the cheapest, most deterministic signals, work up to the trickiest heuristics.
+
+### Rules (1 / 16)
+
+#### Phase 1 — Deterministic structural rules
+
+| Status | Rule | Notes |
+|---|---|---|
+| ☐ | `paragraph-too-long` | |
+| ☐ | `deeply-nested-lists` | |
+| ☐ | `heading-jump` | |
+
+#### Phase 2 — Simple text rules
+
+| Status | Rule | Notes |
+|---|---|---|
+| ✅ | `sentence-too-long` | Reference implementation — template for the 15 others (`src/rules/sentence_too_long.rs`) |
+| ☐ | `excessive-commas` | |
+| ☐ | `consecutive-long-sentences` | |
+
+#### Phase 3 — Lexical rules with word lists
+
+| Status | Rule | Notes |
+|---|---|---|
+| ☐ | `weasel-words` | |
+| ☐ | `unexplained-abbreviation` | v0.1 simplified, no definition awareness (see F9) |
+| ☐ | `jargon-undefined` | |
+| ☐ | `excessive-nominalization` | |
+| ☐ | `repetitive-connectors` | |
+
+#### Phase 4 — Global metric
+
+| Status | Rule | Notes |
+|---|---|---|
+| ☐ | `readability-score` | EN/FR share Flesch variant in v0.1 (see F10) |
+
+#### Phase 5 — Heuristic rules (hardest)
+
+| Status | Rule | Notes |
+|---|---|---|
+| ☐ | `long-enumeration` | |
+| ☐ | `deep-subordination` | |
+| ☐ | `passive-voice` | Heuristic only in v0.1; POS-based detection is a `lucid-lint-nlp` plugin candidate |
+| ☐ | `unclear-antecedent` | |
+| ☐ | `low-lexical-diversity` | |
+
+### Cross-cutting features
+
+| Status | Feature | Notes |
+|---|---|---|
+| 🚧 | Minimal inline-disable | Line/range suppression comments (e.g. `<!-- lucid-lint disable-next-line sentence-too-long -->`). Scope for v0.1: next-line and block disable/enable for Markdown only. File-level ignore and `.lucidignore` are deferred to v0.2 (see *Points deferred from v0.1 session → Configuration*). |
 
 ---
 
@@ -56,6 +118,18 @@ This document captures ideas that emerged while designing v0.1. They are intenti
 | ID | Item | Priority | Origin |
 |---|---|---|---|
 | F12 | Score evolution dashboard across runs | 🟢 Low | Rule 11, inspired by coverage reports |
+
+### Suppression mechanism
+
+v0.1 ships the minimal inline-disable directive (see brainstorm
+`brainstorm/20260419-inline-disable-feature.md`). Extensions deferred:
+
+| ID | Item | Priority | Origin |
+|---|---|---|---|
+| F18 | Block form: `<!-- lucid-lint-disable <rule-id> -->` … `<!-- lucid-lint-enable -->` | 🔴 High | v0.1 inline-disable brainstorm |
+| F19 | Config-based ignores (`[[ignore]]` in `lucid-lint.toml`) covering `.txt` and stdin | 🔴 High | v0.1 inline-disable brainstorm |
+| F20 | `reason="..."` field, optional in v0.1, surfaced in reports and optionally required via config | 🟡 Medium | v0.1 inline-disable brainstorm |
+| F21 | File-level directive (`disable-file`) and multi-rule lists | 🟡 Medium | v0.1 inline-disable brainstorm |
 
 ---
 

@@ -17,29 +17,9 @@ The project was bootstrapped in April 2026 with the following scope for v0.1:
 
 One reference rule is fully implemented: `sentence-too-long`. Use it as the template for the 15 others.
 
-## Implementation order (suggested)
+## Backlog and implementation order
 
-1. **Deterministic structural rules first**
-   - `paragraph-too-long`
-   - `deeply-nested-lists`
-   - `heading-jump`
-2. **Simple text rules next**
-   - `excessive-commas`
-   - `consecutive-long-sentences`
-3. **Lexical rules with word lists**
-   - `weasel-words`
-   - `unexplained-abbreviation` (v0.1 simplified, no definition awareness)
-   - `jargon-undefined`
-   - `excessive-nominalization`
-   - `repetitive-connectors`
-4. **Global metric**
-   - `readability-score`
-5. **Heuristic rules (hardest)**
-   - `long-enumeration`
-   - `deep-subordination`
-   - `passive-voice`
-   - `unclear-antecedent`
-   - `low-lexical-diversity`
+The authoritative v0.1 backlog (rules + cross-cutting features, with current status) lives in [ROADMAP.md — v0.1 — In progress](../ROADMAP.md#v01--in-progress). Consult it before picking up work, and update the checkbox when a rule lands.
 
 ## Design decisions to respect
 
