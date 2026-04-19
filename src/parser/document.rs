@@ -18,13 +18,35 @@ pub struct Document {
     /// Sections of the document. The first section may have no heading
     /// (content before the first heading, or plain text input).
     pub sections: Vec<Section>,
+
+    /// Inline-disable directives extracted from the source. Each directive
+    /// silences one rule on one target line. See [`Directive`].
+    pub directives: Vec<Directive>,
 }
 
 impl Document {
-    /// Create a new document.
+    /// Create a new document with no directives.
     #[must_use]
     pub const fn new(source: SourceFile, sections: Vec<Section>) -> Self {
-        Self { source, sections }
+        Self {
+            source,
+            sections,
+            directives: Vec::new(),
+        }
+    }
+
+    /// Create a new document carrying inline-disable directives.
+    #[must_use]
+    pub const fn with_directives(
+        source: SourceFile,
+        sections: Vec<Section>,
+        directives: Vec<Directive>,
+    ) -> Self {
+        Self {
+            source,
+            sections,
+            directives,
+        }
     }
 
     /// Iterate over all paragraphs across all sections, yielding each paragraph
@@ -96,6 +118,31 @@ pub struct Sentence {
 
     /// 1-based column where the sentence starts within its line (approximate).
     pub column: u32,
+}
+
+/// An inline-disable directive extracted from the source.
+///
+/// v0.1 ships a single form: `<!-- lucid-lint disable-next-line <rule-id> -->`.
+/// The directive silences `rule_id` diagnostics emitted at `target_line`
+/// (the next non-blank line after the comment).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Directive {
+    /// The rule id silenced by this directive.
+    pub rule_id: String,
+
+    /// 1-based line the directive targets.
+    pub target_line: u32,
+}
+
+impl Directive {
+    /// Create a new directive.
+    #[must_use]
+    pub fn new(rule_id: impl Into<String>, target_line: u32) -> Self {
+        Self {
+            rule_id: rule_id.into(),
+            target_line,
+        }
+    }
 }
 
 impl Sentence {

@@ -93,6 +93,12 @@ impl Engine {
         for rule in &self.rules {
             diagnostics.extend(rule.check(&document, language));
         }
+        diagnostics.retain(|d| {
+            !document
+                .directives
+                .iter()
+                .any(|dir| dir.rule_id == d.rule_id && dir.target_line == d.location.line)
+        });
         diagnostics
     }
 }
@@ -136,6 +142,32 @@ mod tests {
                     until it exceeds the public profile threshold by a comfortable margin.";
         assert!(!public.lint_str(text).is_empty());
         assert!(dev.lint_str(text).is_empty());
+    }
+
+    #[test]
+    fn inline_disable_suppresses_matching_diagnostic() {
+        let engine = Engine::with_profile(Profile::Public);
+        let text = "Intro paragraph.\n\n\
+                    <!-- lucid-lint disable-next-line sentence-too-long -->\n\
+                    This is a rather long sentence that keeps adding more and more words \
+                    until it exceeds the public profile threshold by a comfortable margin.\n";
+        let diags = engine.lint_str(text);
+        assert!(
+            diags.is_empty(),
+            "expected directive to suppress, got: {diags:?}"
+        );
+    }
+
+    #[test]
+    fn inline_disable_does_not_affect_other_rules_or_lines() {
+        // Directive for an unrelated rule id does not suppress sentence-too-long.
+        let engine = Engine::with_profile(Profile::Public);
+        let text = "Intro.\n\n\
+                    <!-- lucid-lint disable-next-line weasel-words -->\n\
+                    This is a rather long sentence that keeps adding more and more words \
+                    until it exceeds the public profile threshold by a comfortable margin.\n";
+        let diags = engine.lint_str(text);
+        assert_eq!(diags.len(), 1);
     }
 
     #[test]

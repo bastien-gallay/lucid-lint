@@ -10,7 +10,7 @@
 
 use pulldown_cmark::{Event, HeadingLevel, Options, Parser, Tag, TagEnd};
 
-use super::document::{Document, Paragraph, Section};
+use super::document::{Directive, Document, Paragraph, Section};
 use crate::types::SourceFile;
 
 /// Parse a Markdown text into a [`Document`].
@@ -22,6 +22,7 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
         | Options::ENABLE_TASKLISTS;
 
     let mut sections: Vec<Section> = Vec::new();
+    let mut directives: Vec<Directive> = Vec::new();
     let mut current_title: Option<String> = None;
     let mut current_depth: u32 = 0;
     let mut current_paragraphs: Vec<Paragraph> = Vec::new();
@@ -92,8 +93,12 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
             Event::Code(_) => {
                 // Inline code: skip contents.
             },
-            Event::Html(_) | Event::InlineHtml(_) => {
-                // Skip raw HTML in v0.1.
+            Event::Html(s) | Event::InlineHtml(s) => {
+                if let Some(rule_id) = parse_disable_directive(&s) {
+                    if let Some(target) = next_nonblank_line(text, range.end) {
+                        directives.push(Directive::new(rule_id, target));
+                    }
+                }
             },
             Event::Text(s) => {
                 if in_code {
@@ -138,7 +143,67 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
         sections.push(Section::new(None, 0, Vec::new()));
     }
 
-    Document::new(source, sections)
+    Document::with_directives(source, sections, directives)
+}
+
+/// Parse an HTML comment into a `disable-next-line` directive.
+///
+/// Returns the rule id on match, or `None` if the comment is not a
+/// recognized directive.
+fn parse_disable_directive(html: &str) -> Option<String> {
+    let inner = html
+        .trim()
+        .strip_prefix("<!--")?
+        .strip_suffix("-->")?
+        .trim();
+    let rest = inner.strip_prefix("lucid-lint")?;
+    let rest = rest.strip_prefix(|c: char| c.is_whitespace())?.trim_start();
+    let rest = rest.strip_prefix("disable-next-line")?;
+    let rule_id = rest.strip_prefix(|c: char| c.is_whitespace())?.trim();
+    if rule_id.is_empty() || !is_valid_rule_id(rule_id) {
+        return None;
+    }
+    Some(rule_id.to_string())
+}
+
+fn is_valid_rule_id(s: &str) -> bool {
+    s.chars()
+        .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-')
+}
+
+/// Find the 1-based line number of the first non-blank line at or after
+/// `offset`. `offset` is expected to point at a line start (e.g. the byte
+/// right after the trailing newline of an HTML block). A line is "blank"
+/// if it contains only whitespace.
+fn next_nonblank_line(text: &str, offset: usize) -> Option<u32> {
+    let bytes = text.as_bytes();
+    let len = bytes.len();
+    let start = offset.min(len);
+    // Rewind to the start of the line that contains `start`.
+    let mut line_start = start;
+    while line_start > 0 && bytes[line_start - 1] != b'\n' {
+        line_start -= 1;
+    }
+    #[allow(clippy::naive_bytecount)]
+    let lines_before = bytes[..line_start].iter().filter(|&&b| b == b'\n').count();
+    let mut line_no = u32::try_from(lines_before + 1).ok()?;
+    let mut i = line_start;
+    while i < len {
+        let mut j = i;
+        let mut has_content = false;
+        while j < len && bytes[j] != b'\n' {
+            if !bytes[j].is_ascii_whitespace() {
+                has_content = true;
+            }
+            j += 1;
+        }
+        if has_content {
+            return Some(line_no);
+        }
+        i = j + 1;
+        line_no = line_no.checked_add(1)?;
+    }
+    None
 }
 
 fn finish_paragraph(
@@ -256,6 +321,38 @@ mod tests {
         assert_eq!(doc.sections.len(), 1);
         assert_eq!(doc.sections[0].title, None);
         assert_eq!(doc.sections[0].paragraphs.len(), 2);
+    }
+
+    #[test]
+    fn extracts_disable_next_line_directive() {
+        let md = "Intro.\n\n<!-- lucid-lint disable-next-line sentence-too-long -->\n\
+                  A long sentence that will be suppressed.\n";
+        let doc = parse_markdown(md, SourceFile::Anonymous);
+        assert_eq!(doc.directives.len(), 1);
+        assert_eq!(doc.directives[0].rule_id, "sentence-too-long");
+        // Directive is on line 3, next non-blank line is 4.
+        assert_eq!(doc.directives[0].target_line, 4);
+    }
+
+    #[test]
+    fn ignores_non_directive_html_comments() {
+        let md = "Intro.\n\n<!-- just a regular comment -->\n\nAfter.";
+        let doc = parse_markdown(md, SourceFile::Anonymous);
+        assert!(doc.directives.is_empty());
+    }
+
+    #[test]
+    fn rejects_directive_with_invalid_rule_id() {
+        let md = "<!-- lucid-lint disable-next-line Bad_Rule -->\nText.\n";
+        let doc = parse_markdown(md, SourceFile::Anonymous);
+        assert!(doc.directives.is_empty());
+    }
+
+    #[test]
+    fn directive_without_following_content_is_dropped() {
+        let md = "Body.\n\n<!-- lucid-lint disable-next-line sentence-too-long -->\n";
+        let doc = parse_markdown(md, SourceFile::Anonymous);
+        assert!(doc.directives.is_empty());
     }
 
     #[test]

@@ -18,6 +18,7 @@ Each rule is atomic, documented, and configurable via a per-profile threshold.
    - [Lexical rules](#lexical-rules)
    - [Style rules](#style-rules)
    - [Global rules](#global-rules)
+5. [Suppressing diagnostics](#suppressing-diagnostics)
 
 ---
 
@@ -562,7 +563,7 @@ Trivial implementation. HashSet lookup.
 - *sort of*, *kind of*, *a bit*, *rather*, *quite*
 - *fairly*, *relatively*, *mostly*, *generally*
 
-**All profiles** : active. Use `# lucid-lint disable-next weasel-words` to opt out when usage is intentional (legitimate subset reference, quotation, etc.).
+**All profiles** : active. Use `<!-- lucid-lint disable-next-line weasel-words -->` to opt out when usage is intentional (legitimate subset reference, quotation, etc.). See [Suppressing diagnostics](#suppressing-diagnostics).
 
 ---
 
@@ -838,6 +839,25 @@ Readability indices are the historical metric for text complexity. Simple, repro
 | `dev-doc` | 14 |
 | `public` | 9 |
 | `falc` | 6 |
+
+---
+
+## Suppressing diagnostics
+
+v0.1 supports a single inline-disable directive for Markdown inputs:
+
+```markdown
+<!-- lucid-lint disable-next-line sentence-too-long -->
+
+A long sentence that is intentional and should not be flagged.
+```
+
+- **Syntax** : HTML comment, one rule id per directive.
+- **Scope** : the next non-blank line in the source.
+- **Applies to** : Markdown only. Plain text and stdin cannot carry comments; config-based ignores (`[[ignore]]` in `lucid-lint.toml`) are planned — see `ROADMAP.md` F19.
+- **Unknown rule ids** : silently ignored.
+
+Block disable/enable (`<!-- lucid-lint-disable -->` … `<!-- lucid-lint-enable -->`), file-level directives, multi-rule lists, and an optional `reason=` field are tracked as F18–F21 in `ROADMAP.md`.
 
 ---
 
