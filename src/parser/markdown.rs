@@ -23,6 +23,7 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
 
     let mut sections: Vec<Section> = Vec::new();
     let mut directives: Vec<Directive> = Vec::new();
+    let mut pending_directive_rules: Vec<String> = Vec::new();
     let mut list_items: Vec<ListItem> = Vec::new();
     let mut list_depth: u32 = 0;
     let mut current_title: Option<String> = None;
@@ -41,6 +42,15 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
         Parser::new_ext(text, options).into_offset_iter().collect();
 
     for (event, range) in offsets {
+        // Flush any queued directive rule ids onto the next content block
+        // (paragraph, heading, list item). Directives on intervening HTML
+        // comments or blank lines are carried until a real block appears.
+        if !pending_directive_rules.is_empty() && is_content_block_start(&event) {
+            let target_line = offset_to_line(text, range.start);
+            for rule_id in std::mem::take(&mut pending_directive_rules) {
+                directives.push(Directive::new(rule_id, target_line));
+            }
+        }
         match event {
             Event::Start(Tag::Heading { level, .. }) => {
                 finish_paragraph(
@@ -109,10 +119,12 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
                 // Inline code: skip contents.
             },
             Event::Html(s) | Event::InlineHtml(s) => {
-                if let Some(rule_id) = parse_disable_directive(&s) {
-                    if let Some(target) = next_nonblank_line(text, range.end) {
-                        directives.push(Directive::new(rule_id, target));
-                    }
+                // Queue directives here; the flush at the top of the loop
+                // attaches them to the next real content block so stacked
+                // directives and blank lines in between all resolve to the
+                // same target.
+                for rule_id in parse_all_disable_directives(&s) {
+                    pending_directive_rules.push(rule_id);
                 }
             },
             Event::Text(s) => {
@@ -162,6 +174,34 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
     Document::with_metadata(source, sections, directives, list_items)
 }
 
+/// Whether an event starts a "content block" a directive can attach to.
+/// Paragraphs, headings, and list items count; raw HTML and blank space
+/// in between do not.
+fn is_content_block_start(event: &Event<'_>) -> bool {
+    matches!(
+        event,
+        Event::Start(Tag::Paragraph | Tag::Heading { .. } | Tag::Item)
+    )
+}
+
+/// Parse every `disable-next-line` directive contained in an HTML block.
+fn parse_all_disable_directives(html: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    let mut rest = html;
+    while let Some(open) = rest.find("<!--") {
+        let after_open = &rest[open..];
+        let Some(close) = after_open.find("-->") else {
+            break;
+        };
+        let comment = &after_open[..close + 3];
+        if let Some(rule_id) = parse_disable_directive(comment) {
+            out.push(rule_id);
+        }
+        rest = &after_open[close + 3..];
+    }
+    out
+}
+
 /// Parse an HTML comment into a `disable-next-line` directive.
 ///
 /// Returns the rule id on match, or `None` if the comment is not a
@@ -185,41 +225,6 @@ fn parse_disable_directive(html: &str) -> Option<String> {
 fn is_valid_rule_id(s: &str) -> bool {
     s.chars()
         .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-')
-}
-
-/// Find the 1-based line number of the first non-blank line at or after
-/// `offset`. `offset` is expected to point at a line start (e.g. the byte
-/// right after the trailing newline of an HTML block). A line is "blank"
-/// if it contains only whitespace.
-fn next_nonblank_line(text: &str, offset: usize) -> Option<u32> {
-    let bytes = text.as_bytes();
-    let len = bytes.len();
-    let start = offset.min(len);
-    // Rewind to the start of the line that contains `start`.
-    let mut line_start = start;
-    while line_start > 0 && bytes[line_start - 1] != b'\n' {
-        line_start -= 1;
-    }
-    #[allow(clippy::naive_bytecount)]
-    let lines_before = bytes[..line_start].iter().filter(|&&b| b == b'\n').count();
-    let mut line_no = u32::try_from(lines_before + 1).ok()?;
-    let mut i = line_start;
-    while i < len {
-        let mut j = i;
-        let mut has_content = false;
-        while j < len && bytes[j] != b'\n' {
-            if !bytes[j].is_ascii_whitespace() {
-                has_content = true;
-            }
-            j += 1;
-        }
-        if has_content {
-            return Some(line_no);
-        }
-        i = j + 1;
-        line_no = line_no.checked_add(1)?;
-    }
-    None
 }
 
 fn finish_paragraph(

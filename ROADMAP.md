@@ -24,7 +24,7 @@ This document captures ideas that emerged while designing v0.1. They are intenti
 
 Backlog of everything that must ship before tagging `v0.1.0`. The implementation order mirrors the phases agreed during the bootstrap session: start with the cheapest, most deterministic signals, work up to the trickiest heuristics.
 
-### Rules (9 / 16)
+### Rules (10 / 16)
 
 #### Phase 1 — Deterministic structural rules
 
@@ -49,7 +49,7 @@ Backlog of everything that must ship before tagging `v0.1.0`. The implementation
 | ✅ | `weasel-words` | Per-language phrase list, word-boundary match (`src/rules/weasel_words.rs`) |
 | ✅ | `unexplained-abbreviation` | Pattern-based (v0.1); definition-awareness tracked as F9 (`src/rules/unexplained_abbreviation.rs`) |
 | ✅ | `jargon-undefined` | Pattern-based, profile-activated category lists (`src/rules/jargon_undefined.rs`) |
-| ☐ | `excessive-nominalization` | |
+| ✅ | `excessive-nominalization` | Per-sentence suffix-based density check (`src/rules/excessive_nominalization.rs`) |
 | ☐ | `repetitive-connectors` | |
 
 #### Phase 4 — Global metric
@@ -99,6 +99,7 @@ Backlog of everything that must ship before tagging `v0.1.0`. The implementation
 | F3 | Comma density metric (relative) for `excessive-commas` | 🟢 Low | Rule 3a |
 | F22 | Context-aware relaxation for `excessive-commas` (research needed before design) | 🔴 High | v0.1 dogfood: 5 false-ish positives on technical docs |
 | F23 | Context-aware `weasel-words` (quoted terms, "many X" with concrete X, meta-discussion of the words themselves) | 🔴 High | v0.1 dogfood: 11 false-ish positives on this repo's own docs |
+| F24 | Refine `excessive-nominalization` suffix list (drop or gate `-al`; many adjectives — `crucial`, `horizontal`, `positional`, `attentional` — are flagged despite not being abstract nouns) | 🟡 Medium | v0.1 dogfood |
 
 <!-- lucid-lint disable-next-line weasel-words -->
 

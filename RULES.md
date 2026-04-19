@@ -281,6 +281,7 @@ A list helps scanning. A deeply nested list forces the reader to reconstruct a c
 - Level 4+: mental hierarchy lost.
 
 <!-- lucid-lint disable-next-line weasel-words -->
+<!-- lucid-lint disable-next-line excessive-nominalization -->
 
 For readers with attentional difficulties, horizontal indentation becomes a crucial positional cue. Four levels of indent are too many to track.
 
@@ -702,6 +703,7 @@ Expect ~70-80% precision in v0.1. False positives handled via inline disable com
 **Rationale**
 
 <!-- lucid-lint disable-next-line excessive-commas -->
+<!-- lucid-lint disable-next-line excessive-nominalization -->
 
 Logical connectors guide the reader: opposition, cause, consequence, sequence, illustration, addition. Used well, they are attentional anchors. Repeated, they become noise.
 
