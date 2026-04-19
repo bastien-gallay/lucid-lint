@@ -66,6 +66,6 @@ This page records design decisions made during v0.1 that are worth revisiting be
 
 ## References to follow before changing these
 
-- [`RULES.md`](https://github.com/YOUR_USER/lucid-lint/blob/main/RULES.md) — the authoritative rule reference
-- [`ROADMAP.md`](https://github.com/YOUR_USER/lucid-lint/blob/main/ROADMAP.md) — future work tracked
-- [`CODING_STANDARDS.md`](https://github.com/YOUR_USER/lucid-lint/blob/main/CODING_STANDARDS.md) — day-to-day conventions
+- [`RULES.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/RULES.md) — the authoritative rule reference
+- [`ROADMAP.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/ROADMAP.md) — future work tracked
+- [`CODING_STANDARDS.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/CODING_STANDARDS.md) — day-to-day conventions

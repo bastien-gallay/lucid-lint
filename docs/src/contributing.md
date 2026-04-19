@@ -1,6 +1,6 @@
 # Contributing
 
-See [`CONTRIBUTING.md`](https://github.com/YOUR_USER/lucid-lint/blob/main/CONTRIBUTING.md) for the full contribution guide.
+See [`CONTRIBUTING.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/CONTRIBUTING.md) for the full contribution guide.
 
 ## TL;DR
 
@@ -8,7 +8,7 @@ See [`CONTRIBUTING.md`](https://github.com/YOUR_USER/lucid-lint/blob/main/CONTRI
 - Run `just check` locally.
 - Add tests for new behavior.
 - Follow Conventional Commits.
-- Be kind. See [Code of Conduct](https://github.com/YOUR_USER/lucid-lint/blob/main/CODE_OF_CONDUCT.md).
+- Be kind. See [Code of Conduct](https://github.com/bastien-gallay/lucid-lint/blob/main/CODE_OF_CONDUCT.md).
 
 ## Especially welcome
 

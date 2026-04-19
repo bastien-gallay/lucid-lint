@@ -13,8 +13,8 @@ create-missing = false
 [output.html]
 default-theme = "rust"
 preferred-dark-theme = "navy"
-git-repository-url = "https://github.com/YOUR_USER/lucid-lint"
-edit-url-template = "https://github.com/YOUR_USER/lucid-lint/edit/main/docs/{path}"
+git-repository-url = "https://github.com/bastien-gallay/lucid-lint"
+edit-url-template = "https://github.com/bastien-gallay/lucid-lint/edit/main/docs/{path}"
 site-url = "/lucid-lint/"
 
 [output.html.fold]

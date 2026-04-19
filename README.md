@@ -2,7 +2,7 @@
 
 > A cognitive accessibility linter for prose. Built on cognitive load research. Bilingual EN/FR with equal care. Plugin-first, CI-native.
 
-[![CI](https://github.com/YOUR_USER/lucid-lint/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USER/lucid-lint/actions/workflows/ci.yml)
+[![CI](https://github.com/bastien-gallay/lucid-lint/actions/workflows/ci.yml/badge.svg)](https://github.com/bastien-gallay/lucid-lint/actions/workflows/ci.yml)
 [![Crates.io](https://img.shields.io/crates/v/lucid-lint.svg)](https://crates.io/crates/lucid-lint)
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
 
@@ -37,7 +37,7 @@ cargo install lucid-lint
 From source:
 
 ```bash
-git clone https://github.com/YOUR_USER/lucid-lint
+git clone https://github.com/bastien-gallay/lucid-lint
 cd lucid-lint
 cargo install --path .
 ```
@@ -111,7 +111,7 @@ Planned for v0.2:
 
 ## Documentation
 
-Full documentation at [https://YOUR_USER.github.io/lucid-lint](https://YOUR_USER.github.io/lucid-lint) (built with mdBook).
+Full documentation at [https://bastien-gallay.github.io/lucid-lint](https://bastien-gallay.github.io/lucid-lint) (built with mdBook).
 
 ## Contributing
 

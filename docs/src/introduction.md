@@ -15,7 +15,7 @@ Most prose linters measure style (`write-good`), grammar (`Antidote`), or surfac
 
 ## Project status
 
-`lucid-lint` is in v0.1 active development. The 16 rules from [`RULES.md`](https://github.com/YOUR_USER/lucid-lint/blob/main/RULES.md) are the planned scope for the first release.
+`lucid-lint` is in v0.1 active development. The 16 rules from [`RULES.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/RULES.md) are the planned scope for the first release.
 
 ## Quick taste
 

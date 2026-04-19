@@ -13,7 +13,7 @@ This installs the `lucid-lint` binary into your Cargo bin directory, usually `~/
 ## From source
 
 ```bash
-git clone https://github.com/YOUR_USER/lucid-lint
+git clone https://github.com/bastien-gallay/lucid-lint
 cd lucid-lint
 cargo install --path .
 ```
@@ -26,7 +26,7 @@ Each release ships pre-built binaries for:
 - macOS (`aarch64-apple-darwin`, `x86_64-apple-darwin`)
 - Windows (`x86_64-pc-windows-msvc`)
 
-Download from the [GitHub releases page](https://github.com/YOUR_USER/lucid-lint/releases).
+Download from the [GitHub releases page](https://github.com/bastien-gallay/lucid-lint/releases).
 
 ## Verify the installation
 

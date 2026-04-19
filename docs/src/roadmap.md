@@ -1,6 +1,6 @@
 # Roadmap
 
-The full roadmap lives in [`ROADMAP.md`](https://github.com/YOUR_USER/lucid-lint/blob/main/ROADMAP.md) at the repository root.
+The full roadmap lives in [`ROADMAP.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/ROADMAP.md) at the repository root.
 
 ## Summary
 

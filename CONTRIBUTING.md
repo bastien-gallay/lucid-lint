@@ -34,7 +34,7 @@ We welcome all of the following:
 ### First time setup
 
 ```bash
-git clone https://github.com/YOUR_USER/lucid-lint
+git clone https://github.com/bastien-gallay/lucid-lint
 cd lucid-lint
 just setup
 ```
