@@ -24,7 +24,7 @@ This document captures ideas that emerged while designing v0.1. They are intenti
 
 Backlog of everything that must ship before tagging `v0.1.0`. The implementation order mirrors the phases agreed during the bootstrap session: start with the cheapest, most deterministic signals, work up to the trickiest heuristics.
 
-### Rules (8 / 16)
+### Rules (9 / 16)
 
 #### Phase 1 — Deterministic structural rules
 
@@ -48,7 +48,7 @@ Backlog of everything that must ship before tagging `v0.1.0`. The implementation
 |---|---|---|
 | ✅ | `weasel-words` | Per-language phrase list, word-boundary match (`src/rules/weasel_words.rs`) |
 | ✅ | `unexplained-abbreviation` | Pattern-based (v0.1); definition-awareness tracked as F9 (`src/rules/unexplained_abbreviation.rs`) |
-| ☐ | `jargon-undefined` | |
+| ✅ | `jargon-undefined` | Pattern-based, profile-activated category lists (`src/rules/jargon_undefined.rs`) |
 | ☐ | `excessive-nominalization` | |
 | ☐ | `repetitive-connectors` | |
 
