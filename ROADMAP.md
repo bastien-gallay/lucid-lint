@@ -72,7 +72,7 @@ Backlog of everything that must ship before tagging `v0.1.0`. The implementation
 
 | Status | Feature | Notes |
 |---|---|---|
-| 🚧 | Minimal inline-disable | Line/range suppression comments (e.g. `<!-- lucid-lint disable-next-line sentence-too-long -->`). Scope for v0.1: next-line and block disable/enable for Markdown only. File-level ignore and `.lucidignore` are deferred to v0.2 (see *Points deferred from v0.1 session → Configuration*). |
+| ✅ | Minimal inline-disable | `<!-- lucid-lint disable-next-line <rule-id> -->` for Markdown inputs, single rule id, optional reason. See [RULES.md → Suppressing diagnostics](RULES.md#suppressing-diagnostics). Block form, config ignores, file-level scope and required `reason=` are tracked as F18–F21 below. |
 
 ---
 
