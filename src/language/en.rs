@@ -155,6 +155,35 @@ pub static STOPWORDS: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     .collect()
 });
 
+/// Default English weasel words and phrases (lowercased).
+///
+/// A weasel word weakens a statement without informing the reader: the
+/// reader must silently decide whether the qualification matters. See
+/// [`RULES.md`](../../RULES.md#weasel-words).
+pub static WEASELS: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
+    vec![
+        "some",
+        "many",
+        "often",
+        "just",
+        "simply",
+        "clearly",
+        "obviously",
+        "seemingly",
+        "arguably",
+        "basically",
+        "essentially",
+        "virtually",
+        "various",
+        "numerous",
+        "rather",
+        "quite",
+        "sort of",
+        "kind of",
+        "a bit",
+    ]
+});
+
 #[cfg(test)]
 mod tests {
     use super::*;

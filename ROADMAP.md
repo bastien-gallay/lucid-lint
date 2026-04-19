@@ -24,7 +24,7 @@ This document captures ideas that emerged while designing v0.1. They are intenti
 
 Backlog of everything that must ship before tagging `v0.1.0`. The implementation order mirrors the phases agreed during the bootstrap session: start with the cheapest, most deterministic signals, work up to the trickiest heuristics.
 
-### Rules (6 / 16)
+### Rules (7 / 16)
 
 #### Phase 1 — Deterministic structural rules
 
@@ -46,7 +46,7 @@ Backlog of everything that must ship before tagging `v0.1.0`. The implementation
 
 | Status | Rule | Notes |
 |---|---|---|
-| ☐ | `weasel-words` | |
+| ✅ | `weasel-words` | Per-language phrase list, word-boundary match (`src/rules/weasel_words.rs`) |
 | ☐ | `unexplained-abbreviation` | v0.1 simplified, no definition awareness (see F9) |
 | ☐ | `jargon-undefined` | |
 | ☐ | `excessive-nominalization` | |
@@ -98,6 +98,9 @@ Backlog of everything that must ship before tagging `v0.1.0`. The implementation
 | F2 | Sentence-level low-lexical-diversity density | 🟢 Low | Rule 5 |
 | F3 | Comma density metric (relative) for `excessive-commas` | 🟢 Low | Rule 3a |
 | F22 | Context-aware relaxation for `excessive-commas` (research needed before design) | 🔴 High | v0.1 dogfood: 5 false-ish positives on technical docs |
+| F23 | Context-aware `weasel-words` (quoted terms, "many X" with concrete X, meta-discussion of the words themselves) | 🔴 High | v0.1 dogfood: 11 false-ish positives on this repo's own docs |
+
+<!-- lucid-lint disable-next-line weasel-words -->
 
 **F22 context.** The v0.1 rule is a flat comma-per-sentence threshold.
 In technical docs that routinely enumerate short items, this fires

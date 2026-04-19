@@ -8,6 +8,8 @@ It is meant to guide contributions and to keep the codebase coherent as it grows
 
 ### 1. Make impossible states impossible
 
+<!-- lucid-lint disable-next-line weasel-words -->
+
 Rust's type system is a tool for correctness, not just performance.
 
 **Prefer**:

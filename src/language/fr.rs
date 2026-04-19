@@ -40,6 +40,36 @@ pub static STOPWORDS: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     .collect()
 });
 
+/// Default French weasel words and phrases (lowercased).
+///
+/// See [`RULES.md`](../../RULES.md#weasel-words). Phrases are matched at
+/// word boundaries, so `beaucoup` as a standalone token is not flagged —
+/// only `beaucoup de` is.
+pub static WEASELS: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
+    vec![
+        "quelques",
+        "certains",
+        "parfois",
+        "plutôt",
+        "assez",
+        "globalement",
+        "généralement",
+        "souvent",
+        "en général",
+        "la plupart",
+        "il semble que",
+        "il semblerait que",
+        "on pourrait dire que",
+        "on dit souvent",
+        "beaucoup de",
+        "peu de",
+        "presque",
+        "quasiment",
+        "environ",
+        "à peu près",
+    ]
+});
+
 #[cfg(test)]
 mod tests {
     use super::*;

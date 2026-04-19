@@ -111,6 +111,8 @@ Use the project's `Tokenizer` in `src/parser/tokenizer.rs`. Do NOT split on `.` 
 
 ### Language detection
 
+<!-- lucid-lint disable-next-line weasel-words -->
+
 Heuristic based on stop-words ratio. See `src/language/detect.rs`. Returns `Language::Unknown` if confidence is low — respect that and skip language-specific rules rather than guessing.
 
 ### Unicode

@@ -113,6 +113,8 @@ Contractions (`don't`) and elisions (`l'accessibilité`) are counted as one word
 
 **Rationale**
 
+<!-- lucid-lint disable-next-line weasel-words -->
+
 A paragraph is a mental chunk. A reader with attentional load interrupts often and must find their place again. Short paragraphs create clear reprise points; long ones dilute them.
 
 The rule uses both a sentence count and a word count so that a short-but-dense paragraph (one 80-word sentence) is still flagged. Rule 1 `sentence-too-long` catches the complementary case.
@@ -148,9 +150,13 @@ Split text on blank lines (Markdown paragraph convention). Count sentences and w
 **Severity** : `warning`
 **Bilingual** : yes, identical FR/EN
 
+<!-- lucid-lint disable-next-line weasel-words -->
+
 **Intent** : detect sentences with too many commas. A high comma count is almost always a sign of overload, regardless of cause (subordination, apposition, enumeration, inline parenthetical).
 
 **Rationale**
+
+<!-- lucid-lint disable-next-line weasel-words -->
 
 The comma is the most frequent marker of syntactic complexity. Rather than trying to disentangle the exact cause, this rule flags density as a leading indicator.
 
@@ -212,6 +218,8 @@ Sequence of 4+ short comma-separated segments ending with `, et` / `, or` / `, o
 **Severity** : `warning`
 **Bilingual** : yes, FR/EN lists differ
 
+<!-- lucid-lint disable-next-line weasel-words -->
+
 **Intent** : detect cascading subordinate clauses. Multiple nested relative pronouns or subordinating conjunctions force the reader to hold many open referents in working memory.
 
 **Rationale**
@@ -271,6 +279,8 @@ A list helps scanning. A deeply nested list forces the reader to reconstruct a c
 - Level 2: sub-details, still readable.
 - Level 3: acceptable, detailed outline.
 - Level 4+: mental hierarchy lost.
+
+<!-- lucid-lint disable-next-line weasel-words -->
 
 For readers with attentional difficulties, horizontal indentation becomes a crucial positional cue. Four levels of indent are too many to track.
 
@@ -384,6 +394,8 @@ Walk sentences sequentially. Count consecutive sentences exceeding a length thre
 **Severity** : `info`
 **Bilingual** : yes, FR/EN stoplists differ
 
+<!-- lucid-lint disable-next-line weasel-words -->
+
 **Intent** : detect passages with excessive repetition of content words. A monotonous text loses attention and often signals unstructured thinking.
 
 **Rationale**
@@ -421,6 +433,8 @@ Words inside code blocks are excluded.
 **Category** : `lexical`
 **Severity** : `warning`
 **Bilingual** : yes, FR/EN suffixes overlap significantly
+
+<!-- lucid-lint disable-next-line weasel-words -->
 
 **Intent** : detect sentences with too many nominalizations (action verbs turned into abstract nouns). Nominalization makes text abstract and heavy.
 
@@ -467,6 +481,8 @@ Walk words. Detect typical nominalization suffixes. Count density per sentence.
 | `falc` | 2 |
 
 **Known limitation**
+
+<!-- lucid-lint disable-next-line weasel-words -->
 
 Technical vocabulary (`function`, `implementation`, `configuration`) contains many technical nominalizations. The profile `dev-doc` accommodates this with a looser threshold. The rule targets *density*, not isolated occurrences.
 

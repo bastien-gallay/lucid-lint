@@ -133,15 +133,19 @@ mod tests {
         assert!(diags.is_empty());
     }
 
+    fn diags_for_rule(diags: &[Diagnostic], rule_id: &str) -> usize {
+        diags.iter().filter(|d| d.rule_id == rule_id).count()
+    }
+
     #[test]
     fn engine_respects_profile() {
         let public = Engine::with_profile(Profile::Public);
         let dev = Engine::with_profile(Profile::DevDoc);
-        // 25 words: triggers Public (22) but not DevDoc (30).
-        let text = "This is a rather long sentence that keeps adding more and more words \
-                    until it exceeds the public profile threshold by a comfortable margin.";
-        assert!(!public.lint_str(text).is_empty());
-        assert!(dev.lint_str(text).is_empty());
+        // 25 words: triggers Public (22) but not DevDoc (30) for sentence-too-long.
+        let text = "This is a long sentence that keeps adding more and more words until it \
+                    exceeds the public profile threshold by a comfortable margin of safety.";
+        assert!(diags_for_rule(&public.lint_str(text), "sentence-too-long") > 0);
+        assert_eq!(diags_for_rule(&dev.lint_str(text), "sentence-too-long"), 0);
     }
 
     #[test]
@@ -149,12 +153,13 @@ mod tests {
         let engine = Engine::with_profile(Profile::Public);
         let text = "Intro paragraph.\n\n\
                     <!-- lucid-lint disable-next-line sentence-too-long -->\n\
-                    This is a rather long sentence that keeps adding more and more words \
-                    until it exceeds the public profile threshold by a comfortable margin.\n";
+                    This is a long sentence that keeps adding more and more words until it \
+                    exceeds the public profile threshold by a comfortable margin of safety.\n";
         let diags = engine.lint_str(text);
-        assert!(
-            diags.is_empty(),
-            "expected directive to suppress, got: {diags:?}"
+        assert_eq!(
+            diags_for_rule(&diags, "sentence-too-long"),
+            0,
+            "expected directive to suppress sentence-too-long, got: {diags:?}"
         );
     }
 
@@ -164,10 +169,10 @@ mod tests {
         let engine = Engine::with_profile(Profile::Public);
         let text = "Intro.\n\n\
                     <!-- lucid-lint disable-next-line weasel-words -->\n\
-                    This is a rather long sentence that keeps adding more and more words \
-                    until it exceeds the public profile threshold by a comfortable margin.\n";
+                    This is a long sentence that keeps adding more and more words until it \
+                    exceeds the public profile threshold by a comfortable margin of safety.\n";
         let diags = engine.lint_str(text);
-        assert_eq!(diags.len(), 1);
+        assert_eq!(diags_for_rule(&diags, "sentence-too-long"), 1);
     }
 
     #[test]
