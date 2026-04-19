@@ -3,7 +3,6 @@ title = "lucid-lint"
 authors = ["Bastien Gallay and contributors"]
 description = "A cognitive accessibility linter for prose."
 language = "en"
-multilingual = false
 src = "src"
 
 [build]
