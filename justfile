@@ -90,9 +90,9 @@ clean:
     rm -rf docs/book
     rm -f lcov.info
 
-# Dogfood: run lucid-lint on its own documentation
+# Dogfood: run lucid-lint on its own documentation (dev-doc profile for technical docs)
 dogfood:
-    cargo run --release -- check README.md RULES.md ROADMAP.md CONTRIBUTING.md CODING_STANDARDS.md AGENTS.md
+    cargo run --release -- check --profile dev-doc README.md RULES.md ROADMAP.md CONTRIBUTING.md CODING_STANDARDS.md AGENTS.md
 
 # Release dry-run using cargo-dist
 release-check:

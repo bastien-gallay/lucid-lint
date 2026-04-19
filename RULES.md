@@ -547,9 +547,20 @@ Trivial implementation. HashSet lookup.
 
 **Default lists (v0.1)**
 
-🇫🇷 : *quelques, certains, parfois, plutôt, assez, globalement, généralement, souvent, en général, la plupart, il semble que, il semblerait que, on pourrait dire que, on dit souvent, beaucoup de, peu de, presque, quasiment, environ, à peu près*
+🇫🇷
 
-🇬🇧 : *some, many, often, just, simply, clearly, obviously, seemingly, arguably, basically, essentially, virtually, various, numerous, sort of, kind of, a bit, rather, quite, fairly, relatively, mostly, generally*
+- *quelques*, *certains*, *parfois*, *plutôt*, *assez*
+- *globalement*, *généralement*, *souvent*, *en général*, *la plupart*
+- *il semble que*, *il semblerait que*, *on pourrait dire que*, *on dit souvent*
+- *beaucoup de*, *peu de*, *presque*, *quasiment*, *environ*, *à peu près*
+
+🇬🇧
+
+- *some*, *many*, *often*, *just*, *simply*
+- *clearly*, *obviously*, *seemingly*, *arguably*
+- *basically*, *essentially*, *virtually*, *various*, *numerous*
+- *sort of*, *kind of*, *a bit*, *rather*, *quite*
+- *fairly*, *relatively*, *mostly*, *generally*
 
 **All profiles** : active. Use `# lucid-lint disable-next weasel-words` to opt out when usage is intentional (legitimate subset reference, quotation, etc.).
 

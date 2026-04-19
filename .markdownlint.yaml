@@ -9,6 +9,18 @@ MD013: false
 # MD033: Inline HTML — allowed for intentional formatting
 MD033: false
 
+# MD032: blanks-around-lists — pre-existing scaffold style
+MD032: false
+
+# MD036: RULES.md uses **Bold**: as pseudo-headings inside rule blocks; intentional
+MD036: false
+
+# MD040: Some fenced blocks are intentional examples without a language
+MD040: false
+
+# MD060: table compact style — pre-existing scaffold formatting
+MD060: false
+
 # MD041: First line in file should be a top-level heading
 MD041: false
 
