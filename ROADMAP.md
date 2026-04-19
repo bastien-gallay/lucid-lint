@@ -97,6 +97,33 @@ Backlog of everything that must ship before tagging `v0.1.0`. The implementation
 | F1 | Custom stoplist parameter for `low-lexical-diversity` | 🟡 Medium | Rule 5 |
 | F2 | Sentence-level low-lexical-diversity density | 🟢 Low | Rule 5 |
 | F3 | Comma density metric (relative) for `excessive-commas` | 🟢 Low | Rule 3a |
+| F22 | Context-aware relaxation for `excessive-commas` (research needed before design) | 🔴 High | v0.1 dogfood: 5 false-ish positives on technical docs |
+
+**F22 context.** The v0.1 rule is a flat comma-per-sentence threshold.
+In technical docs that routinely enumerate short items, this fires
+often even when the sentence is perfectly scannable. Candidate
+relaxations to evaluate (needs corpus research — don't pick blindly):
+
+- **Discount commas inside parenthesis-like elements** (`(...)`,
+  `[...]`, en/em-dash pairs). A parenthetical enumeration is already
+  visually bracketed; its commas are not adding subordination load.
+- **Discount commas after a colon `:`** when what follows is a list of
+  short items. Colon + short items is idiomatic prose-enumeration and
+  reads well.
+- **Short-item enumeration exemption**: if all comma-separated
+  segments are 1–2 words, treat the enumeration as a single
+  "flattened list" token for counting purposes (a
+  `max_short_enum_items` parameter, or implicit).
+- **Interaction with `long-enumeration`**: once that rule ships, it
+  already suppresses `excessive-commas` on the sentences it flags.
+  F22 is specifically about the cases `long-enumeration` would miss
+  (3–4 short items, parentheticals).
+
+Research inputs to gather before deciding: FR/EN corpus samples of
+technical docs, a handful of real false positives from dogfooding and
+downstream projects, how `textlint` / Vale / `write-good` handle
+parentheticals. Decide between relaxation parameters vs. a smarter
+token-aware counter.
 
 ### Format support
 
