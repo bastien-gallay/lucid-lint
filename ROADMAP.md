@@ -101,6 +101,7 @@ Backlog of everything that must ship before tagging `v0.1.0`. The implementation
 | F22 | Context-aware relaxation for `excessive-commas` (research needed before design) | 🔴 High | v0.1 dogfood: 5 false-ish positives on technical docs |
 | F23 | Context-aware `weasel-words` (quoted terms, "many X" with concrete X, meta-discussion of the words themselves) | 🔴 High | v0.1 dogfood: 11 false-ish positives on this repo's own docs |
 | F24 | Refine `excessive-nominalization` suffix list (drop or gate `-al`; many adjectives — `crucial`, `horizontal`, `positional`, `attentional` — are flagged despite not being abstract nouns) | 🟡 Medium | v0.1 dogfood |
+| F31 | Split `unexplained-abbreviation` built-in whitelist: the accessibility (`WCAG`, `WAI`, `ARIA`, `RGAA`, `EAA`, `FALC`, `AA`, `AAA`, `ADHD`) and AI (`LLM`, `NLP`) initialisms are well-known inside `lucid-lint` but narrower for a generic tech audience. Move them into a project-scoped whitelist once F19 lands CLI-level config loading, keeping only truly ubiquitous tech acronyms (`URL`, `HTML`, `API`, `CPU`, …) in the shipped `dev-doc` baseline. | 🟡 Medium | v0.1 review feedback |
 
 <!-- lucid-lint disable-next-line weasel-words -->
 
