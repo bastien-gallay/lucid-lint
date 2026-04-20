@@ -2,7 +2,7 @@
 
 The canonical rules reference lives in [`RULES.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/RULES.md) at the repository root.
 
-It documents each of the 16 v0.1 rules in detail, including:
+It documents each of the 17 v0.1 rules in detail, including:
 
 - The cognitive load problem addressed
 - Research references (Sweller, Gibson, Graesser, WCAG, RGAA, FALC)
@@ -29,4 +29,4 @@ It documents each of the 16 v0.1 rules in detail, including:
 
 ## Per-rule pages
 
-Per-rule detail pages will be added in v0.2 when the full set of rules is implemented. For now, refer to [`RULES.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/RULES.md).
+Per-rule detail pages will be added in v0.2 (tracked as F28 in the roadmap). For now, refer to [`RULES.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/RULES.md).

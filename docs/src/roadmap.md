@@ -4,13 +4,13 @@ The full roadmap lives in [`ROADMAP.md`](https://github.com/bastien-gallay/lucid
 
 ## Summary
 
-### v0.1 — In progress
+### v0.1 — Complete
 
-Current status: **1 / 16 rules implemented** (`sentence-too-long`, used as the template for the others). The 15 remaining rules are grouped in 5 phases — structural, simple text, lexical, global metric, then heuristics. Full checklist in [`ROADMAP.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/ROADMAP.md#v01--in-progress).
+All **17 / 17 rules** shipped, grouped by category: length, structure, rhythm, lexical, style, and global readability. Full per-rule reference in [`RULES.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/RULES.md) and the authoritative checklist in [`ROADMAP.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/ROADMAP.md#v01--in-progress).
 
-Also in flight for v0.1:
+Cross-cutting features shipped:
 
-- Minimal inline-disable — next-line and block suppression comments for Markdown
+- Minimal inline-disable directive (`<!-- lucid-lint disable-next-line <rule-id> -->`) for Markdown inputs.
 
 ### v0.2 — First major iteration
 

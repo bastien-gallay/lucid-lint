@@ -9,7 +9,7 @@ This file provides guidance to coding agents (Claude Code, Cursor, GitHub Copilo
 Read in order:
 
 1. [README.md](README.md) — what it is and how it's used
-2. [RULES.md](RULES.md) — the 16 rules shipped in v0.1
+2. [RULES.md](RULES.md) — the 17 rules shipped in v0.1
 3. [CODING_STANDARDS.md](CODING_STANDARDS.md) — design principles
 4. [ROADMAP.md](ROADMAP.md) — what's planned
 5. [CONTRIBUTING.md](CONTRIBUTING.md) — contribution workflow

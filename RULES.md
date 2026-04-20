@@ -2,7 +2,7 @@
 
 > A cognitive accessibility linter for prose. Built on cognitive load research. Bilingual EN/FR with equal care. Plugin-first, CI-native.
 
-This document describes the 16 rules included in `lucid-lint` v0.1.
+This document describes the 17 rules included in `lucid-lint` v0.1.
 
 Each rule is atomic, documented, and configurable via a per-profile threshold.
 

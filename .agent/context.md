@@ -9,7 +9,7 @@ The canonical entry point is [AGENTS.md](../AGENTS.md) at the repository root. T
 The project was bootstrapped in April 2026 with the following scope for v0.1:
 
 - Rust-only core
-- 16 rules validated in RULES.md
+- 17 rules shipped (see RULES.md)
 - Markdown + plain text + stdin inputs
 - Bilingual EN/FR from day one
 - Deterministic rules only (LLM-based rules are a future v0.3 plugin)
