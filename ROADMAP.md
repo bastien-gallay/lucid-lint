@@ -24,7 +24,7 @@ This document captures ideas that emerged while designing v0.1. They are intenti
 
 Backlog of everything that must ship before tagging `v0.1.0`. The implementation order mirrors the phases agreed during the bootstrap session: start with the cheapest, most deterministic signals, work up to the trickiest heuristics.
 
-### Rules (16 / 17)
+### Rules (17 / 17) ✅
 
 #### Phase 1 — Deterministic structural rules
 
@@ -66,7 +66,7 @@ Backlog of everything that must ship before tagging `v0.1.0`. The implementation
 | ✅ | `deep-subordination` | Counts subordinators between strong-punct breaks; skips pronoun enumerations (`src/rules/deep_subordination.rs`) |
 | ✅ | `passive-voice` | Heuristic `be/être`+past-participle detector; POS-based detection remains a `lucid-lint-nlp` plugin candidate (`src/rules/passive_voice.rs`) |
 | ✅ | `unclear-antecedent` | Info-level heuristic: bare demonstrative + verb, or paragraph-start personal pronoun (`src/rules/unclear_antecedent.rs`) |
-| ☐ | `low-lexical-diversity` | |
+| ✅ | `low-lexical-diversity` | Sliding-window TTR over non-stopword content tokens (`src/rules/low_lexical_diversity.rs`) |
 
 ### Cross-cutting features
 

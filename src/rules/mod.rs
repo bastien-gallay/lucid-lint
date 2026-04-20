@@ -18,6 +18,7 @@ pub mod excessive_nominalization;
 pub mod heading_jump;
 pub mod jargon_undefined;
 pub mod long_enumeration;
+pub mod low_lexical_diversity;
 pub mod paragraph_too_long;
 pub mod passive_voice;
 
@@ -36,6 +37,7 @@ pub use excessive_nominalization::ExcessiveNominalization;
 pub use heading_jump::HeadingJump;
 pub use jargon_undefined::JargonUndefined;
 pub use long_enumeration::LongEnumeration;
+pub use low_lexical_diversity::LowLexicalDiversity;
 pub use paragraph_too_long::ParagraphTooLong;
 pub use passive_voice::PassiveVoice;
 pub use readability_score::ReadabilityScore;
@@ -91,6 +93,7 @@ pub fn default_rules(profile: Profile) -> Vec<Box<dyn Rule>> {
         Box::new(DeepSubordination::for_profile(profile)),
         Box::new(PassiveVoice::for_profile(profile)),
         Box::new(UnclearAntecedent::for_profile(profile)),
+        Box::new(LowLexicalDiversity::for_profile(profile)),
     ]
 }
 
