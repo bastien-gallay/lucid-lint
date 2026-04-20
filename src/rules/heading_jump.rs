@@ -87,7 +87,8 @@ impl Rule for HeadingJump {
                             line,
                             section.title.as_deref(),
                             format!(
-                                "First heading is H{depth}; expected H1 at the top of the document."
+                                "First heading is H{depth}, not H1. Start the document with an \
+                                 H1 heading before any lower-level heading."
                             ),
                         ));
                     }
@@ -116,7 +117,8 @@ impl Rule for HeadingJump {
                 &document.source,
                 1,
                 None,
-                "Document has no H1 heading.".to_string(),
+                "Document has no H1 heading. Add an H1 at the top to anchor the outline."
+                    .to_string(),
             ));
         }
 
