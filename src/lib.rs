@@ -38,5 +38,5 @@ pub mod types;
 mod engine;
 
 pub use config::Profile;
-pub use engine::Engine;
+pub use engine::{Engine, EngineError};
 pub use types::{Category, Diagnostic, Language, Location, Severity};

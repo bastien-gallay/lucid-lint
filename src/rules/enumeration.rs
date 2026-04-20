@@ -9,7 +9,7 @@
 //!   don't trip the comma-density threshold.
 //!
 //! Detection recognizes the Oxford-comma pattern documented in
-//! `RULES.md` for [`long-enumeration`]: a run of comma-separated short
+//! `RULES.md` for `long-enumeration`: a run of comma-separated short
 //! segments ending with a connector segment (`, and X` / `, or X` /
 //! `, et X` / `, ou X`). Non-Oxford enumerations ("A, B, C and D" with
 //! no comma before the connector) are deliberately out of scope for

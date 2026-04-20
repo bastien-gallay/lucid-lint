@@ -13,10 +13,11 @@ pub mod json;
 pub mod tty;
 
 /// Output format selector for the CLI and library.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Format {
     /// Human-readable terminal output (default).
+    #[default]
     Tty,
     /// Structured JSON output.
     Json,
@@ -30,11 +31,5 @@ impl Format {
             Self::Tty => tty::render(diagnostics, tty::ColorMode::Auto),
             Self::Json => json::render(diagnostics),
         }
-    }
-}
-
-impl Default for Format {
-    fn default() -> Self {
-        Self::Tty
     }
 }

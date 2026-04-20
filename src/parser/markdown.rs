@@ -135,15 +135,11 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
                     buf.push_str(&s);
                 }
             },
-            Event::SoftBreak => {
-                if in_heading.is_some() || in_paragraph {
-                    buf.push(' ');
-                }
+            Event::SoftBreak if in_heading.is_some() || in_paragraph => {
+                buf.push(' ');
             },
-            Event::HardBreak => {
-                if in_heading.is_some() || in_paragraph {
-                    buf.push('\n');
-                }
+            Event::HardBreak if in_heading.is_some() || in_paragraph => {
+                buf.push('\n');
             },
             _ => {},
         }

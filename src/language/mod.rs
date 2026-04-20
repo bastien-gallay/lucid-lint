@@ -1,7 +1,7 @@
 //! Language detection and language-specific data.
 //!
 //! Language detection uses a simple stop-word ratio heuristic in v0.1.
-//! See [`ROADMAP.md`] for the planned upgrade to a dedicated crate like `whatlang`.
+//! See `ROADMAP.md` for the planned upgrade to a dedicated crate like `whatlang`.
 
 use crate::types::Language;
 
