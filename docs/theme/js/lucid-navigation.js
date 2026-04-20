@@ -34,6 +34,9 @@ const LUCID_COPY = {
     langEn: 'EN',
     langFr: 'FR',
     langLabel: 'Choose language',
+    crumbLabel: 'Breadcrumb',
+    tocAriaLabel: 'On this page',
+    demoUsePrefix: 'Use ',
     tocLabel: 'On this page',
     demoUsed: 'Reading set to ',
     demoUndo: 'Undo',
@@ -58,6 +61,9 @@ const LUCID_COPY = {
     langEn: 'EN',
     langFr: 'FR',
     langLabel: 'Choisir la langue',
+    crumbLabel: 'Fil d’Ariane',
+    tocAriaLabel: 'Sur cette page',
+    demoUsePrefix: 'Utiliser ',
     tocLabel: 'Sur cette page',
     demoUsed: 'Lecture réglée sur ',
     demoUndo: 'Annuler',
@@ -85,6 +91,11 @@ const LUCID_COPY = {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isFr = location.pathname.indexOf('/fr/') !== -1;
   const t = isFr ? LUCID_COPY.fr : LUCID_COPY.en;
+
+  // mdBook hard-codes <html lang> from book.toml [book].language.
+  // The FR stub lives under the same book, so override at runtime so
+  // screen readers and spellcheck pick the right language.
+  if (isFr) d.documentElement.setAttribute('lang', 'fr');
 
   // ---- 1. Skip to content ----------------------------------
   (function skipLink() {
@@ -121,7 +132,7 @@ const LUCID_COPY = {
 
     const nav = d.createElement('nav');
     nav.className = 'lucid-breadcrumbs';
-    nav.setAttribute('aria-label', 'Breadcrumb');
+    nav.setAttribute('aria-label', t.crumbLabel);
 
     const ol = d.createElement('ol');
     if (part) {
@@ -145,7 +156,7 @@ const LUCID_COPY = {
 
     const aside = d.createElement('aside');
     aside.className = 'lucid-pagetoc';
-    aside.setAttribute('aria-label', 'On this page');
+    aside.setAttribute('aria-label', t.tocAriaLabel);
 
     const label = d.createElement('p');
     label.className = 'lucid-pagetoc__label';
@@ -265,9 +276,15 @@ const LUCID_COPY = {
       showToast(t.demoUsed + t.demoFontLabels[preset], preset);
     };
 
-    // Restore current preset on load
+    // Restore current preset on load, and give every button an
+    // accessible name that survives out-of-context readout
+    // ("Use Atkinson Hyperlegible Next" vs just "Use this").
     const current = d.documentElement.getAttribute('data-font') || 'atkinson';
-    buttons.forEach((b) => b.setAttribute('aria-pressed', b.dataset.apply === current ? 'true' : 'false'));
+    buttons.forEach((b) => {
+      b.setAttribute('aria-pressed', b.dataset.apply === current ? 'true' : 'false');
+      const presetName = t.demoFontLabels[b.dataset.apply];
+      if (presetName) b.setAttribute('aria-label', t.demoUsePrefix + presetName);
+    });
 
     buttons.forEach((b) => {
       b.addEventListener('click', () => applyPreset(b.dataset.apply));

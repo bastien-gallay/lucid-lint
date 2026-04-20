@@ -538,6 +538,33 @@
   .lucid-pagetoc { display: none !important; }
 }
 
+/* ---------- Forced-colors (Windows HC mode) ----------
+ * OKLCH surfaces can flatten to system colors in forced-colors
+ * mode, which is desirable — but we lose the 1px "active" rail
+ * and the 1px borders on demo buttons. Reassert them with the
+ * system keywords so the interactive structure survives. */
+@media (forced-colors: active) {
+  .sidebar .chapter li a.active::before {
+    background: CanvasText;
+  }
+  .reading-demo__apply {
+    border: 1px solid ButtonText;
+    forced-color-adjust: none;
+    color: ButtonText;
+    background: ButtonFace;
+  }
+  .reading-demo__apply[aria-pressed="true"] {
+    background: Highlight;
+    color: HighlightText;
+  }
+  .lucid-skip {
+    outline: 2px solid CanvasText;
+  }
+  .lucid-lang__link.is-active {
+    text-decoration: underline;
+  }
+}
+
 /* Tablet landscape (≥ 700px, < 1200px): the TOC is inline above
    content. Constrain its width so it doesn't stretch the full
    content measure on iPad-ish viewports — easier to scan. */

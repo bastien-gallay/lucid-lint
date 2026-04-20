@@ -37,6 +37,21 @@ Where AAA is impractical — for example contrast on a third-party
 embed — the exception is documented in
 [`.impeccable.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/.impeccable.md).
 
+<!-- lucid-lint disable-next-line unexplained-abbreviation -->
+
+### Known limitations
+
+- The French page renders under `<html lang="en">` at build time
+  because mdBook supports a single book-wide language. A small
+  script corrects `lang="fr"` on load; screen readers that
+  respect dynamic changes pick it up. Proper per-locale builds
+  land with the full French mirror in v0.2.
+- mdBook's built-in theme picker still lists Light / Rust / Coal /
+  Navy / Ayu as menu items. Each of them resolves to either
+  **Lucid light** or **Lucid dark** via the theme CSS, but the
+  picker labels themselves are a mdBook concern. Brand-owned
+  labels are tracked as F26 in the roadmap.
+
 ## Reading preferences
 
 A small set of controls tunes the site to your own reading profile.
