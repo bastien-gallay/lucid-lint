@@ -54,6 +54,8 @@ static TECH_WHITELIST: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
         "WASM", "MIT", // AI / language tech
         "LLM", "NLP", // Accessibility and readability standards
         "WCAG", "WAI", "ARIA", "RGAA", "EAA", "FALC", "AA", "AAA", "ADHD",
+        // Ubiquitous engineering-practice initialisms
+        "YAGNI", "DRY", "KISS", "SOLID", "TDD", "BDD", "MVP", "MSRV",
     ]
     .into_iter()
     .collect()

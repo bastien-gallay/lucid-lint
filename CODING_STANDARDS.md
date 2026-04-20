@@ -1,12 +1,10 @@
 # Coding Standards
 
-This document describes the design principles and code conventions applied in `lucid-lint`.
-
-It is meant to guide contributions and to keep the codebase coherent as it grows.
+This document describes the design principles and code conventions applied in `lucid-lint`. The guidance here exists to shape contributions and to keep the codebase coherent as it grows.
 
 ## Design principles
 
-The house framework is **CUPID** (Dan North): write code that is joyful to live with. Five properties, one anti-speculation rule.
+The house framework is **CUPID** (Composable, Unix philosophy, Predictable, Idiomatic, Domain-based — Dan North's five properties of "joyful" code). Five properties, one anti-speculation rule.
 
 ### C — Composable
 
@@ -16,7 +14,7 @@ Pieces plug together without special knowledge of each other.
 - Rules go through a single `Rule` trait (`Box<dyn Rule>`); add, remove, swap without touching the engine.
 - Parser output (`Document`) is the contract between parsing and rules — rules consume it read-only.
 
-**Watch for**: rules that reach past `Document` into the raw input or re-parse themselves. If several rules want the same derived view (lowercased sentence, token stream), hoist it into `Document` once rather than recomputing per rule.
+**Watch for**: rules that reach past `Document` into the raw input or re-parse themselves. If several rules want the same derived view (lowercased sentence, token stream), hoist it into `Document` once instead of recomputing per rule.
 
 ### U — Unix philosophy
 

@@ -401,7 +401,7 @@ Walk sentences sequentially. Count consecutive sentences exceeding a length thre
 
 **Rationale**
 
-Lexical diversity is a measure of writing quality. This is NOT an anti-jargon rule: technical terms (`API`, `request`, `cache`) are expected to repeat. The rule targets non-technical content words that recur without reason.
+Lexical diversity is a measure of writing quality. The rule is NOT an anti-jargon detector: technical terms (`API`, `request`, `cache`) are expected to repeat. It targets non-technical content words that recur without reason.
 
 <!-- lucid-lint disable-next-line unexplained-abbreviation -->
 

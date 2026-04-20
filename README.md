@@ -16,7 +16,7 @@
 
 <!-- lucid-lint disable-next-line excessive-commas -->
 
-Most prose linters measure style (`write-good`), grammar (`Antidote`), or surface readability (Flesch score). `lucid-lint` focuses on one thing: **how hard is this text to read for someone whose attention is already stretched**. That could be ADHD, fatigue, a second language, a noisy environment, or an accessibility-sensitive context (EAA, RGAA, FALC).
+Most prose linters measure style (`write-good`), grammar (`Antidote`), or surface readability (Flesch score). `lucid-lint` focuses on one thing: **how hard is this text to read for someone whose attention is already stretched**. Stretched attention could mean ADHD, fatigue, a second language, a noisy environment, or an accessibility-sensitive context (EAA, RGAA, FALC).
 
 It's fast, CI-native, bilingual EN/FR, and designed to be extended.
 
