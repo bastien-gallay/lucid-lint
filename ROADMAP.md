@@ -24,7 +24,7 @@ This document captures ideas that emerged while designing v0.1. They are intenti
 
 Backlog of everything that must ship before tagging `v0.1.0`. The implementation order mirrors the phases agreed during the bootstrap session: start with the cheapest, most deterministic signals, work up to the trickiest heuristics.
 
-### Rules (13 / 16)
+### Rules (14 / 16)
 
 #### Phase 1 — Deterministic structural rules
 
@@ -63,7 +63,7 @@ Backlog of everything that must ship before tagging `v0.1.0`. The implementation
 | Status | Rule | Notes |
 |---|---|---|
 | ✅ | `long-enumeration` | Shared enumeration detector with `excessive-commas`; suggests list conversion (`src/rules/long_enumeration.rs`, `src/rules/enumeration.rs`) |
-| ☐ | `deep-subordination` | |
+| ✅ | `deep-subordination` | Counts subordinators between strong-punct breaks; skips pronoun enumerations (`src/rules/deep_subordination.rs`) |
 | ☐ | `passive-voice` | Heuristic only in v0.1; POS-based detection is a `lucid-lint-nlp` plugin candidate |
 | ☐ | `unclear-antecedent` | |
 | ☐ | `low-lexical-diversity` | |

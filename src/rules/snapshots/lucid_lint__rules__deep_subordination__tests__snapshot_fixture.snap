@@ -1,0 +1,14 @@
+---
+source: src/rules/deep_subordination.rs
+assertion_line: 346
+expression: diags
+---
+- rule_id: deep-subordination
+  severity: warning
+  location:
+    file: "<input>"
+    line: 1
+    column: 1
+    length: 70
+  section: ~
+  message: Sentence chains 3 subordinators in a row (max 2). Split the sentence or replace a subordinate clause with an independent one.

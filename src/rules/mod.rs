@@ -10,6 +10,7 @@ use crate::parser::Document;
 use crate::types::{Diagnostic, Language};
 
 pub mod consecutive_long_sentences;
+pub mod deep_subordination;
 pub mod deeply_nested_lists;
 pub mod enumeration;
 pub mod excessive_commas;
@@ -25,6 +26,7 @@ pub mod unexplained_abbreviation;
 pub mod weasel_words;
 
 pub use consecutive_long_sentences::ConsecutiveLongSentences;
+pub use deep_subordination::DeepSubordination;
 pub use deeply_nested_lists::DeeplyNestedLists;
 pub use excessive_commas::ExcessiveCommas;
 pub use excessive_nominalization::ExcessiveNominalization;
@@ -81,6 +83,7 @@ pub fn default_rules(profile: Profile) -> Vec<Box<dyn Rule>> {
         Box::new(RepetitiveConnectors::for_profile(profile)),
         Box::new(ReadabilityScore::for_profile(profile)),
         Box::new(LongEnumeration::for_profile(profile)),
+        Box::new(DeepSubordination::for_profile(profile)),
     ]
 }
 
