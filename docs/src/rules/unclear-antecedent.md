@@ -8,8 +8,6 @@
 | **Languages** | EN · FR (separate pronoun lists) |
 | **Source** | [`src/rules/unclear_antecedent.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/unclear_antecedent.rs) |
 
-> **Note.** `RULES.md` currently lists this rule under `rhythm`; `Category::for_rule` classifies it as `syntax`. Code is authoritative for scoring.
-
 ## What it flags
 
 Pronouns whose antecedent is not obvious in the immediate context. Ambiguous pronominal reference is one of the costliest comprehension breaks for readers with attentional difficulties: each ambiguity forces a conscious return-and-search.

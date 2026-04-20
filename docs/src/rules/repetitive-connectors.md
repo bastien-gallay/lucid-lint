@@ -8,8 +8,6 @@
 | **Languages** | EN · FR (separate lists) |
 | **Source** | [`src/rules/repetitive_connectors.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/repetitive_connectors.rs) |
 
-> **Note.** `RULES.md` currently lists this rule under `syntax`; `Category::for_rule` classifies it as `rhythm`. Code is authoritative for scoring.
-
 ## What it flags
 
 Overuse of a single logical connector inside a short window of sentences. Connectors (opposition, cause, consequence, sequence, illustration, addition) are attentional anchors; repeated, they flatten the sense of progression. Sanders & Noordman (2000), *Connectives as processing signals*; Graesser et al. (2004), local cohesion.

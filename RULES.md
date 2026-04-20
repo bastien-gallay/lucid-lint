@@ -73,19 +73,18 @@ score is their weighted sum.
 
 | Category | Rules |
 |---|---|
-| `structure` | `paragraph-too-long`, `sentence-too-long`, `long-enumeration`, `deeply-nested-lists`, `heading-jump` |
-| `syntax` | `excessive-commas`, `deep-subordination`, `passive-voice`, `repetitive-connectors` |
-| `rhythm` | `consecutive-long-sentences`, `unclear-antecedent` |
+| `structure` | `sentence-too-long`, `paragraph-too-long`, `deeply-nested-lists`, `heading-jump`, `excessive-commas`, `long-enumeration`, `deep-subordination` |
+| `syntax` | `passive-voice`, `unclear-antecedent` |
+| `rhythm` | `consecutive-long-sentences`, `repetitive-connectors` |
 | `lexicon` | `low-lexical-diversity`, `excessive-nominalization`, `unexplained-abbreviation`, `weasel-words`, `jargon-undefined` |
 | `readability` | `readability-score` |
 
 > v0.2 remapped the v0.1 taxonomy: `length` merged into `structure`;
-> `lexical` became `lexicon`; punctuation and clause-level rules
-> (`excessive-commas`, `deep-subordination`) moved from `structure` to
-> `syntax`; `repetitive-connectors` moved from `style` to `syntax`;
-> `unclear-antecedent` moved to `rhythm` (explicitly redefined to cover
-> cross-sentence cohesion, not only cadence); `global` became
-> `readability`.
+> `lexical` became `lexicon`; `repetitive-connectors` moved from
+> `style` to `rhythm`; `global` became `readability`. Punctuation and
+> clause-level rules (`excessive-commas`, `deep-subordination`) stay in
+> `structure` as skeleton-level signals; `unclear-antecedent` stays in
+> `syntax` alongside `passive-voice` as sentence-internal clarity.
 
 ---
 
@@ -203,7 +202,7 @@ Split text on blank lines (Markdown paragraph convention). Count sentences and w
 
 #### `excessive-commas`
 
-**Category** : `syntax`
+**Category** : `structure`
 **Severity** : `warning`
 **Bilingual** : yes, identical FR/EN
 
@@ -271,7 +270,7 @@ Sequence of 4+ short comma-separated segments ending with `, et` / `, or` / `, o
 
 #### `deep-subordination`
 
-**Category** : `syntax`
+**Category** : `structure`
 **Severity** : `warning`
 **Bilingual** : yes, FR/EN lists differ
 
@@ -751,7 +750,7 @@ Expect ~70-80% precision in v0.1. False positives handled via inline disable com
 
 #### `repetitive-connectors`
 
-**Category** : `syntax`
+**Category** : `rhythm`
 **Severity** : `warning`
 **Bilingual** : yes, FR/EN lists differ
 
@@ -817,7 +816,7 @@ Sliding window of N sentences. Count occurrences per connector in the window. Fl
 
 #### `unclear-antecedent`
 
-**Category** : `rhythm`
+**Category** : `syntax`
 **Severity** : `info`
 **Bilingual** : yes, FR/EN pronoun lists differ
 

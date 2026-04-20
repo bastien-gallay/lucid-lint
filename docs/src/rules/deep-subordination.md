@@ -8,8 +8,6 @@
 | **Languages** | EN · FR (separate lists) |
 | **Source** | [`src/rules/deep_subordination.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/deep_subordination.rs) |
 
-> **Note.** `RULES.md` currently lists this rule under `syntax`; the running `Category::for_rule` classifies it as `structure`. Code is authoritative for scoring.
-
 ## What it flags
 
 Cascading subordinate clauses: multiple relative pronouns or subordinating conjunctions chained without a strong-punctuation break. Each open referent has to sit in working memory until it closes — Gibson's *Dependency Locality Theory* (1998) ties processing cost directly to that distance.

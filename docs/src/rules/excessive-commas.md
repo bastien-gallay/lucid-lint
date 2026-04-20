@@ -8,8 +8,6 @@
 | **Languages** | EN · FR (identical detection) |
 | **Source** | [`src/rules/excessive_commas.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/excessive_commas.rs) |
 
-> **Note.** `RULES.md` currently lists this rule under `syntax`; the running code (`Category::for_rule` in `src/types.rs`) classifies it as `structure`. The code is authoritative for scoring. The taxonomy drift is tracked for the next RULES.md pass.
-
 ## What it flags
 
 Sentences whose comma count exceeds a per-profile ceiling. The comma is the most frequent marker of syntactic complexity; rather than disentangle the cause (subordination, apposition, enumeration, parenthetical), the rule uses density as a leading indicator of overload.
