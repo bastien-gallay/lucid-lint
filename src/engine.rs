@@ -123,7 +123,10 @@ mod tests {
                     until it exceeds the public profile threshold by a comfortable margin.";
         let diags = engine.lint_str(text);
         assert!(!diags.is_empty());
-        assert!(diags.iter().all(|d| d.severity == Severity::Warning));
+        // At least one rule fires at Warning level; the always-on
+        // observability rules (readability-score, unclear-antecedent)
+        // also contribute `info` diagnostics.
+        assert!(diags.iter().any(|d| d.severity == Severity::Warning));
     }
 
     #[test]

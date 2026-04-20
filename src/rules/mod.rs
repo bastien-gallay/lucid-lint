@@ -24,6 +24,7 @@ pub mod passive_voice;
 pub mod readability_score;
 pub mod repetitive_connectors;
 pub mod sentence_too_long;
+pub mod unclear_antecedent;
 pub mod unexplained_abbreviation;
 pub mod weasel_words;
 
@@ -40,6 +41,7 @@ pub use passive_voice::PassiveVoice;
 pub use readability_score::ReadabilityScore;
 pub use repetitive_connectors::RepetitiveConnectors;
 pub use sentence_too_long::SentenceTooLong;
+pub use unclear_antecedent::UnclearAntecedent;
 pub use unexplained_abbreviation::UnexplainedAbbreviation;
 pub use weasel_words::WeaselWords;
 
@@ -88,6 +90,7 @@ pub fn default_rules(profile: Profile) -> Vec<Box<dyn Rule>> {
         Box::new(LongEnumeration::for_profile(profile)),
         Box::new(DeepSubordination::for_profile(profile)),
         Box::new(PassiveVoice::for_profile(profile)),
+        Box::new(UnclearAntecedent::for_profile(profile)),
     ]
 }
 

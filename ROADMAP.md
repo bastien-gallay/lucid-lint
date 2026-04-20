@@ -24,7 +24,7 @@ This document captures ideas that emerged while designing v0.1. They are intenti
 
 Backlog of everything that must ship before tagging `v0.1.0`. The implementation order mirrors the phases agreed during the bootstrap session: start with the cheapest, most deterministic signals, work up to the trickiest heuristics.
 
-### Rules (15 / 16)
+### Rules (16 / 17)
 
 #### Phase 1 — Deterministic structural rules
 
@@ -65,7 +65,7 @@ Backlog of everything that must ship before tagging `v0.1.0`. The implementation
 | ✅ | `long-enumeration` | Shared enumeration detector with `excessive-commas`; suggests list conversion (`src/rules/long_enumeration.rs`, `src/rules/enumeration.rs`) |
 | ✅ | `deep-subordination` | Counts subordinators between strong-punct breaks; skips pronoun enumerations (`src/rules/deep_subordination.rs`) |
 | ✅ | `passive-voice` | Heuristic `be/être`+past-participle detector; POS-based detection remains a `lucid-lint-nlp` plugin candidate (`src/rules/passive_voice.rs`) |
-| ☐ | `unclear-antecedent` | |
+| ✅ | `unclear-antecedent` | Info-level heuristic: bare demonstrative + verb, or paragraph-start personal pronoun (`src/rules/unclear_antecedent.rs`) |
 | ☐ | `low-lexical-diversity` | |
 
 ### Cross-cutting features
@@ -73,6 +73,7 @@ Backlog of everything that must ship before tagging `v0.1.0`. The implementation
 | Status | Feature | Notes |
 |---|---|---|
 | ✅ | Minimal inline-disable | `<!-- lucid-lint disable-next-line <rule-id> -->` for Markdown inputs, single rule id, optional reason. See [RULES.md → Suppressing diagnostics](RULES.md#suppressing-diagnostics). Block form, config ignores, file-level scope and required `reason=` are tracked as F18–F21 below. |
+| ☐ | Accessibility page in the docs | Dedicated `accessibility.md` page covering: the stated WCAG 2.2 AAA bar, the reading-preferences control, typography choices with credits (Atkinson Hyperlegible Next — Braille Institute; OpenDyslexic — Abelardo Gonzalez; Literata — TypeTogether), keyboard shortcuts, and a brief explanation of how the site itself dogfoods the project's mission. Linked from the sidebar and the footer. |
 
 ---
 
