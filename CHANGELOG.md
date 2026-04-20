@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Per-language readability formula (F10 must-ship slice)** —
+  `readability-score` now selects its formula from the detected document
+  language: Flesch-Kincaid for English (kept), Kandel & Moles (1958) for
+  French. The Kandel-Moles ease score is converted to a grade-equivalent
+  via the standard `(100 − score) / 10` linear approximation so
+  per-profile `max_grade_level` thresholds remain comparable across
+  languages. Unknown language falls back to Flesch-Kincaid. Diagnostic
+  messages now surface the formula name and, for FR, both the native
+  ease score and the grade-equivalent. User-configurable formula choice
+  (F11) and the `Gunning Fog` / `SMOG` / `Dale-Chall` / `Scolarius`
+  alternatives (F10 should-ship) are still pending.
 - **`all-caps-shouting` rule (F48)** — flags runs of two or more
   consecutive ALL-CAPS words (WCAG 3.1.5 / BDA Dyslexia Style Guide
   grounding). Per-profile thresholds: `min_run_length` 3 / 2 / 2

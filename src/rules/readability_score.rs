@@ -1,13 +1,21 @@
 //! Rule: `readability-score`.
 //!
-//! Computes a per-document Flesch-Kincaid grade level and reports it as
-//! an observability signal. Emitted as `info` under threshold and
-//! `warning` above — this is "cyclomatic complexity for prose": a
-//! metric first, a warning second.
+//! Computes a per-document readability score and reports it as an
+//! observability signal. Emitted as `info` under threshold and `warning`
+//! above — this is "cyclomatic complexity for prose": a metric first, a
+//! warning second.
 //!
-//! The formula is calibrated for English. Applied to French it
-//! over-estimates by roughly one to two grades; language-specific
-//! calibration (Kandel-Moles, Scolarius) is tracked as F10.
+//! The formula is selected per detected document language (F10):
+//!
+//! - **English** — Flesch-Kincaid grade level.
+//! - **French** — Kandel-Moles ease score, converted to a grade
+//!   equivalent so the per-profile `max_grade_level` thresholds remain
+//!   meaningful across languages.
+//! - **Unknown** — falls back to Flesch-Kincaid.
+//!
+//! User-configurable formula choice (F11), `--readability-verbose`
+//! multi-formula reports, and the should-ship alternatives (Gunning Fog,
+//! SMOG, Dale-Chall, Scolarius) are tracked separately on the roadmap.
 //!
 //! See [`RULES.md`](../../RULES.md#readability-score) for the rule's
 //! rationale and thresholds.
@@ -76,7 +84,7 @@ impl Rule for ReadabilityScore {
         Self::ID
     }
 
-    fn check(&self, document: &Document, _language: Language) -> Vec<Diagnostic> {
+    fn check(&self, document: &Document, language: Language) -> Vec<Diagnostic> {
         let mut words: u64 = 0;
         let mut syllables: u64 = 0;
         let mut sentences: u64 = 0;
@@ -95,12 +103,17 @@ impl Rule for ReadabilityScore {
             return Vec::new();
         }
 
+        #[allow(clippy::cast_precision_loss)]
         let words_f = words as f64;
+        #[allow(clippy::cast_precision_loss)]
         let sentences_f = sentences as f64;
+        #[allow(clippy::cast_precision_loss)]
         let syllables_f = syllables as f64;
-        let grade = 0.39f64.mul_add(words_f / sentences_f, 11.8 * (syllables_f / words_f)) - 15.59;
 
-        let above_threshold = grade > self.config.max_grade_level;
+        let formula = Formula::for_language(language);
+        let report = formula.compute(words_f, sentences_f, syllables_f);
+
+        let above_threshold = report.grade_equivalent > self.config.max_grade_level;
         if !above_threshold && !self.config.always_report {
             return Vec::new();
         }
@@ -110,20 +123,91 @@ impl Rule for ReadabilityScore {
         } else {
             Severity::Info
         };
-        let message = if above_threshold {
-            format!(
-                "Flesch-Kincaid grade {:.1} exceeds target {:.1}. Shorten sentences or choose \
-                 simpler words.",
-                grade, self.config.max_grade_level,
-            )
-        } else {
-            format!(
-                "Flesch-Kincaid grade {:.1} (target ≤ {:.1}).",
-                grade, self.config.max_grade_level,
-            )
-        };
+        let message = report.format_message(self.config.max_grade_level, above_threshold);
         let location = Location::new(document.source.clone(), 1, 1, 1);
         vec![Diagnostic::new(Self::ID, severity, location, message)]
+    }
+}
+
+/// Per-language readability formula (F10).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Formula {
+    /// Flesch-Kincaid grade level — English.
+    FleschKincaid,
+    /// Kandel-Moles ease score — French.
+    KandelMoles,
+}
+
+impl Formula {
+    fn for_language(language: Language) -> Self {
+        match language {
+            Language::Fr => Self::KandelMoles,
+            Language::En | Language::Unknown => Self::FleschKincaid,
+        }
+    }
+
+    fn compute(self, words: f64, sentences: f64, syllables: f64) -> ScoreReport {
+        match self {
+            Self::FleschKincaid => {
+                // Standard Flesch-Kincaid grade level.
+                let grade = 0.39f64.mul_add(words / sentences, 11.8 * (syllables / words)) - 15.59;
+                ScoreReport {
+                    formula_name: "Flesch-Kincaid",
+                    native_value: grade,
+                    native_unit: "grade",
+                    grade_equivalent: grade,
+                }
+            },
+            Self::KandelMoles => {
+                // Kandel & Moles (1958) — Flesch reading-ease adapted for
+                // French. Range ≈ 0..100, higher = easier. Convert to a
+                // grade equivalent with the same linear approximation
+                // commonly used for the English Reading Ease score so the
+                // per-profile `max_grade_level` threshold stays meaningful
+                // across languages: grade ≈ (100 - score) / 10.
+                let ease = 207.0 - 1.015f64.mul_add(words / sentences, 73.6 * (syllables / words));
+                let grade_equivalent = (100.0 - ease) / 10.0;
+                ScoreReport {
+                    formula_name: "Kandel-Moles",
+                    native_value: ease,
+                    native_unit: "ease score",
+                    grade_equivalent,
+                }
+            },
+        }
+    }
+}
+
+/// One formula's computation result.
+#[derive(Debug, Clone, Copy)]
+struct ScoreReport {
+    formula_name: &'static str,
+    native_value: f64,
+    native_unit: &'static str,
+    grade_equivalent: f64,
+}
+
+impl ScoreReport {
+    fn format_message(&self, target_grade: f64, above_threshold: bool) -> String {
+        // Always show the formula's native value so the user can verify
+        // the metric. When the native unit is not a grade, also surface
+        // the grade-equivalent that the threshold compares against.
+        let native_block = if self.native_unit == "grade" {
+            format!("{} grade {:.1}", self.formula_name, self.native_value)
+        } else {
+            format!(
+                "{} {} {:.1} (≈ grade {:.1})",
+                self.formula_name, self.native_unit, self.native_value, self.grade_equivalent,
+            )
+        };
+        if above_threshold {
+            format!(
+                "{native_block} exceeds target {target_grade:.1}. Shorten sentences or choose \
+                 simpler words.",
+            )
+        } else {
+            format!("{native_block} (target ≤ {target_grade:.1}).")
+        }
     }
 }
 
@@ -186,8 +270,12 @@ mod tests {
     use crate::types::SourceFile;
 
     fn lint(text: &str, profile: Profile) -> Vec<Diagnostic> {
+        lint_lang(text, profile, Language::En)
+    }
+
+    fn lint_lang(text: &str, profile: Profile, language: Language) -> Vec<Diagnostic> {
         let document = parse_plain(text, SourceFile::Anonymous);
-        ReadabilityScore::for_profile(profile).check(&document, Language::En)
+        ReadabilityScore::for_profile(profile).check(&document, language)
     }
 
     #[test]
@@ -283,6 +371,57 @@ mod tests {
         let text = "First short one. Second short one.\n\nThird short one. Fourth short one.";
         let diags = lint(text, Profile::Public);
         assert_eq!(diags.len(), 1);
+    }
+
+    #[test]
+    fn french_uses_kandel_moles() {
+        let text = "Le chat est sur le tapis. Le chien court.";
+        let diags = lint_lang(text, Profile::Public, Language::Fr);
+        assert_eq!(diags.len(), 1);
+        assert!(
+            diags[0].message.starts_with("Kandel-Moles"),
+            "expected Kandel-Moles formula for FR, got: {}",
+            diags[0].message
+        );
+        // Easy text — info under threshold.
+        assert_eq!(diags[0].severity, Severity::Info);
+    }
+
+    #[test]
+    fn french_dense_prose_warns_above_threshold() {
+        let text = "L'implémentation de cette configuration particulière nécessite \
+                    malheureusement une compréhension approfondie de plusieurs sous-composants \
+                    architecturaux interdépendants, contraignant ainsi les collaborateurs en aval.";
+        let diags = lint_lang(text, Profile::Public, Language::Fr);
+        assert_eq!(diags.len(), 1);
+        assert_eq!(diags[0].severity, Severity::Warning);
+        assert!(diags[0].message.starts_with("Kandel-Moles"));
+        assert!(diags[0].message.contains("≈ grade"));
+    }
+
+    #[test]
+    fn english_message_remains_grade_only_for_flesch_kincaid() {
+        let text = "The cat sat on the mat.";
+        let diags = lint_lang(text, Profile::Public, Language::En);
+        assert!(diags[0].message.starts_with("Flesch-Kincaid grade"));
+        assert!(!diags[0].message.contains("≈"));
+    }
+
+    #[test]
+    fn unknown_language_falls_back_to_flesch_kincaid() {
+        let text = "Short. Prose.";
+        let diags = lint_lang(text, Profile::Public, Language::Unknown);
+        assert!(diags[0].message.starts_with("Flesch-Kincaid"));
+    }
+
+    #[test]
+    fn formula_for_language_dispatches_correctly() {
+        assert_eq!(Formula::for_language(Language::En), Formula::FleschKincaid);
+        assert_eq!(Formula::for_language(Language::Fr), Formula::KandelMoles);
+        assert_eq!(
+            Formula::for_language(Language::Unknown),
+            Formula::FleschKincaid
+        );
     }
 
     #[test]

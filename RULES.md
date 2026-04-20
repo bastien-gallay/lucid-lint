@@ -994,13 +994,27 @@ Exact detection requires anaphora resolution, which is advanced NLP. v0.1 catche
 
 Readability indices are the historical metric for text complexity. Simple, reproducible, recognized by US/UK government guidelines and WCAG. For readers with attentional difficulties, a poor score is a synthetic warning sign that deeper rules will refine.
 
-**Detection (v0.1 unified formula)**
+**Detection (v0.2 — per-language formula)**
 
-**Flesch-Kincaid Grade Level** applied regardless of language :
+The formula is selected by the document's detected language (F10 must-ship slice).
+
+🇬🇧 **Flesch-Kincaid Grade Level** :
 
 ```
 0.39 × (words / sentences) + 11.8 × (syllables / words) − 15.59
 ```
+
+The result is a US-school grade. Compared directly to `max_grade_level`.
+
+🇫🇷 **Kandel & Moles (1958)** :
+
+```
+207 − 1.015 × (words / sentences) − 73.6 × (syllables / words)
+```
+
+The result is an ease score on roughly `0..100` (higher = easier), Flesch-style. To stay comparable across languages, the rule converts it to a grade-equivalent with the standard linear approximation `(100 − score) / 10` and compares that against `max_grade_level`. The diagnostic message surfaces both the native ease score and the grade-equivalent.
+
+**Unknown language** falls back to Flesch-Kincaid.
 
 | Grade | US school level equivalent |
 |---|---|
@@ -1010,7 +1024,7 @@ Readability indices are the historical metric for text complexity. Simple, repro
 | 12–16 | College |
 | > 16 | Expert |
 
-**Note** : the formula is calibrated for English. Applied to French, it slightly overestimates (+1 to +2 grades). Language-specific calibration (Kandel-Moles, Scolarius) is planned for v0.2. See registry F10.
+User-configurable formula choice (`Gunning Fog`, `SMOG`, `Dale-Chall`, `Scolarius`, `Flesch-Kandel`) and multi-formula reports under `--readability-verbose` are tracked as F11 / F10 should-ship.
 
 **Granularity** : computed per document. One diagnostic per file.
 

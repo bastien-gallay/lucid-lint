@@ -102,7 +102,7 @@ Shipped in the tag: all 17 rules across 5 phases, the minimal inline-disable dir
 | ID | Item | Priority | Origin |
 |---|---|---|---|
 | F9 | Definition-aware `unexplained-abbreviation` (two-pass) | 🔴 High | Rule 10 simplified in v0.1 |
-| F10 | Language-specific readability formulas. **Must-ship v0.2:** Flesch-Kincaid for EN (kept) + Kandel-Moles for FR (auto-selected by detected language, with per-file override via config). **Should-ship v0.2:** Gunning Fog, SMOG, Dale-Chall as EN alternatives; Scolarius / Flesch-Kandel as FR alternatives. Multi-formula reports behind `--readability-verbose`. Single rule `readability-score` auto-selects per detected language; user override via F11. | 🔴 High | Rule 11 simplified in v0.1; scope expanded in rule-system-growth brainstorm (2026-04-20) |
+| F10 | 🚧 Must-ship slice shipped in v0.2 — `readability-score` auto-selects the formula by detected language: Flesch-Kincaid for EN (kept), Kandel & Moles (1958) for FR. Kandel-Moles ease scores are converted to a grade-equivalent so per-profile `max_grade_level` stays comparable across languages. Unknown language → Flesch-Kincaid. See [`docs/src/rules/readability-score.md`](./rules/readability-score.md). Still open: Gunning Fog / SMOG / Dale-Chall (EN), Scolarius / Flesch-Kandel (FR), `--readability-verbose` multi-formula reports, per-file override (covered by F11). | 🔴 High | Rule 11 simplified in v0.1; scope expanded in rule-system-growth brainstorm (2026-04-20) |
 | F11 | User-configurable readability formula choice | 🟡 Medium | Rule 11 |
 | F13 | `missing-connectors` rule (15b not shipped in v0.1) | 🟡 Medium | Rule 15 decomposition |
 | F1 | Custom stoplist parameter for `low-lexical-diversity` | 🟡 Medium | Rule 5 |
