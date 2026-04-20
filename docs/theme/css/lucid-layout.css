@@ -438,3 +438,111 @@
   opacity: 0.5;
   user-select: none;
 }
+
+/* ============================================================
+ * Responsive adaptations — /adapt pass
+ *
+ * Breakpoints:
+ *   ≤ 1200px — page TOC collapses to the narrow inline state
+ *              (already handled above; pagetoc hides at 700px).
+ *   ≤  900px — tablet portrait / narrow-laptop tightening.
+ *   ≤  700px — phone: stack, tighten, hide secondary chrome.
+ *   ≤  480px — small phone: drop the header language switch;
+ *              the sidebar drawer is still the primary route.
+ *
+ * mdBook handles the sidebar-drawer toggle itself on narrow
+ * viewports; we only tune what our theme adds on top.
+ * ============================================================ */
+
+@media (max-width: 900px) {
+  .lucid-audience {
+    padding: var(--lucid-space-sm) var(--lucid-space-md);
+    margin-block: var(--lucid-space-xs) var(--lucid-space-lg);
+  }
+  .reading-demo {
+    padding: var(--lucid-space-md);
+    margin-block: var(--lucid-space-lg) var(--lucid-space-xl);
+  }
+  .reading-demo__grid {
+    gap: var(--lucid-space-md);
+  }
+}
+
+@media (max-width: 700px) {
+  /* Body reading metrics: keep typography's 70ch cap but let
+     mdBook's padding breathe on small screens. */
+  .content {
+    padding-inline: var(--lucid-space-sm);
+  }
+
+  /* Audience callout: a shade smaller; still readable. */
+  .lucid-audience {
+    font-size: var(--text-body);
+  }
+
+  /* Reading demonstrator: single column, full-width apply button
+     for a comfortable thumb target. The grid already stacks via
+     minmax(min(100%, 22ch), 1fr) — we just widen the buttons. */
+  .reading-demo__card {
+    padding: var(--lucid-space-md);
+  }
+  .reading-demo__apply {
+    align-self: stretch;
+    text-align: center;
+    justify-content: center;
+  }
+
+  /* Breadcrumbs: already flex-wrap; tighten caption size a touch. */
+  .lucid-breadcrumbs { font-size: 0.72rem; }
+
+  /* Toast: edge-to-edge card instead of a centered pill. Easier to
+     spot, never clipped by a narrow viewport. */
+  .lucid-toast {
+    inset-inline: var(--lucid-space-md);
+    inset-block-end: var(--lucid-space-md);
+    left: auto;
+    transform: translateY(150%);
+    text-align: center;
+  }
+  .lucid-toast.is-visible {
+    transform: translateY(0);
+  }
+
+  /* Sidebar brand mark: stay in one line; ellipsize the wordmark
+     rather than wrapping or overflowing the drawer. */
+  .menu-title {
+    min-width: 0;
+  }
+  .menu-title > :not(.lucid-brand__mark) {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Skip link: fill the top edge so it's obvious on focus. */
+  .lucid-skip {
+    inset-inline: var(--lucid-space-sm);
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Drop the header language switch on the smallest viewports —
+     mdBook's menu row runs out of room and the FR stub is still
+     reachable from the sidebar Project section. */
+  .lucid-lang { display: none; }
+
+  /* Page TOC is already hidden ≤ 700px; this is a safety net for
+     any overflow on very small phones. */
+  .lucid-pagetoc { display: none !important; }
+}
+
+/* Tablet landscape (≥ 700px, < 1200px): the TOC is inline above
+   content. Constrain its width so it doesn't stretch the full
+   content measure on iPad-ish viewports — easier to scan. */
+@media (min-width: 700px) and (max-width: 1199px) {
+  .lucid-pagetoc {
+    max-width: 48ch;
+  }
+}
