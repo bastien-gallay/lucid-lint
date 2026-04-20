@@ -71,6 +71,10 @@ pub struct Config {
     /// Per-rule configuration overrides.
     #[serde(default)]
     pub rules: RulesConfig,
+
+    /// Scoring tunables (category caps and per-rule weight overrides).
+    #[serde(default)]
+    pub scoring: ScoringFileConfig,
 }
 
 impl Config {
@@ -123,6 +127,50 @@ impl Default for DefaultConfig {
 pub struct RulesConfig {
     /// Raw map of rule id to TOML table. Rules parse their own sub-table.
     pub entries: std::collections::BTreeMap<String, toml::Value>,
+}
+
+/// `[scoring]` table in `lucid-lint.toml`.
+///
+/// All fields are optional. Missing fields fall back to the defaults
+/// defined in [`crate::scoring`].
+///
+/// Example:
+///
+/// ```toml
+/// [scoring]
+/// category_max = 25
+/// category_cap = 20
+///
+/// [scoring.weights]
+/// sentence-too-long = 3
+/// weasel-words = 2
+/// ```
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct ScoringFileConfig {
+    /// Override the per-category maximum (default 20).
+    #[serde(default)]
+    pub category_max: Option<u32>,
+
+    /// Override the per-category cap (default 15).
+    #[serde(default)]
+    pub category_cap: Option<u32>,
+
+    /// Per-rule weight overrides, keyed by rule id.
+    #[serde(default)]
+    pub weights: std::collections::BTreeMap<String, u32>,
+}
+
+impl ScoringFileConfig {
+    /// Materialize into a runtime [`crate::scoring::ScoringConfig`].
+    #[must_use]
+    pub fn into_scoring_config(self) -> crate::scoring::ScoringConfig {
+        let defaults = crate::scoring::ScoringConfig::default();
+        crate::scoring::ScoringConfig {
+            category_max: self.category_max.unwrap_or(defaults.category_max),
+            category_cap: self.category_cap.unwrap_or(defaults.category_cap),
+            weight_overrides: self.weights,
+        }
+    }
 }
 
 /// Errors returned by config loading and parsing.
@@ -207,5 +255,39 @@ max_words = 25
             Config::from_toml_str("not valid toml ="),
             Err(ConfigError::Parse(_))
         ));
+    }
+
+    #[test]
+    fn config_parses_scoring_overrides() {
+        let config = Config::from_toml_str(
+            r#"
+[scoring]
+category_max = 25
+category_cap = 18
+
+[scoring.weights]
+sentence-too-long = 4
+weasel-words = 2
+"#,
+        )
+        .unwrap();
+        assert_eq!(config.scoring.category_max, Some(25));
+        assert_eq!(config.scoring.category_cap, Some(18));
+        assert_eq!(config.scoring.weights.get("sentence-too-long"), Some(&4));
+        assert_eq!(config.scoring.weights.get("weasel-words"), Some(&2));
+
+        let runtime = config.scoring.into_scoring_config();
+        assert_eq!(runtime.category_max, 25);
+        assert_eq!(runtime.category_cap, 18);
+        assert_eq!(runtime.weight_overrides.get("sentence-too-long"), Some(&4));
+    }
+
+    #[test]
+    fn missing_scoring_table_falls_back_to_defaults() {
+        let config = Config::from_toml_str("").unwrap();
+        let runtime = config.scoring.into_scoring_config();
+        assert_eq!(runtime.category_max, crate::scoring::DEFAULT_CATEGORY_MAX);
+        assert_eq!(runtime.category_cap, crate::scoring::DEFAULT_CATEGORY_CAP);
+        assert!(runtime.weight_overrides.is_empty());
     }
 }

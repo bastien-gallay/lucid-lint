@@ -7,6 +7,7 @@ use std::fmt::Write;
 
 use owo_colors::{OwoColorize, Stream};
 
+use crate::scoring::{CategoryScore, Score, Scorecard};
 use crate::types::{Diagnostic, Severity};
 
 /// Controls whether ANSI color codes are emitted.
@@ -20,22 +21,22 @@ pub enum ColorMode {
     Never,
 }
 
-/// Render a list of diagnostics as human-readable output.
+/// Render diagnostics + scorecard as human-readable output.
 #[must_use]
-pub fn render(diagnostics: &[Diagnostic], color_mode: ColorMode) -> String {
+pub fn render(diagnostics: &[Diagnostic], scorecard: &Scorecard, color_mode: ColorMode) -> String {
     let mut out = String::new();
 
     if diagnostics.is_empty() {
         let _ = writeln!(out, "{}", green("No issues found.", color_mode));
-        return out;
+    } else {
+        for diag in diagnostics {
+            let _ = write!(out, "{}", format_diagnostic(diag, color_mode));
+        }
+        let _ = writeln!(out);
+        let _ = writeln!(out, "{}", summary(diagnostics, color_mode));
     }
 
-    for diag in diagnostics {
-        let _ = write!(out, "{}", format_diagnostic(diag, color_mode));
-    }
-
-    let _ = writeln!(out);
-    let _ = writeln!(out, "{}", summary(diagnostics, color_mode));
+    let _ = writeln!(out, "{}", score_line(scorecard, color_mode));
 
     out
 }
@@ -102,6 +103,40 @@ fn summary(diagnostics: &[Diagnostic], color_mode: ColorMode) -> String {
     } else {
         format!("Summary: {}.", parts.join(", "))
     }
+}
+
+fn score_line(scorecard: &Scorecard, color_mode: ColorMode) -> String {
+    let global = score_fragment(scorecard.global, color_mode);
+    let breakdown: Vec<String> = scorecard
+        .per_category
+        .iter()
+        .map(|cs| format_category(*cs, color_mode))
+        .collect();
+    format!("score: {global} · {}", breakdown.join(" · "))
+}
+
+fn score_fragment(score: Score, color_mode: ColorMode) -> String {
+    let text = format!("{}/{}", score.value, score.max);
+    let ratio = if score.max == 0 {
+        1.0
+    } else {
+        f64::from(score.value) / f64::from(score.max)
+    };
+    if ratio >= 0.80 {
+        green(&text, color_mode)
+    } else if ratio >= 0.60 {
+        yellow(&text, color_mode)
+    } else {
+        red(&text, color_mode)
+    }
+}
+
+fn format_category(cs: CategoryScore, color_mode: ColorMode) -> String {
+    format!(
+        "{} {}",
+        dim(&cs.category.to_string(), color_mode),
+        score_fragment(cs.score, color_mode),
+    )
 }
 
 fn severity_label(severity: Severity, color_mode: ColorMode) -> String {
@@ -189,6 +224,7 @@ fn dim(s: &str, mode: ColorMode) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::scoring::{self, ScoringConfig};
     use crate::types::{Location, SourceFile};
 
     fn sample_diag() -> Diagnostic {
@@ -200,16 +236,25 @@ mod tests {
         )
     }
 
+    fn card(diags: &[Diagnostic]) -> Scorecard {
+        scoring::compute(diags, 1000, &ScoringConfig::default())
+    }
+
     #[test]
     fn render_empty_says_no_issues() {
-        let out = render(&[], ColorMode::Never);
+        let out = render(&[], &card(&[]), ColorMode::Never);
         assert!(out.contains("No issues found"));
+        assert!(out.contains("score: 100/100"));
     }
 
     #[test]
     fn render_contains_severity_and_message() {
         let diag = sample_diag();
-        let out = render(&[diag], ColorMode::Never);
+        let out = render(
+            std::slice::from_ref(&diag),
+            &card(std::slice::from_ref(&diag)),
+            ColorMode::Never,
+        );
         assert!(out.contains("warning"));
         assert!(out.contains("Sentence is 25 words long"));
         assert!(out.contains("sentence-too-long"));
@@ -218,7 +263,11 @@ mod tests {
     #[test]
     fn render_includes_summary_counts() {
         let diag = sample_diag();
-        let out = render(&[diag], ColorMode::Never);
+        let out = render(
+            std::slice::from_ref(&diag),
+            &card(std::slice::from_ref(&diag)),
+            ColorMode::Never,
+        );
         assert!(out.contains("Summary:"));
         assert!(out.contains("1 warnings"));
     }
@@ -226,7 +275,25 @@ mod tests {
     #[test]
     fn render_includes_section_when_present() {
         let diag = sample_diag().with_section("Introduction");
-        let out = render(&[diag], ColorMode::Never);
+        let out = render(
+            std::slice::from_ref(&diag),
+            &card(std::slice::from_ref(&diag)),
+            ColorMode::Never,
+        );
         assert!(out.contains("section: Introduction"));
+    }
+
+    #[test]
+    fn render_shows_score_line_with_all_five_categories() {
+        let diag = sample_diag();
+        let out = render(
+            std::slice::from_ref(&diag),
+            &card(std::slice::from_ref(&diag)),
+            ColorMode::Never,
+        );
+        assert!(out.contains("score:"));
+        for name in ["structure", "rhythm", "lexicon", "syntax", "readability"] {
+            assert!(out.contains(name), "missing category {name} in output");
+        }
     }
 }

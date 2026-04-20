@@ -369,10 +369,10 @@ mod tests {
     }
 
     #[test]
-    fn category_is_style() {
+    fn category_is_syntax() {
         let text = "The release was shipped. The team was thanked by management.";
         let diags = lint(text, Profile::Public, Language::En);
-        assert_eq!(diags[0].category(), crate::types::Category::Style);
+        assert_eq!(diags[0].category(), crate::types::Category::Syntax);
     }
 
     #[test]

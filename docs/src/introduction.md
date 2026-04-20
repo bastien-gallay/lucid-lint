@@ -73,9 +73,12 @@ and [Coh-Metrix](http://cohmetrix.com) single out.
 
 ## Project status
 
-`lucid-lint` is in v0.1. All 17 rules listed in
+`lucid-lint` is in v0.2. All 17 rules listed in
 [`RULES.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/RULES.md)
-have landed. See the [roadmap](./roadmap.md) for what comes next.
+shipped in v0.1. v0.2 adds the [hybrid scoring model](./guide/scoring.md) —
+a global `X / max` score plus five per-category sub-scores, computed on
+top of the existing diagnostics. See the [roadmap](./roadmap.md) for
+what comes next.
 
 ## Quick taste
 
@@ -93,6 +96,9 @@ echo "This is a test sentence." | lucid-lint check -
 
 # JSON for CI
 lucid-lint check --format=json docs/
+
+# Fail the build if the aggregate score drops below 85/100 (v0.2+)
+lucid-lint check --min-score=85 docs/
 ```
 
 ## Where to next

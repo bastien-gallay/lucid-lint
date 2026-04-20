@@ -1,6 +1,5 @@
 ---
 source: src/rules/passive_voice.rs
-assertion_line: 326
 expression: diags
 ---
 - rule_id: passive-voice
@@ -12,3 +11,4 @@ expression: diags
     length: 66
   section: ~
   message: "Paragraph has 2 passive-voice constructions (max 1). Prefer active voice, or suppress with an inline directive if the passive is intentional."
+  weight: 2

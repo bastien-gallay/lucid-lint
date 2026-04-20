@@ -59,9 +59,43 @@ fn check_with_json_format_produces_valid_json() {
 
     let stdout = String::from_utf8(output.stdout).unwrap();
     let parsed: serde_json::Value = serde_json::from_str(&stdout).unwrap();
-    assert_eq!(parsed["version"], 1);
+    assert_eq!(parsed["version"], 2);
     assert!(parsed["diagnostics"].is_array());
     assert!(parsed["summary"]["total"].as_u64().unwrap() >= 1);
+    assert_eq!(parsed["score"]["max"], 100);
+    assert_eq!(parsed["category_scores"].as_array().unwrap().len(), 5);
+    assert!(parsed["diagnostics"][0]["weight"].as_u64().is_some());
+}
+
+#[test]
+fn check_min_score_gate_trips_on_clean_text() {
+    // Clean text emits only an info `readability-score` diagnostic, so the
+    // severity gate passes. With `--min-score=100` the score gate alone must
+    // flip the exit code when the score is below 100.
+    let input = "Short sentence. Another short one.";
+    Command::cargo_bin("lucid-lint")
+        .unwrap()
+        .arg("check")
+        .arg("--min-score")
+        .arg("100")
+        .arg("-")
+        .write_stdin(input)
+        .assert()
+        .code(1);
+}
+
+#[test]
+fn check_min_score_zero_always_passes_gate() {
+    let input = "Short sentence. Another short one.";
+    Command::cargo_bin("lucid-lint")
+        .unwrap()
+        .arg("check")
+        .arg("--min-score")
+        .arg("0")
+        .arg("-")
+        .write_stdin(input)
+        .assert()
+        .success();
 }
 
 #[test]

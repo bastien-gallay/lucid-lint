@@ -4,18 +4,23 @@ This file captures project-specific context useful for coding agents working on 
 
 The canonical entry point is [AGENTS.md](../AGENTS.md) at the repository root. This file adds project state and conventions that might not be obvious from the main docs.
 
-## Current state (v0.1 bootstrap)
+## Current state (v0.2 — scoring)
 
-The project was bootstrapped in April 2026 with the following scope for v0.1:
+The project was bootstrapped in April 2026 with 17 rules in v0.1. The
+v0.2 cycle landed the hybrid scoring model (F14):
 
-- Rust-only core
-- 17 rules shipped (see RULES.md)
-- Markdown + plain text + stdin inputs
-- Bilingual EN/FR from day one
-- Deterministic rules only (LLM-based rules are a future v0.3 plugin)
-- Linter-style output (info/warning); hybrid scoring model is v0.2
+- Rust-only core, 17 rules, Markdown + plain text + stdin inputs.
+- Bilingual EN/FR from day one.
+- Deterministic rules only (LLM-based rules remain a future v0.3 plugin).
+- **v0.2 additions**: hybrid scoring model (`X/max` global + 5 category
+  sub-scores), `Diagnostic.weight` field, `--min-score` CLI gate,
+  `[scoring]` config table, category taxonomy remapped to
+  `Structure · Rhythm · Lexicon · Syntax · Readability`.
+- Output is still linter-style *and* now scored; the JSON schema is at
+  `version = 2`.
 
-One reference rule is fully implemented: `sentence-too-long`. Use it as the template for the 15 others.
+The reference rule implementation is `sentence-too-long`. The reference
+cross-cutting module is `src/scoring.rs`.
 
 ## Backlog and implementation order
 
@@ -29,7 +34,7 @@ Brand voice, palette, typography shortlist, audience, and the WCAG AAA accessibi
 
 See also [ROADMAP.md](../ROADMAP.md) section "Design decisions from v0.1 session".
 
-### Diagnostic struct is minimal
+### Diagnostic struct (v0.2)
 
 ```rust
 pub struct Diagnostic {
@@ -38,12 +43,21 @@ pub struct Diagnostic {
     pub location: Location,
     pub section: Option<String>,
     pub message: String,
+    pub weight: u32,   // v0.2: seeded from scoring::default_weight_for(rule_id)
 }
 ```
 
-- `category` is NOT stored. It is derivable from `rule_id` via a helper.
-- `weight` and `suggestion` are NOT stored. They are v0.2 scoring features.
+- `category` is NOT stored — derivable from `rule_id` via `Category::for_rule`.
+- `weight` IS stored (v0.2): so that `with_weight()` overrides and user
+  config overrides propagate without a second lookup. Rules almost never
+  need to override; the default table is tuned centrally in `scoring.rs`.
+- `suggestion` is NOT stored. Still deferred past v0.2.
 - `section` IS stored because recomputing it requires re-parsing the document.
+
+The v0.2 category taxonomy is **fixed at 5 variants**:
+`Structure · Rhythm · Lexicon · Syntax · Readability`. The pre-v0.2
+`Length`, `Lexical`, `Style`, `Global` variants are gone. Do not
+re-introduce them.
 
 ### No premature abstraction
 

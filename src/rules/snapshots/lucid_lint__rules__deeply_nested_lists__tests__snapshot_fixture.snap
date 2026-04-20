@@ -1,6 +1,5 @@
 ---
 source: src/rules/deeply_nested_lists.rs
-assertion_line: 159
 expression: diags
 ---
 - rule_id: deeply-nested-lists
@@ -12,6 +11,7 @@ expression: diags
     length: 1
   section: ~
   message: "List item at depth 4 exceeds maximum depth of 3. Consider flattening the structure, splitting into multiple lists, or using subsections with headings."
+  weight: 1
 - rule_id: deeply-nested-lists
   severity: warning
   location:
@@ -21,3 +21,4 @@ expression: diags
     length: 1
   section: ~
   message: "List item at depth 5 exceeds maximum depth of 3. Consider flattening the structure, splitting into multiple lists, or using subsections with headings."
+  weight: 1

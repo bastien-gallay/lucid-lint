@@ -331,10 +331,10 @@ mod tests {
     }
 
     #[test]
-    fn category_is_style() {
+    fn category_is_syntax() {
         let text = "The cache was slow. This motivated the change.";
         let diags = lint(text, Language::En);
-        assert_eq!(diags[0].category(), crate::types::Category::Style);
+        assert_eq!(diags[0].category(), crate::types::Category::Syntax);
     }
 
     #[test]

@@ -6,7 +6,8 @@
 
 use serde::Serialize;
 
-use crate::types::Diagnostic;
+use crate::scoring::{Score, Scorecard};
+use crate::types::{Category, Diagnostic};
 
 /// Top-level JSON report.
 #[derive(Debug, Serialize)]
@@ -17,6 +18,48 @@ pub struct Report<'a> {
     pub diagnostics: &'a [Diagnostic],
     /// Summary counts by severity.
     pub summary: Summary,
+    /// Aggregate document score.
+    pub score: Score,
+    /// Per-category sub-scores in fixed [`Category::ALL`] order.
+    pub category_scores: Vec<CategoryScoreEntry>,
+}
+
+/// One entry in the per-category score array.
+///
+/// Unlike [`crate::scoring::CategoryScore`], this flattens `category` into a
+/// string so the JSON is stable under enum renames inside the codebase.
+#[derive(Debug, Serialize)]
+pub struct CategoryScoreEntry {
+    /// Lowercase category name (e.g. `"structure"`).
+    pub category: String,
+    /// Current value, clamped to `max`.
+    pub value: u32,
+    /// Maximum achievable value.
+    pub max: u32,
+}
+
+impl CategoryScoreEntry {
+    fn from_scorecard(scorecard: &Scorecard) -> Vec<Self> {
+        scorecard
+            .per_category
+            .iter()
+            .map(|cs| Self {
+                category: category_name(cs.category).to_string(),
+                value: cs.score.value,
+                max: cs.score.max,
+            })
+            .collect()
+    }
+}
+
+const fn category_name(c: Category) -> &'static str {
+    match c {
+        Category::Structure => "structure",
+        Category::Rhythm => "rhythm",
+        Category::Lexicon => "lexicon",
+        Category::Syntax => "syntax",
+        Category::Readability => "readability",
+    }
 }
 
 /// Counts by severity.
@@ -49,18 +92,24 @@ impl Summary {
 }
 
 /// Schema version. Bumped on breaking output changes.
-pub const SCHEMA_VERSION: u32 = 1;
-
-/// Render diagnostics as pretty-printed JSON.
 ///
-/// Falls back to an empty array on serialization failure (should not happen
-/// with the built-in `Diagnostic` type, but we avoid panicking regardless).
+/// v2 (0.2.0): adds `score`, `category_scores`, and per-diagnostic `weight`;
+/// renames `category` values (`length` → `structure`, `lexical` → `lexicon`,
+/// `style` → `syntax`, `global` → `readability`).
+pub const SCHEMA_VERSION: u32 = 2;
+
+/// Render diagnostics + scorecard as pretty-printed JSON.
+///
+/// Falls back to an empty object on serialization failure (should not happen
+/// with the built-in types, but we avoid panicking regardless).
 #[must_use]
-pub fn render(diagnostics: &[Diagnostic]) -> String {
+pub fn render(diagnostics: &[Diagnostic], scorecard: &Scorecard) -> String {
     let report = Report {
         version: SCHEMA_VERSION,
         diagnostics,
         summary: Summary::from_diagnostics(diagnostics),
+        score: scorecard.global,
+        category_scores: CategoryScoreEntry::from_scorecard(scorecard),
     };
     serde_json::to_string_pretty(&report).unwrap_or_else(|_| "{}".to_string())
 }
@@ -68,6 +117,7 @@ pub fn render(diagnostics: &[Diagnostic]) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::scoring::{self, ScoringConfig};
     use crate::types::{Location, Severity, SourceFile};
 
     fn sample_diag() -> Diagnostic {
@@ -79,10 +129,15 @@ mod tests {
         )
     }
 
+    fn scorecard(diags: &[Diagnostic]) -> Scorecard {
+        scoring::compute(diags, 1000, &ScoringConfig::default())
+    }
+
     #[test]
     fn render_is_valid_json() {
         let diag = sample_diag();
-        let json = render(&[diag]);
+        let card = scorecard(std::slice::from_ref(&diag));
+        let json = render(&[diag], &card);
         let parsed: serde_json::Value = serde_json::from_str(&json).unwrap();
         assert!(parsed.is_object());
         assert_eq!(parsed["version"], SCHEMA_VERSION);
@@ -91,7 +146,8 @@ mod tests {
     #[test]
     fn render_includes_summary() {
         let diag = sample_diag();
-        let json = render(&[diag]);
+        let card = scorecard(std::slice::from_ref(&diag));
+        let json = render(&[diag], &card);
         let parsed: serde_json::Value = serde_json::from_str(&json).unwrap();
         assert_eq!(parsed["summary"]["warning"], 1);
         assert_eq!(parsed["summary"]["info"], 0);
@@ -99,8 +155,32 @@ mod tests {
     }
 
     #[test]
+    fn render_includes_score_and_categories() {
+        let diag = sample_diag();
+        let card = scorecard(std::slice::from_ref(&diag));
+        let json = render(&[diag], &card);
+        let parsed: serde_json::Value = serde_json::from_str(&json).unwrap();
+        assert!(parsed["score"]["value"].as_u64().is_some());
+        assert_eq!(parsed["score"]["max"], 100);
+        let cats = parsed["category_scores"].as_array().unwrap();
+        assert_eq!(cats.len(), 5);
+        assert_eq!(cats[0]["category"], "structure");
+        assert_eq!(cats[4]["category"], "readability");
+    }
+
+    #[test]
+    fn render_diagnostics_carry_weight() {
+        let diag = sample_diag();
+        let card = scorecard(std::slice::from_ref(&diag));
+        let json = render(&[diag], &card);
+        let parsed: serde_json::Value = serde_json::from_str(&json).unwrap();
+        assert_eq!(parsed["diagnostics"][0]["weight"], 2);
+    }
+
+    #[test]
     fn render_empty_diagnostics() {
-        let json = render(&[]);
+        let card = scorecard(&[]);
+        let json = render(&[], &card);
         let parsed: serde_json::Value = serde_json::from_str(&json).unwrap();
         assert_eq!(parsed["summary"]["total"], 0);
         assert!(parsed["diagnostics"].as_array().unwrap().is_empty());

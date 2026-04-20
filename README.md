@@ -58,7 +58,31 @@ cat draft.md | lucid-lint check -
 
 # JSON output for CI
 lucid-lint check --format=json docs/
+
+# Fail CI if the aggregate score drops below 85 / 100
+lucid-lint check --min-score=85 docs/
 ```
+
+## Scoring (v0.2)
+
+Every run now emits a global `X / max` score plus five per-category
+sub-scores (Structure · Rhythm · Lexicon · Syntax · Readability), in
+addition to the existing diagnostics list.
+
+```text
+warning /tmp/draft.md:12:1 Sentence is 27 words long (maximum 22).
+  rule: sentence-too-long
+
+Summary: 1 warnings.
+score: 88/100 · structure 8/20 · rhythm 20/20 · lexicon 20/20 · syntax 20/20 · readability 20/20
+```
+
+Use `--min-score=N` to gate CI on the aggregate score (the gate stacks
+with `--fail-on-warning`). Tune category caps and per-rule weights via
+the `[scoring]` and `[scoring.weights]` tables in `lucid-lint.toml`.
+
+Full documentation in the user guide:
+[Scoring](https://bastien-gallay.github.io/lucid-lint/guide/scoring.html).
 
 ## Supported formats
 
@@ -91,7 +115,7 @@ See [RULES.md](RULES.md) for per-rule thresholds.
 <!-- lucid-lint disable-next-line excessive-commas -->
 <!-- lucid-lint disable-next-line long-enumeration -->
 
-17 rules in v0.1, covering length, structure, rhythm, lexical choice, style, and global readability. Full reference in [RULES.md](RULES.md).
+17 rules grouped into 5 scoring categories — **Structure · Rhythm · Lexicon · Syntax · Readability**. Full reference in [RULES.md](RULES.md).
 
 ## Configuration
 
@@ -106,6 +130,13 @@ max_words = 20
 
 [rules.passive-voice]
 enabled = false
+
+[scoring]
+category_max = 20
+category_cap = 15
+
+[scoring.weights]
+sentence-too-long = 3
 ```
 
 ## Editor integration

@@ -1,6 +1,5 @@
 ---
 source: src/rules/jargon_undefined.rs
-assertion_line: 386
 expression: diags
 ---
 - rule_id: jargon-undefined
@@ -12,6 +11,7 @@ expression: diags
     length: 10
   section: ~
   message: "Jargon term \"idempotent\" may be unfamiliar to non-specialists. Define it on first use or replace with a simpler phrase."
+  weight: 1
 - rule_id: jargon-undefined
   severity: warning
   location:
@@ -21,6 +21,7 @@ expression: diags
     length: 11
   section: ~
   message: "Jargon term \"thread-safe\" may be unfamiliar to non-specialists. Define it on first use or replace with a simpler phrase."
+  weight: 1
 - rule_id: jargon-undefined
   severity: warning
   location:
@@ -30,3 +31,4 @@ expression: diags
     length: 13
   section: ~
   message: "Jargon term \"serialization\" may be unfamiliar to non-specialists. Define it on first use or replace with a simpler phrase."
+  weight: 1

@@ -7,9 +7,24 @@ use thiserror::Error;
 
 use crate::config::Profile;
 use crate::language::{default_language, detect_language};
-use crate::parser::{parse_markdown, parse_plain};
+use crate::parser::{parse_markdown, parse_plain, word_count};
 use crate::rules::{default_rules, Rule};
+use crate::scoring::{self, Scorecard, ScoringConfig};
 use crate::types::{Diagnostic, Language, SourceFile};
+
+/// Aggregated result of a lint run over a single document.
+///
+/// Pairs the list of diagnostics with the [`Scorecard`] that aggregates them
+/// and the word count used as the density denominator.
+#[derive(Debug, Clone)]
+pub struct Report {
+    /// Diagnostics emitted, in rule-discovery order.
+    pub diagnostics: Vec<Diagnostic>,
+    /// Global and per-category scores for this document.
+    pub scorecard: Scorecard,
+    /// Word count used to normalize scoring density.
+    pub word_count: u32,
+}
 
 /// The linting engine.
 ///
@@ -18,6 +33,7 @@ use crate::types::{Diagnostic, Language, SourceFile};
 pub struct Engine {
     profile: Profile,
     rules: Vec<Box<dyn Rule>>,
+    scoring_config: ScoringConfig,
 }
 
 impl Engine {
@@ -27,13 +43,25 @@ impl Engine {
         Self {
             profile,
             rules: default_rules(profile),
+            scoring_config: ScoringConfig::default(),
         }
     }
 
     /// Build an engine with a custom rule set.
     #[must_use]
     pub fn with_rules(profile: Profile, rules: Vec<Box<dyn Rule>>) -> Self {
-        Self { profile, rules }
+        Self {
+            profile,
+            rules,
+            scoring_config: ScoringConfig::default(),
+        }
+    }
+
+    /// Attach a custom [`ScoringConfig`], overriding the defaults.
+    #[must_use]
+    pub fn with_scoring_config(mut self, scoring_config: ScoringConfig) -> Self {
+        self.scoring_config = scoring_config;
+        self
     }
 
     /// The profile this engine was configured with.
@@ -44,13 +72,13 @@ impl Engine {
 
     /// Lint a string input. Markdown syntax is assumed.
     #[must_use]
-    pub fn lint_str(&self, input: &str) -> Vec<Diagnostic> {
+    pub fn lint_str(&self, input: &str) -> Report {
         self.lint_with_source(input, SourceFile::Anonymous, true)
     }
 
     /// Lint stdin-like input.
     #[must_use]
-    pub fn lint_stdin(&self, input: &str) -> Vec<Diagnostic> {
+    pub fn lint_stdin(&self, input: &str) -> Report {
         self.lint_with_source(input, SourceFile::Stdin, true)
     }
 
@@ -62,7 +90,7 @@ impl Engine {
     /// # Errors
     ///
     /// Returns [`EngineError::Io`] if the file cannot be read.
-    pub fn lint_file(&self, path: &Path) -> Result<Vec<Diagnostic>, EngineError> {
+    pub fn lint_file(&self, path: &Path) -> Result<Report, EngineError> {
         let contents = fs::read_to_string(path).map_err(EngineError::Io)?;
         let is_markdown = path
             .extension()
@@ -72,12 +100,7 @@ impl Engine {
         Ok(self.lint_with_source(&contents, source, is_markdown))
     }
 
-    fn lint_with_source(
-        &self,
-        input: &str,
-        source: SourceFile,
-        is_markdown: bool,
-    ) -> Vec<Diagnostic> {
+    fn lint_with_source(&self, input: &str, source: SourceFile, is_markdown: bool) -> Report {
         let language = match detect_language(input) {
             Language::Unknown => default_language(),
             detected => detected,
@@ -99,7 +122,15 @@ impl Engine {
                 .iter()
                 .any(|dir| dir.rule_id == d.rule_id && dir.target_line == d.location.line)
         });
-        diagnostics
+
+        let words = word_count(input);
+        let scorecard = scoring::compute(&diagnostics, words, &self.scoring_config);
+
+        Report {
+            diagnostics,
+            scorecard,
+            word_count: words,
+        }
     }
 }
 
@@ -121,22 +152,22 @@ mod tests {
         let engine = Engine::with_profile(Profile::Public);
         let text = "This is a rather long sentence that keeps adding more and more words \
                     until it exceeds the public profile threshold by a comfortable margin.";
-        let diags = engine.lint_str(text);
-        assert!(!diags.is_empty());
-        // At least one rule fires at Warning level; the always-on
-        // observability rules (readability-score, unclear-antecedent)
-        // also contribute `info` diagnostics.
-        assert!(diags.iter().any(|d| d.severity == Severity::Warning));
+        let report = engine.lint_str(text);
+        assert!(!report.diagnostics.is_empty());
+        assert!(report
+            .diagnostics
+            .iter()
+            .any(|d| d.severity == Severity::Warning));
     }
 
     #[test]
-    fn engine_returns_no_diagnostics_for_clean_text() {
+    fn engine_returns_no_warnings_for_clean_text() {
         let engine = Engine::with_profile(Profile::Public);
-        let diags = engine.lint_str("Short clean sentence. Another fine one.");
-        // `readability-score` emits an informational diagnostic for every
-        // non-empty document (observability signal); only check that no
-        // warnings fire on clean text.
-        assert!(diags.iter().all(|d| d.severity == Severity::Info));
+        let report = engine.lint_str("Short clean sentence. Another fine one.");
+        assert!(report
+            .diagnostics
+            .iter()
+            .all(|d| d.severity == Severity::Info));
     }
 
     fn diags_for_rule(diags: &[Diagnostic], rule_id: &str) -> usize {
@@ -150,8 +181,11 @@ mod tests {
         // 25 words: triggers Public (22) but not DevDoc (30) for sentence-too-long.
         let text = "This is a long sentence that keeps adding more and more words until it \
                     exceeds the public profile threshold by a comfortable margin of safety.";
-        assert!(diags_for_rule(&public.lint_str(text), "sentence-too-long") > 0);
-        assert_eq!(diags_for_rule(&dev.lint_str(text), "sentence-too-long"), 0);
+        assert!(diags_for_rule(&public.lint_str(text).diagnostics, "sentence-too-long") > 0);
+        assert_eq!(
+            diags_for_rule(&dev.lint_str(text).diagnostics, "sentence-too-long"),
+            0
+        );
     }
 
     #[test]
@@ -161,29 +195,40 @@ mod tests {
                     <!-- lucid-lint disable-next-line sentence-too-long -->\n\
                     This is a long sentence that keeps adding more and more words until it \
                     exceeds the public profile threshold by a comfortable margin of safety.\n";
-        let diags = engine.lint_str(text);
+        let report = engine.lint_str(text);
         assert_eq!(
-            diags_for_rule(&diags, "sentence-too-long"),
+            diags_for_rule(&report.diagnostics, "sentence-too-long"),
             0,
-            "expected directive to suppress sentence-too-long, got: {diags:?}"
+            "expected directive to suppress sentence-too-long, got: {:?}",
+            report.diagnostics
         );
     }
 
     #[test]
     fn inline_disable_does_not_affect_other_rules_or_lines() {
-        // Directive for an unrelated rule id does not suppress sentence-too-long.
         let engine = Engine::with_profile(Profile::Public);
         let text = "Intro.\n\n\
                     <!-- lucid-lint disable-next-line weasel-words -->\n\
                     This is a long sentence that keeps adding more and more words until it \
                     exceeds the public profile threshold by a comfortable margin of safety.\n";
-        let diags = engine.lint_str(text);
-        assert_eq!(diags_for_rule(&diags, "sentence-too-long"), 1);
+        let report = engine.lint_str(text);
+        assert_eq!(diags_for_rule(&report.diagnostics, "sentence-too-long"), 1);
     }
 
     #[test]
     fn engine_profile_accessor() {
         let engine = Engine::with_profile(Profile::Falc);
         assert_eq!(engine.profile(), Profile::Falc);
+    }
+
+    #[test]
+    fn engine_produces_scorecard_with_fixed_max() {
+        let engine = Engine::with_profile(Profile::Public);
+        let report = engine.lint_str("Short clean sentence. Another fine one.");
+        assert_eq!(
+            report.scorecard.global.max,
+            crate::scoring::DEFAULT_CATEGORY_MAX * 5
+        );
+        assert_eq!(report.scorecard.per_category.len(), 5);
     }
 }

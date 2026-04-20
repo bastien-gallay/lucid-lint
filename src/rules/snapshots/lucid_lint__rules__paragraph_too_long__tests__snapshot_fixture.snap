@@ -1,6 +1,5 @@
 ---
 source: src/rules/paragraph_too_long.rs
-assertion_line: 216
 expression: diags
 ---
 - rule_id: paragraph-too-long
@@ -12,3 +11,4 @@ expression: diags
     length: 40
   section: ~
   message: Paragraph is 7 sentences (max 5). Consider splitting it.
+  weight: 2

@@ -9,6 +9,7 @@ use clap::Parser;
 
 use lucid_lint::config::Profile;
 use lucid_lint::output::Format;
+use lucid_lint::scoring::{self, ScoringConfig};
 use lucid_lint::{Diagnostic, Engine, Severity};
 
 mod cli;
@@ -33,8 +34,10 @@ fn run_check(args: CheckArgs) -> Result<ExitCode> {
     let profile: Profile = args.profile.into();
     let format: Format = args.format.into();
     let engine = Engine::with_profile(profile);
+    let scoring_config = ScoringConfig::default();
 
     let mut all_diagnostics: Vec<Diagnostic> = Vec::new();
+    let mut total_words: u32 = 0;
 
     for raw_path in &args.paths {
         if is_stdin_marker(raw_path) {
@@ -42,19 +45,26 @@ fn run_check(args: CheckArgs) -> Result<ExitCode> {
             io::stdin()
                 .read_to_string(&mut input)
                 .context("failed to read stdin")?;
-            all_diagnostics.extend(engine.lint_stdin(&input));
+            let report = engine.lint_stdin(&input);
+            total_words = total_words.saturating_add(report.word_count);
+            all_diagnostics.extend(report.diagnostics);
         } else {
             let files = collect_files(raw_path)?;
             for file in files {
-                let diagnostics = engine
+                let report = engine
                     .lint_file(&file)
                     .with_context(|| format!("failed to lint {}", file.display()))?;
-                all_diagnostics.extend(diagnostics);
+                total_words = total_words.saturating_add(report.word_count);
+                all_diagnostics.extend(report.diagnostics);
             }
         }
     }
 
-    let rendered = format.render(&all_diagnostics);
+    // Aggregate across all inputs as a single document for v0.2 scoring.
+    // Per-file and project-level roll-ups are tracked as F15 (ROADMAP).
+    let scorecard = scoring::compute(&all_diagnostics, total_words, &scoring_config);
+
+    let rendered = format.render(&all_diagnostics, &scorecard);
     io::stdout()
         .write_all(rendered.as_bytes())
         .context("failed to write output")?;
@@ -63,7 +73,12 @@ fn run_check(args: CheckArgs) -> Result<ExitCode> {
         .iter()
         .any(|d| matches!(d.severity, Severity::Warning | Severity::Error));
 
-    if args.fail_on_warning && has_warning_or_above {
+    let severity_fail = args.fail_on_warning && has_warning_or_above;
+    let score_fail = args
+        .min_score
+        .is_some_and(|min| scorecard.global.value < min);
+
+    if severity_fail || score_fail {
         Ok(ExitCode::from(1))
     } else {
         Ok(ExitCode::SUCCESS)

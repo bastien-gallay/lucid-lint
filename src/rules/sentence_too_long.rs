@@ -213,11 +213,11 @@ mod tests {
     }
 
     #[test]
-    fn category_is_derived_correctly() {
+    fn category_is_structure() {
         let text = "This is a rather long sentence that keeps adding more and more words \
                     until it exceeds the public profile threshold by a comfortable margin.";
         let diags = lint(text, Profile::Public);
-        assert_eq!(diags[0].category(), crate::types::Category::Length);
+        assert_eq!(diags[0].category(), crate::types::Category::Structure);
     }
 
     #[test]

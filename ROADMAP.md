@@ -83,8 +83,8 @@ Shipped in the tag: all 17 rules across 5 phases, the minimal inline-disable dir
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F14 | Hybrid scoring model (global score + per-category sub-scores + diagnostics). Design shaped in `brainstorm/20260420-score-semantics.md`: `X/max` arbitrary-max at both levels, 5 fixed categories (Structure · Rhythm · Lexicon · Syntax · Readability), composition = weighted sum × density-normalization × per-category cap, new `weight` field on `Diagnostic`, new `--min-score=N` CI flag. Letter-grade / traffic-light / reading-time decorations deferred (F39–F41). | 🔴 High | Architecture decision discussion |
-| F15 | Scoring granularity: document + project in v0.2 (multi-file roll-up). Section-level deferred → F38. | 🔴 High | Linked to F14 |
+| F14 | ✅ Hybrid scoring model shipped in v0.2 (global score + per-category sub-scores + diagnostics). `X/max` arbitrary-max at both levels, 5 fixed categories (Structure · Rhythm · Lexicon · Syntax · Readability), composition = weighted sum × density-normalization × per-category cap, `weight` field added to `Diagnostic`, `--min-score=N` CLI flag. See [`docs/src/guide/scoring.md`](docs/src/guide/scoring.md). Letter-grade / traffic-light / reading-time decorations deferred (F39–F41). | 🔴 High | Architecture decision discussion |
+| F15 | 🚧 Document-level scoring shipped in v0.2 (multi-path runs are aggregated as one document). Project-level roll-up (per-file breakdown + project summary) still open. Section-level deferred → F38. | 🔴 High | Linked to F14 |
 | F17 | Per-family sub-scores | 🟡 Medium | Linked to F14 |
 | F32 | `--format=sarif` output (SARIF v2.1.0) for GitHub Code Scanning. Already referenced from `docs/src/guide/ci-integration.md` as a v0.2 deliverable. | 🔴 High | v0.1 AGENTS.md audit |
 | F37 | Rule-message clarity audit — every diagnostic must answer "what do I change?" not just "what's wrong". F14 makes score actionability depend on diagnostic actionability, so this needs to land before or with v0.2. | 🔴 High | F14 `brainstorm/20260420-score-semantics.md` |

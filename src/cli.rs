@@ -55,6 +55,13 @@ pub(crate) struct CheckArgs {
     /// Exit with code 1 if any warnings are found.
     #[arg(long, default_value_t = true)]
     pub(crate) fail_on_warning: bool,
+
+    /// Fail (exit 1) if the aggregate document score is below this threshold.
+    ///
+    /// The maximum is currently 100 (5 categories × 20). See the `scoring`
+    /// page in the user guide for the calibration details.
+    #[arg(long)]
+    pub(crate) min_score: Option<u32>,
 }
 
 /// Profile values accepted on the command line.

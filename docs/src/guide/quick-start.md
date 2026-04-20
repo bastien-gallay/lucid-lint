@@ -10,12 +10,16 @@ lucid-lint check README.md
 
 Output:
 
-```
+```text
 warning <path>/README.md:14:1 Sentence is 27 words long (maximum 22). Consider splitting it into shorter sentences.
   rule: sentence-too-long
 
 Summary: 1 warnings.
+score: 88/100 · structure 8/20 · rhythm 20/20 · lexicon 20/20 · syntax 20/20 · readability 20/20
 ```
+
+The last line is the v0.2 [scoring](./scoring.md) summary — a global
+`X / 100` score followed by the full per-category breakdown.
 
 ## Lint several files
 
@@ -70,6 +74,9 @@ See [CI integration](./ci-integration.md) for CI recipes.
 
 | Code | Meaning |
 |---|---|
-| 0 | No issues, or only `info` |
-| 1 | Warnings found |
+| 0 | No issues (or only `info`) and score above `--min-score` (if set) |
+| 1 | Warnings found **or** score below `--min-score` |
 | 2 | Runtime error (invalid args, unreadable file) |
+
+The two gates stack. See [CI integration](./ci-integration.md#gating-on-score) for
+combination recipes.

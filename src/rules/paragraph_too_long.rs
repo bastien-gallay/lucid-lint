@@ -203,10 +203,10 @@ mod tests {
     }
 
     #[test]
-    fn category_is_length() {
+    fn category_is_structure() {
         let text = "One. Two. Three. Four. Five. Six.";
         let diags = lint(text, Profile::Public);
-        assert_eq!(diags[0].category(), crate::types::Category::Length);
+        assert_eq!(diags[0].category(), crate::types::Category::Structure);
     }
 
     #[test]

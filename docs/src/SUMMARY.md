@@ -8,6 +8,7 @@
 - [Quick start](./guide/quick-start.md)
 - [Profiles](./guide/profiles.md)
 - [Configuration](./guide/configuration.md)
+- [Scoring](./guide/scoring.md)
 - [CI integration](./guide/ci-integration.md)
 
 # Rules reference

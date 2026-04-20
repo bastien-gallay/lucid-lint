@@ -10,11 +10,10 @@ use serde::{Deserialize, Serialize};
 
 /// A single lint finding emitted by a [`Rule`](crate::rules::Rule).
 ///
-/// The struct is intentionally minimal. See `ROADMAP.md` for the v0.2 scoring model
-/// that will extend this with `weight`, `category`, and richer suggestions.
-///
-/// Note: [`Category`] is not stored here because it is derivable from `rule_id`.
-/// Use [`Category::for_rule`] when needed.
+/// [`Category`] is not stored because it is derivable from `rule_id`; use
+/// [`Category::for_rule`] or [`Diagnostic::category`] when needed. [`weight`](Self::weight)
+/// feeds the hybrid scoring model (see [`crate::scoring`]) and is populated at
+/// emission from [`crate::scoring::default_weight_for`].
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Diagnostic {
     /// Identifier of the rule that produced this diagnostic (kebab-case).
@@ -32,10 +31,20 @@ pub struct Diagnostic {
 
     /// Human-readable message explaining the issue.
     pub message: String,
+
+    /// Scoring weight for this diagnostic.
+    ///
+    /// Populated at [`Diagnostic::new`] from
+    /// [`crate::scoring::default_weight_for`]. Rules that need a non-default
+    /// weight can override via [`Diagnostic::with_weight`].
+    pub weight: u32,
 }
 
 impl Diagnostic {
     /// Create a new diagnostic with no section attached.
+    ///
+    /// `weight` is seeded from [`crate::scoring::default_weight_for`] so that
+    /// the scoring model works uniformly without rules needing to opt in.
     #[must_use]
     pub fn new(
         rule_id: impl Into<String>,
@@ -43,12 +52,15 @@ impl Diagnostic {
         location: Location,
         message: impl Into<String>,
     ) -> Self {
+        let rule_id = rule_id.into();
+        let weight = crate::scoring::default_weight_for(&rule_id);
         Self {
-            rule_id: rule_id.into(),
+            rule_id,
             severity,
             location,
             section: None,
             message: message.into(),
+            weight,
         }
     }
 
@@ -56,6 +68,16 @@ impl Diagnostic {
     #[must_use]
     pub fn with_section(mut self, section: impl Into<String>) -> Self {
         self.section = Some(section.into());
+        self
+    }
+
+    /// Override the default weight attached to this diagnostic.
+    ///
+    /// Most rules should leave the default alone; it is tuned centrally in
+    /// [`crate::scoring::default_weight_for`].
+    #[must_use]
+    pub const fn with_weight(mut self, weight: u32) -> Self {
+        self.weight = weight;
         self
     }
 
@@ -92,47 +114,59 @@ impl fmt::Display for Severity {
 
 /// Category groups rules by the nature of what they measure.
 ///
-/// Categories are stable enum variants used for filtering and grouping.
-/// They are derived from `rule_id`, not stored on [`Diagnostic`].
+/// The taxonomy is fixed at 5 variants, matching the F14 scoring model
+/// (see `brainstorm/20260420-score-semantics.md`): Structure, Rhythm,
+/// Lexicon, Syntax, Readability.
+///
+/// Categories are stable enum variants used for filtering, grouping,
+/// and scoring. They are derived from `rule_id`, not stored on [`Diagnostic`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Category {
-    /// Absolute length of sentences and paragraphs.
-    Length,
-    /// Syntactic and document structure.
+    /// Length, nesting, punctuation, and document skeleton.
     Structure,
-    /// Patterns and cadence across multiple sentences.
+    /// Cadence and repetition across adjacent sentences.
     Rhythm,
-    /// Vocabulary, terminology, acronyms.
-    Lexical,
-    /// Writing style and clarity.
-    Style,
-    /// Document-level metrics.
-    Global,
+    /// Vocabulary, terminology, acronyms, and lexical diversity.
+    Lexicon,
+    /// Sentence-level style and syntactic clarity.
+    Syntax,
+    /// Document-level readability metrics.
+    Readability,
 }
 
 impl Category {
+    /// The fixed ordering used by the scoring model and output surfaces.
+    pub const ALL: [Self; 5] = [
+        Self::Structure,
+        Self::Rhythm,
+        Self::Lexicon,
+        Self::Syntax,
+        Self::Readability,
+    ];
+
     /// Map a rule id to its category.
     ///
-    /// Unknown rule ids fall back to [`Category::Style`].
+    /// Unknown rule ids fall back to [`Category::Syntax`].
     #[must_use]
     pub fn for_rule(rule_id: &str) -> Self {
         match rule_id {
-            "sentence-too-long" | "paragraph-too-long" => Self::Length,
-            "excessive-commas"
-            | "long-enumeration"
-            | "deep-subordination"
+            "sentence-too-long"
+            | "paragraph-too-long"
             | "deeply-nested-lists"
-            | "heading-jump" => Self::Structure,
-            "consecutive-long-sentences" => Self::Rhythm,
+            | "heading-jump"
+            | "excessive-commas"
+            | "long-enumeration"
+            | "deep-subordination" => Self::Structure,
+            "consecutive-long-sentences" | "repetitive-connectors" => Self::Rhythm,
             "low-lexical-diversity"
             | "excessive-nominalization"
             | "unexplained-abbreviation"
             | "weasel-words"
-            | "jargon-undefined" => Self::Lexical,
-            "passive-voice" | "repetitive-connectors" | "unclear-antecedent" => Self::Style,
-            "readability-score" => Self::Global,
-            _ => Self::Style,
+            | "jargon-undefined" => Self::Lexicon,
+            "passive-voice" | "unclear-antecedent" => Self::Syntax,
+            "readability-score" => Self::Readability,
+            _ => Self::Syntax,
         }
     }
 }
@@ -140,12 +174,11 @@ impl Category {
 impl fmt::Display for Category {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Length => f.write_str("length"),
             Self::Structure => f.write_str("structure"),
             Self::Rhythm => f.write_str("rhythm"),
-            Self::Lexical => f.write_str("lexical"),
-            Self::Style => f.write_str("style"),
-            Self::Global => f.write_str("global"),
+            Self::Lexicon => f.write_str("lexicon"),
+            Self::Syntax => f.write_str("syntax"),
+            Self::Readability => f.write_str("readability"),
         }
     }
 }
@@ -238,20 +271,34 @@ mod tests {
 
     #[test]
     fn category_for_rule_maps_known_ids() {
-        assert_eq!(Category::for_rule("sentence-too-long"), Category::Length);
+        assert_eq!(Category::for_rule("sentence-too-long"), Category::Structure);
         assert_eq!(Category::for_rule("excessive-commas"), Category::Structure);
         assert_eq!(
             Category::for_rule("consecutive-long-sentences"),
             Category::Rhythm
         );
-        assert_eq!(Category::for_rule("weasel-words"), Category::Lexical);
-        assert_eq!(Category::for_rule("passive-voice"), Category::Style);
-        assert_eq!(Category::for_rule("readability-score"), Category::Global);
+        assert_eq!(
+            Category::for_rule("repetitive-connectors"),
+            Category::Rhythm
+        );
+        assert_eq!(Category::for_rule("weasel-words"), Category::Lexicon);
+        assert_eq!(Category::for_rule("passive-voice"), Category::Syntax);
+        assert_eq!(
+            Category::for_rule("readability-score"),
+            Category::Readability
+        );
     }
 
     #[test]
-    fn category_for_unknown_rule_defaults_to_style() {
-        assert_eq!(Category::for_rule("no-such-rule"), Category::Style);
+    fn category_for_unknown_rule_defaults_to_syntax() {
+        assert_eq!(Category::for_rule("no-such-rule"), Category::Syntax);
+    }
+
+    #[test]
+    fn category_all_has_five_variants_in_fixed_order() {
+        assert_eq!(Category::ALL.len(), 5);
+        assert_eq!(Category::ALL[0], Category::Structure);
+        assert_eq!(Category::ALL[4], Category::Readability);
     }
 
     #[test]
@@ -265,7 +312,7 @@ mod tests {
     fn diagnostic_category_is_derived_from_rule_id() {
         let location = Location::new(SourceFile::Anonymous, 1, 1, 5);
         let diag = Diagnostic::new("sentence-too-long", Severity::Warning, location, "Too long");
-        assert_eq!(diag.category(), Category::Length);
+        assert_eq!(diag.category(), Category::Structure);
     }
 
     #[test]

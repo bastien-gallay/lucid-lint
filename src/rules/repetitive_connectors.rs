@@ -378,10 +378,10 @@ mod tests {
     }
 
     #[test]
-    fn category_is_style() {
+    fn category_is_rhythm() {
         let text = "Then a. Then b. Then c. Then d. Mid.";
         let diags = lint(text, Profile::Public, Language::En);
-        assert_eq!(diags[0].category(), crate::types::Category::Style);
+        assert_eq!(diags[0].category(), crate::types::Category::Rhythm);
     }
 
     #[test]

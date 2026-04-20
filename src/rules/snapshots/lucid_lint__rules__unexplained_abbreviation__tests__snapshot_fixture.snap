@@ -1,6 +1,5 @@
 ---
 source: src/rules/unexplained_abbreviation.rs
-assertion_line: 365
 expression: diags
 ---
 - rule_id: unexplained-abbreviation
@@ -12,6 +11,7 @@ expression: diags
     length: 3
   section: ~
   message: "Acronym \"ZQX\" is not whitelisted. Define it on first use, e.g. \"ZQX (Full Expansion)\"."
+  weight: 1
 - rule_id: unexplained-abbreviation
   severity: warning
   location:
@@ -21,6 +21,7 @@ expression: diags
     length: 4
   section: ~
   message: "Acronym \"HTTP\" is not whitelisted. Define it on first use, e.g. \"HTTP (Full Expansion)\"."
+  weight: 1
 - rule_id: unexplained-abbreviation
   severity: warning
   location:
@@ -30,3 +31,4 @@ expression: diags
     length: 3
   section: ~
   message: "Acronym \"API\" is not whitelisted. Define it on first use, e.g. \"API (Full Expansion)\"."
+  weight: 1

@@ -7,6 +7,7 @@
 
 use serde::{Deserialize, Serialize};
 
+use crate::scoring::Scorecard;
 use crate::types::Diagnostic;
 
 pub mod json;
@@ -24,12 +25,12 @@ pub enum Format {
 }
 
 impl Format {
-    /// Render a list of diagnostics to a String using this format.
+    /// Render diagnostics + scorecard to a String using this format.
     #[must_use]
-    pub fn render(self, diagnostics: &[Diagnostic]) -> String {
+    pub fn render(self, diagnostics: &[Diagnostic], scorecard: &Scorecard) -> String {
         match self {
-            Self::Tty => tty::render(diagnostics, tty::ColorMode::Auto),
-            Self::Json => json::render(diagnostics),
+            Self::Tty => tty::render(diagnostics, scorecard, tty::ColorMode::Auto),
+            Self::Json => json::render(diagnostics, scorecard),
         }
     }
 }

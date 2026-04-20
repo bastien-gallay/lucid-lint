@@ -1,24 +1,32 @@
-# lucid-lint — Rules Reference (v0.1)
+# lucid-lint — Rules Reference
 
 > A cognitive accessibility linter for prose. Built on cognitive load research. Bilingual EN/FR with equal care. Plugin-first, CI-native.
 
-This document describes the 17 rules included in `lucid-lint` v0.1.
+This document describes the 17 rules included in `lucid-lint`. The rule
+set landed in v0.1; v0.2 adds the [scoring model](#scoring), renames
+the category taxonomy to 5 fixed buckets, and introduces the `weight`
+field on diagnostics.
 
 Each rule is atomic, documented, and configurable via a per-profile threshold.
+
+> Section groupings below are pedagogical (by detection theme). The
+> authoritative per-rule category is the `**Category**` line at the top
+> of each rule; see [Categories](#categories) for the full mapping.
 
 ## Table of Contents
 
 1. [Conventions](#conventions)
 2. [Profiles](#profiles)
 3. [Categories](#categories)
-4. [Rules](#rules)
-   - [Length rules](#length-rules)
-   - [Structure rules](#structure-rules)
+4. [Scoring](#scoring)
+5. [Rules](#rules)
+   - [Length rules](#length-rules) *(structure — length signals)*
+   - [Structure rules](#structure-rules) *(structure — punctuation and skeleton)*
    - [Rhythm rules](#rhythm-rules)
-   - [Lexical rules](#lexical-rules)
-   - [Style rules](#style-rules)
-   - [Global rules](#global-rules)
-5. [Suppressing diagnostics](#suppressing-diagnostics)
+   - [Lexicon rules](#lexicon-rules)
+   - [Syntax rules](#syntax-rules)
+   - [Readability rules](#readability-rules)
+6. [Suppressing diagnostics](#suppressing-diagnostics)
 
 ---
 
@@ -49,16 +57,51 @@ A profile is a preset bundle of rule thresholds. Users pick a profile close to t
 
 ## Categories
 
-Each rule belongs to one category. Categories enable filtering and grouping of diagnostics.
+Each rule belongs to exactly one of five fixed categories. The taxonomy
+mirrors the F14 scoring model (see
+[`brainstorm/20260420-score-semantics.md`](brainstorm/20260420-score-semantics.md)).
 
-| Category | Purpose |
+| Category | Purpose | Rules |
+|---|---|---|
+| `structure` | Length, nesting, punctuation, document skeleton | `sentence-too-long`, `paragraph-too-long`, `excessive-commas`, `long-enumeration`, `deep-subordination`, `deeply-nested-lists`, `heading-jump` |
+| `rhythm` | Cadence and repetition across adjacent sentences | `consecutive-long-sentences`, `repetitive-connectors` |
+| `lexicon` | Vocabulary, terminology, acronyms, lexical diversity | `low-lexical-diversity`, `excessive-nominalization`, `unexplained-abbreviation`, `weasel-words`, `jargon-undefined` |
+| `syntax` | Sentence-level style and syntactic clarity | `passive-voice`, `unclear-antecedent` |
+| `readability` | Document-level readability metrics | `readability-score` |
+
+> v0.2 remapped the v0.1 taxonomy: `length` and the pre-v0.2 `structure`
+> merged into `structure`; `lexical` became `lexicon`; `style` split
+> between `syntax` and `rhythm`; `global` became `readability`.
+
+---
+
+## Scoring
+
+As of v0.2 every run emits a global `X / max` score plus five
+per-category sub-scores, in addition to the existing diagnostics. The
+composition formula is:
+
+```text
+per_rule_cost     = Σ (weight × severity_multiplier)
+per_category_cost = min(Σ per_rule_cost / (words / 1000), category_cap)
+category_score    = category_max − per_category_cost   (clamped ≥ 0)
+global_score      = Σ category_score
+```
+
+Default weights (from `scoring::default_weight_for`):
+
+| Weight | Rules |
 |---|---|
-| `length` | Absolute length of sentences and paragraphs |
-| `structure` | Syntactic and document structure |
-| `rhythm` | Patterns and cadence across multiple sentences |
-| `lexical` | Vocabulary, terminology, acronyms |
-| `style` | Writing style and clarity |
-| `global` | Document-level metrics |
+| `5` | `readability-score` |
+| `2` | `sentence-too-long`, `paragraph-too-long`, `deep-subordination`, `passive-voice`, `unclear-antecedent` |
+| `1` | every other rule |
+
+Severity multiplier: `info = 1`, `warning = 3`, `error = 5` (reserved).
+
+Full details, CI gating, and TOML overrides in the user guide:
+[Scoring](docs/src/guide/scoring.md). Suppressed diagnostics (via
+`<!-- lucid-lint disable-next-line ... -->`) contribute **zero cost** —
+suppression and scoring are consistent.
 
 ---
 
@@ -70,7 +113,7 @@ Each rule belongs to one category. Categories enable filtering and grouping of d
 
 #### `sentence-too-long`
 
-**Category** : `length`
+**Category** : `structure`
 **Severity** : `warning`
 **Bilingual** : yes, identical FR/EN
 
@@ -105,7 +148,7 @@ Contractions (`don't`) and elisions (`l'accessibilité`) are counted as one word
 
 #### `paragraph-too-long`
 
-**Category** : `length`
+**Category** : `structure`
 **Severity** : `warning`
 **Bilingual** : yes, identical FR/EN
 
@@ -385,13 +428,13 @@ Walk sentences sequentially. Count consecutive sentences exceeding a length thre
 
 ---
 
-### Lexical rules
+### Lexicon rules
 
 ---
 
 #### `low-lexical-diversity`
 
-**Category** : `lexical`
+**Category** : `lexicon`
 **Severity** : `info`
 **Bilingual** : yes, FR/EN stoplists differ
 
@@ -433,7 +476,7 @@ Words inside code blocks are excluded.
 
 #### `excessive-nominalization`
 
-**Category** : `lexical`
+**Category** : `lexicon`
 **Severity** : `warning`
 **Bilingual** : yes, FR/EN suffixes overlap significantly
 
@@ -493,7 +536,7 @@ Technical vocabulary (`function`, `implementation`, `configuration`) contains ma
 
 #### `unexplained-abbreviation`
 
-**Category** : `lexical`
+**Category** : `lexicon`
 **Severity** : `warning`
 **Bilingual** : yes, FR/EN whitelists differ
 
@@ -541,7 +584,7 @@ Common FR/EN : `PDF, SMS, GPS, ID, OK, FAQ`
 
 #### `weasel-words`
 
-**Category** : `lexical`
+**Category** : `lexicon`
 **Severity** : `warning`
 **Bilingual** : yes, FR/EN lists differ
 
@@ -588,7 +631,7 @@ Trivial implementation. HashSet lookup.
 
 #### `jargon-undefined`
 
-**Category** : `lexical`
+**Category** : `lexicon`
 **Severity** : `warning`
 **Bilingual** : yes, separate lists per language and per domain
 
@@ -640,13 +683,13 @@ Like acronyms, jargon creates reading interruptions for the non-specialist reade
 
 ---
 
-### Style rules
+### Syntax rules
 
 ---
 
 #### `passive-voice`
 
-**Category** : `style`
+**Category** : `syntax`
 **Severity** : `warning`
 **Bilingual** : yes, separate heuristics FR/EN
 
@@ -694,7 +737,7 @@ Expect ~70-80% precision in v0.1. False positives handled via inline disable com
 
 #### `repetitive-connectors`
 
-**Category** : `style`
+**Category** : `syntax`
 **Severity** : `warning`
 **Bilingual** : yes, FR/EN lists differ
 
@@ -760,7 +803,7 @@ Sliding window of N sentences. Count occurrences per connector in the window. Fl
 
 #### `unclear-antecedent`
 
-**Category** : `style`
+**Category** : `syntax`
 **Severity** : `info`
 **Bilingual** : yes, FR/EN pronoun lists differ
 
@@ -805,13 +848,13 @@ Exact detection requires anaphora resolution, which is advanced NLP. v0.1 catche
 
 ---
 
-### Global rules
+### Readability rules
 
 ---
 
 #### `readability-score`
 
-**Category** : `global`
+**Category** : `readability`
 **Severity** : `info` when below threshold, `warning` when above
 
 **Intent** : calculate a readability score and flag documents exceeding a target grade level.

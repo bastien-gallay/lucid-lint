@@ -14,8 +14,21 @@ Cross-cutting features shipped:
 
 ### v0.2 — First major iteration
 
-- Hybrid scoring model (global score + per-category sub-scores + diagnostics)
-- Language-specific readability formulas (Kandel-Moles for French, SMOG, Coleman-Liau)
+**Shipped in this cycle**:
+
+- ✅ **Hybrid scoring model (F14)** — global `X / max` score plus 5
+  per-category sub-scores (Structure · Rhythm · Lexicon · Syntax ·
+  Readability), `--min-score` CLI flag, `[scoring]` / `[scoring.weights]`
+  config tables. See the [Scoring](./guide/scoring.md) guide page.
+- 🚧 **Document-level scoring granularity (F15)** — CLI aggregates
+  multi-path runs as a single document; per-file + project roll-up
+  still open.
+
+**Still in flight**:
+
+- SARIF v2.1.0 output for GitHub Code Scanning (F32)
+- Rule-message clarity audit (F37) — gates the v0.2 release
+- Language-specific readability formulas (Kandel-Moles FR, SMOG, Coleman-Liau)
 - Definition-aware `unexplained-abbreviation`
 - Custom stoplist for `low-lexical-diversity`
 - Pandoc companion script

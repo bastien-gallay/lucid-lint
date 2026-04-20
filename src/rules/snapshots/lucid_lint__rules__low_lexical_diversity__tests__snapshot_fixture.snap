@@ -1,6 +1,5 @@
 ---
 source: src/rules/low_lexical_diversity.rs
-assertion_line: 375
 expression: diags
 ---
 - rule_id: low-lexical-diversity
@@ -12,3 +11,4 @@ expression: diags
     length: 1
   section: ~
   message: Lexical diversity drops to 0.01 in a window of 100 content words (target ≥ 0.50). Vary the vocabulary or restructure the passage.
+  weight: 1

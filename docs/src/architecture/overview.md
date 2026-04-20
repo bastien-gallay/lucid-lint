@@ -31,21 +31,35 @@
               │
               ▼
 ┌──────────────────────────┐
-│ Diagnostics              │   rule_id, severity, location, section, message
+│ Diagnostics              │   rule_id, severity, location, section,
+│                          │   message, weight
+└─────────────┬────────────┘
+              │
+              ▼
+┌──────────────────────────┐     v0.2+
+│ Scoring                  │   density-normalized, category-capped
+│ (Scorecard)              │   5 fixed categories
 └─────────────┬────────────┘
               │
               ▼
 ┌──────────────────────────┐
 │ Output formatter         │   TTY (default) or JSON
+│                          │   — carries diagnostics + scorecard
 └──────────────────────────┘
 ```
 
 ## Key types
 
-- **`Diagnostic`** — the output unit. Minimal and stable.
+- **`Diagnostic`** — the output unit. Carries `weight` (seeded from
+  `scoring::default_weight_for`) as of v0.2.
 - **`Rule`** (trait) — `fn check(document, language) -> Vec<Diagnostic>`.
 - **`Document`** — the parser's output. Section-aware.
-- **`Engine`** — bundles a profile and a set of rules, exposes `lint_str`, `lint_file`, `lint_stdin`.
+- **`Scorecard`** — `global: Score` plus `[CategoryScore; 5]` in fixed
+  `Structure · Rhythm · Lexicon · Syntax · Readability` order.
+- **`Report`** — `diagnostics + scorecard + word_count`, returned by
+  `Engine::lint_*` since v0.2.
+- **`Engine`** — bundles a profile, rule set, and optional
+  `ScoringConfig`; exposes `lint_str`, `lint_file`, `lint_stdin`.
 
 ## Design principles
 
@@ -69,6 +83,7 @@ src/
 ├── language/          — detection + per-language data
 ├── parser/            — Markdown + plain + tokenizer + document model
 ├── rules/             — one file per rule
+├── scoring.rs         — hybrid scoring model (v0.2+)
 ├── output/            — TTY + JSON formatters
 └── types.rs           — domain types (Diagnostic, Severity, Location, ...)
 ```

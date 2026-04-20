@@ -300,11 +300,11 @@ mod tests {
     }
 
     #[test]
-    fn category_is_lexical() {
+    fn category_is_lexicon() {
         let text = "The implementation of the configuration requires completion of the \
                     serialization step here.";
         let diags = lint(text, Profile::Public, Language::En);
-        assert_eq!(diags[0].category(), crate::types::Category::Lexical);
+        assert_eq!(diags[0].category(), crate::types::Category::Lexicon);
     }
 
     #[test]

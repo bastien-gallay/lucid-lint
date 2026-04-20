@@ -22,11 +22,17 @@ Do not add abstractions speculatively. A trait for a single implementation, a fi
 
 Previous design discussions explicitly removed:
 
-- `category` from the `Diagnostic` struct (derivable from `rule_id`)
-- `weight` and `suggestion` from the `Diagnostic` struct (v0.2 feature)
+- `category` from the `Diagnostic` struct (derivable from `rule_id` via `Category::for_rule`)
+- `suggestion` from the `Diagnostic` struct (still deferred past v0.2)
 - A pluggable `Parser` trait with a single `MarkdownParser` implementation
 
-If you find yourself wanting to add one of these, stop and confirm with a human.
+`weight` was added to `Diagnostic` in v0.2 as part of the hybrid scoring
+model (F14). Seeded at emission from `scoring::default_weight_for(rule_id)`;
+rules rarely need to override via `with_weight`. Do not remove the field
+or re-derive it on the fly.
+
+If you find yourself wanting to add one of the removed items, stop and
+confirm with a human.
 
 ### 2. Preserve typing discipline
 
@@ -84,8 +90,11 @@ Every rule implements a common `Rule` trait, exposes a default config, and lives
 
 ### Output
 
-- Default: human-readable TTY with colors when stdout is a tty.
-- `--format=json`: stable JSON schema for CI integration.
+- Default: human-readable TTY with colors when stdout is a tty. Appends a
+  `score:` summary line (v0.2+) with optional per-category breakdown.
+- `--format=json`: stable JSON schema for CI integration. `version = 2`
+  as of v0.2 — carries `score`, `category_scores`, and per-diagnostic
+  `weight`. See `docs/src/guide/scoring.md`.
 - SARIF v2.1.0 for GitHub Code Scanning is planned for v0.2 (see `ROADMAP.md`).
 
 ## Definition of "done" for a change

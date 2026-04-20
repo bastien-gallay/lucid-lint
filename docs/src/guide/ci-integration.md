@@ -65,3 +65,29 @@ lucid-lint check --fail-on-warning=false docs/
 ```
 
 This always returns 0 except on runtime error.
+
+## Gating on score
+
+As of v0.2 you can also gate the build on the aggregate
+[scoring model](./scoring.md). The run exits `1` if the global score is
+below the threshold, independently of the severity gate.
+
+```yaml
+jobs:
+  lucid-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo install lucid-lint
+      - name: Lint and gate on score
+        run: lucid-lint check --min-score=85 docs/ README.md
+```
+
+Both gates stack — the run fails if *either* trips. Pick the combination
+that fits your adoption curve:
+
+| Goal | Flags |
+|---|---|
+| Catch newly introduced warnings (v0.1 behaviour) | default |
+| Tolerate individual warnings but fail on drift | `--fail-on-warning=false --min-score=85` |
+| Fail on both spikes and drift | default + `--min-score=85` |

@@ -396,9 +396,9 @@ mod tests {
     }
 
     #[test]
-    fn category_is_lexical() {
+    fn category_is_lexicon() {
         let diags = lint("Fix the ZQX.", Profile::Public);
-        assert_eq!(diags[0].category(), crate::types::Category::Lexical);
+        assert_eq!(diags[0].category(), crate::types::Category::Lexicon);
     }
 
     #[test]

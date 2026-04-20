@@ -1,6 +1,5 @@
 ---
 source: src/rules/repetitive_connectors.rs
-assertion_line: 419
 expression: diags
 ---
 - rule_id: repetitive-connectors
@@ -12,3 +11,4 @@ expression: diags
     length: 24
   section: ~
   message: "Connector \"then\" appears 4 times within 5 consecutive sentences (max 3). Vary the connector or restructure the passage."
+  weight: 1

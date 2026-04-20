@@ -1,6 +1,5 @@
 ---
 source: src/rules/unclear_antecedent.rs
-assertion_line: 320
 expression: diags
 ---
 - rule_id: unclear-antecedent
@@ -12,6 +11,7 @@ expression: diags
     length: 59
   section: ~
   message: "Paragraph opens with the pronoun \"it\". Readers have no antecedent in this paragraph — name the referent instead."
+  weight: 2
 - rule_id: unclear-antecedent
   severity: info
   location:
@@ -21,3 +21,4 @@ expression: diags
     length: 26
   section: ~
   message: "Sentence starts with a bare demonstrative \"this\". Name the referent (e.g. \"this change\", \"cette décision\") to avoid forcing the reader to guess."
+  weight: 2

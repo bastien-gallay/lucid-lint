@@ -339,11 +339,11 @@ mod tests {
     }
 
     #[test]
-    fn category_is_lexical() {
+    fn category_is_lexicon() {
         let base = "cache cache cache cache cache cache cache cache cache cache ";
         let text = base.repeat(12);
         let diags = lint(&text, Profile::Public, Language::En);
-        assert_eq!(diags[0].category(), crate::types::Category::Lexical);
+        assert_eq!(diags[0].category(), crate::types::Category::Lexicon);
     }
 
     #[test]

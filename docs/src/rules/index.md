@@ -12,14 +12,18 @@ It documents each of the 17 v0.1 rules in detail, including:
 
 ## Categories
 
+v0.2 fixes the taxonomy at 5 buckets (remapped from v0.1 — see the
+[Categories](https://github.com/bastien-gallay/lucid-lint/blob/main/RULES.md#categories)
+section of RULES.md for the rename map). The buckets also drive the
+[scoring model](../guide/scoring.md).
+
 | Category | Rules |
 |---|---|
-| **Length** | `sentence-too-long`, `paragraph-too-long` |
-| **Structure** | `excessive-commas`, `long-enumeration`, `deep-subordination`, `deeply-nested-lists`, `heading-jump` |
-| **Rhythm** | `consecutive-long-sentences` |
-| **Lexical** | `low-lexical-diversity`, `excessive-nominalization`, `unexplained-abbreviation`, `weasel-words`, `jargon-undefined` |
-| **Style** | `passive-voice`, `repetitive-connectors`, `unclear-antecedent` |
-| **Global** | `readability-score` |
+| **Structure** | `sentence-too-long`, `paragraph-too-long`, `excessive-commas`, `long-enumeration`, `deep-subordination`, `deeply-nested-lists`, `heading-jump` |
+| **Rhythm** | `consecutive-long-sentences`, `repetitive-connectors` |
+| **Lexicon** | `low-lexical-diversity`, `excessive-nominalization`, `unexplained-abbreviation`, `weasel-words`, `jargon-undefined` |
+| **Syntax** | `passive-voice`, `unclear-antecedent` |
+| **Readability** | `readability-score` |
 
 ## Severity
 

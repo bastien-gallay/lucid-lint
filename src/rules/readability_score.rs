@@ -272,10 +272,10 @@ mod tests {
     }
 
     #[test]
-    fn category_is_global() {
+    fn category_is_readability() {
         let text = "Short. Prose.";
         let diags = lint(text, Profile::Public);
-        assert_eq!(diags[0].category(), crate::types::Category::Global);
+        assert_eq!(diags[0].category(), crate::types::Category::Readability);
     }
 
     #[test]

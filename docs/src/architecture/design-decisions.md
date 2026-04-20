@@ -4,23 +4,60 @@ This page records design decisions made during v0.1 that are worth revisiting be
 
 ## Linter model vs scoring model
 
-**Decision**: v0.1 ships as a classic linter with `info` / `warning` severities. A hybrid scoring model (global score + per-category sub-scores + diagnostics) is planned for v0.2.
+**Decision**: v0.1 shipped as a classic linter with `info` / `warning`
+severities. v0.2 added a hybrid scoring model (global score +
+per-category sub-scores + diagnostics) on top, without removing the
+linter form.
 
-**Rationale**: shipping the linter form first lets us validate detection quality on real corpora before investing in a scoring model.
+**Rationale**: shipping the linter form first let us validate detection
+quality on real corpora before adding the aggregation layer. The scoring
+layer is additive — consumers that only care about diagnostics ignore
+the scorecard.
 
-## Diagnostic struct is minimal
+## Hybrid scoring model (v0.2)
 
-**Decision**: a `Diagnostic` carries only `rule_id`, `severity`, `location`, `section`, `message`.
+**Decision**: global + 5 per-category sub-scores, all in `X / max` form.
+Composition stacks a weighted sum, density normalization (per 1 000
+words, floored at 200), and a per-category cap. 5 fixed categories:
+`Structure · Rhythm · Lexicon · Syntax · Readability`.
+New `Diagnostic.weight` field, new `--min-score=N` CLI flag.
+
+**Rationale** (full brainstorm at [`brainstorm/20260420-score-semantics.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/brainstorm/20260420-score-semantics.md)):
+
+- `X / max` over 0–100: arbitrary max lets us re-tune without claiming
+  the 80 we ship today is the same 80 next release. The `/impeccable`
+  skill already uses this convention.
+- 5 fixed categories: couples nothing to a rule rename; uses the
+  `category_of(rule_id)` helper already decided in v0.1. Derive-from-
+  prefix (plan B) was rejected because it would require renaming 17
+  rules for F14 alone.
+- Three composition mechanics stacked: no single one covers every
+  failure mode. Density alone punishes short docs; weights alone lose
+  to a runaway rule; caps alone can't reflect cost magnitude.
+- Letter grades, traffic lights, pass/fail margin, reading-time-seconds
+  were cut from the v0.2 design after a first-principles pass (F39–F41
+  in ROADMAP). They duplicate function-1 (at-a-glance) that the number
+  already serves.
+- Actionability (function-2) is delivered by the diagnostics list, not
+  the score. So sub-scores can afford to be minimal — F37 makes sure
+  diagnostic messages hold up the actionability side of the contract.
+
+## Diagnostic struct
+
+**Decision**: a `Diagnostic` carries `rule_id`, `severity`, `location`,
+`section`, `message`, and (as of v0.2) `weight`.
 
 **What's NOT stored and why**:
 
 - **`category`** — derivable from `rule_id` via `Category::for_rule`. Storing it would duplicate information and risk drift.
-- **`weight`** — a v0.2 feature for the scoring model. Not useful yet.
-- **`suggestion`** — a v0.2 feature. Current messages are actionable on their own.
+- **`suggestion`** — still deferred; current messages are actionable on their own.
 
 **What IS stored and why**:
 
 - **`section`** — recomputing it after the fact would require re-parsing the document to walk headings and match locations. The storage cost is an `Option<String>` per diagnostic; the recompute cost is a second full parse.
+- **`weight`** (v0.2) — seeded at emission from `scoring::default_weight_for`
+  so that user overrides (via config) and rule-level overrides (via
+  `with_weight`) both flow through aggregation without a second lookup.
 
 ## Deterministic core, plugins for the rest
 

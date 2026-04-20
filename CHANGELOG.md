@@ -7,12 +7,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-The v0.2 cycle extends the v0.1 foundations. Work in flight:
+### Added
 
-- **Scoring** — hybrid model (global score + per-category sub-scores) and SARIF v2.1.0 output for GitHub Code Scanning (F14, F15, F17, F32).
-- **Rule refinement** — definition-aware `unexplained-abbreviation`, language-specific readability formulas (Kandel-Moles FR, SMOG, Coleman-Liau), context-aware relaxations for `excessive-commas` and `weasel-words` (F9, F10, F22, F23).
-- **Docs site** — French mirror of the docs (`/fr/`), full reading-preferences popover UI (font, line-spacing, text-size sliders — the v0.1 demonstrator is the seed), responsive / mobile adaptation, brand-owned theme-picker labels, and the accessibility-audit sweep (F25, F26, F33–F36).
-- **Format support** — native AsciiDoc and HTML, a Pandoc companion script for docx (F5, F6, F7, F8).
+- **Hybrid scoring model (F14)** — every run now emits a global `X / max`
+  score plus five per-category sub-scores (Structure · Rhythm · Lexicon ·
+  Syntax · Readability). Composition stacks a weighted sum, density
+  normalization (per 1 000 words, floored at 200 words) and a per-category
+  cap so no single rule dominates. See [`docs/src/guide/scoring.md`](docs/src/guide/scoring.md).
+- **`--min-score=N` CLI flag** — optional gate that exits `1` when the
+  aggregate document score falls below `N`. Stacks with the existing
+  severity gate.
+- **`[scoring]` / `[scoring.weights]` in `lucid-lint.toml`** — override
+  `category_max`, `category_cap`, and per-rule weights without touching
+  code.
+- **`Diagnostic.weight` field** — populated at emission from
+  `scoring::default_weight_for`; overridable per-diagnostic via
+  `with_weight`.
+- **Public `scoring` module** — `Score`, `CategoryScore`, `Scorecard`,
+  `ScoringConfig`, `compute`, `default_weight_for`, `severity_multiplier`,
+  plus the `Category::ALL` constant for fixed iteration order.
+
+### Changed
+
+- **Breaking — `Category` remap.** The six v0.1 variants collapse to
+  five: `length` / `structure` → `Structure`, `rhythm` → `Rhythm`,
+  `lexical` → `Lexicon`, `style` / `repetitive-connectors` → `Syntax` /
+  `Rhythm`, `global` → `Readability`. JSON `category` values and
+  `Category::for_rule` are updated accordingly.
+- **Breaking — `Engine::lint_str` / `lint_stdin` / `lint_file` return
+  `Report`** (`diagnostics` + `scorecard` + `word_count`) instead of
+  `Vec<Diagnostic>`. Call sites consume `report.diagnostics` and
+  `report.scorecard`.
+- **Breaking — JSON schema `version = 2`.** Adds `score`,
+  `category_scores`, and per-diagnostic `weight`. Consumers on v0.1
+  should bump the expected version and remap the category names listed
+  above.
+- **TTY output** appends one colorized `score:` line after the existing
+  summary, followed by all five per-category scores in fixed order.
+
+### Still in flight (v0.2)
+
+- **SARIF v2.1.0 output** for GitHub Code Scanning (F32).
+- **Rule refinement** — definition-aware `unexplained-abbreviation`,
+  language-specific readability formulas (Kandel-Moles FR, SMOG,
+  Coleman-Liau), context-aware relaxations for `excessive-commas` and
+  `weasel-words` (F9, F10, F22, F23).
+- **Rule-message clarity audit (F37)** — every diagnostic must answer
+  "what do I change?"; gates the v0.2 release because score
+  actionability depends on diagnostic actionability.
+- **Docs site** — French mirror of the docs (`/fr/`), full reading-
+  preferences popover UI, responsive / mobile adaptation, brand-owned
+  theme-picker labels, accessibility-audit sweep (F25, F26, F33–F36).
+- **Format support** — native AsciiDoc and HTML, a Pandoc companion
+  script for docx (F5, F6, F7, F8).
+- **Project-level scoring roll-up (F15)** — document-level lands in this
+  cycle; multi-file roll-up still open.
 
 See [`ROADMAP.md`](ROADMAP.md) for the full backlog with priorities.
 

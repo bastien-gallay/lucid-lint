@@ -13,11 +13,12 @@ use lucid_lint::{Engine, Profile};
 
 fn assert_fires(rule_id: &str, text: &str) {
     let engine = Engine::with_profile(Profile::Public);
-    let diagnostics = engine.lint_str(text);
+    let report = engine.lint_str(text);
     assert!(
-        diagnostics.iter().any(|d| d.rule_id == rule_id),
+        report.diagnostics.iter().any(|d| d.rule_id == rule_id),
         "{rule_id} did not fire on input: {text:?}\ngot: {:?}",
-        diagnostics
+        report
+            .diagnostics
             .iter()
             .map(|d| d.rule_id.as_str())
             .collect::<Vec<_>>()
