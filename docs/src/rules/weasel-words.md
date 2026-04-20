@@ -31,7 +31,7 @@ Word-boundary match against a per-language list. Case-insensitive. One diagnosti
 
 ## Known false positives
 
-The v0.1 detector is context-blind. Quoted terms, "many X" with concrete X, and meta-discussion of the words themselves still fire. Context-awareness is tracked as **F23** on the [roadmap](../roadmap.md).
+The v0.1 detector is context-blind. Quoted terms, "many X" with concrete X, and meta-discussion of the words themselves still fire. Context-awareness is tracked as **[F23](../roadmap.md)** on the [roadmap](../roadmap.md).
 
 ## Suppression
 

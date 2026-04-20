@@ -30,16 +30,16 @@ New `Diagnostic.weight` field, new `--min-score=N` CLI flag.
 - 5 fixed categories: couples nothing to a rule rename; uses the
   `category_of(rule_id)` helper already decided in v0.1. Derive-from-
   prefix (plan B) was rejected because it would require renaming 17
-  rules for F14 alone.
+  rules for [F14](../roadmap.md) alone.
 - Three composition mechanics stacked: no single one covers every
   failure mode. Density alone punishes short docs; weights alone lose
   to a runaway rule; caps alone can't reflect cost magnitude.
 - Letter grades, traffic lights, pass/fail margin, reading-time-seconds
-  were cut from the v0.2 design after a first-principles pass (F39–F41
+  were cut from the v0.2 design after a first-principles pass ([F39](../roadmap.md)–[F41](../roadmap.md)
   in ROADMAP). They duplicate function-1 (at-a-glance) that the number
   already serves.
 - Actionability (function-2) is delivered by the diagnostics list, not
-  the score. So sub-scores can afford to be minimal — F37 makes sure
+  the score. So sub-scores can afford to be minimal — [F37](../roadmap.md) makes sure
   diagnostic messages hold up the actionability side of the contract.
 
 ## Diagnostic struct

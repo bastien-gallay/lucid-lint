@@ -50,7 +50,7 @@ embed — the exception is documented in
   Navy / Ayu as menu items. Each of them resolves to either
   **Lucid light** or **Lucid dark** via the theme CSS, but the
   picker labels themselves are a mdBook concern. Brand-owned
-  labels are tracked as F26 in the roadmap.
+  labels are tracked as [F26](./roadmap.md) in the roadmap.
 
 ## Reading preferences
 

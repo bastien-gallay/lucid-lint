@@ -29,8 +29,8 @@ Cross-cutting features shipped:
 - SARIF v2.1.0 output for GitHub Code Scanning (F32)
 - Rule-message clarity audit (F37) — gates the v0.2 release
 - Language-specific readability formulas (Kandel-Moles FR, SMOG, Coleman-Liau)
-- Definition-aware `unexplained-abbreviation`
-- Custom stoplist for `low-lexical-diversity`
+- Definition-aware [`unexplained-abbreviation`](./rules/unexplained-abbreviation.md)
+- Custom stoplist for [`low-lexical-diversity`](./rules/low-lexical-diversity.md)
 - Pandoc companion script
 - `missing-connectors` rule
 - Native AsciiDoc and HTML support

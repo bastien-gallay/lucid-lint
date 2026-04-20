@@ -172,19 +172,19 @@ later doesn't break older configs.
 
 ## What's deferred
 
-The brainstorm that shaped F14 (see
+The brainstorm that shaped [F14](../roadmap.md) (see
 [`brainstorm/20260420-score-semantics.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/brainstorm/20260420-score-semantics.md))
 kept the model minimal. Decorations promoted only when user feedback
 requires them:
 
-- **Letter grades (A–F)** — tracked as F39. Promoted if the numbers feel
+- **Letter grades (A–F)** — tracked as [F39](../roadmap.md). Promoted if the numbers feel
   noisy or hard to compare across documents.
-- **Traffic-light + pass/fail margin display** — tracked as F40.
+- **Traffic-light + pass/fail margin display** — tracked as [F40](../roadmap.md).
   Promoted if CI users ask for a stronger glance signal.
-- **Reading-time-seconds as alternative unit** — tracked as F41. Needs a
+- **Reading-time-seconds as alternative unit** — tracked as [F41](../roadmap.md). Needs a
   validated heuristic plus companion metrics (comfort, fatigue) so it
   doesn't monopolize the read.
-- **Section-level sub-scores** — tracked as F38. Once document + project
+- **Section-level sub-scores** — tracked as [F38](../roadmap.md). Once document + project
   roll-ups are proven in the wild.
-- **Project-level multi-file roll-up** — tracked as F15. The CLI in v0.2
+- **Project-level multi-file roll-up** — tracked as [F15](../roadmap.md). The CLI in v0.2
   treats all passed paths as a single document for scoring purposes.

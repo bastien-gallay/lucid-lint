@@ -20,7 +20,7 @@ Acronyms used without a nearby definition. Each forced interruption to guess or 
 2. Subtract the whitelist.
 3. Flag each remaining occurrence.
 
-A two-pass definition-aware version (check whether the acronym is defined anywhere in the document) is tracked as **F9** on the [roadmap](../roadmap.md).
+A two-pass definition-aware version (check whether the acronym is defined anywhere in the document) is tracked as **[F9](../roadmap.md)** on the [roadmap](../roadmap.md).
 
 ## Parameters
 
@@ -29,7 +29,7 @@ A two-pass definition-aware version (check whether the acronym is defined anywhe
 | `min_length` | `int` | 3 | 2 | 2 |
 | `whitelist` | `list` | extended | minimal | empty |
 
-**Default whitelist (v0.1):** general IT (`URL, HTML, CSS, JSON, XML, HTTP, HTTPS, API, CLI, GUI, OS, CPU, RAM, SSD, USB, WiFi`) plus common FR/EN (`PDF, SMS, GPS, ID, OK, FAQ`). Narrower project-scoped overrides are tracked as **F31**.
+**Default whitelist (v0.1):** general IT (`URL, HTML, CSS, JSON, XML, HTTP, HTTPS, API, CLI, GUI, OS, CPU, RAM, SSD, USB, WiFi`) plus common FR/EN (`PDF, SMS, GPS, ID, OK, FAQ`). Narrower project-scoped overrides are tracked as **[F31](../roadmap.md)**.
 
 ## Suppression
 

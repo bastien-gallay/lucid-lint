@@ -28,7 +28,7 @@ A document-level readability index. Readability formulas are the historical synt
 | 12–16 | College |
 | > 16 | Expert |
 
-Language-specific formulas (Kandel-Moles, Scolarius, SMOG, Coleman-Liau) and a user-configurable formula choice are tracked as **F10** / **F11** on the [roadmap](../roadmap.md).
+Language-specific formulas (Kandel-Moles, Scolarius, SMOG, Coleman-Liau) and a user-configurable formula choice are tracked as **[F10](../roadmap.md)** / **[F11](../roadmap.md)** on the [roadmap](../roadmap.md).
 
 ## Parameters
 

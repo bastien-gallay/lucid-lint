@@ -25,7 +25,7 @@ Split on blank lines (Markdown paragraph convention). Count sentences and words 
 
 ## Examples
 
-A paragraph of eight medium sentences under the `public` profile will fire on `max_sentences`. A paragraph containing a single 120-word sentence will fire on `max_words` (and also on `sentence-too-long`).
+A paragraph of eight medium sentences under the `public` profile will fire on `max_sentences`. A paragraph containing a single 120-word sentence will fire on `max_words` (and also on [`sentence-too-long`](./sentence-too-long.md)).
 
 ## Suppression
 

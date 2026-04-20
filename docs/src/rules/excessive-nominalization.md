@@ -28,7 +28,7 @@ Walk the sentence. Flag words whose suffix matches the language's nominalization
 
 ## Known false positives
 
-Technical vocabulary (`function`, `implementation`, `configuration`) contains many legitimate nominalizations, which is why `dev-doc` relaxes the threshold. The `-al` suffix in English is too broad (flags `crucial`, `horizontal`, `positional` despite these not being abstract nouns) and is tracked for review in **F24** on the [roadmap](../roadmap.md).
+Technical vocabulary (`function`, `implementation`, `configuration`) contains many legitimate nominalizations, which is why `dev-doc` relaxes the threshold. The `-al` suffix in English is too broad (flags `crucial`, `horizontal`, `positional` despite these not being abstract nouns) and is tracked for review in **[F24](../roadmap.md)** on the [roadmap](../roadmap.md).
 
 ## Example
 

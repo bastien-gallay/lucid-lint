@@ -20,7 +20,7 @@ Domain-specific terms used without definition. Jargon is contextual: acceptable 
 2. User activates the relevant lists via profile.
 3. Flag each occurrence of a listed term.
 
-A definition-aware variant is tracked as part of **F9** on the [roadmap](../roadmap.md).
+A definition-aware variant is tracked as part of **[F9](../roadmap.md)** on the [roadmap](../roadmap.md).
 
 ## Parameters
 

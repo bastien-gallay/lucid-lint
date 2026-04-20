@@ -26,7 +26,7 @@ Count commas per sentence, report those above `max_commas`.
 
 ## Known false positives
 
-Technical prose enumerating short items still fires; context-aware relaxations (parentheticals, post-colon short lists, non-Oxford enumerations) are tracked as **F22** in the [roadmap](../roadmap.md).
+Technical prose enumerating short items still fires; context-aware relaxations (parentheticals, post-colon short lists, non-Oxford enumerations) are tracked as **[F22](../roadmap.md)** in the [roadmap](../roadmap.md).
 
 ## Suppression
 
