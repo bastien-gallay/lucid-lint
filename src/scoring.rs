@@ -128,6 +128,7 @@ pub const WEIGHTED_RULE_IDS: &[&str] = &[
     "weasel-words",
     "jargon-undefined",
     "nested-negation",
+    "conditional-stacking",
 ];
 
 /// Default weight for a rule, keyed by `rule_id`.
@@ -142,8 +143,13 @@ pub const WEIGHTED_RULE_IDS: &[&str] = &[
 pub fn default_weight_for(rule_id: &str) -> u32 {
     match rule_id {
         "readability-score" => 5,
-        "sentence-too-long" | "paragraph-too-long" | "deep-subordination" | "passive-voice"
-        | "unclear-antecedent" | "nested-negation" => 2,
+        "sentence-too-long"
+        | "paragraph-too-long"
+        | "deep-subordination"
+        | "passive-voice"
+        | "unclear-antecedent"
+        | "nested-negation"
+        | "conditional-stacking" => 2,
         _ => 1,
     }
 }

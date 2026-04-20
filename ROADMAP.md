@@ -154,7 +154,7 @@ research that justifies the rule.
 |---|---|---|---|---|---|
 | F48 | `lexicon.all-caps-shouting` | Lexicon | `a11y-markup`, `dyslexia`, `general` | WCAG 3.1.5, BDA Dyslexia Style Guide | 🔴 High |
 | F55 | ✅ `nested-negation` shipped in v0.2 — see [`docs/src/rules/nested-negation.md`](docs/src/rules/nested-negation.md) | Syntax | `aphasia`, `adhd`, `general` | FALC, CDC Clear Communication Index | 🔴 High |
-| F56 | `syntax.conditional-stacking` | Syntax | `aphasia`, `adhd`, `general` | FALC, plainlanguage.gov | 🔴 High |
+| F56 | ✅ `conditional-stacking` shipped in v0.2 — see [`docs/src/rules/conditional-stacking.md`](docs/src/rules/conditional-stacking.md) | Syntax | `aphasia`, `adhd`, `general` | FALC, plainlanguage.gov | 🔴 High |
 
 **Should-ship v0.2 (cuttable under time pressure, in suggested cut order):**
 

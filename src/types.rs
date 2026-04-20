@@ -164,7 +164,9 @@ impl Category {
             | "unexplained-abbreviation"
             | "weasel-words"
             | "jargon-undefined" => Self::Lexicon,
-            "passive-voice" | "unclear-antecedent" | "nested-negation" => Self::Syntax,
+            "passive-voice" | "unclear-antecedent" | "nested-negation" | "conditional-stacking" => {
+                Self::Syntax
+            },
             "readability-score" => Self::Readability,
             _ => Self::Syntax,
         }

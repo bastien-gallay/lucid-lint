@@ -194,6 +194,28 @@ pub static NEGATIONS: &[&str] = &[
     "nor", "cannot", "without",
 ];
 
+/// English conditional / temporal-conditional connectors (lowercased).
+///
+/// Used by the `conditional-stacking` rule to count branching constructs
+/// that compound the inferential load on a single sentence. Mixes pure
+/// conditionals (`if`, `unless`, `provided`) with temporal conjunctions
+/// that introduce a conditional-like sub-clause (`when`, `while`).
+pub static CONDITIONALS: &[&str] = &[
+    "if",
+    "unless",
+    "when",
+    "whenever",
+    "while",
+    "until",
+    "provided",
+    "assuming",
+    "in case",
+    "as long as",
+    "as soon as",
+    "even if",
+    "only if",
+];
+
 #[cfg(test)]
 mod tests {
     use super::*;

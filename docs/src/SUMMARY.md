@@ -33,6 +33,7 @@
   - [`passive-voice`](./rules/passive-voice.md)
   - [`unclear-antecedent`](./rules/unclear-antecedent.md)
   - [`nested-negation`](./rules/nested-negation.md)
+  - [`conditional-stacking`](./rules/conditional-stacking.md)
   - [`readability-score`](./rules/readability-score.md)
 
 # Architecture

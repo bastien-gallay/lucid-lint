@@ -74,7 +74,7 @@ score is their weighted sum.
 | Category | Rules |
 |---|---|
 | `structure` | `sentence-too-long`, `paragraph-too-long`, `deeply-nested-lists`, `heading-jump`, `excessive-commas`, `long-enumeration`, `deep-subordination` |
-| `syntax` | `passive-voice`, `unclear-antecedent`, `nested-negation` |
+| `syntax` | `passive-voice`, `unclear-antecedent`, `nested-negation`, `conditional-stacking` |
 | `rhythm` | `consecutive-long-sentences`, `repetitive-connectors` |
 | `lexicon` | `low-lexical-diversity`, `excessive-nominalization`, `unexplained-abbreviation`, `weasel-words`, `jargon-undefined` |
 | `readability` | `readability-score` |
@@ -106,7 +106,7 @@ Default weights (from `scoring::default_weight_for`):
 | Weight | Rules |
 |---|---|
 | `5` | `readability-score` |
-| `2` | `sentence-too-long`, `paragraph-too-long`, `deep-subordination`, `passive-voice`, `unclear-antecedent`, `nested-negation` |
+| `2` | `sentence-too-long`, `paragraph-too-long`, `deep-subordination`, `passive-voice`, `unclear-antecedent`, `nested-negation`, `conditional-stacking` |
 | `1` | every other rule |
 
 Severity multiplier: `info = 1`, `warning = 3`, `error = 5` (reserved).
@@ -781,6 +781,46 @@ Per sentence, count the negations and report counts above `max_negations`.
 **Thresholds by profile**
 
 | Profile | `max_negations` |
+|---|---|
+| `dev-doc` | 3 |
+| `public` | 2 |
+| `falc` | 1 |
+
+---
+
+#### `conditional-stacking`
+
+**Category** : `syntax`
+**Severity** : `warning`
+**Default weight** : `2`
+**Condition tags** : `aphasia`, `adhd`, `general`
+**Bilingual** : yes, language-specific lists
+
+**Intent** : flag sentences that chain multiple conditional clauses. Each `if` / `when` / `unless` (and FR equivalents) opens a branch the reader must hold open until the outer clause resolves.
+
+**Rationale**
+
+Conditionals are inferential branches. Two or three of them stacked in one sentence force the reader to maintain a mental call stack — costly for readers with aphasia, ADHD, and anyone reading under load. Plain-language guidelines (FALC, plainlanguage.gov) recommend splitting chains into separate sentences or a bullet list.
+
+**References** : FALC, plainlanguage.gov.
+
+**Detection**
+
+Per sentence, sum word-bounded matches against the language's conditional connector list and report counts above `max_conditionals`.
+
+🇬🇧 : `if`, `unless`, `when`, `whenever`, `while`, `until`, `provided`, `assuming`, `in case`, `as long as`, `as soon as`, `even if`, `only if`.
+
+🇫🇷 : `si`, `sauf si`, `à moins que`, `à moins de`, `quand`, `lorsque`, `lorsqu'`, `dès que`, `tant que`, `pourvu que`, `à condition que`, `à condition de`, `au cas où`, `même si`, `en cas de`, plus the elliptic clitics `s'il` / `s'ils`.
+
+**Parameters**
+
+| Parameter | Type | Default |
+|---|---|---|
+| `max_conditionals` | int | profile-dependent |
+
+**Thresholds by profile**
+
+| Profile | `max_conditionals` |
 |---|---|
 | `dev-doc` | 3 |
 | `public` | 2 |

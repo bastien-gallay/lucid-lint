@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`conditional-stacking` rule (F56)** — flags sentences chaining
+  multiple conditional connectors (FALC / plainlanguage.gov grounding).
+  Per-profile thresholds: 3 / 2 / 1 (`dev-doc` / `public` / `falc`).
+  Bilingual lists in `language::{en,fr}::CONDITIONALS`; FR also counts
+  the `s'il` / `s'ils` clitics. Condition tags: `aphasia`, `adhd`,
+  `general`. See [`docs/src/rules/conditional-stacking.md`](docs/src/rules/conditional-stacking.md).
 - **`nested-negation` rule (F55)** — flags sentences that stack multiple
   negations (FALC / CDC Clear Communication Index grounding). Per-profile
   thresholds: 3 / 2 / 1 (`dev-doc` / `public` / `falc`). Bilingual: EN

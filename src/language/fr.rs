@@ -87,6 +87,32 @@ pub static STANDALONE_NEGATIONS: &[&str] = &["sans", "non"];
 /// One occurrence of `ne` or `n'` marks one bipartite negation.
 pub static NEGATION_CLITICS: &[&str] = &["ne", "n'"];
 
+/// French conditional / temporal-conditional connectors (lowercased).
+///
+/// Used by the `conditional-stacking` rule. Bare `si` covers both the
+/// canonical conditional and the elliptic `s'` form (see [`SI_CLITICS`]).
+pub static CONDITIONALS: &[&str] = &[
+    "si",
+    "sauf si",
+    "à moins que",
+    "à moins de",
+    "quand",
+    "lorsque",
+    "lorsqu'",
+    "dès que",
+    "tant que",
+    "pourvu que",
+    "à condition que",
+    "à condition de",
+    "au cas où",
+    "même si",
+    "en cas de",
+];
+
+/// French elliptic forms of `si` that attach to a vowel-initial word
+/// (`s'il`, `s'ils`). Counted as one occurrence each.
+pub static SI_CLITICS: &[&str] = &["s'il", "s'ils"];
+
 #[cfg(test)]
 mod tests {
     use super::*;
