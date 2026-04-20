@@ -153,6 +153,15 @@ token-aware counter.
 |---|---|---|---|
 | F25 | French mirror of the mdBook docs (`/fr/` tree) — until then, the header EN/FR switch links to a "French version — coming in v0.2" stub | 🔴 High | v0.1 docs `/shape` session, bilingual-equality prime directive |
 
+### Docs site — content
+
+| ID | Item | Priority | Origin |
+|---|---|---|---|
+| F27 | Mirror the full `ROADMAP.md` in the mdBook site (synced from the repo file, not a hand-edited copy) so readers can browse v0.2+ plans without leaving the docs. | 🔴 High | v0.1 docs review |
+| F28 | Dedicated rule reference in the docs: one page per rule, covering rationale, thresholds per profile, EN/FR examples, and suppression guidance. | 🔴 High | v0.1 docs review |
+| F29 | Rule numbering scheme based on category (e.g. `STR-001` for structural, `LEX-002` for lexical, `SYN-003` for syntactic). Stable IDs that survive renames, referenced from both diagnostics output and the docs. | 🟡 Medium | v0.1 docs review |
+| F30 | Audit every rule mention across the docs and link it to its reference page (F28). Requires F28 to land first. | 🟡 Medium | v0.1 docs review |
+
 ### Docs site — theming
 
 | ID | Item | Priority | Origin |
