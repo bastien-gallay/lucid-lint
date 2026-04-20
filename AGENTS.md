@@ -135,6 +135,8 @@ Prose is Unicode. Use `unicode-segmentation` for graphemes and words. Never inde
 
 ## Design context
 
+<!-- lucid-lint disable-next-line long-enumeration -->
+
 Brand voice, palette, typography shortlist, audience, and the WCAG AAA accessibility bar live in [.impeccable.md](.impeccable.md). Read it before any frontend, mdBook, branding, or marketing-surface work. The `/impeccable` skill also reads it automatically.
 
 ## For Claude specifically

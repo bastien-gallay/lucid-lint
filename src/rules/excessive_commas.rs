@@ -12,6 +12,7 @@ use std::num::NonZeroU32;
 
 use crate::config::Profile;
 use crate::parser::{split_sentences, Document};
+use crate::rules::enumeration::enumeration_comma_count;
 use crate::rules::Rule;
 use crate::types::{Diagnostic, Language, Location, Severity, SourceFile};
 
@@ -65,15 +66,20 @@ impl Rule for ExcessiveCommas {
         Self::ID
     }
 
-    fn check(&self, document: &Document, _language: Language) -> Vec<Diagnostic> {
+    fn check(&self, document: &Document, language: Language) -> Vec<Diagnostic> {
         let max = self.config.max_commas.get();
         document
             .paragraphs_with_section()
             .flat_map(|(paragraph, section_title)| {
                 let sentences = split_sentences(&paragraph.text, paragraph.start_line, 1);
                 sentences.into_iter().filter_map(move |sentence| {
-                    let count =
+                    let total =
                         u32::try_from(sentence.text.matches(',').count()).unwrap_or(u32::MAX);
+                    // Discount commas that belong to a recognized inline
+                    // enumeration: those are style questions for the
+                    // `long-enumeration` rule, not subordination load.
+                    let enum_commas = enumeration_comma_count(&sentence.text, language);
+                    let count = total.saturating_sub(enum_commas);
                     if count > max {
                         Some(build_diagnostic(
                             &document.source,
@@ -129,6 +135,25 @@ mod tests {
     #[test]
     fn id_is_kebab_case() {
         assert_eq!(ExcessiveCommas::ID, "excessive-commas");
+    }
+
+    #[test]
+    fn oxford_enumeration_commas_are_discounted() {
+        // 4 commas total, but the enumeration accounts for them all, so
+        // the effective count is 0 — below threshold.
+        let text = "Red, green, blue, yellow, and purple make the palette.";
+        assert!(lint(text, Profile::Public).is_empty());
+    }
+
+    #[test]
+    fn sentence_with_enumeration_plus_extra_commas_still_triggers() {
+        // The enumeration "red, green, and blue" accounts for 2 commas; the
+        // remaining 4 commas come from subordinate clauses and push the
+        // effective count above the Public threshold.
+        let text = "Note, although we agreed, we packed red, green, and blue, carefully, and \
+                    quietly.";
+        let diags = lint(text, Profile::Public);
+        assert!(!diags.is_empty());
     }
 
     #[test]

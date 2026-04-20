@@ -1,0 +1,14 @@
+---
+source: src/rules/long_enumeration.rs
+assertion_line: 170
+expression: diags
+---
+- rule_id: long-enumeration
+  severity: warning
+  location:
+    file: "<input>"
+    line: 1
+    column: 1
+    length: 54
+  section: ~
+  message: Inline enumeration of 5 items. Consider converting it into a bulleted list so readers can scan the items.

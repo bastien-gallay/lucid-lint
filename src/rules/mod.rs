@@ -11,10 +11,12 @@ use crate::types::{Diagnostic, Language};
 
 pub mod consecutive_long_sentences;
 pub mod deeply_nested_lists;
+pub mod enumeration;
 pub mod excessive_commas;
 pub mod excessive_nominalization;
 pub mod heading_jump;
 pub mod jargon_undefined;
+pub mod long_enumeration;
 pub mod paragraph_too_long;
 pub mod readability_score;
 pub mod repetitive_connectors;
@@ -28,6 +30,7 @@ pub use excessive_commas::ExcessiveCommas;
 pub use excessive_nominalization::ExcessiveNominalization;
 pub use heading_jump::HeadingJump;
 pub use jargon_undefined::JargonUndefined;
+pub use long_enumeration::LongEnumeration;
 pub use paragraph_too_long::ParagraphTooLong;
 pub use readability_score::ReadabilityScore;
 pub use repetitive_connectors::RepetitiveConnectors;
@@ -77,6 +80,7 @@ pub fn default_rules(profile: Profile) -> Vec<Box<dyn Rule>> {
         Box::new(ExcessiveNominalization::for_profile(profile)),
         Box::new(RepetitiveConnectors::for_profile(profile)),
         Box::new(ReadabilityScore::for_profile(profile)),
+        Box::new(LongEnumeration::for_profile(profile)),
     ]
 }
 

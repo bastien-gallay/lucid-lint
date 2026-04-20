@@ -24,7 +24,7 @@ This document captures ideas that emerged while designing v0.1. They are intenti
 
 Backlog of everything that must ship before tagging `v0.1.0`. The implementation order mirrors the phases agreed during the bootstrap session: start with the cheapest, most deterministic signals, work up to the trickiest heuristics.
 
-### Rules (12 / 16)
+### Rules (13 / 16)
 
 #### Phase 1 — Deterministic structural rules
 
@@ -62,7 +62,7 @@ Backlog of everything that must ship before tagging `v0.1.0`. The implementation
 
 | Status | Rule | Notes |
 |---|---|---|
-| ☐ | `long-enumeration` | |
+| ✅ | `long-enumeration` | Shared enumeration detector with `excessive-commas`; suggests list conversion (`src/rules/long_enumeration.rs`, `src/rules/enumeration.rs`) |
 | ☐ | `deep-subordination` | |
 | ☐ | `passive-voice` | Heuristic only in v0.1; POS-based detection is a `lucid-lint-nlp` plugin candidate |
 | ☐ | `unclear-antecedent` | |
@@ -118,10 +118,12 @@ relaxations to evaluate (needs corpus research — don't pick blindly):
   segments are 1–2 words, treat the enumeration as a single
   "flattened list" token for counting purposes (a
   `max_short_enum_items` parameter, or implicit).
-- **Interaction with `long-enumeration`**: once that rule ships, it
-  already suppresses `excessive-commas` on the sentences it flags.
-  F22 is specifically about the cases `long-enumeration` would miss
-  (3–4 short items, parentheticals).
+- **Interaction with `long-enumeration`**: the shared
+  `enumeration::detect_enumerations` helper already discounts Oxford-
+  style enumeration commas from `excessive-commas` (3+ short items).
+  F22 is specifically about the cases that helper still misses:
+  parentheticals, post-colon lists, and non-Oxford enumerations
+  ("A, B, C and D" without the final comma).
 
 Research inputs to gather before deciding: FR/EN corpus samples of
 technical docs, a handful of real false positives from dogfooding and
@@ -143,6 +145,12 @@ token-aware counter.
 | ID | Item | Priority | Origin |
 |---|---|---|---|
 | F4 | `code-block-without-lang` rule | 🟡 Medium | Rule 8 dropped from v0.1, candidate for `lucid-lint-docs` plugin |
+
+### Docs site — bilingual
+
+| ID | Item | Priority | Origin |
+|---|---|---|---|
+| F25 | French mirror of the mdBook docs (`/fr/` tree) — until then, the header EN/FR switch links to a "French version — coming in v0.2" stub | 🔴 High | v0.1 docs `/shape` session, bilingual-equality prime directive |
 
 ### Quality features
 

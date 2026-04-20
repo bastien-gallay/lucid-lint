@@ -89,6 +89,7 @@ See [RULES.md](RULES.md) for per-rule thresholds.
 ## Rules
 
 <!-- lucid-lint disable-next-line excessive-commas -->
+<!-- lucid-lint disable-next-line long-enumeration -->
 
 16 rules in v0.1, covering length, structure, rhythm, lexical choice, style, and global readability. Full reference in [RULES.md](RULES.md).
 
