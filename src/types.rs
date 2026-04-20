@@ -157,7 +157,8 @@ impl Category {
             | "heading-jump"
             | "excessive-commas"
             | "long-enumeration"
-            | "deep-subordination" => Self::Structure,
+            | "deep-subordination"
+            | "line-length-wide" => Self::Structure,
             "consecutive-long-sentences" | "repetitive-connectors" => Self::Rhythm,
             "low-lexical-diversity"
             | "excessive-nominalization"

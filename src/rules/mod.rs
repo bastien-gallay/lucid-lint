@@ -20,6 +20,7 @@ pub mod excessive_commas;
 pub mod excessive_nominalization;
 pub mod heading_jump;
 pub mod jargon_undefined;
+pub mod line_length_wide;
 pub mod long_enumeration;
 pub mod low_lexical_diversity;
 pub mod nested_negation;
@@ -42,6 +43,7 @@ pub use excessive_commas::ExcessiveCommas;
 pub use excessive_nominalization::ExcessiveNominalization;
 pub use heading_jump::HeadingJump;
 pub use jargon_undefined::JargonUndefined;
+pub use line_length_wide::LineLengthWide;
 pub use long_enumeration::LongEnumeration;
 pub use low_lexical_diversity::LowLexicalDiversity;
 pub use nested_negation::NestedNegation;
@@ -131,6 +133,7 @@ pub fn default_rules(profile: Profile) -> Vec<Box<dyn Rule>> {
         Box::new(NestedNegation::for_profile(profile)),
         Box::new(ConditionalStacking::for_profile(profile)),
         Box::new(AllCapsShouting::for_profile(profile)),
+        Box::new(LineLengthWide::for_profile(profile)),
     ]
 }
 
@@ -158,7 +161,7 @@ mod tests {
     #[test]
     fn filter_by_conditions_keeps_general_rules() {
         let kept = filter_by_conditions(default_rules(Profile::Public), &[]);
-        assert_eq!(kept.len(), 20);
+        assert_eq!(kept.len(), 21);
     }
 
     #[test]

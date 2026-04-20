@@ -20,6 +20,7 @@
   - [`paragraph-too-long`](./rules/paragraph-too-long.md)
   - [`heading-jump`](./rules/heading-jump.md)
   - [`deeply-nested-lists`](./rules/deeply-nested-lists.md)
+  - [`line-length-wide`](./rules/line-length-wide.md)
   - [`excessive-commas`](./rules/excessive-commas.md)
   - [`long-enumeration`](./rules/long-enumeration.md)
   - [`deep-subordination`](./rules/deep-subordination.md)

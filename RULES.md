@@ -73,7 +73,7 @@ score is their weighted sum.
 
 | Category | Rules |
 |---|---|
-| `structure` | `sentence-too-long`, `paragraph-too-long`, `deeply-nested-lists`, `heading-jump`, `excessive-commas`, `long-enumeration`, `deep-subordination` |
+| `structure` | `sentence-too-long`, `paragraph-too-long`, `deeply-nested-lists`, `heading-jump`, `excessive-commas`, `long-enumeration`, `deep-subordination`, `line-length-wide` |
 | `syntax` | `passive-voice`, `unclear-antecedent`, `nested-negation`, `conditional-stacking` |
 | `rhythm` | `consecutive-long-sentences`, `repetitive-connectors` |
 | `lexicon` | `low-lexical-diversity`, `excessive-nominalization`, `unexplained-abbreviation`, `weasel-words`, `jargon-undefined`, `all-caps-shouting` |
@@ -364,6 +364,38 @@ Fully deterministic. No false positives.
 **Diagnostic suggestion**
 
 > *"List item at depth N exceeds maximum depth of M. Consider flattening structure, splitting into multiple lists, or using subsections with headings."*
+
+---
+
+#### `line-length-wide`
+
+**Category** : `structure`
+**Severity** : `warning`
+**Default weight** : `1`
+**Condition tags** : `dyslexia`, `general`
+**Bilingual** : yes, script-agnostic
+
+**Intent** : flag source lines wider than the per-profile ceiling. WCAG 1.4.8 (AAA) caps rendered text at roughly 80 characters because longer lines force longer return sweeps and increase re-reading — a known difficulty for dyslexic readers.
+
+**References** : WCAG 1.4.8 (AAA), BDA Dyslexia Style Guide.
+
+**Detection**
+
+Per paragraph, count grapheme clusters on each line and report lines above `max_line_length`. Fenced and indented code blocks are excluded by the Markdown parser. Markdown soft breaks in the source are reflowed to spaces during parsing, so the rule measures the reflowed paragraph text; for hard control over wrap width, lint the rendered output or use a plain-text input.
+
+**Parameters**
+
+| Parameter | Type | Default |
+|---|---|---|
+| `max_line_length` | int | profile-dependent |
+
+**Thresholds by profile**
+
+| Profile | `max_line_length` |
+|---|---|
+| `dev-doc` | 120 |
+| `public` | 100 |
+| `falc` | 80 |
 
 ---
 

@@ -164,7 +164,7 @@ research that justifies the rule.
 |---|---|---|---|---|---|
 | F62 | `lexicon.redundant-intensifier` | Lexicon | `general` | Plain-language guides | 🟡 Medium |
 | F52 | `structure.mixed-numeric-format` | Structure | `dyscalculia`, `general` | CDC Clear Communication Index | 🟡 Medium |
-| F50 | `structure.line-length-wide` | Structure | `dyslexia`, `general` | WCAG 1.4.8 (AAA) | 🟡 Medium |
+| F50 | ✅ `line-length-wide` shipped in v0.2 — see [`docs/src/rules/line-length-wide.md`](./rules/line-length-wide.md) | Structure | `dyslexia`, `general` | WCAG 1.4.8 (AAA) | 🟡 Medium |
 | F47 | `lexicon.consonant-cluster` | Lexicon | `dyslexia`, `general` | BDA Dyslexia Style Guide | 🟡 Medium |
 | F54 | `syntax.dense-punctuation-burst` | Syntax | `general` | IFLA easy-to-read guidelines | 🟡 Medium |
 
@@ -294,6 +294,30 @@ depend on earlier features (F9, F14). Naming uses the provisional
 | ID | Item | Priority | Origin |
 |---|---|---|---|
 | F73 | Differential diagnostics — `--compare=<ref>` CLI mode. Runs against two revisions of the same text(s) and reports score-delta + diagnostic-delta. Pitch: CI/PR comment framing ("this PR adds 2 warnings, removes 5, net −3"), inverting alarm fatigue the way coverage tools do. CLI + JSON + SARIF-run-comparison. No dashboard (that is F12). | 🟡 Medium | Rule-system-growth brainstorm (2026-04-20). Depends on F14 stabilising. |
+
+### Ecosystem interop
+
+Motivation: lucid-lint and Markdown-syntax linters (markdownlint, Vale,
+proselint, textlint) can flag the same line from different angles.
+Cognitive-load rules that happen to share a substrate with a structural
+check should stay shipped in core — users without markdownlint, users
+who disabled the matching markdownlint rule, and users feeding
+non-Markdown input (plain text, .docx via F7, HTML via F6) all rely on
+lucid-lint for that coverage. The pain point is editor LSP sessions
+where two servers report the same span with different severities and
+different wording, not CLI pipelines where tools run sequentially.
+
+Scope audit at 2026-04-20: after the `heading-jump` reframing (cognitive
+"comprehension cliff" at skip ≥ 2 levels, distinct from MD001's strict
++1 rule), **`deeply-nested-lists` is the only lucid-lint rule that
+remains functionally equivalent to a markdownlint rule (MD007)**. The
+mechanism below is designed to scale — Vale, proselint, textlint
+overlaps are likely as the rule set grows — rather than to solve a
+single-rule problem.
+
+| ID | Item | Priority | Origin |
+|---|---|---|---|
+| F76 | Interop suppression mechanism. Rules declare overlapping external linter rules in their metadata (e.g. `Rule::external_overlaps() -> &[(Linter, &'static str)]`, enum `Linter::Markdownlint \| Vale \| Proselint \| Textlint`). Users opt in via `[interop] suppress_when = ["markdownlint"]` in `lucid-lint.toml` (CLI equivalent: `--interop-suppress=markdownlint`); opt-out is default, so coverage never silently drops. When active, affected rules are skipped at emission time with an info-level trace in `--verbose`. Ships CLI + LSP (the LSP path is the real motivator: two servers squiggling the same span with different severities and wording erodes trust in both). Only `deeply-nested-lists` qualifies at time of writing (MD007); framework is designed to scale to future overlaps. Non-goal: detecting whether the external linter is actually installed or configured — the config field is the signal. | 🟡 Medium | Markdownlint-overlap scan (2026-04-20) |
 
 ### Research track
 

@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`line-length-wide` rule (F50)** — flags source lines wider than
+  the per-profile ceiling (WCAG 1.4.8 AAA / BDA Dyslexia Style Guide
+  grounding). Per-paragraph grapheme-cluster scan; fenced code blocks
+  excluded upstream by the Markdown parser. Profile thresholds:
+  `max_line_length` 120 / 100 / 80 (`dev-doc` / `public` / `falc`);
+  FALC matches the WCAG 1.4.8 AAA recommendation. Condition tags:
+  `dyslexia`, `general`. See [`docs/src/rules/line-length-wide.md`](docs/src/rules/line-length-wide.md).
 - **Per-language readability formula (F10 must-ship slice)** —
   `readability-score` now selects its formula from the detected document
   language: Flesch-Kincaid for English (kept), Kandel & Moles (1958) for

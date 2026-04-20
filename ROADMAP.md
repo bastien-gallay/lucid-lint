@@ -162,7 +162,7 @@ research that justifies the rule.
 |---|---|---|---|---|---|
 | F62 | `lexicon.redundant-intensifier` | Lexicon | `general` | Plain-language guides | 🟡 Medium |
 | F52 | `structure.mixed-numeric-format` | Structure | `dyscalculia`, `general` | CDC Clear Communication Index | 🟡 Medium |
-| F50 | `structure.line-length-wide` | Structure | `dyslexia`, `general` | WCAG 1.4.8 (AAA) | 🟡 Medium |
+| F50 | ✅ `line-length-wide` shipped in v0.2 — see [`docs/src/rules/line-length-wide.md`](docs/src/rules/line-length-wide.md) | Structure | `dyslexia`, `general` | WCAG 1.4.8 (AAA) | 🟡 Medium |
 | F47 | `lexicon.consonant-cluster` | Lexicon | `dyslexia`, `general` | BDA Dyslexia Style Guide | 🟡 Medium |
 | F54 | `syntax.dense-punctuation-burst` | Syntax | `general` | IFLA easy-to-read guidelines | 🟡 Medium |
 
