@@ -73,7 +73,7 @@ Backlog of everything that must ship before tagging `v0.1.0`. The implementation
 | Status | Feature | Notes |
 |---|---|---|
 | ✅ | Minimal inline-disable | `<!-- lucid-lint disable-next-line <rule-id> -->` for Markdown inputs, single rule id, optional reason. See [RULES.md → Suppressing diagnostics](RULES.md#suppressing-diagnostics). Block form, config ignores, file-level scope and required `reason=` are tracked as F18–F21 below. |
-| ☐ | Accessibility page in the docs | Dedicated `accessibility.md` page covering: the stated WCAG 2.2 AAA bar, the reading-preferences control, typography choices with credits (Atkinson Hyperlegible Next — Braille Institute; OpenDyslexic — Abelardo Gonzalez; Literata — TypeTogether), keyboard shortcuts, and a brief explanation of how the site itself dogfoods the project's mission. Linked from the sidebar and the footer. |
+| ✅ | Accessibility page in the docs | `docs/src/accessibility.md` covers the WCAG 2.2 AAA bar, the reading-preferences control, typography credits (Atkinson Hyperlegible Next — Braille Institute; OpenDyslexic — Abelardo Gonzalez; Literata — TypeTogether), keyboard shortcuts, and how the site dogfoods the project's mission. Linked from the sidebar and the footer. |
 
 ---
 
@@ -86,6 +86,7 @@ Backlog of everything that must ship before tagging `v0.1.0`. The implementation
 | F14 | Hybrid scoring model (global score + per-category sub-scores + diagnostics) | 🔴 High | Architecture decision discussion |
 | F15 | Scoring granularity: document, project, section | 🔴 High | Linked to F14 |
 | F17 | Per-family sub-scores | 🟡 Medium | Linked to F14 |
+| F32 | `--format=sarif` output (SARIF v2.1.0) for GitHub Code Scanning. Already referenced from `docs/src/guide/ci-integration.md` as a v0.2 deliverable. | 🔴 High | v0.1 AGENTS.md audit |
 
 ### Rules refinement
 

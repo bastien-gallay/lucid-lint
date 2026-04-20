@@ -86,7 +86,7 @@ Every rule implements a common `Rule` trait, exposes a default config, and lives
 
 - Default: human-readable TTY with colors when stdout is a tty.
 - `--format=json`: stable JSON schema for CI integration.
-- `--format=sarif`: SARIF v2.1.0 for GitHub Code Scanning.
+- SARIF v2.1.0 for GitHub Code Scanning is planned for v0.2 (see `ROADMAP.md`).
 
 ## Definition of "done" for a change
 
