@@ -24,7 +24,7 @@ This document captures ideas that emerged while designing v0.1. They are intenti
 
 Backlog of everything that must ship before tagging `v0.1.0`. The implementation order mirrors the phases agreed during the bootstrap session: start with the cheapest, most deterministic signals, work up to the trickiest heuristics.
 
-### Rules (11 / 16)
+### Rules (12 / 16)
 
 #### Phase 1 — Deterministic structural rules
 
@@ -56,7 +56,7 @@ Backlog of everything that must ship before tagging `v0.1.0`. The implementation
 
 | Status | Rule | Notes |
 |---|---|---|
-| ☐ | `readability-score` | EN/FR share Flesch variant in v0.1 (see F10) |
+| ✅ | `readability-score` | Per-document Flesch-Kincaid grade; info under threshold, warning above (`src/rules/readability_score.rs`) |
 
 #### Phase 5 — Heuristic rules (hardest)
 

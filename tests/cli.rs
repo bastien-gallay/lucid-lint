@@ -121,6 +121,9 @@ fn check_accepts_stdin() {
 
 #[test]
 fn check_clean_text_returns_zero() {
+    // `readability-score` emits an observability `info` diagnostic on every
+    // non-empty document, so clean text exits 0 with an info-only summary
+    // rather than "No issues found".
     let input = "Short sentence. Another short one.";
     Command::cargo_bin("lucid-lint")
         .unwrap()
@@ -129,7 +132,7 @@ fn check_clean_text_returns_zero() {
         .write_stdin(input)
         .assert()
         .success()
-        .stdout(predicate::str::contains("No issues found"));
+        .stdout(predicate::str::contains("Summary: 1 info"));
 }
 
 #[test]

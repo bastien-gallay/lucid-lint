@@ -1,0 +1,14 @@
+---
+source: src/rules/readability_score.rs
+assertion_line: 279
+expression: diags
+---
+- rule_id: readability-score
+  severity: info
+  location:
+    file: "<input>"
+    line: 1
+    column: 1
+    length: 1
+  section: ~
+  message: Flesch-Kincaid grade -0.3 (target ≤ 9.0).

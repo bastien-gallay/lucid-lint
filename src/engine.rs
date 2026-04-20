@@ -130,7 +130,10 @@ mod tests {
     fn engine_returns_no_diagnostics_for_clean_text() {
         let engine = Engine::with_profile(Profile::Public);
         let diags = engine.lint_str("Short clean sentence. Another fine one.");
-        assert!(diags.is_empty());
+        // `readability-score` emits an informational diagnostic for every
+        // non-empty document (observability signal); only check that no
+        // warnings fire on clean text.
+        assert!(diags.iter().all(|d| d.severity == Severity::Info));
     }
 
     fn diags_for_rule(diags: &[Diagnostic], rule_id: &str) -> usize {

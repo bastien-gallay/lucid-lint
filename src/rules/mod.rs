@@ -16,6 +16,7 @@ pub mod excessive_nominalization;
 pub mod heading_jump;
 pub mod jargon_undefined;
 pub mod paragraph_too_long;
+pub mod readability_score;
 pub mod repetitive_connectors;
 pub mod sentence_too_long;
 pub mod unexplained_abbreviation;
@@ -28,6 +29,7 @@ pub use excessive_nominalization::ExcessiveNominalization;
 pub use heading_jump::HeadingJump;
 pub use jargon_undefined::JargonUndefined;
 pub use paragraph_too_long::ParagraphTooLong;
+pub use readability_score::ReadabilityScore;
 pub use repetitive_connectors::RepetitiveConnectors;
 pub use sentence_too_long::SentenceTooLong;
 pub use unexplained_abbreviation::UnexplainedAbbreviation;
@@ -74,6 +76,7 @@ pub fn default_rules(profile: Profile) -> Vec<Box<dyn Rule>> {
         Box::new(JargonUndefined::for_profile(profile)),
         Box::new(ExcessiveNominalization::for_profile(profile)),
         Box::new(RepetitiveConnectors::for_profile(profile)),
+        Box::new(ReadabilityScore::for_profile(profile)),
     ]
 }
 
