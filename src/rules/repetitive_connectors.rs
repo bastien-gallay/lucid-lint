@@ -12,6 +12,7 @@ use std::num::NonZeroU32;
 use std::sync::LazyLock;
 
 use crate::config::Profile;
+use crate::parser::phrase_search::count_word_bounded;
 use crate::parser::{split_sentences, Document, Sentence};
 use crate::rules::Rule;
 use crate::types::{Diagnostic, Language, Location, Severity, SourceFile};
@@ -190,7 +191,7 @@ impl Rule for RepetitiveConnectors {
             let mut hits: Vec<usize> = Vec::new();
             for (idx, (sentence, _)) in sentences.iter().enumerate() {
                 let lowered = sentence.text.to_lowercase();
-                let occurrences = count_matches(&lowered, connector);
+                let occurrences = count_word_bounded(&lowered, connector);
                 for _ in 0..occurrences {
                     hits.push(idx);
                 }
@@ -230,37 +231,6 @@ impl Rule for RepetitiveConnectors {
         diagnostics.sort_by_key(|d| (d.location.line, d.location.column));
         diagnostics
     }
-}
-
-/// Count word-bounded case-insensitive occurrences of `needle` in `haystack`.
-/// `haystack` must already be lowercased.
-fn count_matches(haystack: &str, needle: &str) -> usize {
-    if needle.is_empty() {
-        return 0;
-    }
-    let mut count = 0;
-    let mut start = 0;
-    while let Some(found) = haystack[start..].find(needle) {
-        let abs = start + found;
-        if is_word_boundary(haystack, abs, abs + needle.len()) {
-            count += 1;
-        }
-        start = abs + needle.len();
-        if start > haystack.len() {
-            break;
-        }
-    }
-    count
-}
-
-fn is_word_boundary(s: &str, start: usize, end: usize) -> bool {
-    let before_ok = start == 0 || !s[..start].chars().next_back().is_some_and(is_word_char);
-    let after_ok = end >= s.len() || !s[end..].chars().next().is_some_and(is_word_char);
-    before_ok && after_ok
-}
-
-fn is_word_char(c: char) -> bool {
-    c.is_alphabetic() || c == '\''
 }
 
 #[allow(clippy::too_many_arguments)]

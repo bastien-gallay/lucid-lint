@@ -16,6 +16,7 @@ use std::collections::HashSet;
 use std::sync::LazyLock;
 
 use crate::config::Profile;
+use crate::parser::phrase_search::{find_word_bounded, line_column_at};
 use crate::parser::Document;
 use crate::rules::Rule;
 use crate::types::{Diagnostic, Language, Location, Severity, SourceFile};
@@ -202,7 +203,7 @@ impl Rule for JargonUndefined {
         for (paragraph, section_title) in document.paragraphs_with_section() {
             let lowered = paragraph.text.to_lowercase();
             for phrase in &phrases {
-                for byte_offset in find_all(&lowered, phrase) {
+                for byte_offset in find_word_bounded(&lowered, phrase) {
                     let (line_offset, column) = line_column_at(&paragraph.text, byte_offset);
                     let line = paragraph.start_line.saturating_add(line_offset);
                     diagnostics.push(build_diagnostic(
@@ -218,47 +219,6 @@ impl Rule for JargonUndefined {
         diagnostics.sort_by_key(|d| (d.location.line, d.location.column));
         diagnostics
     }
-}
-
-fn find_all(haystack: &str, needle: &str) -> Vec<usize> {
-    if needle.is_empty() {
-        return Vec::new();
-    }
-    let mut hits = Vec::new();
-    let mut start = 0;
-    while let Some(found) = haystack[start..].find(needle) {
-        let abs = start + found;
-        if is_word_boundary(haystack, abs, abs + needle.len()) {
-            hits.push(abs);
-        }
-        start = abs + needle.len();
-        if start > haystack.len() {
-            break;
-        }
-    }
-    hits
-}
-
-fn is_word_boundary(s: &str, start: usize, end: usize) -> bool {
-    let before_ok = start == 0 || !s[..start].chars().next_back().is_some_and(is_word_char);
-    let after_ok = end >= s.len() || !s[end..].chars().next().is_some_and(is_word_char);
-    before_ok && after_ok
-}
-
-fn is_word_char(c: char) -> bool {
-    c.is_alphabetic() || c == '\''
-}
-
-fn line_column_at(text: &str, byte_offset: usize) -> (u32, u32) {
-    let capped = byte_offset.min(text.len());
-    let prefix = &text[..capped];
-    #[allow(clippy::naive_bytecount)]
-    let line_offset =
-        u32::try_from(prefix.bytes().filter(|&b| b == b'\n').count()).unwrap_or(u32::MAX);
-    let current_line_start = prefix.rfind('\n').map_or(0, |pos| pos + 1);
-    let column =
-        u32::try_from(text[current_line_start..capped].chars().count() + 1).unwrap_or(u32::MAX);
-    (line_offset, column)
 }
 
 fn build_diagnostic(

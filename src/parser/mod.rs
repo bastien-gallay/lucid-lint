@@ -6,6 +6,7 @@
 
 mod document;
 mod markdown;
+pub mod phrase_search;
 mod tokenizer;
 
 pub use document::{Directive, Document, ListItem, Paragraph, Section, Sentence};
