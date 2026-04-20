@@ -10,6 +10,7 @@ use crate::config::Profile;
 use crate::parser::Document;
 use crate::types::{Diagnostic, Language};
 
+pub mod all_caps_shouting;
 pub mod conditional_stacking;
 pub mod consecutive_long_sentences;
 pub mod deep_subordination;
@@ -32,6 +33,7 @@ pub mod unclear_antecedent;
 pub mod unexplained_abbreviation;
 pub mod weasel_words;
 
+pub use all_caps_shouting::AllCapsShouting;
 pub use conditional_stacking::ConditionalStacking;
 pub use consecutive_long_sentences::ConsecutiveLongSentences;
 pub use deep_subordination::DeepSubordination;
@@ -128,6 +130,7 @@ pub fn default_rules(profile: Profile) -> Vec<Box<dyn Rule>> {
         Box::new(LowLexicalDiversity::for_profile(profile)),
         Box::new(NestedNegation::for_profile(profile)),
         Box::new(ConditionalStacking::for_profile(profile)),
+        Box::new(AllCapsShouting::for_profile(profile)),
     ]
 }
 
@@ -155,7 +158,7 @@ mod tests {
     #[test]
     fn filter_by_conditions_keeps_general_rules() {
         let kept = filter_by_conditions(default_rules(Profile::Public), &[]);
-        assert_eq!(kept.len(), 19);
+        assert_eq!(kept.len(), 20);
     }
 
     #[test]

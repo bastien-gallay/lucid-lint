@@ -30,6 +30,7 @@
   - [`unexplained-abbreviation`](./rules/unexplained-abbreviation.md)
   - [`weasel-words`](./rules/weasel-words.md)
   - [`jargon-undefined`](./rules/jargon-undefined.md)
+  - [`all-caps-shouting`](./rules/all-caps-shouting.md)
   - [`passive-voice`](./rules/passive-voice.md)
   - [`unclear-antecedent`](./rules/unclear-antecedent.md)
   - [`nested-negation`](./rules/nested-negation.md)

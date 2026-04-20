@@ -129,6 +129,7 @@ pub const WEIGHTED_RULE_IDS: &[&str] = &[
     "jargon-undefined",
     "nested-negation",
     "conditional-stacking",
+    "all-caps-shouting",
 ];
 
 /// Default weight for a rule, keyed by `rule_id`.

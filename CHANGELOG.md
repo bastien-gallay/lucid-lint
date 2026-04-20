@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`all-caps-shouting` rule (F48)** — flags runs of two or more
+  consecutive ALL-CAPS words (WCAG 3.1.5 / BDA Dyslexia Style Guide
+  grounding). Per-profile thresholds: `min_run_length` 3 / 2 / 2
+  (`dev-doc` / `public` / `falc`); `dev-doc` tolerates a 2-word `DO NOT`
+  emphasis run. Single ALL-CAPS tokens stay with `unexplained-abbreviation`.
+  First `lexicon` rule to declare the `a11y-markup` tag (also `dyslexia`,
+  `general`). See [`docs/src/rules/all-caps-shouting.md`](docs/src/rules/all-caps-shouting.md).
 - **`conditional-stacking` rule (F56)** — flags sentences chaining
   multiple conditional connectors (FALC / plainlanguage.gov grounding).
   Per-profile thresholds: 3 / 2 / 1 (`dev-doc` / `public` / `falc`).

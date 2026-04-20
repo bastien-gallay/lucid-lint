@@ -163,7 +163,8 @@ impl Category {
             | "excessive-nominalization"
             | "unexplained-abbreviation"
             | "weasel-words"
-            | "jargon-undefined" => Self::Lexicon,
+            | "jargon-undefined"
+            | "all-caps-shouting" => Self::Lexicon,
             "passive-voice" | "unclear-antecedent" | "nested-negation" | "conditional-stacking" => {
                 Self::Syntax
             },

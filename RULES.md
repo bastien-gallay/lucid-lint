@@ -76,7 +76,7 @@ score is their weighted sum.
 | `structure` | `sentence-too-long`, `paragraph-too-long`, `deeply-nested-lists`, `heading-jump`, `excessive-commas`, `long-enumeration`, `deep-subordination` |
 | `syntax` | `passive-voice`, `unclear-antecedent`, `nested-negation`, `conditional-stacking` |
 | `rhythm` | `consecutive-long-sentences`, `repetitive-connectors` |
-| `lexicon` | `low-lexical-diversity`, `excessive-nominalization`, `unexplained-abbreviation`, `weasel-words`, `jargon-undefined` |
+| `lexicon` | `low-lexical-diversity`, `excessive-nominalization`, `unexplained-abbreviation`, `weasel-words`, `jargon-undefined`, `all-caps-shouting` |
 | `readability` | `readability-score` |
 
 > v0.2 remapped the v0.1 taxonomy: `length` merged into `structure`;
@@ -693,6 +693,44 @@ Like acronyms, jargon creates reading interruptions for the non-specialist reade
 | `dev-doc` | None (developers understand their domain jargon) |
 | `public` | `tech`, `legal`, `medical`, `admin` |
 | `falc` | `tech`, `legal`, `medical`, `admin`, with strict mode |
+
+---
+
+#### `all-caps-shouting`
+
+**Category** : `lexicon`
+**Severity** : `warning`
+**Default weight** : `1`
+**Condition tags** : `a11y-markup`, `dyslexia`, `general`
+**Bilingual** : yes, language-agnostic (script-only detection)
+
+**Intent** : flag runs of consecutive ALL-CAPS words. ALL-CAPS prose strips the shape cues dyslexic readers rely on, and triggers many screen readers to spell out the run letter by letter.
+
+**Rationale**
+
+WCAG 3.1.5 and the BDA Dyslexia Style Guide both recommend lowercase or sentence case for emphasis. Use bold or italics, or a callout, instead of `SHOUTING`.
+
+**References** : WCAG 3.1.5 (Reading Level), BDA Dyslexia Style Guide.
+
+**Detection**
+
+Per paragraph, scan for runs of consecutive ALL-CAPS words. Minor connectors (`,`, `;`, `:`, `-`, whitespace) keep a run alive; a lowercase word, a period, or paragraph break ends it. A word is ALL-CAPS when it is at least 2 letters long and contains no lowercase letter. Single ALL-CAPS tokens are treated as abbreviations and are the responsibility of `unexplained-abbreviation`. Code blocks are excluded by the Markdown parser.
+
+**Parameters**
+
+| Parameter | Type | Default |
+|---|---|---|
+| `min_run_length` | int | profile-dependent |
+
+**Thresholds by profile**
+
+| Profile | `min_run_length` |
+|---|---|
+| `dev-doc` | 3 |
+| `public` | 2 |
+| `falc` | 2 |
+
+`dev-doc` tolerates a 2-word emphasis run (`DO NOT`) common in technical docs.
 
 ---
 
