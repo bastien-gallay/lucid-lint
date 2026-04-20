@@ -10,12 +10,15 @@ build-dir = "book"
 create-missing = false
 
 [output.html]
-default-theme = "rust"
+default-theme = "light"
 preferred-dark-theme = "navy"
 git-repository-url = "https://github.com/bastien-gallay/lucid-lint"
 edit-url-template = "https://github.com/bastien-gallay/lucid-lint/edit/main/docs/{path}"
 site-url = "/lucid-lint/"
-additional-css = ["theme/css/lucid-typography.css"]
+additional-css = [
+  "theme/css/lucid-colors.css",
+  "theme/css/lucid-typography.css",
+]
 
 [output.html.fold]
 enable = true

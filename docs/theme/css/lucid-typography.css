@@ -21,8 +21,8 @@
 
 @font-face {
   font-family: "Atkinson Hyperlegible Next";
-  src: url("../fonts/atkinson-hyperlegible-next.woff2") format("woff2-variations"),
-       url("../fonts/atkinson-hyperlegible-next.woff2") format("woff2");
+  src: url("../../_fonts/atkinson-hyperlegible-next.woff2") format("woff2-variations"),
+       url("../../_fonts/atkinson-hyperlegible-next.woff2") format("woff2");
   font-weight: 200 800;
   font-style: normal;
   font-display: swap;
@@ -30,8 +30,8 @@
 
 @font-face {
   font-family: "Atkinson Hyperlegible Next";
-  src: url("../fonts/atkinson-hyperlegible-next-italic.woff2") format("woff2-variations"),
-       url("../fonts/atkinson-hyperlegible-next-italic.woff2") format("woff2");
+  src: url("../../_fonts/atkinson-hyperlegible-next-italic.woff2") format("woff2-variations"),
+       url("../../_fonts/atkinson-hyperlegible-next-italic.woff2") format("woff2");
   font-weight: 200 800;
   font-style: italic;
   font-display: swap;
@@ -39,8 +39,8 @@
 
 @font-face {
   font-family: "Literata";
-  src: url("../fonts/literata.woff2") format("woff2-variations"),
-       url("../fonts/literata.woff2") format("woff2");
+  src: url("../../_fonts/literata.woff2") format("woff2-variations"),
+       url("../../_fonts/literata.woff2") format("woff2");
   font-weight: 200 900;
   font-style: normal;
   font-display: swap;
@@ -48,8 +48,8 @@
 
 @font-face {
   font-family: "Literata";
-  src: url("../fonts/literata-italic.woff2") format("woff2-variations"),
-       url("../fonts/literata-italic.woff2") format("woff2");
+  src: url("../../_fonts/literata-italic.woff2") format("woff2-variations"),
+       url("../../_fonts/literata-italic.woff2") format("woff2");
   font-weight: 200 900;
   font-style: italic;
   font-display: swap;
@@ -57,8 +57,8 @@
 
 @font-face {
   font-family: "Commit Mono";
-  src: url("../fonts/commit-mono.woff2") format("woff2-variations"),
-       url("../fonts/commit-mono.woff2") format("woff2");
+  src: url("../../_fonts/commit-mono.woff2") format("woff2-variations"),
+       url("../../_fonts/commit-mono.woff2") format("woff2");
   font-weight: 400 700;
   font-style: normal;
   font-display: swap;
@@ -66,7 +66,7 @@
 
 @font-face {
   font-family: "OpenDyslexic";
-  src: url("../fonts/opendyslexic.woff2") format("woff2");
+  src: url("../../_fonts/opendyslexic.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -74,7 +74,7 @@
 
 @font-face {
   font-family: "OpenDyslexic";
-  src: url("../fonts/opendyslexic-bold.woff2") format("woff2");
+  src: url("../../_fonts/opendyslexic-bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -107,13 +107,8 @@
   --reading-font-display:  var(--font-display);
   --reading-font-mono:     var(--font-mono);
 
-  /* Palette tokens (subset needed for typography contrast).
-     The full palette lands in /colorize. Hex retained in
-     comments for .impeccable.md cross-reference. */
-  --color-paper:  oklch(98% 0.003 85);     /* #FAFAF7 */
-  --color-ink:    oklch(22% 0.012 265);    /* #1A1D24 */
-  --color-lucid:  oklch(44% 0.13 260);     /* #2E5EAA — AAA 7.2:1 on paper */
-  --color-fog:    oklch(55% 0.015 260);    /* #6B7280 — AA for secondary text */
+  /* Palette tokens are defined in lucid-colors.css (theme-aware).
+     This file only consumes --color-ink, --color-lucid, --color-fog. */
 
   /* Modular type scale, 1.25 ratio, body anchored at 16px.
      mdBook's stock theme sets `html { font-size: 62.5% }` so

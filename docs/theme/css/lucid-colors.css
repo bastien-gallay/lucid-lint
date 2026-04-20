@@ -1,0 +1,234 @@
+/* ============================================================
+ * lucid-lint — color / theme layer
+ *
+ * Collapses mdBook's five stock themes into two palettes:
+ * "Lucid light" (maps `.light` + `.rust`) and "Lucid dark"
+ * (maps `.coal` + `.navy` + `.ayu`). The theme picker in mdBook's
+ * header still lists all five stock labels — overriding the
+ * menu markup requires replacing index.hbs, which is invasive.
+ * Tracked in ROADMAP.md as F26. In the meantime, every selection
+ * in the menu resolves to one of our two palettes, so the UX is
+ * consistent even if the label text is wrong.
+ *
+ * Palette source of truth: .impeccable.md. Hex retained in
+ * comments; values expressed in OKLCH throughout (perceptually
+ * uniform, maintainable).
+ * ============================================================ */
+
+/* ---------- Palette tokens ---------- */
+
+:root {
+  /* Light palette */
+  --lucid-paper:       oklch(98%  0.003 85);   /* #FAFAF7 */
+  --lucid-paper-soft:  oklch(96%  0.004 85);   /* chrome surfaces */
+  --lucid-paper-sink:  oklch(94%  0.004 85);   /* hovers, spacers */
+  --lucid-paper-edge:  oklch(90%  0.005 85);   /* borders */
+
+  --lucid-ink:         oklch(22%  0.012 265);  /* #1A1D24 */
+  --lucid-fog:         oklch(55%  0.015 265);  /* #6B7280, secondary text */
+  --lucid-mist:        oklch(70%  0.012 265);  /* disabled, placeholder */
+
+  --lucid-blue:        oklch(44%  0.13  260);  /* #2E5EAA, AAA 7.2:1 on paper */
+  --lucid-blue-soft:   oklch(94%  0.04  260);  /* link hover tint, search mark */
+  --lucid-violet:      oklch(55%  0.14  310);  /* #8B5FBF, rare accent */
+
+  /* Dark palette — accents lifted to maintain AAA on dark bg */
+  --lucid-paper-dark:       oklch(18%  0.012 265);  /* bg */
+  --lucid-paper-dark-soft:  oklch(15%  0.012 265);  /* sidebar bg, popovers */
+  --lucid-paper-dark-sink:  oklch(22%  0.012 265);  /* code bg, hovers */
+  --lucid-paper-dark-edge:  oklch(28%  0.010 265);  /* borders */
+
+  --lucid-ink-dark:    oklch(92%  0.005  85);  /* foreground on dark */
+  --lucid-fog-dark:    oklch(65%  0.015 265);  /* secondary text on dark */
+  --lucid-mist-dark:   oklch(45%  0.012 265);  /* disabled on dark */
+
+  --lucid-blue-dark:      oklch(75%  0.12  260); /* links on dark, ~AAA */
+  --lucid-blue-dark-soft: oklch(26%  0.06  260); /* search mark, tints */
+  --lucid-violet-dark:    oklch(72%  0.13  310);
+}
+
+/* ---------- Lucid Light
+ * Applied to: stock `.light`, `.rust`, and the no-js fallback.
+ * The `.rust` mapping means anyone landing on the historical
+ * default sees the lucid palette immediately.
+ * -------------------------------------------------- */
+
+.light, .rust, html:not(.js) {
+  --bg:                        var(--lucid-paper);
+  --fg:                        var(--lucid-ink);
+
+  --sidebar-bg:                var(--lucid-paper-soft);
+  --sidebar-fg:                var(--lucid-ink);
+  --sidebar-non-existant:      var(--lucid-mist);
+  --sidebar-active:            var(--lucid-blue);
+  --sidebar-spacer:            var(--lucid-paper-sink);
+  --sidebar-header-border-color: var(--lucid-paper-edge);
+
+  --scrollbar:                 var(--lucid-fog);
+  --icons:                     var(--lucid-fog);
+  --icons-hover:               var(--lucid-blue);
+
+  --links:                     var(--lucid-blue);
+  --inline-code-color:         var(--lucid-ink);
+
+  --theme-popup-bg:            var(--lucid-paper);
+  --theme-popup-border:        var(--lucid-paper-edge);
+  --theme-hover:               var(--lucid-paper-sink);
+
+  --quote-bg:                  var(--lucid-blue-soft);
+  --quote-border:              var(--lucid-paper-edge);
+
+  --warning-border:            var(--lucid-violet);
+
+  --table-border-color:        var(--lucid-paper-edge);
+  --table-header-bg:           var(--lucid-paper-sink);
+  --table-alternate-bg:        var(--lucid-paper-soft);
+
+  --searchbar-border-color:    var(--lucid-paper-edge);
+  --searchbar-bg:              var(--lucid-paper);
+  --searchbar-fg:              var(--lucid-ink);
+  --searchbar-shadow-color:    var(--lucid-paper-edge);
+  --searchresults-header-fg:   var(--lucid-fog);
+  --searchresults-border-color: var(--lucid-paper-edge);
+  --searchresults-li-bg:       var(--lucid-blue-soft);
+  --search-mark-bg:            var(--lucid-blue-soft);
+
+  --color-scheme: light;
+
+  /* mdBook's copy-button is a hue-rotate filter on a base icon.
+     Matching our fog/lucid exactly via filter is impractical;
+     we pick the closest filter chain that lands near fog on
+     idle and lucid on hover. Visual match is close enough. */
+  --copy-button-filter:        invert(55%) sepia(5%) saturate(10%) hue-rotate(210deg) brightness(90%);
+  --copy-button-filter-hover:  invert(30%) sepia(70%) saturate(1500%) hue-rotate(205deg) brightness(80%) contrast(90%);
+
+  --footnote-highlight:        var(--lucid-blue);
+  --overlay-bg:                oklch(60% 0.01 265 / 0.35);
+
+  --blockquote-note-color:     var(--lucid-blue);
+  --blockquote-tip-color:      oklch(50% 0.12 155);    /* muted green */
+  --blockquote-important-color: var(--lucid-violet);
+  --blockquote-warning-color:  oklch(55% 0.13 75);     /* muted amber */
+  --blockquote-caution-color:  oklch(52% 0.17 25);     /* muted red */
+
+  --code-block-background-color: var(--lucid-paper-soft);
+}
+
+/* ---------- Lucid Dark
+ * Applied to: stock `.coal`, `.navy`, `.ayu`.
+ * -------------------------------------------------- */
+
+.coal, .navy, .ayu {
+  --bg:                        var(--lucid-paper-dark);
+  --fg:                        var(--lucid-ink-dark);
+
+  --sidebar-bg:                var(--lucid-paper-dark-soft);
+  --sidebar-fg:                var(--lucid-ink-dark);
+  --sidebar-non-existant:      var(--lucid-mist-dark);
+  --sidebar-active:            var(--lucid-blue-dark);
+  --sidebar-spacer:            var(--lucid-paper-dark-sink);
+  --sidebar-header-border-color: var(--lucid-paper-dark-edge);
+
+  --scrollbar:                 var(--lucid-fog-dark);
+  --icons:                     var(--lucid-fog-dark);
+  --icons-hover:               var(--lucid-blue-dark);
+
+  --links:                     var(--lucid-blue-dark);
+  --inline-code-color:         var(--lucid-ink-dark);
+
+  --theme-popup-bg:            var(--lucid-paper-dark-soft);
+  --theme-popup-border:        var(--lucid-paper-dark-edge);
+  --theme-hover:               var(--lucid-paper-dark-sink);
+
+  --quote-bg:                  var(--lucid-blue-dark-soft);
+  --quote-border:              var(--lucid-paper-dark-edge);
+
+  --warning-border:            var(--lucid-violet-dark);
+
+  --table-border-color:        var(--lucid-paper-dark-edge);
+  --table-header-bg:           var(--lucid-paper-dark-sink);
+  --table-alternate-bg:        var(--lucid-paper-dark-soft);
+
+  --searchbar-border-color:    var(--lucid-paper-dark-edge);
+  --searchbar-bg:              var(--lucid-paper-dark-soft);
+  --searchbar-fg:              var(--lucid-ink-dark);
+  --searchbar-shadow-color:    var(--lucid-paper-dark);
+  --searchresults-header-fg:   var(--lucid-fog-dark);
+  --searchresults-border-color: var(--lucid-paper-dark-edge);
+  --searchresults-li-bg:       var(--lucid-blue-dark-soft);
+  --search-mark-bg:            var(--lucid-blue-dark-soft);
+
+  --color-scheme: dark;
+
+  --copy-button-filter:        invert(70%) sepia(5%) saturate(10%) hue-rotate(200deg) brightness(95%);
+  --copy-button-filter-hover:  invert(78%) sepia(40%) saturate(500%) hue-rotate(190deg) brightness(105%);
+
+  --footnote-highlight:        var(--lucid-blue-dark);
+  --overlay-bg:                oklch(8% 0.01 265 / 0.6);
+
+  --blockquote-note-color:     var(--lucid-blue-dark);
+  --blockquote-tip-color:      oklch(75% 0.14 155);
+  --blockquote-important-color: var(--lucid-violet-dark);
+  --blockquote-warning-color:  oklch(75% 0.13 75);
+  --blockquote-caution-color:  oklch(72% 0.16 25);
+
+  --code-block-background-color: var(--lucid-paper-dark-sink);
+}
+
+/* ---------- Typography-to-palette bridge ----------
+ * /typeset declared --color-paper, --color-ink, --color-lucid,
+ * --color-fog for standalone typography work. Re-point them at
+ * the per-theme tokens so typography inherits the correct
+ * palette in both modes instead of hard-coding light values.
+ * -------------------------------------------------- */
+
+:root {
+  --color-paper:  var(--bg, var(--lucid-paper));
+  --color-ink:    var(--fg, var(--lucid-ink));
+  --color-lucid:  var(--links, var(--lucid-blue));
+  --color-fog:    var(--lucid-fog);
+  --color-aurora: var(--lucid-violet);
+}
+
+.coal, .navy, .ayu {
+  --color-fog:    var(--lucid-fog-dark);
+  --color-aurora: var(--lucid-violet-dark);
+}
+
+/* ---------- Surface polish ----------
+ * A few spots where mdBook's stock CSS hardcodes colors that
+ * ignore theme variables. We override directly. */
+
+.content hr {
+  border: none;
+  border-top: 1px solid var(--lucid-paper-edge);
+  margin-block: 2rem;
+}
+.coal .content hr,
+.navy .content hr,
+.ayu .content hr {
+  border-top-color: var(--lucid-paper-dark-edge);
+}
+
+.content blockquote {
+  /* typography layer sets the italic + fog color; we add the
+     bg for the full surface treatment. The left rule stays at
+     1px (inherited from typography) per the impeccable rule
+     on side-stripes — background tint carries the weight. */
+  background-color: var(--quote-bg);
+  border-radius: 0 4px 4px 0;
+  padding: 1em 1.25em;
+}
+
+.content table th {
+  background-color: var(--table-header-bg);
+}
+.content table tbody tr:nth-child(2n) {
+  background-color: var(--table-alternate-bg);
+}
+
+/* Focus ring — re-state here so it picks up --lucid-blue per theme
+   (typography layer set it against a static --color-lucid). */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline-color: var(--links);
+}
