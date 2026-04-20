@@ -5,6 +5,17 @@ All notable changes to `lucid-lint` are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+The v0.2 cycle extends the v0.1 foundations. Work in flight:
+
+- **Scoring** — hybrid model (global score + per-category sub-scores) and SARIF v2.1.0 output for GitHub Code Scanning (F14, F15, F17, F32).
+- **Rule refinement** — definition-aware `unexplained-abbreviation`, language-specific readability formulas (Kandel-Moles FR, SMOG, Coleman-Liau), context-aware relaxations for `excessive-commas` and `weasel-words` (F9, F10, F22, F23).
+- **Docs site** — French mirror of the docs (`/fr/`), full reading-preferences popover UI (font, line-spacing, text-size sliders — the v0.1 demonstrator is the seed), responsive / mobile adaptation, brand-owned theme-picker labels, and the accessibility-audit sweep (F25, F26, F33–F36).
+- **Format support** — native AsciiDoc and HTML, a Pandoc companion script for docx (F5, F6, F7, F8).
+
+See [`ROADMAP.md`](ROADMAP.md) for the full backlog with priorities.
+
 ## [0.1.0] — 2026-04-20
 
 First public release. Seventeen rules, bilingual EN/FR, deterministic core, Markdown + plain-text + stdin inputs.
@@ -78,4 +89,5 @@ Style and global:
 - CI matrix: format, clippy, tests on Linux/macOS/Windows, MSRV build, rustdoc, security audit, dogfood.
 - MSRV pinned to Rust 1.80.
 
+[Unreleased]: https://github.com/bastien-gallay/lucid-lint/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/bastien-gallay/lucid-lint/releases/tag/v0.1.0

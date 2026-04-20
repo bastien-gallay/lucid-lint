@@ -20,9 +20,9 @@ This document captures ideas that emerged while designing v0.1. They are intenti
 
 ---
 
-## v0.1 — In progress
+## v0.1 — Released 2026-04-20
 
-Backlog of everything that must ship before tagging `v0.1.0`. The implementation order mirrors the phases agreed during the bootstrap session: start with the cheapest, most deterministic signals, work up to the trickiest heuristics.
+Shipped in the tag: all 17 rules across 5 phases, the minimal inline-disable directive, and the mdBook documentation site (Lucid light / Lucid dark themes, Atkinson Hyperlegible Next / Literata / Commit Mono / OpenDyslexic typography layer, reading-preferences demonstrator, accessibility page, EN/FR header switch with v0.2 FR-stub). See [`CHANGELOG.md`](CHANGELOG.md) for the full release notes.
 
 ### Rules (17 / 17) ✅
 
@@ -169,6 +169,15 @@ token-aware counter.
 | ID | Item | Priority | Origin |
 |---|---|---|---|
 | F26 | Override `index.hbs` (or `book.js`) to replace the mdBook theme picker with a two-option toggle labelled "Lucid light / Lucid dark". In v0.1 the `.light` + `.rust` classes both resolve to lucid-light and `.coal` + `.navy` + `.ayu` to lucid-dark — the palette is consistent but the menu labels still read `Light / Rust / Coal / Navy / Ayu`. | 🟡 Medium | v0.1 docs `/colorize` session; mdBook stock limitation |
+
+### Docs site — reading preferences
+
+| ID | Item | Priority | Origin |
+|---|---|---|---|
+| F33 | Full reading-preferences popover UI — cog button in the header opens a popover with font radio (Atkinson / Standard / OpenDyslexic), line-spacing slider (1.4–2.0, 0.05 step) and text-size slider (90–130 %, 5 % step). v0.1 ships only the Introduction-page demonstrator; the CSS-variable plumbing (`--reading-scale`, `--reading-line-height`, `[data-font]`) is already in place, so this is UI work only. | 🔴 High | v0.1 docs `/shape` + `/typeset` sessions |
+| F34 | Responsive / mobile adaptation — right-rail page TOC and header controls collapse gracefully below 700 px; touch targets verified ≥ 44 × 44 px; sidebar drawer behaviour polished. | 🔴 High | v0.1 docs `/layout` session, deferred to `/adapt` |
+| F35 | Accessibility audit sweep — full AAA pass on both themes (contrast, focus order, `prefers-reduced-motion` coverage, keyboard-only walk-through, skip-link), plus a published accessibility statement page. The v0.1 site clears AAA on the spot-checks; F35 makes it systematic and publishes the evidence. | 🔴 High | v0.1 docs `/audit` plan |
+| F36 | Final polish pass — optical alignment, spacing rhythm, edge-state copy, favicon PNG fallback, social-card refinement, re-running `/critique` to verify the score moves above 30/40. | 🟡 Medium | v0.1 docs `/polish` plan |
 
 ### Quality features
 
