@@ -52,6 +52,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   F19–F21 deferred extensions. The 17 per-rule pages now link to it
   via `../guide/suppression.md` (previously pointed at the
   repo-root `RULES.md`, which renders as a 404 inside mdBook).
+- **Roadmap mirror in the mdBook site (F27)** — `docs/src/roadmap.md`
+  is auto-generated from the root `ROADMAP.md` by
+  [`scripts/sync-roadmap.py`](scripts/sync-roadmap.py), invoked as a
+  dependency of `just docs-build` / `just docs-serve`. Relative links
+  are rewritten on the fly: targets under `docs/src/` become
+  docs-relative, everything else becomes an absolute GitHub URL, so
+  the `docs_links_stay_inside_docs` gate still passes.
+- **Rule + feature cross-links across the mdBook site (F30)** — first
+  mention of a rule id or feature id (in backticks / plain text) per
+  H2/H3 section now links to its canonical page
+  (`docs/src/rules/<id>.md` or `docs/src/roadmap.md`). Touches
+  `accessibility.md`, `architecture/design-decisions.md`,
+  `guide/scoring.md`, `guide/suppression.md`, `roadmap.md`, and eight
+  per-rule pages.
+- **`RULES.md` category drift fixed (F43)** — per-rule `**Category**`
+  lines and the Categories table now match `Category::for_rule`:
+  `excessive-commas` and `deep-subordination` are `structure`,
+  `repetitive-connectors` is `rhythm`, `unclear-antecedent` is
+  `syntax`. The drift banners on the four affected per-rule mdBook
+  pages are removed.
 - **In-docs link convention + gate.** A new test
   `docs_links_stay_inside_docs` scans `docs/src/**/*.md` and fails on
   any `](../../…)` pattern that escapes the mdBook tree. Convention

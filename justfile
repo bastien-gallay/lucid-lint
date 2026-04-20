@@ -76,12 +76,16 @@ coverage-html:
     cargo llvm-cov --all-features --workspace --html
     @echo "Report at target/llvm-cov/html/index.html"
 
+# Mirror ROADMAP.md into docs/src/roadmap.md (rewrites relative links)
+sync-roadmap:
+    python3 scripts/sync-roadmap.py
+
 # Build the mdBook documentation
-docs-build:
+docs-build: sync-roadmap
     cd docs && mdbook build
 
 # Serve docs locally with hot reload
-docs-serve:
+docs-serve: sync-roadmap
     cd docs && mdbook serve --open
 
 # Clean generated artifacts
