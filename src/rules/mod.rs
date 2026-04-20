@@ -5,6 +5,7 @@
 //! is [`sentence_too_long`] — it is intentionally minimal, well-tested, and
 //! demonstrates the canonical structure.
 
+use crate::condition::{rule_enabled, ConditionTag};
 use crate::config::Profile;
 use crate::parser::Document;
 use crate::types::{Diagnostic, Language};
@@ -19,6 +20,7 @@ pub mod heading_jump;
 pub mod jargon_undefined;
 pub mod long_enumeration;
 pub mod low_lexical_diversity;
+pub mod nested_negation;
 pub mod paragraph_too_long;
 pub mod passive_voice;
 
@@ -38,6 +40,7 @@ pub use heading_jump::HeadingJump;
 pub use jargon_undefined::JargonUndefined;
 pub use long_enumeration::LongEnumeration;
 pub use low_lexical_diversity::LowLexicalDiversity;
+pub use nested_negation::NestedNegation;
 pub use paragraph_too_long::ParagraphTooLong;
 pub use passive_voice::PassiveVoice;
 pub use readability_score::ReadabilityScore;
@@ -68,6 +71,33 @@ pub trait Rule {
 
     /// Analyze a document and return any diagnostics.
     fn check(&self, document: &Document, language: Language) -> Vec<Diagnostic>;
+
+    /// Condition tags this rule targets (F71).
+    ///
+    /// Defaults to `&[ConditionTag::General]`, meaning the rule is always
+    /// active. Rules targeting a specific cognitive condition override this
+    /// to declare the relevant tags. The engine uses
+    /// [`crate::condition::rule_enabled`] to decide whether the rule runs
+    /// for a given user `conditions = [...]` config (F72).
+    fn condition_tags(&self) -> &'static [ConditionTag] {
+        &[ConditionTag::General]
+    }
+}
+
+/// Filter `rules` down to those enabled by the user's active conditions.
+///
+/// See [`rule_enabled`] for the per-rule semantics. Rules tagged
+/// [`ConditionTag::General`] are always retained; rules without `General`
+/// are retained only if any of their tags appears in `active`.
+#[must_use]
+pub fn filter_by_conditions(
+    rules: Vec<Box<dyn Rule>>,
+    active: &[ConditionTag],
+) -> Vec<Box<dyn Rule>> {
+    rules
+        .into_iter()
+        .filter(|r| rule_enabled(r.condition_tags(), active))
+        .collect()
 }
 
 /// Build the default set of rules for a given profile.
@@ -94,6 +124,7 @@ pub fn default_rules(profile: Profile) -> Vec<Box<dyn Rule>> {
         Box::new(PassiveVoice::for_profile(profile)),
         Box::new(UnclearAntecedent::for_profile(profile)),
         Box::new(LowLexicalDiversity::for_profile(profile)),
+        Box::new(NestedNegation::for_profile(profile)),
     ]
 }
 
@@ -105,6 +136,23 @@ mod tests {
     fn default_rules_is_non_empty() {
         let rules = default_rules(Profile::Public);
         assert!(!rules.is_empty());
+    }
+
+    #[test]
+    fn every_default_rule_is_tagged_general() {
+        for rule in default_rules(Profile::Public) {
+            assert!(
+                rule.condition_tags().contains(&ConditionTag::General),
+                "rule `{}` is missing the `general` condition tag (v0.2 baseline)",
+                rule.id()
+            );
+        }
+    }
+
+    #[test]
+    fn filter_by_conditions_keeps_general_rules() {
+        let kept = filter_by_conditions(default_rules(Profile::Public), &[]);
+        assert_eq!(kept.len(), 18);
     }
 
     #[test]

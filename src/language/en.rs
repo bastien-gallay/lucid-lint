@@ -184,6 +184,16 @@ pub static WEASELS: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
     ]
 });
 
+/// English negation markers (lowercased word forms).
+///
+/// Each entry is a standalone lexical negation. Contracted forms ending in
+/// `n't` (`don't`, `can't`, `isn't`, `won't`, `doesn't`, …) are detected by
+/// the `nested-negation` rule via a suffix check rather than enumeration.
+pub static NEGATIONS: &[&str] = &[
+    "not", "no", "never", "none", "nothing", "nobody", "no-one", "noone", "nowhere", "neither",
+    "nor", "cannot", "without",
+];
+
 #[cfg(test)]
 mod tests {
     use super::*;

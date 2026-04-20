@@ -7,6 +7,7 @@
 - [Installation](./guide/installation.md)
 - [Quick start](./guide/quick-start.md)
 - [Profiles](./guide/profiles.md)
+- [Conditions](./guide/conditions.md)
 - [Configuration](./guide/configuration.md)
 - [Scoring](./guide/scoring.md)
 - [Suppression](./guide/suppression.md)
@@ -31,6 +32,7 @@
   - [`jargon-undefined`](./rules/jargon-undefined.md)
   - [`passive-voice`](./rules/passive-voice.md)
   - [`unclear-antecedent`](./rules/unclear-antecedent.md)
+  - [`nested-negation`](./rules/nested-negation.md)
   - [`readability-score`](./rules/readability-score.md)
 
 # Architecture

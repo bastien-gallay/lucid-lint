@@ -94,8 +94,8 @@ Shipped in the tag: all 17 rules across 5 phases, the minimal inline-disable dir
 | F39 | Letter-grade decoration (A–F) on the `X/max` score — promote when user feedback shows the numbers feel noisy or hard to compare across docs. | 🟡 Medium | F14 `brainstorm/20260420-score-semantics.md` |
 | F40 | Traffic-light (🔴🟡🟢) + pass/fail margin in the TTY output — promote when CI users ask for a stronger glance signal than the number alone. | 🟡 Medium | F14 `brainstorm/20260420-score-semantics.md` |
 | F41 | Reading-time-seconds as an alternative score unit — ties score to concrete user outcome. Requires validated heuristic + companion metrics (comfort, fatigue, understandability) so the time unit doesn't monopolize the read. | 🟢 Low | F14 `brainstorm/20260420-score-semantics.md` |
-| F71 | Rule-level condition-tag ontology. Each rule declares target-condition tags from a fixed set: `a11y-markup`, `dyslexia`, `dyscalculia`, `aphasia`, `adhd`, `non-native`, `general`. Most rules are `general`; some carry multiple tags (e.g. `nested-negation` → `aphasia, adhd, general`). Orthogonal to profiles — see F72. | 🔴 High | Rule-system-growth brainstorm (2026-04-20) |
-| F72 | Config field `conditions = [...]` that enables tagged rules on top of any profile. Example: `profile = "falc"` + `conditions = ["dyslexia", "aphasia"]`. Avoids combinatorial explosion of profile families (3 strictness levels × N conditions). FALC retains its regulatory meaning; dys-friendliness is additive, not a rename. | 🔴 High | Rule-system-growth brainstorm (2026-04-20) |
+| F71 | ✅ Shipped in v0.2 — `ConditionTag` enum (fixed 7-variant ontology: `a11y-markup`, `dyslexia`, `dyscalculia`, `aphasia`, `adhd`, `non-native`, `general`) plus `Rule::condition_tags()` trait method (default `&[General]`). All 17 v0.2 rules are `general`; future tagged rules (F48, F55, F56) opt in by overriding. See [`docs/src/guide/conditions.md`](./guide/conditions.md). | 🔴 High | Rule-system-growth brainstorm (2026-04-20) |
+| F72 | ✅ Shipped in v0.2 — `[default] conditions = [...]` config field and `--conditions` CLI flag (comma-separated). Filter semantics: rules tagged `general` always run; tagged-only rules run iff their tags intersect the active list. Profiles unchanged; FALC retains its regulatory meaning. See [`docs/src/guide/conditions.md`](./guide/conditions.md). | 🔴 High | Rule-system-growth brainstorm (2026-04-20) |
 
 ### Rules refinement
 
@@ -155,7 +155,7 @@ research that justifies the rule.
 | ID | Rule | Category | Tags | Grounding | Priority |
 |---|---|---|---|---|---|
 | F48 | `lexicon.all-caps-shouting` | Lexicon | `a11y-markup`, `dyslexia`, `general` | WCAG 3.1.5, BDA Dyslexia Style Guide | 🔴 High |
-| F55 | `syntax.nested-negation` | Syntax | `aphasia`, `adhd`, `general` | FALC, CDC Clear Communication Index | 🔴 High |
+| F55 | ✅ `nested-negation` shipped in v0.2 — see [`docs/src/rules/nested-negation.md`](./rules/nested-negation.md) | Syntax | `aphasia`, `adhd`, `general` | FALC, CDC Clear Communication Index | 🔴 High |
 | F56 | `syntax.conditional-stacking` | Syntax | `aphasia`, `adhd`, `general` | FALC, plainlanguage.gov | 🔴 High |
 
 **Should-ship v0.2 (cuttable under time pressure, in suggested cut order):**
@@ -164,7 +164,7 @@ research that justifies the rule.
 |---|---|---|---|---|---|
 | F62 | `lexicon.redundant-intensifier` | Lexicon | `general` | Plain-language guides | 🟡 Medium |
 | F52 | `structure.mixed-numeric-format` | Structure | `dyscalculia`, `general` | CDC Clear Communication Index | 🟡 Medium |
-| F50 | `structure.line-length-wide` | Structure | `dyspraxia`, `dyslexia`, `general` | WCAG 1.4.8 (AAA) | 🟡 Medium |
+| F50 | `structure.line-length-wide` | Structure | `dyslexia`, `general` | WCAG 1.4.8 (AAA) | 🟡 Medium |
 | F47 | `lexicon.consonant-cluster` | Lexicon | `dyslexia`, `general` | BDA Dyslexia Style Guide | 🟡 Medium |
 | F54 | `syntax.dense-punctuation-burst` | Syntax | `general` | IFLA easy-to-read guidelines | 🟡 Medium |
 

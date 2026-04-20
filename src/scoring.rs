@@ -127,6 +127,7 @@ pub const WEIGHTED_RULE_IDS: &[&str] = &[
     "unexplained-abbreviation",
     "weasel-words",
     "jargon-undefined",
+    "nested-negation",
 ];
 
 /// Default weight for a rule, keyed by `rule_id`.
@@ -142,7 +143,7 @@ pub fn default_weight_for(rule_id: &str) -> u32 {
     match rule_id {
         "readability-score" => 5,
         "sentence-too-long" | "paragraph-too-long" | "deep-subordination" | "passive-voice"
-        | "unclear-antecedent" => 2,
+        | "unclear-antecedent" | "nested-negation" => 2,
         _ => 1,
     }
 }

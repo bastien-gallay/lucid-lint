@@ -10,6 +10,8 @@ use std::path::Path;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
+use crate::condition::ConditionTag;
+
 /// A preset bundle of rule thresholds tuned for a specific audience.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
@@ -105,12 +107,25 @@ pub struct DefaultConfig {
     /// Default profile. `public` when omitted.
     #[serde(default)]
     pub profile: Profile,
+
+    /// Active condition tags (F72). Enables tagged rules on top of the
+    /// chosen profile. Rules tagged `general` are always active; tagged
+    /// rules without `general` only run when their tag appears here.
+    ///
+    /// ```toml
+    /// [default]
+    /// profile = "falc"
+    /// conditions = ["dyslexia", "aphasia"]
+    /// ```
+    #[serde(default)]
+    pub conditions: Vec<ConditionTag>,
 }
 
 impl Default for DefaultConfig {
     fn default() -> Self {
         Self {
             profile: Profile::DEFAULT,
+            conditions: Vec::new(),
         }
     }
 }
@@ -224,6 +239,34 @@ mod tests {
         let config = Config::from_toml_str("").unwrap();
         assert_eq!(config.default.profile, Profile::Public);
         assert!(config.rules.entries.is_empty());
+    }
+
+    #[test]
+    fn config_parses_conditions_list() {
+        let config = Config::from_toml_str(
+            r#"[default]
+profile = "falc"
+conditions = ["dyslexia", "aphasia"]
+"#,
+        )
+        .unwrap();
+        assert_eq!(config.default.profile, Profile::Falc);
+        assert_eq!(
+            config.default.conditions,
+            vec![ConditionTag::Dyslexia, ConditionTag::Aphasia]
+        );
+    }
+
+    #[test]
+    fn config_rejects_unknown_condition_tag() {
+        assert!(matches!(
+            Config::from_toml_str(
+                r#"[default]
+conditions = ["autism"]
+"#,
+            ),
+            Err(ConfigError::Parse(_))
+        ));
     }
 
     #[test]

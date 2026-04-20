@@ -9,6 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`nested-negation` rule (F55)** — flags sentences that stack multiple
+  negations (FALC / CDC Clear Communication Index grounding). Per-profile
+  thresholds: 3 / 2 / 1 (`dev-doc` / `public` / `falc`). Bilingual: EN
+  counts the negation list plus contracted `n't`; FR counts `ne` / `n'`
+  clitics plus standalone `sans` / `non` (avoids the `plus` / `personne`
+  ambiguity outside `ne ... X`). Condition tags: `aphasia`, `adhd`,
+  `general`. See [`docs/src/rules/nested-negation.md`](docs/src/rules/nested-negation.md).
+- **Condition-tag ontology (F71 + F72)** — new `ConditionTag` enum
+  (`a11y-markup`, `dyslexia`, `dyscalculia`, `aphasia`, `adhd`,
+  `non-native`, `general`) plus `Rule::condition_tags()` trait method
+  (default `&[General]`). User-facing surface: `[default] conditions =
+  [...]` in `lucid-lint.toml` and the `--conditions` CLI flag
+  (comma-separated). Filter semantics: rules tagged `general` always
+  run; tagged-only rules opt in via the active list. All 17 v0.2 rules
+  are `general`, so default behavior is unchanged. Tagged rules (F48,
+  F55, F56) ride this infrastructure. See
+  [`docs/src/guide/conditions.md`](docs/src/guide/conditions.md).
 - **Hybrid scoring model (F14)** — every run now emits a global `X / max`
   score plus five per-category sub-scores (Structure · Rhythm · Lexicon ·
   Syntax · Readability). Composition stacks a weighted sum, density

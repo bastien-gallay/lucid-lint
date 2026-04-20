@@ -70,6 +70,23 @@ pub static WEASELS: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
     ]
 });
 
+/// French standalone negation markers (lowercased word forms).
+///
+/// French negation is bipartite (`ne ... pas`, `ne ... jamais`, …). The
+/// `nested-negation` rule counts each `ne` / `n'` occurrence as one
+/// negation rather than enumerating second-position particles, because
+/// many of those particles (`plus`, `personne`, `point`, …) are ambiguous
+/// outside the bipartite construction.
+///
+/// This list captures negators that stand on their own, without `ne`:
+/// `sans` (without), `non` (no/not in elliptic answers and prefixes).
+pub static STANDALONE_NEGATIONS: &[&str] = &["sans", "non"];
+
+/// French pre-verbal negation clitic forms.
+///
+/// One occurrence of `ne` or `n'` marks one bipartite negation.
+pub static NEGATION_CLITICS: &[&str] = &["ne", "n'"];
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -26,6 +26,7 @@ Top-level defaults applied to the whole run.
 | Field | Type | Default | Description |
 |---|---|---|---|
 | `profile` | string | `"public"` | One of `dev-doc`, `public`, `falc` |
+| `conditions` | array of strings | `[]` | Active condition tags (v0.2+). See [Conditions](./conditions.md). |
 
 ### `[rules.<rule-id>]`
 

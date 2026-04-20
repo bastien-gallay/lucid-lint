@@ -74,7 +74,7 @@ score is their weighted sum.
 | Category | Rules |
 |---|---|
 | `structure` | `sentence-too-long`, `paragraph-too-long`, `deeply-nested-lists`, `heading-jump`, `excessive-commas`, `long-enumeration`, `deep-subordination` |
-| `syntax` | `passive-voice`, `unclear-antecedent` |
+| `syntax` | `passive-voice`, `unclear-antecedent`, `nested-negation` |
 | `rhythm` | `consecutive-long-sentences`, `repetitive-connectors` |
 | `lexicon` | `low-lexical-diversity`, `excessive-nominalization`, `unexplained-abbreviation`, `weasel-words`, `jargon-undefined` |
 | `readability` | `readability-score` |
@@ -106,7 +106,7 @@ Default weights (from `scoring::default_weight_for`):
 | Weight | Rules |
 |---|---|
 | `5` | `readability-score` |
-| `2` | `sentence-too-long`, `paragraph-too-long`, `deep-subordination`, `passive-voice`, `unclear-antecedent` |
+| `2` | `sentence-too-long`, `paragraph-too-long`, `deep-subordination`, `passive-voice`, `unclear-antecedent`, `nested-negation` |
 | `1` | every other rule |
 
 Severity multiplier: `info = 1`, `warning = 3`, `error = 5` (reserved).
@@ -745,6 +745,46 @@ Expect ~70-80% precision in v0.1. False positives handled via inline disable com
 **Note on severity**
 
 `warning` for all profiles. High levels of technical education do not equate to rhetorical mastery. Tech profiles are trained in technical reasoning, not careful prose. A `warning` level respects the reader.
+
+---
+
+#### `nested-negation`
+
+**Category** : `syntax`
+**Severity** : `warning`
+**Default weight** : `2`
+**Condition tags** : `aphasia`, `adhd`, `general`
+**Bilingual** : yes, language-specific counting
+
+**Intent** : flag sentences that stack multiple negations. Two or more negations in a single sentence force the reader to mentally toggle truth values, a known burden for readers with aphasia, ADHD, and anyone reading under load.
+
+**Rationale**
+
+Plain-language guidelines (FALC, CDC Clear Communication Index, plainlanguage.gov) recommend rewriting double negatives as positives. A negation is cheap to write and expensive to read: every additional toggle multiplies the inferential cost.
+
+**References** : FALC, CDC Clear Communication Index, plainlanguage.gov.
+
+**Detection**
+
+Per sentence, count the negations and report counts above `max_negations`.
+
+🇬🇧 : sum of word-boundary matches against the negation list (`not`, `no`, `never`, `none`, `nothing`, `nobody`, `nowhere`, `neither`, `nor`, `cannot`, `without`) plus occurrences of the contracted `n't` suffix (`don't`, `won't`, `isn't`, `doesn't`, …).
+
+🇫🇷 : bipartite negation: each `ne` / `n'` clitic counts as one negation, plus standalone negators (`sans`, `non`). Counting the second-position particle (`pas`, `jamais`, `plus`, …) directly would trigger false positives because many of those forms are ambiguous outside the `ne ... X` construction.
+
+**Parameters**
+
+| Parameter | Type | Default |
+|---|---|---|
+| `max_negations` | int | profile-dependent |
+
+**Thresholds by profile**
+
+| Profile | `max_negations` |
+|---|---|
+| `dev-doc` | 3 |
+| `public` | 2 |
+| `falc` | 1 |
 
 ---
 

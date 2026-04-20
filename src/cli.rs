@@ -11,6 +11,7 @@ use std::path::PathBuf;
 
 use clap::{Parser, Subcommand, ValueEnum};
 
+use lucid_lint::condition::ConditionTag;
 use lucid_lint::config::Profile as ProfileConfig;
 use lucid_lint::output::Format as FormatConfig;
 
@@ -62,6 +63,53 @@ pub(crate) struct CheckArgs {
     /// page in the user guide for the calibration details.
     #[arg(long)]
     pub(crate) min_score: Option<u32>,
+
+    /// Active condition tags (F72). Comma-separated kebab-case names from
+    /// the fixed ontology: `a11y-markup`, `dyslexia`, `dyscalculia`,
+    /// `aphasia`, `adhd`, `non-native`, `general`. Repeatable.
+    ///
+    /// Rules tagged `general` are always active; tagged rules without
+    /// `general` only run when their tag appears here.
+    #[arg(long, value_enum, value_delimiter = ',')]
+    pub(crate) conditions: Vec<CliConditionTag>,
+}
+
+/// Condition-tag values accepted on the command line.
+///
+/// Mirror of [`ConditionTag`] kept inside the binary crate so the library
+/// stays independent of `clap`.
+#[derive(Debug, Clone, Copy, ValueEnum)]
+pub(crate) enum CliConditionTag {
+    /// Prose-adjacent markup signals.
+    #[value(name = "a11y-markup")]
+    A11yMarkup,
+    /// Dyslexia-targeted signals.
+    Dyslexia,
+    /// Dyscalculia-targeted signals.
+    Dyscalculia,
+    /// Aphasia-targeted signals.
+    Aphasia,
+    /// Attention-fragility signals (ADHD).
+    Adhd,
+    /// Non-native reader signals.
+    #[value(name = "non-native")]
+    NonNative,
+    /// Always-on rules (default tag for v0.2 rules).
+    General,
+}
+
+impl From<CliConditionTag> for ConditionTag {
+    fn from(value: CliConditionTag) -> Self {
+        match value {
+            CliConditionTag::A11yMarkup => Self::A11yMarkup,
+            CliConditionTag::Dyslexia => Self::Dyslexia,
+            CliConditionTag::Dyscalculia => Self::Dyscalculia,
+            CliConditionTag::Aphasia => Self::Aphasia,
+            CliConditionTag::Adhd => Self::Adhd,
+            CliConditionTag::NonNative => Self::NonNative,
+            CliConditionTag::General => Self::General,
+        }
+    }
 }
 
 /// Profile values accepted on the command line.

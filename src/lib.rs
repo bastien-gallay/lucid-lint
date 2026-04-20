@@ -29,6 +29,7 @@
 #![warn(unreachable_pub)]
 #![forbid(unsafe_code)]
 
+pub mod condition;
 pub mod config;
 pub mod language;
 pub mod output;
@@ -39,6 +40,7 @@ pub mod types;
 
 mod engine;
 
+pub use condition::ConditionTag;
 pub use config::Profile;
 pub use engine::{Engine, EngineError, Report};
 pub use scoring::{CategoryScore, Score, Scorecard, ScoringConfig};

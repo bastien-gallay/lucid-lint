@@ -5,10 +5,11 @@ use std::path::Path;
 
 use thiserror::Error;
 
+use crate::condition::ConditionTag;
 use crate::config::Profile;
 use crate::language::{default_language, detect_language};
 use crate::parser::{parse_markdown, parse_plain, word_count};
-use crate::rules::{default_rules, Rule};
+use crate::rules::{default_rules, filter_by_conditions, Rule};
 use crate::scoring::{self, Scorecard, ScoringConfig};
 use crate::types::{Diagnostic, Language, SourceFile};
 
@@ -43,6 +44,18 @@ impl Engine {
         Self {
             profile,
             rules: default_rules(profile),
+            scoring_config: ScoringConfig::default(),
+        }
+    }
+
+    /// Build an engine for the given profile, restricting the rule set to
+    /// rules tagged `general` plus those whose condition tags intersect with
+    /// `conditions` (F71 + F72).
+    #[must_use]
+    pub fn with_profile_and_conditions(profile: Profile, conditions: &[ConditionTag]) -> Self {
+        Self {
+            profile,
+            rules: filter_by_conditions(default_rules(profile), conditions),
             scoring_config: ScoringConfig::default(),
         }
     }

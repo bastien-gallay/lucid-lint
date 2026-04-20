@@ -126,6 +126,39 @@ fn check_falc_profile_is_stricter() {
 }
 
 #[test]
+fn check_accepts_conditions_flag() {
+    // `--conditions` is parsed; with the v0.2 rule set (all `general`)
+    // it does not change behavior. Smoke test that the flag is wired and
+    // that comma-separated values parse.
+    let fixture = corpus_path("en/sample.md");
+    Command::cargo_bin("lucid-lint")
+        .unwrap()
+        .arg("check")
+        .arg("--profile")
+        .arg("public")
+        .arg("--conditions")
+        .arg("dyslexia,aphasia")
+        .arg(fixture)
+        .assert()
+        .code(1)
+        .stdout(predicate::str::contains("sentence-too-long"));
+}
+
+#[test]
+fn check_rejects_unknown_condition_tag() {
+    let fixture = corpus_path("en/sample.md");
+    Command::cargo_bin("lucid-lint")
+        .unwrap()
+        .arg("check")
+        .arg("--conditions")
+        .arg("autism")
+        .arg(fixture)
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("invalid value"));
+}
+
+#[test]
 fn check_rejects_unknown_profile() {
     let fixture = corpus_path("en/sample.md");
     Command::cargo_bin("lucid-lint")

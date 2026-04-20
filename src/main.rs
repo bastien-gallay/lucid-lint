@@ -7,6 +7,7 @@ use std::process::ExitCode;
 use anyhow::{Context, Result};
 use clap::Parser;
 
+use lucid_lint::condition::ConditionTag;
 use lucid_lint::config::Profile;
 use lucid_lint::output::Format;
 use lucid_lint::scoring::{self, ScoringConfig};
@@ -33,7 +34,8 @@ fn main() -> ExitCode {
 fn run_check(args: CheckArgs) -> Result<ExitCode> {
     let profile: Profile = args.profile.into();
     let format: Format = args.format.into();
-    let engine = Engine::with_profile(profile);
+    let conditions: Vec<ConditionTag> = args.conditions.iter().copied().map(Into::into).collect();
+    let engine = Engine::with_profile_and_conditions(profile, &conditions);
     let scoring_config = ScoringConfig::default();
 
     let mut all_diagnostics: Vec<Diagnostic> = Vec::new();

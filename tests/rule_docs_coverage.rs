@@ -95,7 +95,10 @@ fn every_rule_is_categorized() {
         // Sanity: the fallback is Syntax, so flag any rule that lands there
         // *unless* it is one of the two rules we expect to be there.
         if matches!(code_category, Category::Syntax)
-            && !matches!(id.as_str(), "passive-voice" | "unclear-antecedent")
+            && !matches!(
+                id.as_str(),
+                "passive-voice" | "unclear-antecedent" | "nested-negation"
+            )
         {
             unmapped.push(id.clone());
         }
