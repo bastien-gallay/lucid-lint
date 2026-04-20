@@ -85,6 +85,9 @@ targets = [
     "x86_64-pc-windows-msvc",
 ]
 pr-run-mode = "plan"
+# release.yml is hand-maintained; tell dist not to fail when its own
+# template drifts. Track cargo-dist upgrades explicitly.
+allow-dirty = ["ci"]
 
 [lints.rust]
 unsafe_code = "forbid"
