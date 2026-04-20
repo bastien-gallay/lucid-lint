@@ -909,7 +909,9 @@ Readability indices are the historical metric for text complexity. Simple, repro
 
 ## Suppressing diagnostics
 
-v0.1 supports a single inline-disable directive for Markdown inputs:
+Two inline-disable directives are supported for Markdown inputs.
+
+### Line form
 
 ```markdown
 <!-- lucid-lint disable-next-line sentence-too-long -->
@@ -919,10 +921,29 @@ A long sentence that is intentional and should not be flagged.
 
 - **Syntax** : HTML comment, one rule id per directive.
 - **Scope** : the next non-blank line in the source.
+
+### Block form (v0.2, F18)
+
+```markdown
+<!-- lucid-lint-disable sentence-too-long -->
+
+A long sentence.
+
+Another long sentence in the same scope.
+
+<!-- lucid-lint-enable -->
+```
+
+- **Syntax** : `<!-- lucid-lint-disable <rule-id> -->` opens a scope; `<!-- lucid-lint-enable -->` closes every currently-open scope. An optional rule id on `enable` closes only that rule's scope, which lets nested disables overlap for different rules.
+- **Scope** : every line between the two comments (inclusive). An unterminated `disable` extends to the end of the document.
+- **One rule per comment** : multi-rule lists are tracked as F21.
+
+### Common properties
+
 - **Applies to** : Markdown only. Plain text and stdin cannot carry comments; config-based ignores (`[[ignore]]` in `lucid-lint.toml`) are planned — see `ROADMAP.md` F19.
 - **Unknown rule ids** : silently ignored.
 
-Block disable/enable (`<!-- lucid-lint-disable -->` … `<!-- lucid-lint-enable -->`), file-level directives, multi-rule lists, and an optional `reason=` field are tracked as F18–F21 in `ROADMAP.md`.
+File-level directives, multi-rule lists, and an optional `reason=` field are tracked as F20–F21 in `ROADMAP.md`.
 
 ---
 

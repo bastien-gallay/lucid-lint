@@ -197,7 +197,7 @@ v0.1 ships the minimal inline-disable directive (see brainstorm
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F18 | Block form: `<!-- lucid-lint-disable <rule-id> -->` … `<!-- lucid-lint-enable -->` | 🔴 High | v0.1 inline-disable brainstorm |
+| F18 | ✅ Block form shipped in v0.2: `<!-- lucid-lint-disable <rule-id> -->` … `<!-- lucid-lint-enable -->` silences one rule across every line in the scope. `enable` with no argument closes every open scope; with a rule id, closes only that rule's scope (so overlapping disables for different rules can nest). Unterminated `disable` extends to end-of-document. See [RULES.md → Suppressing diagnostics](RULES.md#suppressing-diagnostics). | 🔴 High | v0.1 inline-disable brainstorm |
 | F19 | Config-based ignores (`[[ignore]]` in `lucid-lint.toml`) covering `.txt` and stdin | 🔴 High | v0.1 inline-disable brainstorm |
 | F20 | `reason="..."` field, optional in v0.1, surfaced in reports and optionally required via config | 🟡 Medium | v0.1 inline-disable brainstorm |
 | F21 | File-level directive (`disable-file`) and multi-rule lists | 🟡 Medium | v0.1 inline-disable brainstorm |

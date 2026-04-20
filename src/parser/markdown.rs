@@ -24,6 +24,8 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
     let mut sections: Vec<Section> = Vec::new();
     let mut directives: Vec<Directive> = Vec::new();
     let mut pending_directive_rules: Vec<String> = Vec::new();
+    // Open block-form disable scopes: (rule_id, start_line).
+    let mut open_blocks: Vec<(String, u32)> = Vec::new();
     let mut list_items: Vec<ListItem> = Vec::new();
     let mut list_depth: u32 = 0;
     let mut current_title: Option<String> = None;
@@ -119,12 +121,31 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
                 // Inline code: skip contents.
             },
             Event::Html(s) | Event::InlineHtml(s) => {
-                // Queue directives here; the flush at the top of the loop
-                // attaches them to the next real content block so stacked
-                // directives and blank lines in between all resolve to the
-                // same target.
-                for rule_id in parse_all_disable_directives(&s) {
-                    pending_directive_rules.push(rule_id);
+                let block_line = offset_to_line(text, range.start);
+                for (parsed, line) in parse_all_directives_in_html(&s, block_line) {
+                    match parsed {
+                        ParsedDirective::LineForm { rule_id } => {
+                            // Queue; the flush at the top of the loop attaches
+                            // these to the next real content block so stacked
+                            // directives and blank lines between them all
+                            // resolve to the same target.
+                            pending_directive_rules.push(rule_id);
+                        },
+                        ParsedDirective::BlockOpen { rule_id } => {
+                            open_blocks.push((rule_id, line));
+                        },
+                        ParsedDirective::BlockClose { rule_id: Some(id) } => {
+                            if let Some(pos) = open_blocks.iter().rposition(|(r, _)| r == &id) {
+                                let (rule_id, start) = open_blocks.remove(pos);
+                                directives.push(Directive::block(rule_id, start, line));
+                            }
+                        },
+                        ParsedDirective::BlockClose { rule_id: None } => {
+                            for (rule_id, start) in std::mem::take(&mut open_blocks) {
+                                directives.push(Directive::block(rule_id, start, line));
+                            }
+                        },
+                    }
                 }
             },
             Event::Text(s) => {
@@ -167,6 +188,15 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
         sections.push(Section::new(None, 0, Vec::new()));
     }
 
+    // Close any unterminated block-disables at end-of-document so they still
+    // suppress diagnostics up to the last line of the input.
+    if !open_blocks.is_empty() {
+        let last_line = offset_to_line(text, text.len().saturating_sub(1));
+        for (rule_id, start) in open_blocks {
+            directives.push(Directive::block(rule_id, start, last_line.max(start)));
+        }
+    }
+
     Document::with_metadata(source, sections, directives, list_items)
 }
 
@@ -180,34 +210,82 @@ fn is_content_block_start(event: &Event<'_>) -> bool {
     )
 }
 
-/// Parse every `disable-next-line` directive contained in an HTML block.
-fn parse_all_disable_directives(html: &str) -> Vec<String> {
+/// A disable directive parsed from a single HTML comment.
+enum ParsedDirective {
+    /// `<!-- lucid-lint disable-next-line <rule-id> -->`
+    LineForm { rule_id: String },
+    /// `<!-- lucid-lint-disable <rule-id> -->`
+    BlockOpen { rule_id: String },
+    /// `<!-- lucid-lint-enable [<rule-id>] -->` — `None` closes all open scopes.
+    BlockClose { rule_id: Option<String> },
+}
+
+/// Parse every recognized directive in an HTML block, paired with its
+/// 1-based line number relative to the document (derived from
+/// `block_start_line` plus the newlines that precede the comment inside
+/// `html`).
+fn parse_all_directives_in_html(html: &str, block_start_line: u32) -> Vec<(ParsedDirective, u32)> {
     let mut out = Vec::new();
-    let mut rest = html;
-    while let Some(open) = rest.find("<!--") {
-        let after_open = &rest[open..];
-        let Some(close) = after_open.find("-->") else {
+    let mut cursor = 0usize;
+    while let Some(open_rel) = html[cursor..].find("<!--") {
+        let open = cursor + open_rel;
+        let Some(close_rel) = html[open..].find("-->") else {
             break;
         };
-        let comment = &after_open[..close + 3];
-        if let Some(rule_id) = parse_disable_directive(comment) {
-            out.push(rule_id);
+        let close = open + close_rel + 3;
+        let comment = &html[open..close];
+        if let Some(parsed) = parse_single_directive(comment) {
+            #[allow(clippy::naive_bytecount)]
+            let newlines_before = html.as_bytes()[..open]
+                .iter()
+                .filter(|&&b| b == b'\n')
+                .count();
+            let line = block_start_line.saturating_add(u32::try_from(newlines_before).unwrap_or(0));
+            out.push((parsed, line));
         }
-        rest = &after_open[close + 3..];
+        cursor = close;
     }
     out
 }
 
-/// Parse an HTML comment into a `disable-next-line` directive.
+/// Parse a single HTML comment into a recognized directive, or `None`.
 ///
-/// Returns the rule id on match, or `None` if the comment is not a
-/// recognized directive.
-fn parse_disable_directive(html: &str) -> Option<String> {
+/// Recognized forms (order matters — block forms are tried first because
+/// they share the `lucid-lint` prefix with the line form):
+///
+/// - `<!-- lucid-lint-disable <rule-id> -->`
+/// - `<!-- lucid-lint-enable [<rule-id>] -->`
+/// - `<!-- lucid-lint disable-next-line <rule-id> -->`
+fn parse_single_directive(html: &str) -> Option<ParsedDirective> {
     let inner = html
         .trim()
         .strip_prefix("<!--")?
         .strip_suffix("-->")?
         .trim();
+
+    if let Some(rest) = inner.strip_prefix("lucid-lint-disable") {
+        let rule_id = rest.strip_prefix(|c: char| c.is_whitespace())?.trim();
+        if rule_id.is_empty() || !is_valid_rule_id(rule_id) {
+            return None;
+        }
+        return Some(ParsedDirective::BlockOpen {
+            rule_id: rule_id.to_string(),
+        });
+    }
+
+    if let Some(rest) = inner.strip_prefix("lucid-lint-enable") {
+        let trimmed = rest.trim();
+        if trimmed.is_empty() {
+            return Some(ParsedDirective::BlockClose { rule_id: None });
+        }
+        if !is_valid_rule_id(trimmed) {
+            return None;
+        }
+        return Some(ParsedDirective::BlockClose {
+            rule_id: Some(trimmed.to_string()),
+        });
+    }
+
     let rest = inner.strip_prefix("lucid-lint")?;
     let rest = rest.strip_prefix(|c: char| c.is_whitespace())?.trim_start();
     let rest = rest.strip_prefix("disable-next-line")?;
@@ -215,7 +293,9 @@ fn parse_disable_directive(html: &str) -> Option<String> {
     if rule_id.is_empty() || !is_valid_rule_id(rule_id) {
         return None;
     }
-    Some(rule_id.to_string())
+    Some(ParsedDirective::LineForm {
+        rule_id: rule_id.to_string(),
+    })
 }
 
 fn is_valid_rule_id(s: &str) -> bool {
@@ -355,7 +435,8 @@ mod tests {
         assert_eq!(doc.directives.len(), 1);
         assert_eq!(doc.directives[0].rule_id, "sentence-too-long");
         // Directive is on line 3, next non-blank line is 4.
-        assert_eq!(doc.directives[0].target_line, 4);
+        assert_eq!(doc.directives[0].start_line, 4);
+        assert_eq!(doc.directives[0].end_line, 4);
     }
 
     #[test]
@@ -375,6 +456,76 @@ mod tests {
     #[test]
     fn directive_without_following_content_is_dropped() {
         let md = "Body.\n\n<!-- lucid-lint disable-next-line sentence-too-long -->\n";
+        let doc = parse_markdown(md, SourceFile::Anonymous);
+        assert!(doc.directives.is_empty());
+    }
+
+    #[test]
+    fn extracts_block_disable_and_enable_directive() {
+        let md = "Intro.\n\n\
+                  <!-- lucid-lint-disable sentence-too-long -->\n\n\
+                  Inside block.\n\n\
+                  More inside.\n\n\
+                  <!-- lucid-lint-enable -->\n\n\
+                  After.\n";
+        let doc = parse_markdown(md, SourceFile::Anonymous);
+        assert_eq!(doc.directives.len(), 1);
+        let d = &doc.directives[0];
+        assert_eq!(d.rule_id, "sentence-too-long");
+        assert_eq!(d.start_line, 3);
+        assert_eq!(d.end_line, 9);
+        assert!(d.covers(5));
+        assert!(d.covers(7));
+        assert!(!d.covers(11));
+    }
+
+    #[test]
+    fn block_enable_with_rule_id_closes_matching_scope_only() {
+        let md = "<!-- lucid-lint-disable sentence-too-long -->\n\n\
+                  <!-- lucid-lint-disable weasel-words -->\n\n\
+                  Between.\n\n\
+                  <!-- lucid-lint-enable sentence-too-long -->\n\n\
+                  After.\n\n\
+                  <!-- lucid-lint-enable -->\n";
+        let doc = parse_markdown(md, SourceFile::Anonymous);
+        assert_eq!(doc.directives.len(), 2);
+        let sentence = doc
+            .directives
+            .iter()
+            .find(|d| d.rule_id == "sentence-too-long")
+            .expect("sentence-too-long directive");
+        let weasel = doc
+            .directives
+            .iter()
+            .find(|d| d.rule_id == "weasel-words")
+            .expect("weasel-words directive");
+        assert!(sentence.end_line < weasel.end_line);
+    }
+
+    #[test]
+    fn unterminated_block_disable_extends_to_end_of_document() {
+        let md = "Intro.\n\n\
+                  <!-- lucid-lint-disable sentence-too-long -->\n\n\
+                  Body.\n";
+        let doc = parse_markdown(md, SourceFile::Anonymous);
+        assert_eq!(doc.directives.len(), 1);
+        let d = &doc.directives[0];
+        assert_eq!(d.rule_id, "sentence-too-long");
+        assert!(d.end_line >= d.start_line);
+        assert!(d.covers(5));
+    }
+
+    #[test]
+    fn enable_with_no_matching_open_scope_is_ignored() {
+        let md = "<!-- lucid-lint-enable sentence-too-long -->\n\nText.\n";
+        let doc = parse_markdown(md, SourceFile::Anonymous);
+        assert!(doc.directives.is_empty());
+    }
+
+    #[test]
+    fn block_directive_with_invalid_rule_id_is_rejected() {
+        let md = "<!-- lucid-lint-disable Bad_Rule -->\n\nBody.\n\n\
+                  <!-- lucid-lint-enable -->\n";
         let doc = parse_markdown(md, SourceFile::Anonymous);
         assert!(doc.directives.is_empty());
     }

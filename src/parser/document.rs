@@ -149,18 +149,25 @@ pub struct Sentence {
     pub column: u32,
 }
 
-/// An inline-disable directive extracted from the source.
+/// A disable directive extracted from the source.
 ///
-/// v0.1 ships a single form: `<!-- lucid-lint disable-next-line <rule-id> -->`.
-/// The directive silences `rule_id` diagnostics emitted at `target_line`
-/// (the next non-blank line after the comment).
+/// Two forms are supported:
+///
+/// - **Line form** (v0.1): `<!-- lucid-lint disable-next-line <rule-id> -->`
+///   silences `rule_id` on the next non-blank line. `start_line == end_line`.
+/// - **Block form** (v0.2, F18):
+///   `<!-- lucid-lint-disable <rule-id> -->` … `<!-- lucid-lint-enable -->`
+///   silences `rule_id` on every line between the two comments (inclusive).
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Directive {
     /// The rule id silenced by this directive.
     pub rule_id: String,
 
-    /// 1-based line the directive targets.
-    pub target_line: u32,
+    /// 1-based first line the directive covers (inclusive).
+    pub start_line: u32,
+
+    /// 1-based last line the directive covers (inclusive).
+    pub end_line: u32,
 }
 
 /// A list item position captured during parsing.
@@ -186,13 +193,30 @@ impl ListItem {
 }
 
 impl Directive {
-    /// Create a new directive.
+    /// Create a line-form directive covering a single line.
     #[must_use]
     pub fn new(rule_id: impl Into<String>, target_line: u32) -> Self {
         Self {
             rule_id: rule_id.into(),
-            target_line,
+            start_line: target_line,
+            end_line: target_line,
         }
+    }
+
+    /// Create a block-form directive covering an inclusive line range.
+    #[must_use]
+    pub fn block(rule_id: impl Into<String>, start_line: u32, end_line: u32) -> Self {
+        Self {
+            rule_id: rule_id.into(),
+            start_line,
+            end_line,
+        }
+    }
+
+    /// Whether `line` falls inside this directive's range (inclusive).
+    #[must_use]
+    pub const fn covers(&self, line: u32) -> bool {
+        line >= self.start_line && line <= self.end_line
     }
 }
 

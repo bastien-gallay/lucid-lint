@@ -120,7 +120,7 @@ impl Engine {
             !document
                 .directives
                 .iter()
-                .any(|dir| dir.rule_id == d.rule_id && dir.target_line == d.location.line)
+                .any(|dir| dir.rule_id == d.rule_id && dir.covers(d.location.line))
         });
 
         let words = word_count(input);
@@ -213,6 +213,31 @@ mod tests {
                     exceeds the public profile threshold by a comfortable margin of safety.\n";
         let report = engine.lint_str(text);
         assert_eq!(diags_for_rule(&report.diagnostics, "sentence-too-long"), 1);
+    }
+
+    #[test]
+    fn block_disable_suppresses_diagnostics_within_scope() {
+        let engine = Engine::with_profile(Profile::Public);
+        let long_sentence = "This is a long sentence that keeps adding more and more words \
+                             until it exceeds the public profile threshold by a comfortable \
+                             margin of safety.";
+        let text = format!(
+            "Intro.\n\n\
+             <!-- lucid-lint-disable sentence-too-long -->\n\n\
+             {long_sentence}\n\n\
+             {long_sentence}\n\n\
+             <!-- lucid-lint-enable -->\n\n\
+             {long_sentence}\n",
+        );
+        let report = engine.lint_str(&text);
+        // The two long sentences inside the block are suppressed; the one
+        // after the enable comment still triggers.
+        assert_eq!(
+            diags_for_rule(&report.diagnostics, "sentence-too-long"),
+            1,
+            "expected block directive to suppress 2 of 3 diagnostics, got: {:?}",
+            report.diagnostics,
+        );
     }
 
     #[test]
