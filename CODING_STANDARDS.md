@@ -192,6 +192,19 @@ Types:
 
 Breaking changes include `BREAKING CHANGE:` in the footer or `!` after the type.
 
+## Toolchain policy
+
+- `rust-toolchain.toml` pins `channel = "stable"`. Do NOT pin a specific
+  Rust minor version here — a frozen pin silently ages and third-party
+  actions (e.g. `rustsec/audit-check`, `peaceiris/actions-mdbook` when
+  running `cargo doc`) will fail as their ecosystem moves forward.
+- `Cargo.toml` declares `rust-version` as the MSRV. The CI `msrv` job
+  MUST match this exact value. Bumping MSRV requires a dedicated commit
+  updating both places together.
+- Jobs that invoke `cargo` in CI MUST install a toolchain explicitly via
+  `dtolnay/rust-toolchain@master`. Don't rely on the runner's
+  preinstalled Rust — it drifts without warning.
+
 ## Review mindset
 
 When reviewing a PR, ask:
