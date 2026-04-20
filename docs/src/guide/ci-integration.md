@@ -54,7 +54,51 @@ To surface diagnostics as pull request review comments:
 lucid-lint check --format=json docs/ | reviewdog -f=rdjson -reporter=github-pr-review
 ```
 
-> Note: RDJSON adapter is not shipped in v0.1. For now, parse the JSON output yourself or wait for the [SARIF output](../roadmap.md) planned in v0.2.
+> Note: RDJSON adapter is not shipped. For native code-review surfacing, prefer the [GitHub Code Scanning](#github-code-scanning-sarif) workflow below.
+
+## GitHub Code Scanning (SARIF)
+
+`--format=sarif` emits a SARIF v2.1.0 log that GitHub's Code Scanning ingests directly: each diagnostic becomes a code-scanning alert annotated on the PR diff.
+
+```yaml
+name: Lucid lint (code scanning)
+
+on:
+  pull_request:
+    paths: ['**/*.md']
+  push:
+    branches: [main]
+    paths: ['**/*.md']
+
+permissions:
+  security-events: write
+  contents: read
+
+jobs:
+  lucid-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo install lucid-lint
+      - name: Run lucid-lint and emit SARIF
+        run: |
+          lucid-lint check \
+            --profile=public \
+            --format=sarif \
+            --fail-on-warning=false \
+            docs/ README.md > lucid-lint.sarif
+      - name: Upload SARIF to Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: lucid-lint.sarif
+          category: lucid-lint
+```
+
+Notes:
+
+- `--fail-on-warning=false` lets the upload step always run; rely on Code Scanning's own gating in the PR UI rather than the lint exit code.
+- Each rule appears once in `runs[0].tool.driver.rules` with its category, default severity, default scoring weight, and a `helpUri` pointing at the per-rule mdBook page.
+- Per-result `properties.weight` and `properties.section` carry the scoring weight and the heading the diagnostic was found under.
 
 ## Exit code control
 

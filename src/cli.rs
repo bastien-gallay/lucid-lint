@@ -93,6 +93,8 @@ pub(crate) enum CliFormat {
     Tty,
     /// Structured JSON.
     Json,
+    /// SARIF v2.1.0 log for GitHub Code Scanning.
+    Sarif,
 }
 
 impl From<CliFormat> for FormatConfig {
@@ -100,6 +102,7 @@ impl From<CliFormat> for FormatConfig {
         match value {
             CliFormat::Tty => Self::Tty,
             CliFormat::Json => Self::Json,
+            CliFormat::Sarif => Self::Sarif,
         }
     }
 }

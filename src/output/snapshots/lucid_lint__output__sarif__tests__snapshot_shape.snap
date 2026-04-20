@@ -1,0 +1,65 @@
+---
+source: src/output/sarif.rs
+expression: normalized
+---
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "lucid-lint",
+          "version": "X.Y.Z",
+          "informationUri": "https://github.com/bastien-gallay/lucid-lint",
+          "rules": [
+            {
+              "id": "sentence-too-long",
+              "name": "sentence-too-long",
+              "shortDescription": {
+                "text": "sentence-too-long — cognitive accessibility check (category: structure)."
+              },
+              "helpUri": "https://bastien-gallay.github.io/lucid-lint/rules/sentence-too-long.html",
+              "properties": {
+                "category": "structure",
+                "default-severity": "warning",
+                "default-weight": 2,
+                "tags": [
+                  "structure",
+                  "accessibility",
+                  "prose"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "sentence-too-long",
+          "level": "warning",
+          "message": {
+            "text": "Sentence is too long."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "docs/foo.md"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "endColumn": 43
+                }
+              }
+            }
+          ],
+          "properties": {
+            "weight": 2
+          }
+        }
+      ]
+    }
+  ]
+}

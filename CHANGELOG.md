@@ -52,6 +52,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   F19–F21 deferred extensions. The 17 per-rule pages now link to it
   via `../guide/suppression.md` (previously pointed at the
   repo-root `RULES.md`, which renders as a 404 inside mdBook).
+- **SARIF v2.1.0 output (F32)** — `lucid-lint check --format=sarif` now
+  emits a SARIF log compatible with GitHub Code Scanning (and any
+  SARIF v2.1.0 consumer). Each rule appears once under
+  `runs[0].tool.driver.rules` with its category, default severity,
+  default scoring weight, and a `helpUri` to the per-rule mdBook page;
+  per-result `properties` carry the diagnostic's scoring weight and
+  the heading it was found under.
+  [`docs/src/guide/ci-integration.md`](docs/src/guide/ci-integration.md)
+  ships a full GitHub Actions workflow that uploads the SARIF to
+  Code Scanning via `github/codeql-action/upload-sarif@v3`.
 - **Context-aware `weasel-words` — first slice of F23.** Hits inside
   inline code spans (`` `…` ``) are skipped so an author discussing a
   weasel term by name is no longer flagged for using it. Directional
