@@ -52,6 +52,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   F19–F21 deferred extensions. The 17 per-rule pages now link to it
   via `../guide/suppression.md` (previously pointed at the
   repo-root `RULES.md`, which renders as a 404 inside mdBook).
+- **Context-aware `weasel-words` — first slice of F23.** Hits inside
+  inline code spans (`` `…` ``) are skipped so an author discussing a
+  weasel term by name is no longer flagged for using it. Directional
+  pairings `rather than` (EN) and `plutôt que` (FR) are recognised as
+  conjunctions and skipped. Dogfood on this repo drops from 9 to 5
+  weasel hits. Follow-up work on straight-quoted terms and `"many X"`
+  with concrete X remains queued under F23. Rule touched:
+  `weasel-words`.
 - **Roadmap mirror in the mdBook site (F27)** — `docs/src/roadmap.md`
   is auto-generated from the root `ROADMAP.md` by
   [`scripts/sync-roadmap.py`](scripts/sync-roadmap.py), invoked as a

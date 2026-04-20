@@ -109,7 +109,7 @@ Shipped in the tag: all 17 rules across 5 phases, the minimal inline-disable dir
 | F2 | Sentence-level low-lexical-diversity density | 🟢 Low | Rule 5 |
 | F3 | Comma density metric (relative) for `excessive-commas` | 🟢 Low | Rule 3a |
 | F22 | Context-aware relaxation for `excessive-commas` (research needed before design) | 🔴 High | v0.1 dogfood: 5 false-ish positives on technical docs |
-| F23 | Context-aware `weasel-words` (quoted terms, "many X" with concrete X, meta-discussion of the words themselves) | 🔴 High | v0.1 dogfood: 11 false-ish positives on this repo's own docs |
+| F23 | 🚧 First slice shipped in v0.2 — hits inside inline code spans and directional `rather than` / `plutôt que` pairings are now skipped. Still open: straight-quoted terms (e.g. `"many X"` outside backticks) and `"many X"` where X is a concrete noun. | 🔴 High | v0.1 dogfood: 11 false-ish positives on this repo's own docs |
 | F24 | Refine `excessive-nominalization` suffix list (drop or gate `-al`; many adjectives — `crucial`, `horizontal`, `positional`, `attentional` — are flagged despite not being abstract nouns) | 🟡 Medium | v0.1 dogfood |
 | F31 | Split `unexplained-abbreviation` built-in whitelist: the accessibility (`WCAG`, `WAI`, `ARIA`, `RGAA`, `EAA`, `FALC`, `AA`, `AAA`, `ADHD`) and AI (`LLM`, `NLP`) initialisms are well-known inside `lucid-lint` but narrower for a generic tech audience. Move them into a project-scoped whitelist once F19 lands CLI-level config loading, keeping only truly ubiquitous tech acronyms (`URL`, `HTML`, `API`, `CPU`, …) in the shipped `dev-doc` baseline. | 🟡 Medium | v0.1 review feedback |
 

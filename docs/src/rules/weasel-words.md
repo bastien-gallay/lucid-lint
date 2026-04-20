@@ -16,6 +16,11 @@ Vague qualifiers that weaken a statement. A weasel word adds an invisible cognit
 
 Word-boundary match against a per-language list. Case-insensitive. One diagnostic per occurrence.
 
+Two context-aware exclusions, added in v0.2 as the first slice of **[F23](../roadmap.md)**:
+
+- **Inline code spans.** A hit inside `` `…` `` is skipped. Wrap a weasel term in backticks when you are discussing the word itself.
+- **Directional pairings.** `rather than` (EN) and `plutôt que` (FR) are conjunctions meaning "instead of" — not hedges — and are skipped.
+
 ## Parameters
 
 | Key | Type | Default |
@@ -31,7 +36,7 @@ Word-boundary match against a per-language list. Case-insensitive. One diagnosti
 
 ## Known false positives
 
-The v0.1 detector is context-blind. Quoted terms, "many X" with concrete X, and meta-discussion of the words themselves still fire. Context-awareness is tracked as **[F23](../roadmap.md)** on the [roadmap](../roadmap.md).
+Two patterns still fire in v0.2: straight-quoted terms (`"many X"` without backticks) and `"many X"` where X is a concrete noun. Both are queued under **[F23](../roadmap.md)** on the [roadmap](../roadmap.md). Wrap the quoted term in backticks, or use an inline disable comment, to opt out.
 
 ## Suppression
 

@@ -102,6 +102,12 @@ impl Rule for WeaselWords {
             let lowered = paragraph.text.to_lowercase();
             for phrase in &phrases {
                 for byte_offset in find_word_bounded(&lowered, phrase) {
+                    if is_inside_inline_code(&paragraph.text, byte_offset) {
+                        continue;
+                    }
+                    if is_directional_pair(&lowered, byte_offset, phrase, language) {
+                        continue;
+                    }
                     let (line_offset, column) = line_column_at(&paragraph.text, byte_offset);
                     let line = paragraph.start_line.saturating_add(line_offset);
                     diagnostics.push(build_diagnostic(
@@ -117,6 +123,46 @@ impl Rule for WeaselWords {
         diagnostics.sort_by_key(|d| (d.location.line, d.location.column));
         diagnostics
     }
+}
+
+/// A hit lands inside an inline code span when the number of backticks
+/// between the current line's start and the hit offset is odd. Fenced
+/// code blocks are already excluded by the parser, so this check only
+/// needs to reason about `` `inline` `` spans within a single line.
+fn is_inside_inline_code(text: &str, offset: usize) -> bool {
+    let capped = offset.min(text.len());
+    let line_start = text[..capped].rfind('\n').map_or(0, |p| p + 1);
+    text[line_start..capped]
+        .bytes()
+        .filter(|&b| b == b'`')
+        .count()
+        % 2
+        == 1
+}
+
+/// "rather than" and "plutôt que" are conjunctions meaning "instead of",
+/// not hedges. Skip a hit when the lexical unit immediately after the
+/// phrase is the expected directional follower for the language.
+fn is_directional_pair(lowered: &str, offset: usize, phrase: &str, language: Language) -> bool {
+    let follower = match (language, phrase) {
+        (Language::En, "rather") => "than",
+        (Language::Fr, "plutôt") => "que",
+        _ => return false,
+    };
+    let end = offset + phrase.len();
+    if end > lowered.len() {
+        return false;
+    }
+    let tail = lowered[end..].trim_start();
+    if !tail.starts_with(follower) {
+        return false;
+    }
+    // Guard against matching a prefix (e.g. "quelque" for "que"): the
+    // byte right after the follower must be a non-word character.
+    tail.as_bytes()
+        .get(follower.len())
+        .copied()
+        .map_or(true, |b| !(b.is_ascii_alphabetic() || b == b'\''))
 }
 
 fn build_diagnostic(
@@ -239,6 +285,54 @@ mod tests {
     fn category_is_lexicon() {
         let diags = lint("Clearly wrong.", Language::En);
         assert_eq!(diags[0].category(), crate::types::Category::Lexicon);
+    }
+
+    #[test]
+    fn weasel_inside_inline_code_is_skipped() {
+        // Author is discussing the word itself; backticks mark it as a term,
+        // not as an actual hedge.
+        let diags = lint("The phrase `basically` weakens a statement.", Language::En);
+        assert!(diags.is_empty(), "got {diags:?}");
+    }
+
+    #[test]
+    fn weasel_outside_inline_code_still_fires() {
+        // Same word in prose (no backticks) remains a hit.
+        let diags = lint(
+            "The phrase `ok` is fine, but this code is basically correct.",
+            Language::En,
+        );
+        assert_eq!(diags.len(), 1);
+        assert!(diags[0].message.contains("basically"));
+    }
+
+    #[test]
+    fn rather_than_is_not_a_hedge() {
+        let diags = lint("Use verbs rather than nominalizations.", Language::En);
+        assert!(diags.is_empty(), "got {diags:?}");
+    }
+
+    #[test]
+    fn rather_alone_still_fires() {
+        let diags = lint("The result is rather poor.", Language::En);
+        assert_eq!(diags.len(), 1);
+        assert!(diags[0].message.contains("rather"));
+    }
+
+    #[test]
+    fn plutot_que_is_not_a_hedge() {
+        let diags = lint(
+            "Préférer les verbes plutôt que les substantifs.",
+            Language::Fr,
+        );
+        assert!(diags.is_empty(), "got {diags:?}");
+    }
+
+    #[test]
+    fn plutot_alone_still_fires() {
+        let diags = lint("Le résultat est plutôt décevant.", Language::Fr);
+        assert_eq!(diags.len(), 1);
+        assert!(diags[0].message.contains("plutôt"));
     }
 
     #[test]
