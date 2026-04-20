@@ -143,6 +143,9 @@ impl Rule for PassiveVoice {
     }
 
     fn check(&self, document: &Document, language: Language) -> Vec<Diagnostic> {
+        if matches!(language, Language::Unknown) {
+            return Vec::new();
+        }
         let max = self.config.max_per_paragraph;
         let mut diagnostics = Vec::new();
 

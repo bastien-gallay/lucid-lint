@@ -21,6 +21,14 @@ use crate::types::SourceFile;
 /// unnamed section with all paragraphs.
 #[must_use]
 pub fn parse_plain(text: &str, source: SourceFile) -> Document {
+    // Normalize CRLF → LF so paragraph splitting works on Windows-edited
+    // files. Avoid allocating when the input already uses LF.
+    let normalized: std::borrow::Cow<'_, str> = if text.contains('\r') {
+        std::borrow::Cow::Owned(text.replace("\r\n", "\n").replace('\r', "\n"))
+    } else {
+        std::borrow::Cow::Borrowed(text)
+    };
+    let text = normalized.as_ref();
     let paragraphs: Vec<Paragraph> = text
         .split("\n\n")
         .enumerate()
@@ -83,6 +91,17 @@ mod tests {
         let text = "\n\n\nFirst.\n\n\n\nSecond.";
         let doc = parse_plain(text, SourceFile::Anonymous);
         assert_eq!(doc.sections[0].paragraphs.len(), 2);
+    }
+
+    #[test]
+    fn parse_plain_handles_crlf_line_endings() {
+        let text = "First paragraph.\r\n\r\nSecond paragraph.\r\n\r\nThird.";
+        let doc = parse_plain(text, SourceFile::Anonymous);
+        assert_eq!(doc.sections[0].paragraphs.len(), 3);
+        assert!(doc.sections[0]
+            .paragraphs
+            .iter()
+            .all(|p| !p.text.contains('\r')));
     }
 
     #[test]

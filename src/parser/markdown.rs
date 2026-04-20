@@ -276,7 +276,11 @@ const fn heading_depth(level: HeadingLevel) -> u32 {
 
 fn offset_to_line(text: &str, offset: usize) -> u32 {
     let capped = offset.min(text.len());
-    let lines_before = text[..capped].bytes().filter(|&b| b == b'\n').count();
+    #[allow(clippy::naive_bytecount)]
+    let lines_before = text.as_bytes()[..capped]
+        .iter()
+        .filter(|&&b| b == b'\n')
+        .count();
     (lines_before + 1).try_into().unwrap_or(u32::MAX)
 }
 
