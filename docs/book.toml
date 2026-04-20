@@ -15,6 +15,7 @@ preferred-dark-theme = "navy"
 git-repository-url = "https://github.com/bastien-gallay/lucid-lint"
 edit-url-template = "https://github.com/bastien-gallay/lucid-lint/edit/main/docs/{path}"
 site-url = "/lucid-lint/"
+additional-css = ["theme/css/lucid-typography.css"]
 
 [output.html.fold]
 enable = true

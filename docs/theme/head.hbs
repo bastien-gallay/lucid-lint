@@ -1,0 +1,23 @@
+{{!--
+  Extension point injected into <head>. mdBook's default head.hbs is
+  empty; we use it to:
+    1. Preload the default body font so first paint uses it.
+    2. Apply persisted reading preferences before the browser renders
+       the body, avoiding the flash-of-unstyled-preferences (FOUP).
+--}}
+
+<link rel="preload"
+      href="{{ path_to_root }}theme/fonts/atkinson-hyperlegible-next.woff2"
+      as="font" type="font/woff2" crossorigin>
+
+<script>
+(function () {
+  try {
+    var p = JSON.parse(localStorage.getItem('lucidLintReading') || '{}');
+    var root = document.documentElement;
+    if (p.font)    root.setAttribute('data-font', p.font);
+    if (p.spacing) root.style.setProperty('--reading-line-height', p.spacing);
+    if (p.size)    root.style.setProperty('--reading-scale', p.size);
+  } catch (e) { /* silent: feature degrades to defaults */ }
+})();
+</script>

@@ -1,0 +1,440 @@
+/* ============================================================
+ * lucid-lint — typography layer
+ *
+ * Loaded via [output.html].additional-css in book.toml, so it
+ * appends to mdBook's defaults and wins by cascade order. This
+ * file handles type only; the full palette + theme collapse
+ * ("Lucid light" / "Lucid dark") lands in /colorize.
+ *
+ * The reading-preferences popover (next design pass) flips:
+ *   :root[data-font="atkinson"|"standard"|"dyslexic"]
+ *   :root { --reading-line-height: <1.4..2.0> }
+ *   :root { --reading-scale:       <0.9..1.3> }
+ * via localStorage. The bootstrap script in head.hbs applies
+ * persisted preferences before first paint.
+ * ============================================================ */
+
+/* ---------- Fonts (self-hosted under /theme/fonts/) ----------
+ * See docs/theme/fonts/README.md for the expected file list and
+ * SIL OFL attributions.
+ * -------------------------------------------------------- */
+
+@font-face {
+  font-family: "Atkinson Hyperlegible Next";
+  src: url("../fonts/atkinson-hyperlegible-next.woff2") format("woff2-variations"),
+       url("../fonts/atkinson-hyperlegible-next.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Atkinson Hyperlegible Next";
+  src: url("../fonts/atkinson-hyperlegible-next-italic.woff2") format("woff2-variations"),
+       url("../fonts/atkinson-hyperlegible-next-italic.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Literata";
+  src: url("../fonts/literata.woff2") format("woff2-variations"),
+       url("../fonts/literata.woff2") format("woff2");
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Literata";
+  src: url("../fonts/literata-italic.woff2") format("woff2-variations"),
+       url("../fonts/literata-italic.woff2") format("woff2");
+  font-weight: 200 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Commit Mono";
+  src: url("../fonts/commit-mono.woff2") format("woff2-variations"),
+       url("../fonts/commit-mono.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "OpenDyslexic";
+  src: url("../fonts/opendyslexic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "OpenDyslexic";
+  src: url("../fonts/opendyslexic-bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---------- Tokens ---------- */
+
+:root {
+  /* Families. Fallbacks chosen to metric-match as closely as
+     possible, so the swap from fallback to loaded face creates
+     minimal layout shift. */
+  --font-body:    "Atkinson Hyperlegible Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Literata", "Source Serif Pro", Charter, Cambria, Georgia, "Times New Roman", serif;
+  --font-mono:    "Commit Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-dyslexic:"OpenDyslexic", var(--font-body);
+
+  /* Redefine mdBook's stock family vars so any rule that still
+     resolves them (sidebar chrome, search, playground) picks up
+     our families instead of Open Sans / Source Code Pro. */
+  --body-font: var(--font-body);
+  --mono-font: var(--font-mono);
+
+  /* Reading-prefs (flipped by popover, persisted in localStorage).
+     Keep defaults here so the site works pre-JS. */
+  --reading-scale:       1;         /* 0.90 – 1.30, 0.05 step */
+  --reading-line-height: 1.7;       /* 1.40 – 2.00, 0.05 step */
+
+  /* Resolved at [data-font] variant level (see below). */
+  --reading-font-body:     var(--font-body);
+  --reading-font-display:  var(--font-display);
+  --reading-font-mono:     var(--font-mono);
+
+  /* Palette tokens (subset needed for typography contrast).
+     The full palette lands in /colorize. Hex retained in
+     comments for .impeccable.md cross-reference. */
+  --color-paper:  oklch(98% 0.003 85);     /* #FAFAF7 */
+  --color-ink:    oklch(22% 0.012 265);    /* #1A1D24 */
+  --color-lucid:  oklch(44% 0.13 260);     /* #2E5EAA — AAA 7.2:1 on paper */
+  --color-fog:    oklch(55% 0.015 260);    /* #6B7280 — AA for secondary text */
+
+  /* Modular type scale, 1.25 ratio, body anchored at 16px.
+     mdBook's stock theme sets `html { font-size: 62.5% }` so
+     1rem = 10px. To anchor body at 16px we multiply by 1.6.
+     Scales with --reading-scale so the popover's size slider
+     lifts the whole hierarchy proportionally. */
+  --text-caption:    calc(1.28rem  * var(--reading-scale));  /* 12.8px */
+  --text-small:      calc(1.44rem  * var(--reading-scale));  /* 14.4px */
+  --text-body:       calc(1.6rem   * var(--reading-scale));  /* 16px   */
+  --text-lead:       calc(1.8rem   * var(--reading-scale));  /* 18px   */
+  --text-h4:         calc(2rem     * var(--reading-scale));  /* 20px   */
+  --text-h3:         calc(2.5rem   * var(--reading-scale));  /* 25px   */
+  --text-h2:         calc(3.125rem * var(--reading-scale));  /* 31.25px */
+  --text-h1:         calc(3.906rem * var(--reading-scale));  /* 39px   */
+
+  /* Rhythm */
+  --measure:              70ch;     /* body max-width */
+  --line-height-body:     var(--reading-line-height);
+  --line-height-heading:  1.2;
+  --line-height-lead:     1.5;
+
+  /* Weights — committed roles */
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+}
+
+/* ---------- Reading-preference presets ----------
+ * `atkinson` (default): Atkinson body + Literata headings
+ * `standard`          : Literata body + Literata headings
+ * `dyslexic`          : OpenDyslexic body + OpenDyslexic headings
+ * Mono stays Commit Mono across all three. */
+
+:root[data-font="standard"] {
+  --reading-font-body:    var(--font-display);
+  --reading-font-display: var(--font-display);
+}
+
+:root[data-font="dyslexic"] {
+  --reading-font-body:    var(--font-dyslexic);
+  --reading-font-display: var(--font-dyslexic);
+  /* OpenDyslexic is visually larger per-em; users will usually
+     want a smaller reading-scale. We don't force it — respect
+     their chosen size — but expose a hint via data-font so
+     future JS can nudge the slider default. */
+}
+
+/* ---------- Body ---------- */
+
+html {
+  /* mdBook stock sets 62.5% here to enable 1rem = 10px pseudo-
+     sizing. We keep that convention — mdBook's other CSS relies
+     on it — but we express our own tokens in true rem so they
+     scale with the user's browser setting. The calc() above
+     already accounts for that by using rem directly. */
+}
+
+body,
+html body {
+  /* `var(--reading-font-body)` is load-bearing: the reading-
+     preferences popover swaps the body face by flipping that
+     custom property via [data-font]. Do NOT replace with a
+     literal family list — it would disable preset switching.
+     (Note: the impeccable CLI scanner runs in jsdom which does
+     not fully resolve custom properties, so its overused-font
+     finding on this file is a known false positive. Runtime
+     behavior is correct; verified via chrome-devtools MCP.) */
+  font-family: var(--reading-font-body);
+  font-size: var(--text-body);
+  line-height: var(--line-height-body);
+  font-weight: var(--weight-regular);
+  color: var(--color-ink);
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  font-kerning: normal;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---------- Headings — fix the inverted mdBook hierarchy ----------
+ * Stock renders h1 at weight 200 in a color lighter than body.
+ * We flip that: bold, inked, properly scaled. */
+
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6 {
+  font-family: var(--reading-font-display);
+  color: var(--color-ink);
+  font-weight: var(--weight-bold);
+  line-height: var(--line-height-heading);
+  letter-spacing: -0.01em;
+  /* Reset mdBook's heading top-margin to a rhythm that scales
+     with font-size, not a fixed px value. */
+  margin-block-start: 1.5em;
+  margin-block-end: 0.5em;
+}
+
+.content h1 {
+  font-size: var(--text-h1);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.02em;
+  margin-block-start: 0;
+}
+
+.content h2 {
+  font-size: var(--text-h2);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.015em;
+}
+
+.content h3 {
+  font-size: var(--text-h3);
+  font-weight: var(--weight-semibold);
+  letter-spacing: -0.01em;
+}
+
+.content h4 {
+  font-size: var(--text-h4);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
+}
+
+.content h5 {
+  font-size: var(--text-lead);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
+}
+
+.content h6 {
+  font-size: var(--text-body);
+  font-weight: var(--weight-semibold);
+  color: var(--color-fog);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* ---------- Paragraphs, lists, measure ---------- */
+
+.content p,
+.content ul,
+.content ol,
+.content blockquote {
+  max-width: var(--measure);
+  line-height: var(--line-height-body);
+}
+
+.content p + p {
+  margin-block-start: 1em;
+}
+
+.content li {
+  line-height: var(--line-height-body);
+  margin-block-end: 0.25em;
+}
+
+.content blockquote {
+  font-family: var(--reading-font-display);
+  font-style: italic;
+  color: var(--color-fog);
+  border-inline-start: 1px solid currentColor;
+  padding-inline-start: 1em;
+  /* Note: 1px is fine — the absolute_bans rule targets decorative
+     side-stripes > 1px used as "accent" coloring. A 1px semantic
+     quote-mark is standard typographic convention. */
+}
+
+/* ---------- Inline elements ---------- */
+
+.content a,
+.content a:link,
+.content a:visited {
+  color: var(--color-lucid);
+  font-weight: inherit;
+  text-decoration-line: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+  text-decoration-skip-ink: auto;
+}
+
+.content a:hover,
+.content a:focus-visible {
+  text-decoration-thickness: 0.12em;
+}
+
+.content strong,
+.content b {
+  font-weight: var(--weight-bold);
+}
+
+.content em,
+.content i {
+  font-style: italic;
+}
+
+.content small {
+  font-size: var(--text-small);
+}
+
+/* ---------- Monospace ---------- */
+
+/* Code: mdBook's stock `code { font-family: var(--mono-font) !important }`
+   forces us to match with !important so the Commit Mono swap lands.
+   Legitimate counter-override; no other rules compete here. */
+.content code,
+.content pre,
+.content pre code,
+.content pre code.hljs,
+.content kbd,
+.content samp,
+.content tt,
+code.hljs {
+  font-family: var(--font-mono) !important;
+  font-feature-settings: "liga" 0, "calt" 1, "zero" 1, "ss01" 1;
+  font-variant-ligatures: none;
+}
+
+.content p code,
+.content li code,
+.content td code {
+  font-size: 0.92em; /* match x-height to body for inline code */
+}
+
+.content pre code,
+.content pre code.hljs {
+  font-size: var(--text-small);
+  line-height: 1.5; /* code doesn't need reading-line-height */
+  letter-spacing: 0;
+}
+
+/* ---------- Tables ---------- */
+
+.content table {
+  font-variant-numeric: tabular-nums;
+}
+
+.content table th {
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  font-size: var(--text-small);
+  color: var(--color-fog);
+}
+
+/* ---------- Sidebar + chrome ----------
+ * Light touch here — full chrome colorization is /colorize's job.
+ * We only ensure the sidebar uses the same font family and isn't
+ * stuck on Open Sans. */
+
+.sidebar,
+.menu-title,
+.nav-chapters {
+  font-family: var(--reading-font-body);
+}
+
+.sidebar .chapter li a {
+  font-size: var(--text-small);
+  line-height: 1.45; /* tighter than body — sidebar is not for long reading */
+  letter-spacing: 0;
+}
+
+.sidebar .chapter li.part-title {
+  font-family: var(--reading-font-display);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-caption);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.menu-title {
+  font-family: var(--reading-font-display);
+  font-weight: var(--weight-semibold);
+}
+
+/* ---------- Accessibility scaffolding ----------
+ * Respect reduced motion and forced-colors. Focus ring is
+ * committed as 3px Lucid blue — visible without relying on
+ * color alone (offset + thickness). /audit will tighten. */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 3px solid var(--color-lucid);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ---------- Reading demonstrator (Introduction page) ----------
+ * The three-column live demo in /clarify will use these utility
+ * classes. Defining them here so the CSS plumbing is ready and
+ * the popover preset names match the demo. */
+
+.reading-demo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22ch), 1fr));
+  gap: 1.5rem;
+  max-width: 100%;
+  margin-block: 2rem;
+}
+
+.reading-demo__sample { font-size: var(--text-body); line-height: 1.7; }
+.reading-demo__sample[data-demo="atkinson"]  { font-family: var(--font-body); }
+.reading-demo__sample[data-demo="standard"]  { font-family: var(--font-display); }
+.reading-demo__sample[data-demo="dyslexic"]  { font-family: var(--font-dyslexic); }
+
+.reading-demo__label {
+  font-family: var(--font-display);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-fog);
+  margin-block-end: 0.5rem;
+}
