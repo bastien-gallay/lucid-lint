@@ -19,6 +19,8 @@ pub mod heading_jump;
 pub mod jargon_undefined;
 pub mod long_enumeration;
 pub mod paragraph_too_long;
+pub mod passive_voice;
+
 pub mod readability_score;
 pub mod repetitive_connectors;
 pub mod sentence_too_long;
@@ -34,6 +36,7 @@ pub use heading_jump::HeadingJump;
 pub use jargon_undefined::JargonUndefined;
 pub use long_enumeration::LongEnumeration;
 pub use paragraph_too_long::ParagraphTooLong;
+pub use passive_voice::PassiveVoice;
 pub use readability_score::ReadabilityScore;
 pub use repetitive_connectors::RepetitiveConnectors;
 pub use sentence_too_long::SentenceTooLong;
@@ -84,6 +87,7 @@ pub fn default_rules(profile: Profile) -> Vec<Box<dyn Rule>> {
         Box::new(ReadabilityScore::for_profile(profile)),
         Box::new(LongEnumeration::for_profile(profile)),
         Box::new(DeepSubordination::for_profile(profile)),
+        Box::new(PassiveVoice::for_profile(profile)),
     ]
 }
 
