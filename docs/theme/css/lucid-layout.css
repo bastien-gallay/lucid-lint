@@ -66,7 +66,7 @@
 /* ---------- Breadcrumbs ---------- */
 
 .lucid-breadcrumbs {
-  margin-block-end: var(--lucid-space-sm);
+  margin-block-end: var(--lucid-space-md);
   font-family: var(--font-display, var(--reading-font-body));
   font-size: var(--text-caption);
   color: var(--lucid-fog);
@@ -303,6 +303,13 @@
   padding: var(--lucid-space-md);
   background: var(--bg);
   border-radius: 6px;
+  transition: box-shadow 150ms ease-out;
+}
+.reading-demo__card:focus-within {
+  box-shadow: 0 0 0 1px var(--lucid-fog);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reading-demo__card { transition: none; }
 }
 
 .reading-demo__label {
@@ -348,6 +355,12 @@
   background: var(--links);
   color: var(--bg);
 }
+/* Tighter focus offset inside the card — 3px+3px from /typeset
+   would clip against the 6px card radius; 2px keeps the ring
+   cleanly around the button. */
+.reading-demo__apply:focus-visible {
+  outline-offset: 2px;
+}
 .reading-demo__apply[aria-pressed="true"] {
   background: var(--links);
   color: var(--bg);
@@ -385,6 +398,13 @@
   pointer-events: none;
   transition: transform 200ms cubic-bezier(0.2, 0, 0, 1), opacity 200ms;
   z-index: 1500;
+}
+/* Dark theme: a weightier shadow so the toast doesn't float
+   indistinct against the near-black background. */
+.coal .lucid-toast,
+.navy .lucid-toast,
+.ayu  .lucid-toast {
+  box-shadow: 0 6px 18px oklch(0% 0 0 / 0.45);
 }
 .lucid-toast.is-visible {
   transform: translate(-50%, 0);

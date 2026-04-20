@@ -275,7 +275,12 @@ html body {
 
 .content li {
   line-height: var(--line-height-body);
-  margin-block-end: 0.25em;
+  margin-block-end: 0.35em;
+}
+/* Long-bullet lists (e.g. accessibility credits): a hair more
+   breathing room so paragraphs-inside-li don't read as a wall. */
+.content li > p + p {
+  margin-block-start: 0.4em;
 }
 
 .content blockquote {
