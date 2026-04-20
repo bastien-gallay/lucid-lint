@@ -1,0 +1,252 @@
+/* ============================================================
+ * lucid-lint — layout + spatial rhythm
+ *
+ * Content measure, skip-link, breadcrumbs, right-rail page TOC,
+ * and sidebar rhythm adjustments. Loaded after colors and
+ * typography; complements them rather than overriding.
+ * ============================================================ */
+
+/* ---------- Spacing scale ---------- */
+
+:root {
+  --lucid-space-2xs: 0.25rem;
+  --lucid-space-xs:  0.5rem;
+  --lucid-space-sm:  0.75rem;
+  --lucid-space-md:  1rem;
+  --lucid-space-lg:  1.5rem;
+  --lucid-space-xl:  2rem;
+  --lucid-space-2xl: 3rem;
+  --lucid-space-3xl: 4.5rem;
+}
+
+/* ---------- Container ----------
+ * mdBook's stock --content-max-width is 750px. We widen it to
+ * 840px so tables, code blocks, and the future reading demo
+ * have breathing room, while keeping the body prose capped at
+ * 70ch in lucid-typography.css. The two constraints cooperate:
+ * the narrower one wins per element.
+ * -------------------------------- */
+
+:root {
+  --content-max-width: 840px;
+}
+
+/* ---------- Skip link ----------
+ * Absolutely positioned off-screen; slides in on focus. Must be
+ * the first interactive element in the tab order (lucid-navigation.js
+ * inserts it as body.firstChild). Uses the palette tokens so it
+ * works in both Lucid light and Lucid dark.
+ * -------------------------------- */
+
+.lucid-skip {
+  position: fixed;
+  top: var(--lucid-space-sm);
+  inset-inline-start: var(--lucid-space-sm);
+  z-index: 2000;
+  padding: var(--lucid-space-sm) var(--lucid-space-md);
+  background: var(--links);
+  color: var(--bg);
+  font-family: var(--font-display, var(--reading-font-body));
+  font-weight: var(--weight-semibold, 600);
+  text-decoration: none;
+  border-radius: 4px;
+  transform: translateY(-150%);
+  transition: transform 150ms cubic-bezier(0.2, 0, 0, 1);
+}
+.lucid-skip:focus,
+.lucid-skip:focus-visible {
+  transform: translateY(0);
+  outline: 3px solid var(--bg);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lucid-skip { transition: none; }
+}
+
+/* ---------- Breadcrumbs ---------- */
+
+.lucid-breadcrumbs {
+  margin-block-end: var(--lucid-space-sm);
+  font-family: var(--font-display, var(--reading-font-body));
+  font-size: var(--text-caption);
+  color: var(--lucid-fog);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.lucid-breadcrumbs ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lucid-space-xs);
+  max-width: none; /* escape the 70ch body cap */
+}
+.lucid-breadcrumbs li {
+  margin: 0;
+}
+.lucid-breadcrumbs li + li::before {
+  content: "/";
+  margin-inline-end: var(--lucid-space-xs);
+  color: var(--lucid-mist, var(--lucid-fog));
+}
+.lucid-breadcrumbs li[aria-current="page"] {
+  color: var(--fg);
+  text-transform: none;
+  font-weight: var(--weight-semibold, 600);
+  letter-spacing: 0.02em;
+}
+.coal .lucid-breadcrumbs li + li::before,
+.navy .lucid-breadcrumbs li + li::before,
+.ayu  .lucid-breadcrumbs li + li::before {
+  color: var(--lucid-mist-dark, var(--lucid-fog-dark));
+}
+
+/* ---------- Page TOC (right rail) ----------
+ * Positioned absolutely to the right of .content on viewports
+ * ≥ 1200px. On narrower screens it collapses gracefully above
+ * the content (a dismissible "on this page" box), and on small
+ * phones it hides entirely — /adapt will revisit.
+ * ---------------------------------------- */
+
+.lucid-pagetoc {
+  max-width: none;
+  margin-block: 0 var(--lucid-space-lg);
+  padding: var(--lucid-space-md);
+  background: var(--quote-bg);
+  border-radius: 6px;
+  font-family: var(--reading-font-body);
+  font-size: var(--text-small);
+  line-height: 1.5;
+}
+.lucid-pagetoc__label {
+  margin: 0 0 var(--lucid-space-sm);
+  font-family: var(--font-display, var(--reading-font-body));
+  font-size: var(--text-caption);
+  font-weight: var(--weight-semibold, 600);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lucid-fog);
+}
+.coal .lucid-pagetoc__label,
+.navy .lucid-pagetoc__label,
+.ayu  .lucid-pagetoc__label { color: var(--lucid-fog-dark); }
+
+.lucid-pagetoc ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-width: none; /* escape the 70ch cap */
+}
+.lucid-pagetoc li {
+  margin: 0;
+  padding-block: var(--lucid-space-2xs);
+}
+.lucid-pagetoc__nested {
+  padding-inline-start: var(--lucid-space-md);
+}
+.lucid-pagetoc a {
+  color: var(--fg);
+  text-decoration: none;
+  display: inline-block;
+  padding-inline: var(--lucid-space-2xs);
+  border-radius: 2px;
+}
+.lucid-pagetoc a:hover { color: var(--links); }
+.lucid-pagetoc a[aria-current="location"] {
+  color: var(--links);
+  font-weight: var(--weight-semibold, 600);
+}
+
+@media (min-width: 1200px) {
+  .content { position: relative; }
+  .lucid-pagetoc {
+    position: absolute;
+    top: 0;
+    inset-inline-start: calc(var(--content-max-width, 840px) + var(--lucid-space-xl));
+    width: 220px;
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+    background: transparent;
+    padding: 0;
+  }
+  .lucid-pagetoc,
+  .lucid-pagetoc ul {
+    position: sticky;
+    top: var(--lucid-space-xl);
+  }
+}
+@media (max-width: 700px) {
+  /* Tight viewports: hide the inline TOC; the sidebar is the
+     primary nav anyway. Revisit in /adapt. */
+  .lucid-pagetoc { display: none; }
+}
+
+/* ---------- Sidebar rhythm ----------
+ * Tighter section titles, a bit more air between chapter items,
+ * clearer hover affordance. /typeset already handled type sizes. */
+
+.sidebar .chapter { padding-block: var(--lucid-space-sm); }
+.sidebar .chapter li { margin: 0; }
+.sidebar .chapter li a,
+.sidebar .chapter li .chapter-item {
+  padding-block: var(--lucid-space-2xs);
+  padding-inline: var(--lucid-space-md);
+  border-radius: 3px;
+}
+.sidebar .chapter li a:hover {
+  background: var(--theme-hover);
+}
+.sidebar .chapter li.part-title {
+  margin-block-start: var(--lucid-space-lg);
+  margin-block-end: var(--lucid-space-xs);
+  padding-inline: var(--lucid-space-md);
+  color: var(--lucid-fog);
+}
+.coal .sidebar .chapter li.part-title,
+.navy .sidebar .chapter li.part-title,
+.ayu  .sidebar .chapter li.part-title {
+  color: var(--lucid-fog-dark);
+}
+.sidebar .chapter li.part-title:first-child { margin-block-start: 0; }
+
+/* Active item — subtle left-rail dot rather than the stock block
+   background; matches the reading-companion voice and stays under
+   the side-stripe ban (1px, semantic, not a "colored accent" card
+   stripe). */
+.sidebar .chapter li a.active {
+  color: var(--links);
+  font-weight: var(--weight-semibold, 600);
+  background: transparent;
+  position: relative;
+}
+.sidebar .chapter li a.active::before {
+  content: "";
+  position: absolute;
+  inset-block: 0.3em;
+  inset-inline-start: 0;
+  width: 2px;
+  background: var(--links);
+  border-radius: 2px;
+}
+
+/* ---------- .content tightening ----------
+ * mdBook occasionally ships with large heading margins that fight
+ * our 1.5em heading margin-top. Reconfirm here, and lift the first
+ * heading's margin so it doesn't push below the breadcrumb. */
+
+.content h1:first-child,
+.content h2:first-child,
+.content h3:first-child { margin-block-start: 0; }
+
+.lucid-breadcrumbs + h1 { margin-block-start: 0; }
+
+/* ---------- Tables + code: escape the 70ch body cap ----------
+ * Typography caps .content p/ul/ol/blockquote. Tables, pre,
+ * figures, and our reading-demo grid should be allowed to use
+ * the full --content-max-width. */
+
+.content :where(table, pre, figure, .reading-demo) {
+  max-width: none;
+  width: 100%;
+}

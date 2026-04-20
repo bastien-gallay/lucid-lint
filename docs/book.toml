@@ -18,6 +18,10 @@ site-url = "/lucid-lint/"
 additional-css = [
   "theme/css/lucid-colors.css",
   "theme/css/lucid-typography.css",
+  "theme/css/lucid-layout.css",
+]
+additional-js = [
+  "theme/js/lucid-navigation.js",
 ]
 
 [output.html.fold]
@@ -27,7 +31,7 @@ level = 1
 [output.html.search]
 enable = true
 limit-results = 30
-teaser-word-count = 30
+teaser-word-count = 15
 use-boolean-and = true
 
 [output.html.playground]

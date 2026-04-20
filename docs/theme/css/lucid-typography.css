@@ -102,9 +102,14 @@
   --reading-scale:       1;         /* 0.90 – 1.30, 0.05 step */
   --reading-line-height: 1.7;       /* 1.40 – 2.00, 0.05 step */
 
-  /* Resolved at [data-font] variant level (see below). */
+  /* Resolved at [data-font] variant level (see below).
+     Default (atkinson preset): every surface uses Atkinson
+     Hyperlegible Next — including headings — so the first-visit
+     experience is fully sans-serif, which the ADHD/dys* reading
+     research supports. Serif display appears ONLY when the reader
+     opts into the `standard` preset. */
   --reading-font-body:     var(--font-body);
-  --reading-font-display:  var(--font-display);
+  --reading-font-display:  var(--font-body);
   --reading-font-mono:     var(--font-mono);
 
   /* Palette tokens are defined in lucid-colors.css (theme-aware).
@@ -138,13 +143,18 @@
 }
 
 /* ---------- Reading-preference presets ----------
- * `atkinson` (default): Atkinson body + Literata headings
- * `standard`          : Literata body + Literata headings
- * `dyslexic`          : OpenDyslexic body + OpenDyslexic headings
+ * `atkinson` (default): Atkinson Hyperlegible Next everywhere —
+ *                       body and headings. All-sans, no serifs.
+ *                       The accessibility-first default.
+ * `standard`          : Atkinson body + Literata headings — the
+ *                       "book reading" pairing for readers who
+ *                       prefer serif display and contrast between
+ *                       body and headings.
+ * `dyslexic`          : OpenDyslexic everywhere (body + headings).
  * Mono stays Commit Mono across all three. */
 
 :root[data-font="standard"] {
-  --reading-font-body:    var(--font-display);
+  --reading-font-body:    var(--font-body);
   --reading-font-display: var(--font-display);
 }
 
