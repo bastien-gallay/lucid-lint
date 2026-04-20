@@ -184,7 +184,6 @@ token-aware counter.
 | ID | Item | Priority | Origin |
 |---|---|---|---|
 | F12 | Score evolution dashboard across runs | 🟢 Low | Rule 11, inspired by coverage reports |
-| F33 | Fix Windows packaging step in `release.yml`. The `Package (Windows)` job uses Unix-style `cp README.md LICENSE-MIT LICENSE-APACHE dist/`, which PowerShell parses as `Copy-Item` with too many positional arguments (`A positional parameter cannot be found that accepts argument 'LICENSE-APACHE'`). Options: (a) use `shell: bash` on the Windows runner so `cp` stays Unix-style; (b) rewrite with `Copy-Item README.md, LICENSE-MIT, LICENSE-APACHE -Destination dist/`; (c) move the three files into a `scripts/package.sh` that both OSes invoke identically. Until fixed, v0.1.0 ships without a Windows archive. | 🔴 High | v0.1.0 release failure |
 
 ### Suppression mechanism
 

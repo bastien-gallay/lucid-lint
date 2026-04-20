@@ -16,6 +16,12 @@ The v0.2 cycle extends the v0.1 foundations. Work in flight:
 
 See [`ROADMAP.md`](ROADMAP.md) for the full backlog with priorities.
 
+## [0.1.1] — 2026-04-20
+
+### Fixed
+
+- **Windows release packaging** — the `Package (Windows)` job now runs under `bash` so the Unix-style `cp` invocation is parsed by Git Bash instead of PowerShell; v0.1.0 shipped without a Windows archive because PowerShell rejected `cp README.md LICENSE-MIT LICENSE-APACHE dist/` as too many positional arguments.
+
 ## [0.1.0] — 2026-04-20
 
 First public release. Seventeen rules, bilingual EN/FR, deterministic core, Markdown + plain-text + stdin inputs.
