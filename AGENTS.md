@@ -70,6 +70,33 @@ Every new rule requires:
 
 Bug fixes require a regression test before the fix.
 
+### 7. New-rule acceptance filter
+
+A new rule earns its place in core only if it passes every point:
+
+1. **Atomic** — one detection goal. (Restates directive 3.)
+2. **Cognitive-load-grounded** — traceable to a cited source
+   (cognitive / linguistic research) or a recognised standard: WCAG,
+   RGAA, FALC, BDA, IFLA, CDC Clear Communication Index,
+   plainlanguage.gov. No aesthetic-only rules — those belong in a
+   future `lucid-lint-style` plugin.
+3. **Deterministic in core** — pattern, counter, or window.
+   LLM / POS / dependency-tree goes to a plugin (`lucid-lint-llm`,
+   `lucid-lint-nlp`).
+4. **Bilingual-viable** — language-agnostic, or has a concrete FR + EN
+   implementation path at proposal time. No "EN now, FR later".
+5. **Category-coherent** — fits one of the five categories
+   (`structure`, `syntax`, `rhythm`, `lexicon`, `readability`)
+   cleanly. If a rule fits three, it is probably two rules.
+6. **Balance is monitored, not enforced** — a category growing or
+   staying thin is a signal to revisit the taxonomy, not a reason to
+   invent or reject rules.
+
+Rules may additionally declare condition tags (F71) from the fixed
+ontology `a11y-markup`, `dyslexia`, `dyscalculia`, `aphasia`, `adhd`,
+`non-native`, `general`. Most rules are `general`; some carry multiple
+tags.
+
 ## Project-specific conventions
 
 ### Naming

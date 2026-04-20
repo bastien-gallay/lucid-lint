@@ -57,21 +57,35 @@ A profile is a preset bundle of rule thresholds. Users pick a profile close to t
 
 ## Categories
 
-Each rule belongs to exactly one of five fixed categories. The taxonomy
-mirrors the F14 scoring model (see
-[`brainstorm/20260420-score-semantics.md`](brainstorm/20260420-score-semantics.md)).
+Each rule belongs to exactly one of five fixed categories. The split
+separates phenomena that carry distinct cognitive costs:
 
-| Category | Purpose | Rules |
-|---|---|---|
-| `structure` | Length, nesting, punctuation, document skeleton | `sentence-too-long`, `paragraph-too-long`, `excessive-commas`, `long-enumeration`, `deep-subordination`, `deeply-nested-lists`, `heading-jump` |
-| `rhythm` | Cadence and repetition across adjacent sentences | `consecutive-long-sentences`, `repetitive-connectors` |
-| `lexicon` | Vocabulary, terminology, acronyms, lexical diversity | `low-lexical-diversity`, `excessive-nominalization`, `unexplained-abbreviation`, `weasel-words`, `jargon-undefined` |
-| `syntax` | Sentence-level style and syntactic clarity | `passive-voice`, `unclear-antecedent` |
-| `readability` | Document-level readability metrics | `readability-score` |
+- `structure` — document and prose shape at scale.
+- `syntax` — sentence-internal mechanics: punctuation, clause
+  construction, voice, connector usage.
+- `rhythm` — cross-sentence cohesion and cadence.
+- `lexicon` — vocabulary, terminology, acronyms, lexical diversity.
+- `readability` — document-level metrics.
 
-> v0.2 remapped the v0.1 taxonomy: `length` and the pre-v0.2 `structure`
-> merged into `structure`; `lexical` became `lexicon`; `style` split
-> between `syntax` and `rhythm`; `global` became `readability`.
+This taxonomy is the unit over which the F14 hybrid scoring model
+composes: each category carries an independent sub-score and the global
+score is their weighted sum.
+
+| Category | Rules |
+|---|---|
+| `structure` | `paragraph-too-long`, `sentence-too-long`, `long-enumeration`, `deeply-nested-lists`, `heading-jump` |
+| `syntax` | `excessive-commas`, `deep-subordination`, `passive-voice`, `repetitive-connectors` |
+| `rhythm` | `consecutive-long-sentences`, `unclear-antecedent` |
+| `lexicon` | `low-lexical-diversity`, `excessive-nominalization`, `unexplained-abbreviation`, `weasel-words`, `jargon-undefined` |
+| `readability` | `readability-score` |
+
+> v0.2 remapped the v0.1 taxonomy: `length` merged into `structure`;
+> `lexical` became `lexicon`; punctuation and clause-level rules
+> (`excessive-commas`, `deep-subordination`) moved from `structure` to
+> `syntax`; `repetitive-connectors` moved from `style` to `syntax`;
+> `unclear-antecedent` moved to `rhythm` (explicitly redefined to cover
+> cross-sentence cohesion, not only cadence); `global` became
+> `readability`.
 
 ---
 
@@ -189,7 +203,7 @@ Split text on blank lines (Markdown paragraph convention). Count sentences and w
 
 #### `excessive-commas`
 
-**Category** : `structure`
+**Category** : `syntax`
 **Severity** : `warning`
 **Bilingual** : yes, identical FR/EN
 
@@ -257,7 +271,7 @@ Sequence of 4+ short comma-separated segments ending with `, et` / `, or` / `, o
 
 #### `deep-subordination`
 
-**Category** : `structure`
+**Category** : `syntax`
 **Severity** : `warning`
 **Bilingual** : yes, FR/EN lists differ
 
@@ -803,7 +817,7 @@ Sliding window of N sentences. Count occurrences per connector in the window. Fl
 
 #### `unclear-antecedent`
 
-**Category** : `syntax`
+**Category** : `rhythm`
 **Severity** : `info`
 **Bilingual** : yes, FR/EN pronoun lists differ
 

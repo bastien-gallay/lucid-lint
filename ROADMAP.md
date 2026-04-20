@@ -92,13 +92,15 @@ Shipped in the tag: all 17 rules across 5 phases, the minimal inline-disable dir
 | F39 | Letter-grade decoration (A–F) on the `X/max` score — promote when user feedback shows the numbers feel noisy or hard to compare across docs. | 🟡 Medium | F14 `brainstorm/20260420-score-semantics.md` |
 | F40 | Traffic-light (🔴🟡🟢) + pass/fail margin in the TTY output — promote when CI users ask for a stronger glance signal than the number alone. | 🟡 Medium | F14 `brainstorm/20260420-score-semantics.md` |
 | F41 | Reading-time-seconds as an alternative score unit — ties score to concrete user outcome. Requires validated heuristic + companion metrics (comfort, fatigue, understandability) so the time unit doesn't monopolize the read. | 🟢 Low | F14 `brainstorm/20260420-score-semantics.md` |
+| F71 | Rule-level condition-tag ontology. Each rule declares target-condition tags from a fixed set: `a11y-markup`, `dyslexia`, `dyscalculia`, `aphasia`, `adhd`, `non-native`, `general`. Most rules are `general`; some carry multiple tags (e.g. `nested-negation` → `aphasia, adhd, general`). Orthogonal to profiles — see F72. | 🔴 High | Rule-system-growth brainstorm (2026-04-20) |
+| F72 | Config field `conditions = [...]` that enables tagged rules on top of any profile. Example: `profile = "falc"` + `conditions = ["dyslexia", "aphasia"]`. Avoids combinatorial explosion of profile families (3 strictness levels × N conditions). FALC retains its regulatory meaning; dys-friendliness is additive, not a rename. | 🔴 High | Rule-system-growth brainstorm (2026-04-20) |
 
 ### Rules refinement
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
 | F9 | Definition-aware `unexplained-abbreviation` (two-pass) | 🔴 High | Rule 10 simplified in v0.1 |
-| F10 | Language-specific readability formulas (Kandel-Moles FR, SMOG, Coleman-Liau) | 🔴 High | Rule 11 simplified in v0.1 |
+| F10 | Language-specific readability formulas. **Must-ship v0.2:** Flesch-Kincaid for EN (kept) + Kandel-Moles for FR (auto-selected by detected language, with per-file override via config). **Should-ship v0.2:** Gunning Fog, SMOG, Dale-Chall as EN alternatives; Scolarius / Flesch-Kandel as FR alternatives. Multi-formula reports behind `--readability-verbose`. Single rule `readability-score` auto-selects per detected language; user override via F11. | 🔴 High | Rule 11 simplified in v0.1; scope expanded in rule-system-growth brainstorm (2026-04-20) |
 | F11 | User-configurable readability formula choice | 🟡 Medium | Rule 11 |
 | F13 | `missing-connectors` rule (15b not shipped in v0.1) | 🟡 Medium | Rule 15 decomposition |
 | F1 | Custom stoplist parameter for `low-lexical-diversity` | 🟡 Medium | Rule 5 |
@@ -138,6 +140,35 @@ technical docs, a handful of real false positives from dogfooding and
 downstream projects, how `textlint` / Vale / `write-good` handle
 parentheticals. Decide between relaxation parameters vs. a smarter
 token-aware counter.
+
+### New rules (v0.2)
+
+New rule candidates raised in the rule-system-growth brainstorm
+(2026-04-20). Naming uses a provisional `category.rule-name` prefix
+pending F29 harmonisation. Grounding column points at the standard or
+research that justifies the rule.
+
+**Must-ship v0.2 (blocking release):**
+
+| ID | Rule | Category | Tags | Grounding | Priority |
+|---|---|---|---|---|---|
+| F48 | `lexicon.all-caps-shouting` | Lexicon | `a11y-markup`, `dyslexia`, `general` | WCAG 3.1.5, BDA Dyslexia Style Guide | 🔴 High |
+| F55 | `syntax.nested-negation` | Syntax | `aphasia`, `adhd`, `general` | FALC, CDC Clear Communication Index | 🔴 High |
+| F56 | `syntax.conditional-stacking` | Syntax | `aphasia`, `adhd`, `general` | FALC, plainlanguage.gov | 🔴 High |
+
+**Should-ship v0.2 (cuttable under time pressure, in suggested cut order):**
+
+| ID | Rule | Category | Tags | Grounding | Priority |
+|---|---|---|---|---|---|
+| F62 | `lexicon.redundant-intensifier` | Lexicon | `general` | Plain-language guides | 🟡 Medium |
+| F52 | `structure.mixed-numeric-format` | Structure | `dyscalculia`, `general` | CDC Clear Communication Index | 🟡 Medium |
+| F50 | `structure.line-length-wide` | Structure | `dyspraxia`, `dyslexia`, `general` | WCAG 1.4.8 (AAA) | 🟡 Medium |
+| F47 | `lexicon.consonant-cluster` | Lexicon | `dyslexia`, `general` | BDA Dyslexia Style Guide | 🟡 Medium |
+| F54 | `syntax.dense-punctuation-burst` | Syntax | `general` | IFLA easy-to-read guidelines | 🟡 Medium |
+
+**Cut order if schedule slips:** F47 → F54 → F62 → F52 → F50 → F11. F55
+and F56 are non-negotiable (trivial implementation cost, strong
+grounding).
 
 ### Format support
 
@@ -218,12 +249,87 @@ Disabled by default due to non-determinism, API cost, and latency incompatible w
 
 ### Advanced NLP
 
-Candidates for a `lucid-lint-nlp` plugin (Python subprocess or WASM-based):
+| ID | Item | Priority | Origin |
+|---|---|---|---|
+| F75 | `lucid-lint-nlp` plugin specification and scaffolding (Python subprocess or WASM-based). Replaces heuristic rules with POS- / dependency-tree- / anaphora-backed precise versions. | 🟡 Medium | Rule-system-growth brainstorm (2026-04-20) |
+
+Candidate rules for the plugin:
 
 - POS-based `passive-voice` detection (replaces v0.1 heuristic)
 - Full anaphora resolution for `unclear-antecedent`
 - Dependency-tree-based `deep-subordination`
 - Semantic similarity between adjacent sentences (discourse cohesion signal inspired by Coh-Metrix)
+
+### New rules (v0.3 candidates)
+
+Deferred from v0.2 because they require corpus work, lexicon builds, or
+depend on earlier features (F9, F14). Naming uses the provisional
+`category.rule-name` prefix pending F29.
+
+| ID | Rule | Category | Tags | Grounding | Depends on |
+|---|---|---|---|---|---|
+| F46 | `lexicon.homophone-density` | Lexicon | `dyslexia` | BDA (dyslexia) | FR corpus tuning; ships as `info` |
+| F49 | `structure.italic-span-long` | Structure | `dyslexia` | BDA | — |
+| F51 | `structure.number-run` | Structure | `dyscalculia` | plainlanguage.gov | — |
+| F53 | `readability.large-number-unanchored` | Readability | `dyscalculia`, `general` | CDC CCI | — |
+| F57 | `syntax.parenthetical-depth` | Syntax | `adhd`, `general` | plainlanguage.gov, Hemingway | — |
+| F58 | `syntax.front-loaded-subject-delay` | Syntax | `adhd`, `general` | plainlanguage.gov | FR corpus validation (dislocation FP risk) |
+| F59 | `rhythm.pronoun-density` | Rhythm | `aphasia`, `general` | FALC | — |
+| F60 | `rhythm.topic-shift-cluster` | Rhythm | `adhd`, `general` | Hemingway | May merge into F13 after corpus review |
+| F61 | `lexicon.falc-idiom` | Lexicon | `aphasia`, `non-native` | IFLA, FALC | Curated bilingual idiom lexicon |
+| F63 | `lexicon.vocabulary-rarity` | Lexicon | `non-native`, `general` | — | Frequency lexicon per language (Lexique.org for FR, COCA / Google-Books for EN). Tiered weights: `common` / `context-dependent` / `expert`. LLM-built fallback only. |
+| F65 | `rhythm.forward-reference-heavy` | Rhythm | `adhd`, `general` | Working-memory load | — |
+| F66 | `lexicon.acronym-distance-from-definition` | Lexicon | `adhd`, `non-native` | Memory decay | F9 (definition-aware abbreviation) |
+| F67 | `syntax.complex-tense` | Syntax | `non-native`, `aphasia` | FALC tense restrictions | FR morphology primary; EN lighter |
+| F68 | `syntax.impersonal-voice-heavy` | Syntax | `aphasia` | FALC direct-address rule | — |
+| F69 | `syntax.address-inconsistency` | Syntax | `non-native`, `general` | Register consistency | FR primary (tu / vous); EN weaker (you / one) |
+
+### Developer experience (v0.3)
+
+| ID | Item | Priority | Origin |
+|---|---|---|---|
+| F73 | Differential diagnostics — `--compare=<ref>` CLI mode. Runs against two revisions of the same text(s) and reports score-delta + diagnostic-delta. Pitch: CI/PR comment framing ("this PR adds 2 warnings, removes 5, net −3"), inverting alarm fatigue the way coverage tools do. CLI + JSON + SARIF-run-comparison. No dashboard (that is F12). | 🟡 Medium | Rule-system-growth brainstorm (2026-04-20). Depends on F14 stabilising. |
+
+### Research track
+
+Bets that don't commit to a ship date. Tracked to ensure they're not
+forgotten.
+
+| ID | Item | Priority | Origin |
+|---|---|---|---|
+| F64 | `structure.paragraph-landmark-density` — reprise-points for attention-fragile readers. Research needed to define "landmark" (bold / italic / headers / list-starts / code spans?). | 🟢 Low | Rule-system-growth brainstorm (2026-04-20) |
+| F70 | `structure.lede-buried` — journalistic inverted-pyramid check. Strong candidate for a future `lucid-lint-journalism` plugin rather than core. | 🟢 Low | Rule-system-growth brainstorm (2026-04-20) |
+| F74 | Rule-discovery corpus project — mine writer-heavy git histories for patterns that authors repeatedly rewrite. Source of evidence-grounded rule proposals. Intern / student project scale. | 🟢 Low | Rule-system-growth brainstorm (2026-04-20) |
+
+Additional research directions captured for posterity but not yet ID'd:
+
+- **Reader-model scoring** — tiny local model predicts processing time
+  and accuracy per paragraph; output is a cognitive-load heatmap.
+  Deterministic at inference, data-hungry at training.
+- **TTS / screen-reader prosody** rules — detect prosody breakdown
+  (mid-sentence acronyms, awkward punctuation cadence). Needs a TTS
+  corpus.
+- **Cross-document terminology drift** — same concept named three ways
+  across a corpus ("user" / "customer" / "client"). Requires
+  multi-file analysis infrastructure; performance implications.
+- **Eye-tracking corpus collaboration** — partnership with a reading
+  lab to ground thresholds in behavioural data.
+- **LSP server** — live diagnostics in editors; same core, different
+  frontend.
+- **`--fix` / quickfix suggestions** — safe rules only (e.g.
+  `long-enumeration` → concrete list skeleton). Controversial for
+  prose; needs guardrails.
+- **`lucid-lint baseline`** — record per-project medians; rules flag
+  regressions rather than absolutes (ESLint-style).
+- **Profile composition** (`extends = "falc"`) — reduce duplication
+  across projects.
+- **Community rule-pack registry** — cargo-style publication of domain
+  packs (medical, legal, edu, journalism).
+- **`lucid-lint-style` plugin** — adverb overuse, show-don't-tell, and
+  other aesthetic rules excluded from core by design.
+- **`lucid-lint-a11y` plugin** — alternative home for `a11y-markup`-
+  tagged rules if the tag proves insufficient to separate them from
+  prose rules.
 
 ---
 
