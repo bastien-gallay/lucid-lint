@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" width="480" height="160" role="img" aria-label="lucid-lint logo">
+  <title>lucid-lint</title>
+  <desc>A lens clarifying prose: wavy chaotic line on the left becomes a clean line on the right.</desc>
+
+  <!-- Variant 1: Classic lens -->
+  <!-- Wavy "before" line (left of circle) -->
+  <path d="M 10 40 Q 18 32, 26 40 T 42 40 T 58 40"
+        fill="none"
+        stroke="#6B7280"
+        stroke-width="2.5"
+        stroke-linecap="round"/>
+
+  <!-- Lens circle (the lucid moment) -->
+  <circle cx="80" cy="40" r="18"
+          fill="none"
+          stroke="#2E5EAA"
+          stroke-width="3"/>
+
+  <!-- Focus dot inside the lens -->
+  <circle cx="80" cy="40" r="2.5" fill="#2E5EAA"/>
+
+  <!-- Clean "after" line (right of circle) -->
+  <line x1="102" y1="40" x2="150" y2="40"
+        stroke="#1A1D24"
+        stroke-width="2.5"
+        stroke-linecap="round"/>
+
+  <!-- Wordmark -->
+  <text x="160" y="46"
+        font-family="'Inter', 'Helvetica Neue', sans-serif"
+        font-size="18"
+        font-weight="600"
+        fill="#1A1D24">lucid-lint</text>
+</svg>

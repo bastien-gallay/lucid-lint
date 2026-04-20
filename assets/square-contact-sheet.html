@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>lucid-lint — square variants</title>
+  <style>
+    :root {
+      --paper: #FAFAF7;
+      --ink: #1A1D24;
+      --fog: #6B7280;
+      --blue: #2E5EAA;
+      --violet: #8B5FBF;
+      --sky: #7FB2E5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      margin: 0;
+      padding: 40px;
+      line-height: 1.6;
+    }
+    h1 { font-size: 28px; font-weight: 700; margin: 0 0 8px; }
+    h2 { font-size: 20px; font-weight: 600; margin: 0 0 12px; }
+    h3 { font-size: 14px; font-weight: 600; margin: 0 0 12px; color: var(--fog); text-transform: uppercase; letter-spacing: 0.5px; }
+    .subtitle { color: var(--fog); margin-bottom: 40px; }
+    .section {
+      background: white;
+      border: 1px solid #E5E7EB;
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 32px;
+    }
+    .intent {
+      color: var(--fog);
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+    .size-grid {
+      display: flex;
+      gap: 40px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      padding: 24px;
+      background: var(--paper);
+      border-radius: 8px;
+      border: 1px solid #E5E7EB;
+      margin-bottom: 16px;
+    }
+    .size-item {
+      text-align: center;
+    }
+    .size-item img {
+      display: block;
+      margin: 0 auto;
+      image-rendering: -webkit-optimize-contrast;
+    }
+    .size-label {
+      font-size: 11px;
+      color: var(--fog);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 8px;
+    }
+    .bg-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .bg-tile {
+      padding: 40px 20px;
+      border-radius: 8px;
+      text-align: center;
+      position: relative;
+    }
+    .bg-tile .label {
+      position: absolute;
+      top: 8px;
+      left: 12px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.6;
+    }
+    .bg-paper { background: var(--paper); border: 1px solid #E5E7EB; color: var(--ink); }
+    .bg-white { background: white; border: 1px solid #E5E7EB; color: var(--ink); }
+    .bg-ink { background: var(--ink); color: var(--paper); }
+    .bg-blue { background: var(--blue); color: white; }
+
+    /* Colors swap for dark backgrounds */
+    .bg-ink svg circle[stroke="#2E5EAA"] { stroke: #7FB2E5 !important; }
+    .bg-ink svg circle[fill="#2E5EAA"] { fill: #7FB2E5 !important; }
+    .bg-ink svg path[stroke="#6B7280"] { stroke: #9CA3AF !important; }
+    .bg-ink svg line[stroke="#1A1D24"] { stroke: #FAFAF7 !important; }
+
+    .bg-blue svg circle[stroke="#2E5EAA"] { stroke: #FAFAF7 !important; }
+    .bg-blue svg circle[fill="#2E5EAA"] { fill: #FAFAF7 !important; }
+    .bg-blue svg path[stroke="#6B7280"] { stroke: rgba(255,255,255,0.5) !important; }
+    .bg-blue svg line[stroke="#1A1D24"] { stroke: #FAFAF7 !important; }
+
+    .use-cases {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .use-case {
+      background: var(--paper);
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .use-case-title {
+      font-size: 13px;
+      color: var(--fog);
+      margin-bottom: 12px;
+    }
+    .mock-github {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: white;
+      border: 1px solid #E5E7EB;
+      border-radius: 6px;
+    }
+    .mock-github .handle {
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .mock-github .repo {
+      color: var(--fog);
+      font-size: 12px;
+    }
+    .mock-browser {
+      background: white;
+      border: 1px solid #E5E7EB;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .mock-browser-bar {
+      background: #F3F4F6;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    .mock-browser-dots { display: flex; gap: 4px; }
+    .mock-browser-dot { width: 10px; height: 10px; border-radius: 50%; background: #D1D5DB; }
+    .mock-browser-url {
+      flex: 1;
+      background: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--fog);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .mock-browser-content { padding: 16px; font-size: 13px; }
+    footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid #E5E7EB; color: var(--fog); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <h1>lucid-lint — square variants</h1>
+  <p class="subtitle">Two complementary square versions derived from the Classic Lens concept.</p>
+
+  <!-- Icon Pure -->
+  <div class="section">
+    <h2>🎯 Version 1 — Icon Pure</h2>
+    <p class="intent">Just the lens and the focus dot. For favicons, GitHub avatar, npm/crates.io badge, app icon. Optimized for small sizes.</p>
+
+    <h3>Size gradient</h3>
+    <div class="size-grid">
+      <div class="size-item">
+        <img src="06-icon-pure.svg" width="16" height="16" alt="16px">
+        <div class="size-label">16 px favicon</div>
+      </div>
+      <div class="size-item">
+        <img src="06-icon-pure.svg" width="24" height="24" alt="24px">
+        <div class="size-label">24 px</div>
+      </div>
+      <div class="size-item">
+        <img src="06-icon-pure.svg" width="32" height="32" alt="32px">
+        <div class="size-label">32 px favicon</div>
+      </div>
+      <div class="size-item">
+        <img src="06-icon-pure.svg" width="48" height="48" alt="48px">
+        <div class="size-label">48 px</div>
+      </div>
+      <div class="size-item">
+        <img src="06-icon-pure.svg" width="64" height="64" alt="64px">
+        <div class="size-label">64 px</div>
+      </div>
+      <div class="size-item">
+        <img src="06-icon-pure.svg" width="128" height="128" alt="128px">
+        <div class="size-label">128 px</div>
+      </div>
+      <div class="size-item">
+        <img src="06-icon-pure.svg" width="256" height="256" alt="256px">
+        <div class="size-label">256 px avatar</div>
+      </div>
+    </div>
+
+    <h3>Background contexts</h3>
+    <div class="bg-grid">
+      <div class="bg-tile bg-paper">
+        <span class="label">Paper #FAFAF7</span>
+        <object type="image/svg+xml" data="06-icon-pure.svg" width="80" height="80"></object>
+      </div>
+      <div class="bg-tile bg-white">
+        <span class="label">White</span>
+        <object type="image/svg+xml" data="06-icon-pure.svg" width="80" height="80"></object>
+      </div>
+      <div class="bg-tile bg-ink">
+        <span class="label">Ink #1A1D24</span>
+        <object type="image/svg+xml" data="06-icon-pure.svg" width="80" height="80"></object>
+      </div>
+      <div class="bg-tile bg-blue">
+        <span class="label">Blue #2E5EAA</span>
+        <object type="image/svg+xml" data="06-icon-pure.svg" width="80" height="80"></object>
+      </div>
+    </div>
+
+    <h3>Real-world use cases</h3>
+    <div class="use-cases">
+      <div class="use-case">
+        <div class="use-case-title">GitHub avatar</div>
+        <div class="mock-github">
+          <object type="image/svg+xml" data="06-icon-pure.svg" width="40" height="40"></object>
+          <div>
+            <div class="handle">lucid-lint</div>
+            <div class="repo">Cognitive accessibility linter</div>
+          </div>
+        </div>
+      </div>
+      <div class="use-case">
+        <div class="use-case-title">Browser favicon</div>
+        <div class="mock-browser">
+          <div class="mock-browser-bar">
+            <div class="mock-browser-dots">
+              <div class="mock-browser-dot"></div>
+              <div class="mock-browser-dot"></div>
+              <div class="mock-browser-dot"></div>
+            </div>
+            <div class="mock-browser-url">
+              <img src="06-icon-pure.svg" width="14" height="14" alt="favicon">
+              <span>lucid-lint.dev</span>
+            </div>
+          </div>
+          <div class="mock-browser-content">
+            A cognitive accessibility linter for prose.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Square Social -->
+  <div class="section">
+    <h2>🎨 Version 2 — Square Social</h2>
+    <p class="intent">Balanced composition keeping the narrative: wavy → lens → clean. For Open Graph images, README hero, social media posts, presentation covers.</p>
+
+    <h3>Size gradient</h3>
+    <div class="size-grid">
+      <div class="size-item">
+        <img src="07-square-social.svg" width="64" height="64" alt="64px">
+        <div class="size-label">64 px</div>
+      </div>
+      <div class="size-item">
+        <img src="07-square-social.svg" width="128" height="128" alt="128px">
+        <div class="size-label">128 px</div>
+      </div>
+      <div class="size-item">
+        <img src="07-square-social.svg" width="256" height="256" alt="256px">
+        <div class="size-label">256 px</div>
+      </div>
+      <div class="size-item">
+        <img src="07-square-social.svg" width="400" height="400" alt="400px">
+        <div class="size-label">400 px OG image</div>
+      </div>
+    </div>
+
+    <h3>Background contexts</h3>
+    <div class="bg-grid">
+      <div class="bg-tile bg-paper">
+        <span class="label">Paper #FAFAF7</span>
+        <object type="image/svg+xml" data="07-square-social.svg" width="120" height="120"></object>
+      </div>
+      <div class="bg-tile bg-white">
+        <span class="label">White</span>
+        <object type="image/svg+xml" data="07-square-social.svg" width="120" height="120"></object>
+      </div>
+      <div class="bg-tile bg-ink">
+        <span class="label">Ink #1A1D24</span>
+        <object type="image/svg+xml" data="07-square-social.svg" width="120" height="120"></object>
+      </div>
+      <div class="bg-tile bg-blue">
+        <span class="label">Blue #2E5EAA</span>
+        <object type="image/svg+xml" data="07-square-social.svg" width="120" height="120"></object>
+      </div>
+    </div>
+  </div>
+
+  <!-- Decision note -->
+  <div class="section">
+    <h2>📋 When to use which?</h2>
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="border-bottom: 2px solid #E5E7EB;">
+          <th style="text-align: left; padding: 12px; font-size: 13px;">Context</th>
+          <th style="text-align: left; padding: 12px; font-size: 13px;">Use</th>
+          <th style="text-align: left; padding: 12px; font-size: 13px;">Why</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom: 1px solid #F3F4F6;">
+          <td style="padding: 12px; font-size: 14px;">Favicon (16×16, 32×32)</td>
+          <td style="padding: 12px; font-size: 14px;"><strong>Icon Pure</strong></td>
+          <td style="padding: 12px; font-size: 14px; color: var(--fog);">Traits too small to read</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #F3F4F6;">
+          <td style="padding: 12px; font-size: 14px;">GitHub / GitLab avatar</td>
+          <td style="padding: 12px; font-size: 14px;"><strong>Icon Pure</strong></td>
+          <td style="padding: 12px; font-size: 14px; color: var(--fog);">Cropped to circle anyway</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #F3F4F6;">
+          <td style="padding: 12px; font-size: 14px;">App launcher icon</td>
+          <td style="padding: 12px; font-size: 14px;"><strong>Icon Pure</strong></td>
+          <td style="padding: 12px; font-size: 14px; color: var(--fog);">Space is tight</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #F3F4F6;">
+          <td style="padding: 12px; font-size: 14px;">Open Graph image (1200×630)</td>
+          <td style="padding: 12px; font-size: 14px;"><strong>Square Social</strong> + title text</td>
+          <td style="padding: 12px; font-size: 14px; color: var(--fog);">Room to tell the story</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #F3F4F6;">
+          <td style="padding: 12px; font-size: 14px;">README hero image</td>
+          <td style="padding: 12px; font-size: 14px;"><strong>Square Social</strong></td>
+          <td style="padding: 12px; font-size: 14px; color: var(--fog);">Narrative supports reading</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #F3F4F6;">
+          <td style="padding: 12px; font-size: 14px;">Presentation cover slide</td>
+          <td style="padding: 12px; font-size: 14px;"><strong>Square Social</strong></td>
+          <td style="padding: 12px; font-size: 14px; color: var(--fog);">Visible from back of room</td>
+        </tr>
+        <tr>
+          <td style="padding: 12px; font-size: 14px;">Website nav bar</td>
+          <td style="padding: 12px; font-size: 14px;">Horizontal version (01)</td>
+          <td style="padding: 12px; font-size: 14px; color: var(--fog);">Wordmark fits naturally</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    <p>Palette Clarity — Primary #2E5EAA · Accent #8B5FBF · Paper #FAFAF7 · Ink #1A1D24</p>
+    <p>Both SVGs use viewBox units optimized for their intended rendering sizes: 64×64 for Icon Pure, 128×128 for Square Social.</p>
+  </footer>
+</body>
+</html>

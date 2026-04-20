@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" width="480" height="160" role="img" aria-label="lucid-lint logo">
+  <title>lucid-lint</title>
+  <desc>A lens with aurora gradient clarifying a wavy line into a clean line.</desc>
+
+  <defs>
+    <linearGradient id="aurora" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2E5EAA"/>
+      <stop offset="100%" stop-color="#8B5FBF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Variant 4: Aurora lens -->
+  <!-- Wavy line on the left -->
+  <path d="M 10 40 Q 18 32, 26 40 T 42 40 T 58 40"
+        fill="none" stroke="#6B7280" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Lens with aurora gradient -->
+  <circle cx="80" cy="40" r="18"
+          fill="none"
+          stroke="url(#aurora)"
+          stroke-width="3.5"/>
+
+  <!-- Center dot -->
+  <circle cx="80" cy="40" r="2.5" fill="#8B5FBF"/>
+
+  <!-- Clean line on the right -->
+  <line x1="102" y1="40" x2="150" y2="40"
+        stroke="#1A1D24" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Wordmark -->
+  <text x="160" y="46"
+        font-family="'Inter', 'Helvetica Neue', sans-serif"
+        font-size="18"
+        font-weight="600"
+        fill="#1A1D24">lucid-lint</text>
+</svg>
