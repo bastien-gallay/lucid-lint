@@ -14,9 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ steps.release.outputs.tag }}
-      tag-flag: ${{ steps.release.outputs.tag-flag }}
-      publishing: ${{ steps.release.outputs.publishing }}
-      releases: ${{ steps.release.outputs.releases }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -30,13 +27,16 @@ jobs:
 
       - id: release
         name: Plan release
+        # We invoke `cargo dist plan` as a sanity check (it validates the
+        # tag + workspace + config) and surface its manifest in the log.
+        # The JSON itself is not consumed by downstream jobs, so we don't
+        # try to stuff it through $GITHUB_OUTPUT (multi-line values need
+        # heredoc syntax and nothing reads it anyway).
         run: |
           cargo dist plan \
             --tag=${{ github.ref_name }} \
             --output-format=json \
-            > plan.json
-          cat plan.json
-          echo "releases=$(cat plan.json)" >> "$GITHUB_OUTPUT"
+            | tee plan.json
           echo "tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
 
   build:
