@@ -22,4 +22,6 @@
 # Project
 
 - [Roadmap](./roadmap.md)
+- [Accessibility](./accessibility.md)
 - [Contributing](./contributing.md)
+- [Version française](./fr/index.md)

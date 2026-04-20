@@ -250,3 +250,191 @@
   max-width: none;
   width: 100%;
 }
+
+/* ---------- Audience callout ---------- */
+
+.lucid-audience {
+  max-width: none;
+  margin-block: var(--lucid-space-xs) var(--lucid-space-xl);
+  padding: var(--lucid-space-md) var(--lucid-space-lg);
+  background: var(--quote-bg);
+  border-radius: 6px;
+  font-size: var(--text-lead);
+  color: var(--fg);
+  font-weight: var(--weight-regular, 400);
+}
+
+/* ---------- Reading demonstrator ----------
+ * Three-column font demo on the Introduction page. Each card
+ * renders the same paragraph in one of the three presets. The
+ * "Use this" buttons are wired in lucid-navigation.js. */
+
+.reading-demo {
+  margin-block: var(--lucid-space-xl) var(--lucid-space-2xl);
+  padding: var(--lucid-space-lg);
+  background: var(--sidebar-bg);
+  border-radius: 8px;
+}
+.reading-demo__note,
+.reading-demo__caption {
+  max-width: none;
+  margin-block: 0 var(--lucid-space-md);
+  color: var(--lucid-fog);
+  font-size: var(--text-small);
+}
+.coal .reading-demo__note,
+.coal .reading-demo__caption,
+.navy .reading-demo__note,
+.navy .reading-demo__caption,
+.ayu  .reading-demo__note,
+.ayu  .reading-demo__caption { color: var(--lucid-fog-dark); }
+.reading-demo__caption { margin-block: var(--lucid-space-md) 0; }
+
+.reading-demo__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22ch), 1fr));
+  gap: var(--lucid-space-lg);
+}
+
+.reading-demo__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lucid-space-sm);
+  padding: var(--lucid-space-md);
+  background: var(--bg);
+  border-radius: 6px;
+}
+
+.reading-demo__label {
+  margin: 0;
+  font-family: var(--reading-font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-semibold, 600);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lucid-fog);
+}
+.coal .reading-demo__label,
+.navy .reading-demo__label,
+.ayu  .reading-demo__label { color: var(--lucid-fog-dark); }
+
+.reading-demo__sample {
+  margin: 0;
+  max-width: none;
+  font-size: var(--text-body);
+  line-height: 1.7;
+  color: var(--fg);
+  flex: 1;
+}
+.reading-demo__sample[data-demo="atkinson"]  { font-family: "Atkinson Hyperlegible Next", ui-sans-serif, system-ui, sans-serif; }
+.reading-demo__sample[data-demo="standard"]  { font-family: "Literata", Charter, Cambria, Georgia, serif; }
+.reading-demo__sample[data-demo="dyslexic"]  { font-family: "OpenDyslexic", "Atkinson Hyperlegible Next", ui-sans-serif, sans-serif; }
+
+.reading-demo__apply {
+  align-self: flex-start;
+  padding: var(--lucid-space-xs) var(--lucid-space-md);
+  background: var(--bg);
+  color: var(--links);
+  font-family: var(--reading-font-body);
+  font-size: var(--text-small);
+  font-weight: var(--weight-semibold, 600);
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  cursor: pointer;
+  min-height: 44px;  /* AAA touch target */
+  transition: background 150ms, color 150ms;
+}
+.reading-demo__apply:hover {
+  background: var(--links);
+  color: var(--bg);
+}
+.reading-demo__apply[aria-pressed="true"] {
+  background: var(--links);
+  color: var(--bg);
+  cursor: default;
+}
+.reading-demo__default {
+  color: var(--lucid-fog);
+  font-weight: var(--weight-regular, 400);
+  font-size: 0.85em;
+  margin-inline-start: 0.25em;
+}
+.reading-demo__apply[aria-pressed="true"] .reading-demo__default {
+  color: inherit;
+  opacity: 0.7;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reading-demo__apply { transition: none; }
+}
+
+/* ---------- Toast ---------- */
+
+.lucid-toast {
+  position: fixed;
+  inset-inline-start: 50%;
+  inset-block-end: var(--lucid-space-xl);
+  transform: translate(-50%, 150%);
+  padding: var(--lucid-space-sm) var(--lucid-space-lg);
+  background: var(--fg);
+  color: var(--bg);
+  font-family: var(--reading-font-body);
+  font-size: var(--text-small);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px oklch(0% 0 0 / 0.15);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 200ms cubic-bezier(0.2, 0, 0, 1), opacity 200ms;
+  z-index: 1500;
+}
+.lucid-toast.is-visible {
+  transform: translate(-50%, 0);
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lucid-toast { transition: none; }
+}
+
+/* ---------- Brand mark (sidebar) ---------- */
+
+.menu-title { display: flex; align-items: center; gap: var(--lucid-space-sm); }
+.lucid-brand__mark {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 auto;
+}
+
+/* ---------- Language switch (header) ---------- */
+
+.lucid-lang {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lucid-space-xs);
+  margin-inline-start: var(--lucid-space-sm);
+  font-family: var(--reading-font-body);
+  font-size: var(--text-small);
+  font-weight: var(--weight-semibold, 600);
+}
+.lucid-lang__link {
+  color: var(--lucid-fog);
+  text-decoration: none;
+  padding: var(--lucid-space-2xs) var(--lucid-space-xs);
+  border-radius: 3px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.coal .lucid-lang__link,
+.navy .lucid-lang__link,
+.ayu  .lucid-lang__link { color: var(--lucid-fog-dark); }
+.lucid-lang__link.is-active {
+  color: var(--fg);
+}
+.lucid-lang__link:hover,
+.lucid-lang__link:focus-visible {
+  color: var(--links);
+}
+.lucid-lang__sep {
+  color: var(--lucid-fog);
+  opacity: 0.5;
+  user-select: none;
+}
