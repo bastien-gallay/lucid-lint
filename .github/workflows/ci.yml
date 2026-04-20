@@ -48,8 +48,16 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+    env:
+      # Opt-in gate checked by `tests/rule_docs_coverage.rs`: when set,
+      # any rule source modified versus `origin/main` must be mentioned in
+      # the CHANGELOG `## [Unreleased]` section.
+      RULE_DOCS_GATE_GIT: "1"
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Fetch full history so the docs-gate test can diff against origin/main.
+          fetch-depth: 0
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: stable

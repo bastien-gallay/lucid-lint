@@ -9,11 +9,29 @@
 - [Profiles](./guide/profiles.md)
 - [Configuration](./guide/configuration.md)
 - [Scoring](./guide/scoring.md)
+- [Suppression](./guide/suppression.md)
 - [CI integration](./guide/ci-integration.md)
 
 # Rules reference
 
 - [Overview](./rules/index.md)
+  - [`sentence-too-long`](./rules/sentence-too-long.md)
+  - [`paragraph-too-long`](./rules/paragraph-too-long.md)
+  - [`heading-jump`](./rules/heading-jump.md)
+  - [`deeply-nested-lists`](./rules/deeply-nested-lists.md)
+  - [`excessive-commas`](./rules/excessive-commas.md)
+  - [`long-enumeration`](./rules/long-enumeration.md)
+  - [`deep-subordination`](./rules/deep-subordination.md)
+  - [`consecutive-long-sentences`](./rules/consecutive-long-sentences.md)
+  - [`repetitive-connectors`](./rules/repetitive-connectors.md)
+  - [`low-lexical-diversity`](./rules/low-lexical-diversity.md)
+  - [`excessive-nominalization`](./rules/excessive-nominalization.md)
+  - [`unexplained-abbreviation`](./rules/unexplained-abbreviation.md)
+  - [`weasel-words`](./rules/weasel-words.md)
+  - [`jargon-undefined`](./rules/jargon-undefined.md)
+  - [`passive-voice`](./rules/passive-voice.md)
+  - [`unclear-antecedent`](./rules/unclear-antecedent.md)
+  - [`readability-score`](./rules/readability-score.md)
 
 # Architecture
 

@@ -97,6 +97,36 @@ ontology `a11y-markup`, `dyslexia`, `dyscalculia`, `aphasia`, `adhd`,
 `non-native`, `general`. Most rules are `general`; some carry multiple
 tags.
 
+### 8. Rule documentation is not optional
+
+Adding *or modifying* a rule means updating all five surfaces listed under
+"Adding or modifying a rule — documentation contract" in
+[`CONTRIBUTING.md`](CONTRIBUTING.md): source, wiring (`default_rules`,
+`Category::for_rule`, `scoring::WEIGHTED_RULE_IDS`),
+`docs/src/rules/<rule-id>.md`, tests, and `CHANGELOG.md`
+`## [Unreleased]`. The coverage test at `tests/rule_docs_coverage.rs`
+enforces surfaces 1–4; CI enforces surface 5 by diffing against
+`origin/main` (gated by `RULE_DOCS_GATE_GIT=1`).
+
+### 9. Docs links stay inside `docs/src/`
+
+Any relative link written from a page under `docs/src/` must resolve to
+another page under `docs/src/`. mdBook only serves what's inside `src/`,
+so `../../RULES.md` or `../../ROADMAP.md` render as 404s. When a
+canonical target is missing:
+
+- If the content is stable and high-confidence (a shipped feature, a
+  settled convention), create a short page under `docs/src/guide/` or
+  `docs/src/architecture/` and link to it.
+- Otherwise create a placeholder page + roadmap entry so future
+  contributors know where to land the full version.
+
+Absolute `https://github.com/...` URLs remain acceptable for explicit
+"see the repo file" references (LICENSE, root-level `RULES.md` /
+`ROADMAP.md` as external browseable artifacts). The coverage test
+`docs_links_stay_inside_docs` in `tests/rule_docs_coverage.rs` fails on
+any `](../../…)` pattern in a `docs/src/**/*.md` file.
+
 ## Project-specific conventions
 
 ### Naming

@@ -1,36 +1,31 @@
 # Rules reference
 
-The canonical rules reference lives in [`RULES.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/RULES.md) at the repository root.
+`lucid-lint` ships 17 rules in v0.1, all carried forward in v0.2. Each rule has a dedicated page below with category, severity, default weight, thresholds per profile, examples, and suppression guidance.
 
-It documents each of the 17 v0.1 rules in detail, including:
-
-- The cognitive load problem addressed
-- Research references (Sweller, Gibson, Graesser, WCAG, RGAA, FALC)
-- Detection approach and known limitations
-- Parameters and default thresholds per profile
-- Bilingual specifications where applicable
+The compact reference at [`RULES.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/RULES.md) remains the single-file overview kept in the repository root.
 
 ## Categories
 
-v0.2 fixes the taxonomy at 5 buckets (remapped from v0.1 — see the
-[Categories](https://github.com/bastien-gallay/lucid-lint/blob/main/RULES.md#categories)
-section of RULES.md for the rename map). The buckets also drive the
-[scoring model](../guide/scoring.md).
+Every rule belongs to exactly one of five fixed buckets. The taxonomy is authoritative — the [scoring model](../guide/scoring.md) composes per-category sub-scores into the global `X / max`.
 
 | Category | Rules |
 |---|---|
-| **Structure** | `sentence-too-long`, `paragraph-too-long`, `excessive-commas`, `long-enumeration`, `deep-subordination`, `deeply-nested-lists`, `heading-jump` |
-| **Rhythm** | `consecutive-long-sentences`, `repetitive-connectors` |
-| **Lexicon** | `low-lexical-diversity`, `excessive-nominalization`, `unexplained-abbreviation`, `weasel-words`, `jargon-undefined` |
-| **Syntax** | `passive-voice`, `unclear-antecedent` |
-| **Readability** | `readability-score` |
+| **`structure`** | [`sentence-too-long`](./sentence-too-long.md) · [`paragraph-too-long`](./paragraph-too-long.md) · [`heading-jump`](./heading-jump.md) · [`deeply-nested-lists`](./deeply-nested-lists.md) · [`excessive-commas`](./excessive-commas.md) · [`long-enumeration`](./long-enumeration.md) · [`deep-subordination`](./deep-subordination.md) |
+| **`rhythm`** | [`consecutive-long-sentences`](./consecutive-long-sentences.md) · [`repetitive-connectors`](./repetitive-connectors.md) |
+| **`lexicon`** | [`low-lexical-diversity`](./low-lexical-diversity.md) · [`excessive-nominalization`](./excessive-nominalization.md) · [`unexplained-abbreviation`](./unexplained-abbreviation.md) · [`weasel-words`](./weasel-words.md) · [`jargon-undefined`](./jargon-undefined.md) |
+| **`syntax`** | [`passive-voice`](./passive-voice.md) · [`unclear-antecedent`](./unclear-antecedent.md) |
+| **`readability`** | [`readability-score`](./readability-score.md) |
 
-## Severity
+> **Authoritative source.** The category of each rule is determined by `Category::for_rule` in `src/types.rs`. The mapping above mirrors that function. A coverage test (`tests/rule_docs_coverage.rs`) keeps the per-rule pages, the category helper, and the scoring weights in lock-step.
 
-- `info`: signal worth knowing, does not fail CI
-- `warning`: quality issue worth fixing
-- `error`: reserved for v0.2+ (not emitted in v0.1)
+## Severity levels
 
-## Per-rule pages
+| Level | Meaning | Effect |
+|---|---|---|
+| `info` | Signal worth knowing, not a defect | Reported; does not fail CI |
+| `warning` | Quality issue worth fixing | Reported; may fail CI depending on `--min-score` |
+| `error` | Reserved for v0.3+ | Not emitted in v0.2 |
 
-Per-rule detail pages will be added in v0.2 (tracked as F28 in the roadmap). For now, refer to [`RULES.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/RULES.md).
+## Contributing a rule
+
+See [Contributing](../contributing.md) for the rule-addition checklist — every new rule must land with a page in this section.

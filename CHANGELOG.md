@@ -26,6 +26,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Public `scoring` module** — `Score`, `CategoryScore`, `Scorecard`,
   `ScoringConfig`, `compute`, `default_weight_for`, `severity_multiplier`,
   plus the `Category::ALL` constant for fixed iteration order.
+- **Per-rule mdBook pages (F28)** — every one of the 17 rules now has
+  a dedicated page under `docs/src/rules/<rule-id>.md` covering
+  category, severity, default weight, parameters per profile, EN/FR
+  examples, and suppression. Wired into `docs/src/SUMMARY.md`;
+  `docs/src/rules/index.md` turns into a categorised link index.
+  Rules touched: `sentence-too-long`, `paragraph-too-long`,
+  `heading-jump`, `deeply-nested-lists`, `excessive-commas`,
+  `long-enumeration`, `deep-subordination`,
+  `consecutive-long-sentences`, `repetitive-connectors`,
+  `low-lexical-diversity`, `excessive-nominalization`,
+  `unexplained-abbreviation`, `weasel-words`, `jargon-undefined`,
+  `passive-voice`, `unclear-antecedent`, `readability-score`.
+- **Rule documentation coverage gate (F42)** — new integration test
+  `tests/rule_docs_coverage.rs` keeps five surfaces in lock-step: rule
+  source, `rules::default_rules`, `Category::for_rule`,
+  `scoring::WEIGHTED_RULE_IDS` (new public const), and the per-rule
+  mdBook pages. When `RULE_DOCS_GATE_GIT=1` (set by the CI `test` job),
+  any rule source modified versus `origin/main` must also be mentioned
+  in the `## [Unreleased]` section of this file. Contract documented
+  in `CONTRIBUTING.md` §"Adding or modifying a rule — documentation
+  contract" and mirrored as directive 8 in `AGENTS.md`.
+- **`docs/src/guide/suppression.md`** — dedicated page covering the
+  inline and block disable directives, common properties, and the
+  F19–F21 deferred extensions. The 17 per-rule pages now link to it
+  via `../guide/suppression.md` (previously pointed at the
+  repo-root `RULES.md`, which renders as a 404 inside mdBook).
+- **In-docs link convention + gate.** A new test
+  `docs_links_stay_inside_docs` scans `docs/src/**/*.md` and fails on
+  any `](../../…)` pattern that escapes the mdBook tree. Convention
+  written up as `AGENTS.md` directive 9 and the "Docs links stay
+  inside `docs/src/`" section of `CONTRIBUTING.md`. Also fixed a
+  pre-existing broken `../../ROADMAP.md` link in
+  `docs/src/guide/ci-integration.md`.
 
 ### Changed
 

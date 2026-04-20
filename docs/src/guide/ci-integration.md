@@ -54,7 +54,7 @@ To surface diagnostics as pull request review comments:
 lucid-lint check --format=json docs/ | reviewdog -f=rdjson -reporter=github-pr-review
 ```
 
-> Note: RDJSON adapter is not shipped in v0.1. For now, parse the JSON output yourself or wait for the [SARIF output](../../ROADMAP.md) planned in v0.2.
+> Note: RDJSON adapter is not shipped in v0.1. For now, parse the JSON output yourself or wait for the [SARIF output](../roadmap.md) planned in v0.2.
 
 ## Exit code control
 

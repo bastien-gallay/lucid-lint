@@ -104,10 +104,39 @@ pub const fn severity_multiplier(severity: Severity) -> u32 {
     }
 }
 
+/// Rule ids explicitly registered in [`default_weight_for`].
+///
+/// Used by the documentation coverage test (`tests/rule_docs_coverage.rs`)
+/// to assert that every shipped rule has been considered for weighting,
+/// rather than silently inheriting the uniform fallback.
+pub const WEIGHTED_RULE_IDS: &[&str] = &[
+    "readability-score",
+    "sentence-too-long",
+    "paragraph-too-long",
+    "deep-subordination",
+    "passive-voice",
+    "unclear-antecedent",
+    "heading-jump",
+    "deeply-nested-lists",
+    "excessive-commas",
+    "long-enumeration",
+    "consecutive-long-sentences",
+    "repetitive-connectors",
+    "low-lexical-diversity",
+    "excessive-nominalization",
+    "unexplained-abbreviation",
+    "weasel-words",
+    "jargon-undefined",
+];
+
 /// Default weight for a rule, keyed by `rule_id`.
 ///
 /// Rules that cost more cognitive effort to land on a reader get higher
 /// weights. Unknown ids fall back to `1` (the uniform floor).
+///
+/// A rule id deliberately returning `1` must still appear in
+/// [`WEIGHTED_RULE_IDS`] so the coverage test can distinguish "considered
+/// and kept at the floor" from "forgotten".
 #[must_use]
 pub fn default_weight_for(rule_id: &str) -> u32 {
     match rule_id {

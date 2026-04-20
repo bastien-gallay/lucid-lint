@@ -107,6 +107,32 @@ Before writing code:
    - Proposed default thresholds per profile
 3. Wait for maintainer feedback before investing time.
 
+## Adding or modifying a rule — documentation contract
+
+Every rule lands on five surfaces. CI (`tests/rule_docs_coverage.rs`) enforces the first four; the fifth is manual.
+
+1. **Source** — `src/rules/<rule-id>.rs`. Use [`sentence_too_long.rs`](src/rules/sentence_too_long.rs) as the template. The rule ID must match the filename (kebab-case).
+2. **Wiring** — register the rule in three places, and keep them in sync:
+   - `rules::default_rules` in [`src/rules/mod.rs`](src/rules/mod.rs)
+   - `Category::for_rule` in [`src/types.rs`](src/types.rs)
+   - `scoring::WEIGHTED_RULE_IDS` (and `default_weight_for` if non-default) in [`src/scoring.rs`](src/scoring.rs)
+3. **Docs page** — `docs/src/rules/<rule-id>.md`. Copy the template from an existing rule ([`sentence-too-long.md`](docs/src/rules/sentence-too-long.md) is canonical). The H1 must be `` `<rule-id>` `` and the page must declare `| **Category** | `` `<category>` `` |` matching `Category::for_rule`. Add an entry to [`docs/src/SUMMARY.md`](docs/src/SUMMARY.md).
+4. **Tests** — unit tests inside the rule file, one `insta` snapshot, and a corpus fixture under `tests/corpus/{en,fr}/` (both if the rule is language-dependent).
+5. **Changelog** — add a line to the `## [Unreleased]` section of [`CHANGELOG.md`](CHANGELOG.md) mentioning the rule ID. CI diffs rule files against `origin/main` and fails the build if the rule ID is missing from Unreleased.
+
+The same contract applies when you **modify** a shipped rule (new parameter, changed threshold, refined detection). Only step 1 is optional in that case — the other four are still required.
+
+### Docs links stay inside `docs/src/`
+
+mdBook only renders files under `docs/src/`. Any relative link written from a page inside `docs/src/` must resolve to another page inside `docs/src/` — a `(../../RULES.md)` or `(../../ROADMAP.md)` link points outside the mdBook tree and renders as a 404 on the published site.
+
+When a canonical target is missing:
+
+1. **Stable, high-confidence content** (a shipped feature, a settled convention) → create a short page under `docs/src/guide/` (or `docs/src/architecture/`) and link to it. See [`docs/src/guide/suppression.md`](docs/src/guide/suppression.md) as an example.
+2. **Future content** → create a placeholder page and add a roadmap entry so future contributors know where the full version should land.
+
+Absolute `https://github.com/…` URLs remain acceptable for deliberate "see the repo file" references (LICENSE, root-level `RULES.md` / `ROADMAP.md`). The test `docs_links_stay_inside_docs` in [`tests/rule_docs_coverage.rs`](tests/rule_docs_coverage.rs) fails on any `](../../…)` pattern in a `docs/src/**/*.md` file.
+
 ## Language word lists
 
 Lists for `weasel-words`, `repetitive-connectors`, `jargon-undefined`, and stoplists live in `src/language/`. PRs are very welcome to:

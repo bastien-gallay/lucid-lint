@@ -196,9 +196,11 @@ grounding).
 | ID | Item | Priority | Origin |
 |---|---|---|---|
 | F27 | Mirror the full `ROADMAP.md` in the mdBook site (synced from the repo file, not a hand-edited copy) so readers can browse v0.2+ plans without leaving the docs. | 🔴 High | v0.1 docs review |
-| F28 | Dedicated rule reference in the docs: one page per rule, covering rationale, thresholds per profile, EN/FR examples, and suppression guidance. | 🔴 High | v0.1 docs review |
+| F28 | ✅ Shipped in v0.2 — one page per rule under `docs/src/rules/`, wired into `docs/src/SUMMARY.md`, enforced by [`tests/rule_docs_coverage.rs`](tests/rule_docs_coverage.rs). Each page carries category, severity, default weight, parameters per profile, EN/FR examples where applicable, and suppression guidance. | 🔴 High | v0.1 docs review |
 | F29 | Rule numbering scheme based on category (e.g. `STR-001` for structural, `LEX-002` for lexical, `SYN-003` for syntactic). Stable IDs that survive renames, referenced from both diagnostics output and the docs. | 🟡 Medium | v0.1 docs review |
 | F30 | Audit every rule mention across the docs and link it to its reference page (F28). Requires F28 to land first. | 🟡 Medium | v0.1 docs review |
+| F42 | ✅ Shipped in v0.2 — rule documentation coverage gate. [`tests/rule_docs_coverage.rs`](tests/rule_docs_coverage.rs) cross-checks every shipped rule id against its mdBook page, `Category::for_rule`, `scoring::WEIGHTED_RULE_IDS`, and (on CI, gated by `RULE_DOCS_GATE_GIT=1`) the `## [Unreleased]` section of `CHANGELOG.md`. Contract documented in [`CONTRIBUTING.md`](CONTRIBUTING.md#adding-or-modifying-a-rule--documentation-contract). | 🔴 High | v0.2 interlude |
+| F43 | `RULES.md` category drift — the per-rule headings in the root-level `RULES.md` still list v0.1-era categories for `excessive-commas`, `deep-subordination`, `repetitive-connectors`, and `unclear-antecedent`. The running `Category::for_rule` (authoritative for scoring) and the new `docs/src/rules/*` pages are consistent; `RULES.md` needs a follow-up pass. | 🟡 Medium | Surfaced by F42 interlude |
 
 ### Docs site — theming
 
