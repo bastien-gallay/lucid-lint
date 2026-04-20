@@ -6,18 +6,47 @@ It is meant to guide contributions and to keep the codebase coherent as it grows
 
 ## Design principles
 
-### 1. Make impossible states impossible
+The house framework is **CUPID** (Dan North): write code that is joyful to live with. Five properties, one anti-speculation rule.
 
-<!-- lucid-lint disable-next-line weasel-words -->
+### C — Composable
 
-Rust's type system is a tool for correctness, not just performance.
+Pieces plug together without special knowledge of each other.
 
-**Prefer**:
+- `Engine` is decoupled from `cli.rs`; the library can be embedded anywhere.
+- Rules go through a single `Rule` trait (`Box<dyn Rule>`); add, remove, swap without touching the engine.
+- Parser output (`Document`) is the contract between parsing and rules — rules consume it read-only.
 
-- Newtype wrappers over raw primitives (`Words(u32)`, not `u32` for a word count).
-- Enums with associated data over flags + optional fields.
-- `NonZeroU32` when a value must be positive.
-- Builder patterns that require all mandatory fields before `.build()`.
+**Watch for**: rules that reach past `Document` into the raw input or re-parse themselves. If several rules want the same derived view (lowercased sentence, token stream), hoist it into `Document` once rather than recomputing per rule.
+
+### U — Unix philosophy
+
+Do one thing well.
+
+- One binary, one job: lint prose for cognitive accessibility.
+- Reads files, stdin (`-`), writes stdout, non-zero exit on findings. Pipe-friendly by design.
+- One file, one rule, one signal. If a rule grows a second detection strategy, split it (see the v0.1 decomposition of rule 3 into `excessive-commas`, `long-enumeration`, `deep-subordination`).
+
+**Watch for**: rules that "while we're here" emit an unrelated diagnostic. File the second signal as a new rule.
+
+### P — Predictable
+
+Same input, same output, on any machine.
+
+- No network, no LLM, no time or environment dependency in the core.
+- Deterministic iteration: if order matters, sort explicitly — don't rely on `HashMap`/`HashSet` iteration.
+- Language-sensitive rules return empty for `Language::Unknown` unless they have a well-defined language-agnostic fallback.
+- Snapshot tests (`insta`) make any change in output intentional and reviewable.
+
+Non-deterministic rules (LLM-backed, network-backed) live in optional plugin crates, never the core.
+
+### I — Idiomatic
+
+Feels like modern Rust to a Rust reader.
+
+- Newtype wrappers and enums to make impossible states impossible (`NonZeroU32` for positive thresholds, `Severity`/`Category`/`Language` as enums, not strings).
+- Iterator chains (`map`, `filter`, `fold`) over accumulating in a mut `Vec` — when it reads cleaner. Use a `for` loop when it doesn't.
+- `Result<T, E>` and `Option<T>` over sentinel values. Pattern matching over nested `if let`.
+- `thiserror` for library errors, `anyhow` for binary-level terminal errors. No `unwrap`/`expect` in library code unless provably unreachable and commented.
 
 **Example**
 
@@ -35,60 +64,26 @@ pub struct RuleConfig {
 }
 ```
 
-### 2. Prefer functional style
+### D — Domain-based
 
-Transformations over mutations, when it doesn't hurt clarity.
+The code speaks the vocabulary of linguistics and accessibility.
 
-**Prefer**:
+- Types map to the domain: `Sentence`, `Paragraph`, `Diagnostic`, `Severity`, `Profile`, `Language`.
+- Rule filenames name the signal, not the data structure: `sentence_too_long.rs`, `deep_subordination.rs`, `low_lexical_diversity.rs`.
+- Profile names (`DevDoc`, `Public`, `Falc`) are grounded in real user personas, not technical tiers.
 
-- `Iterator` chains (`map`, `filter`, `fold`) over accumulating in a mut `Vec`.
-- Pure functions with clear inputs and outputs.
-- `Result<T, E>` and `Option<T>` instead of sentinel values.
-- Pattern matching over nested `if let`.
+**Watch for**: helpers named after their implementation (`ratio_at_anchor_min`) leaking into public API. Rename toward the domain when promoting.
 
-**Example**
+### YAGNI (anti-speculation rule)
 
-```rust
-// Prefer
-let long_sentences: Vec<_> = sentences
-    .iter()
-    .filter(|s| s.word_count() > threshold.get())
-    .collect();
+CUPID describes what good code *is*; YAGNI protects against building what you don't need yet.
 
-// Avoid, when the functional form is just as clear
-let mut long_sentences = Vec::new();
-for s in &sentences {
-    if s.word_count() > threshold.get() {
-        long_sentences.push(s);
-    }
-}
-```
+- No abstraction for a second use case that doesn't exist. A concrete `MarkdownParser` is fine until `AsciiDocParser` actually lands.
+- No trait with a single implementation.
+- No field that duplicates information derivable from another (`category` from `rule_id`; don't store it, derive it with a helper).
+- No proc macros to remove scaffolding when the scaffolding *is* the contract. Seventeen small, identical rule skeletons beat one magical macro.
 
-Don't go overboard. If a `for` loop reads better than a chain, use the loop.
-
-### 3. Atomic rules
-
-Each rule checks one signal.
-
-If a rule needs three independent parameters and three different detection strategies, it is actually three rules. See the v0.1 history of rule 3 (`excessive-commas`, `long-enumeration`, `deep-subordination`) for a concrete decomposition.
-
-### 4. Deterministic by default
-
-The core `lucid-lint` binary must produce the same output for the same input on any machine.
-
-- No network calls in core rules.
-- No LLM calls in core rules.
-- No time-dependent or environment-dependent behavior.
-
-LLM-based or other non-deterministic rules live in optional plugins.
-
-### 5. YAGNI
-
-Don't add an abstraction for a second use case that doesn't exist yet. Add it when the second use case appears.
-
-Corollary: avoid traits with a single implementation until there is a clear need for polymorphism. A concrete `MarkdownParser` is fine until we actually add `AsciiDocParser`.
-
-**Counter-example**: if a field on a struct would duplicate information already derivable from another field (`category` from `rule_id`, for instance), don't store it. Derive it with a helper function.
+When a refactor toward CUPID would require speculative work, stop and wait for the second use case.
 
 ## Code conventions
 
