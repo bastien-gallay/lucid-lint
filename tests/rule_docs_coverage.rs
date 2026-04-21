@@ -97,7 +97,11 @@ fn every_rule_is_categorized() {
         if matches!(code_category, Category::Syntax)
             && !matches!(
                 id.as_str(),
-                "passive-voice" | "unclear-antecedent" | "nested-negation" | "conditional-stacking"
+                "passive-voice"
+                    | "unclear-antecedent"
+                    | "nested-negation"
+                    | "conditional-stacking"
+                    | "dense-punctuation-burst"
             )
         {
             unmapped.push(id.clone());

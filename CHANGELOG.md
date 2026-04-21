@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`dense-punctuation-burst` rule (F54)** — flags *local* bursts of
+  punctuation: windows where ≥ N qualifying marks (`,`, `;`, `:`, `—`,
+  `–`) cluster within W grapheme clusters (IFLA easy-to-read
+  guidelines). Distinct from `excessive-commas` (per-sentence count):
+  this rule fires on local density, not total count. Per-source-line
+  sliding window with greedy-extend; emits one diagnostic per burst,
+  never overlapping. Profile thresholds: `dev-doc` 4/30, `public` 3/30,
+  `falc` 3/40 — `dev-doc` tolerates a 3-mark cluster, FALC widens the
+  window. Tag: `general`. See [`docs/src/rules/dense-punctuation-burst.md`](docs/src/rules/dense-punctuation-burst.md).
 - **`redundant-intensifier` rule (F62)** — flags intensifiers
   (`very`, `really`, `extremely`, `absolutely`, … / FR `très`,
   `vraiment`, `extrêmement`, `absolument`, …) that try to upgrade the

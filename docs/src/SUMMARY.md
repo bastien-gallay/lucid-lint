@@ -38,6 +38,7 @@
   - [`unclear-antecedent`](./rules/unclear-antecedent.md)
   - [`nested-negation`](./rules/nested-negation.md)
   - [`conditional-stacking`](./rules/conditional-stacking.md)
+  - [`dense-punctuation-burst`](./rules/dense-punctuation-burst.md)
   - [`readability-score`](./rules/readability-score.md)
 
 # Architecture

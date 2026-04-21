@@ -15,6 +15,7 @@ pub mod conditional_stacking;
 pub mod consecutive_long_sentences;
 pub mod deep_subordination;
 pub mod deeply_nested_lists;
+pub mod dense_punctuation_burst;
 pub mod enumeration;
 pub mod excessive_commas;
 pub mod excessive_nominalization;
@@ -41,6 +42,7 @@ pub use conditional_stacking::ConditionalStacking;
 pub use consecutive_long_sentences::ConsecutiveLongSentences;
 pub use deep_subordination::DeepSubordination;
 pub use deeply_nested_lists::DeeplyNestedLists;
+pub use dense_punctuation_burst::DensePunctuationBurst;
 pub use excessive_commas::ExcessiveCommas;
 pub use excessive_nominalization::ExcessiveNominalization;
 pub use heading_jump::HeadingJump;
@@ -140,6 +142,7 @@ pub fn default_rules(profile: Profile) -> Vec<Box<dyn Rule>> {
         Box::new(LineLengthWide::for_profile(profile)),
         Box::new(MixedNumericFormat::for_profile(profile)),
         Box::new(RedundantIntensifier::for_profile(profile)),
+        Box::new(DensePunctuationBurst::for_profile(profile)),
     ]
 }
 
@@ -167,7 +170,7 @@ mod tests {
     #[test]
     fn filter_by_conditions_keeps_general_rules() {
         let kept = filter_by_conditions(default_rules(Profile::Public), &[]);
-        assert_eq!(kept.len(), 23);
+        assert_eq!(kept.len(), 24);
     }
 
     #[test]

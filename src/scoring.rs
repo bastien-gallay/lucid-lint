@@ -133,6 +133,7 @@ pub const WEIGHTED_RULE_IDS: &[&str] = &[
     "line-length-wide",
     "mixed-numeric-format",
     "redundant-intensifier",
+    "dense-punctuation-burst",
 ];
 
 /// Default weight for a rule, keyed by `rule_id`.

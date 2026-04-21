@@ -168,9 +168,11 @@ impl Category {
             | "jargon-undefined"
             | "all-caps-shouting"
             | "redundant-intensifier" => Self::Lexicon,
-            "passive-voice" | "unclear-antecedent" | "nested-negation" | "conditional-stacking" => {
-                Self::Syntax
-            },
+            "passive-voice"
+            | "unclear-antecedent"
+            | "nested-negation"
+            | "conditional-stacking"
+            | "dense-punctuation-burst" => Self::Syntax,
             "readability-score" => Self::Readability,
             _ => Self::Syntax,
         }

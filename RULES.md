@@ -75,7 +75,7 @@ score is their weighted sum.
 |---|---|
 | `structure` | `sentence-too-long`, `paragraph-too-long`, `deeply-nested-lists`, `heading-jump`, `excessive-commas`, `long-enumeration`, `deep-subordination`, `line-length-wide`, `mixed-numeric-format` |
 | `lexicon` | `low-lexical-diversity`, `excessive-nominalization`, `unexplained-abbreviation`, `weasel-words`, `jargon-undefined`, `all-caps-shouting`, `redundant-intensifier` |
-| `syntax` | `passive-voice`, `unclear-antecedent`, `nested-negation`, `conditional-stacking` |
+| `syntax` | `passive-voice`, `unclear-antecedent`, `nested-negation`, `conditional-stacking`, `dense-punctuation-burst` |
 | `rhythm` | `consecutive-long-sentences`, `repetitive-connectors` |
 | `readability` | `readability-score` |
 
@@ -1058,6 +1058,41 @@ Exact detection requires anaphora resolution, which is advanced NLP. v0.1 catche
 
 - 🇫🇷 : *ce, cela, ceci, ça, celui-ci, celle-ci, il, elle, ils, elles*
 - 🇬🇧 : *this, that, these, those, it, they, them*
+
+---
+
+#### `dense-punctuation-burst`
+
+**Category** : `syntax`
+**Severity** : `warning`
+**Default weight** : `1`
+**Condition tags** : `general`
+**Bilingual** : yes, script-agnostic
+
+**Intent** : flag *local* bursts of punctuation — windows where ≥ N qualifying marks (`,`, `;`, `:`, `—`, `–`) cluster within W grapheme clusters. Tight clusters signal layered subordination, parenthetical interjections, or list-within-list constructions that are hard to parse for readers with cognitive or attentional difficulties. Distinct from [`excessive-commas`](#excessive-commas), which counts commas across an entire sentence rather than over a sliding window.
+
+**References** : IFLA easy-to-read guidelines.
+
+**Detection**
+
+Per source line, walk the grapheme stream once and collect the column of every qualifying mark. When a window of `window_graphemes` graphemes contains `min_marks` or more marks, emit a burst spanning the first to the last mark in the window, then advance past that last mark so overlapping windows do not double-fire. Code blocks are excluded upstream by the parser.
+
+**Parameters**
+
+| Parameter | Type | Default |
+|---|---|---|
+| `min_marks` | int | profile-dependent |
+| `window_graphemes` | int | profile-dependent |
+
+**Thresholds by profile**
+
+| Profile | `min_marks` | `window_graphemes` |
+|---|---|---|
+| `dev-doc` | 4 | 30 |
+| `public` | 3 | 30 |
+| `falc` | 3 | 40 |
+
+`dev-doc` tolerates a 3-mark cluster (often unavoidable in technical lists adjacent to prose). FALC keeps the same density floor as `public` but widens the window to catch slightly looser bursts.
 
 ---
 
