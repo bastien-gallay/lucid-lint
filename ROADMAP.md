@@ -207,7 +207,7 @@ grounding).
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F26 | Override `index.hbs` (or `book.js`) to replace the mdBook theme picker with a two-option toggle labelled "Lucid light / Lucid dark". In v0.1 the `.light` + `.rust` classes both resolve to lucid-light and `.coal` + `.navy` + `.ayu` to lucid-dark — the palette is consistent but the menu labels still read `Light / Rust / Coal / Navy / Ayu`. | 🟡 Medium | v0.1 docs `/colorize` session; mdBook stock limitation |
+| F26 | ✅ MVP shipped in v0.2 via DOM-level trim in `lucid-navigation.js` — the picker now shows three honest items (`Auto · Lucid light · Lucid dark`); the stock Rust / Navy / Ayu `<li>`s are marked `hidden` so they're inert for keyboard and screen-reader. CSS class mapping is unchanged (`.light` / `.rust` → lucid-light, `.coal` / `.navy` / `.ayu` → lucid-dark), so pre-existing localStorage selections still render correctly. Follow-up (optional): a full `index.hbs` override to drop the stock markup entirely rather than hide it; preferred once the mdBook upgrade cadence settles. | 🟡 Medium | v0.1 docs `/colorize` session; mdBook stock limitation |
 
 ### Docs site — reading preferences
 
