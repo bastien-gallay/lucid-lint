@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`weasel-words` false-positive cleanup (F23 completion)** —
+  hits inside straight `"..."` or paired curly `"..."` quotes are
+  now skipped, joining the inline-code-span and directional-pair
+  exceptions shipped earlier in the F23 cycle. The author is
+  *mentioning* the word in those spans rather than using it as a
+  hedge (`Use "many" sparingly`, `The word "rather" weakens the
+  sentence`). Scan is per-line, so an unclosed quote cannot leak
+  across a newline and silence later hits. Single quotes /
+  apostrophes are deliberately NOT recognised — they collide with
+  possessives, contractions, and French elisions. The "concrete
+  noun" semantic slice (`"many X"` with a concrete noun) remains
+  unshipped by design: it needs POS data and belongs in the future
+  `lucid-lint-nlp` plugin (F75).
 - **Definition-aware `unexplained-abbreviation` + project whitelist
   (F9 + F31)** — the rule is now two-pass. A pre-scan collects
   acronyms defined in the document in either canonical form

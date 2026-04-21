@@ -105,6 +105,9 @@ impl Rule for WeaselWords {
                     if is_inside_inline_code(&paragraph.text, byte_offset) {
                         continue;
                     }
+                    if is_inside_quoted_span(&paragraph.text, byte_offset) {
+                        continue;
+                    }
                     if is_directional_pair(&lowered, byte_offset, phrase, language) {
                         continue;
                     }
@@ -138,6 +141,34 @@ fn is_inside_inline_code(text: &str, offset: usize) -> bool {
         .count()
         % 2
         == 1
+}
+
+/// A hit lands inside a quoted span when the author is *mentioning*
+/// the word rather than using it. Examples: `use "many" sparingly`,
+/// `the word "rather" is a hedge`. The F23 first slice handled
+/// backticks; this extends the same courtesy to straight double
+/// quotes and paired curly quotes.
+///
+/// Single quotes (`'`, `'`, `'`) are intentionally NOT recognised —
+/// they collide with possessives (`Alice's`), contractions (`don't`),
+/// and French elisions (`l'utilisateur`). Too many false negatives.
+///
+/// Scans the current line only, walking left-to-right and toggling an
+/// "inside" flag on each recognised marker. Returns the flag's value
+/// at `offset`.
+fn is_inside_quoted_span(text: &str, offset: usize) -> bool {
+    let capped = offset.min(text.len());
+    let line_start = text[..capped].rfind('\n').map_or(0, |p| p + 1);
+    let mut inside = false;
+    for ch in text[line_start..capped].chars() {
+        match ch {
+            '"' => inside = !inside,
+            '\u{201C}' => inside = true,  // “
+            '\u{201D}' => inside = false, // ”
+            _ => {},
+        }
+    }
+    inside
 }
 
 /// "rather than" and "plutôt que" are conjunctions meaning "instead of",
@@ -302,6 +333,53 @@ mod tests {
             "The phrase `ok` is fine, but this code is basically correct.",
             Language::En,
         );
+        assert_eq!(diags.len(), 1);
+        assert!(diags[0].message.contains("basically"));
+    }
+
+    #[test]
+    fn weasel_inside_straight_double_quotes_is_skipped() {
+        // Author is mentioning the word, not using it as a hedge.
+        let diags = lint("Use \"many\" sparingly in specs.", Language::En);
+        assert!(diags.is_empty(), "got {diags:?}");
+    }
+
+    #[test]
+    fn weasel_inside_curly_double_quotes_is_skipped() {
+        let diags = lint(
+            "The word \u{201C}several\u{201D} is vague in contracts.",
+            Language::En,
+        );
+        assert!(diags.is_empty(), "got {diags:?}");
+    }
+
+    #[test]
+    fn weasel_outside_quotes_on_same_line_still_fires() {
+        // First `"many"` is a mention (skipped). The second, unquoted
+        // `basically`, is an actual hedge and must fire.
+        let diags = lint(
+            "The word \"many\" is vague; this sentence is basically wrong.",
+            Language::En,
+        );
+        assert_eq!(diags.len(), 1);
+        assert!(diags[0].message.contains("basically"));
+    }
+
+    #[test]
+    fn apostrophe_is_not_treated_as_a_quote_opener() {
+        // Single quotes are deliberately NOT recognised. An apostrophe
+        // (possessive / contraction / French elision) must not silence
+        // a subsequent weasel on the same line.
+        let diags = lint("Alice's report is basically wrong.", Language::En);
+        assert_eq!(diags.len(), 1);
+        assert!(diags[0].message.contains("basically"));
+    }
+
+    #[test]
+    fn quoted_weasel_skip_is_per_line() {
+        // An unclosed straight `"` must not leak across a newline and
+        // silence hits on the next line.
+        let diags = lint("He said \"hello\nbasically correct.", Language::En);
         assert_eq!(diags.len(), 1);
         assert!(diags[0].message.contains("basically"));
     }

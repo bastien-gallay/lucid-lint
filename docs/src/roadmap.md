@@ -87,7 +87,7 @@ Shipped in the tag: all 17 rules across 5 phases, the minimal inline-disable dir
 
 Current 🔴 queue, grouped by theme:
 
-- **False-positive cleanup** — F22 (`excessive-commas`), F23 🚧 (`weasel-words`)
+- **False-positive cleanup** — F22 (`excessive-commas`)
 - **Bilingual directive** — F25 (French docs mirror)
 - **Docs-site finishing** — F34 (responsive), F35 (a11y audit sweep)
 
@@ -119,7 +119,7 @@ Current 🔴 queue, grouped by theme:
 | F2 | Sentence-level low-lexical-diversity density | 🟢 Speculative | Rule 5 |
 | F3 | Comma density metric (relative) for `excessive-commas` | 🟢 Speculative | Rule 3a |
 | F22 | Context-aware relaxation for `excessive-commas` (research needed before design) | 🔴 Next | v0.1 dogfood: 5 false-ish positives on technical docs |
-| F23 | 🚧 First slice shipped in v0.2 — hits inside inline code spans and directional `rather than` / `plutôt que` pairings are now skipped. Still open: straight-quoted terms (e.g. `"many X"` outside backticks) and `"many X"` where X is a concrete noun. | 🔴 Next | v0.1 dogfood: 11 false-ish positives on this repo's own docs |
+| F23 | ✅ Shipped in v0.2 — false-positive cleanup complete for v0.2. Hits inside inline code spans, straight `"..."` quotes, paired curly `"..."` quotes, and directional `rather than` / `plutôt que` pairings are now skipped. Single quotes / apostrophes are deliberately not recognised (possessives, contractions, FR elisions). The "concrete noun" semantic check (`"many X"` where X is a concrete noun) stays unshipped — needs POS data and belongs in the `lucid-lint-nlp` plugin (F75) rather than the deterministic core. | — | v0.1 dogfood: 11 false-ish positives on this repo's own docs |
 | F24 | Refine `excessive-nominalization` suffix list (drop or gate `-al`; many adjectives — `crucial`, `horizontal`, `positional`, `attentional` — are flagged despite not being abstract nouns) | 🟡 Later | v0.1 dogfood |
 | F31 | ✅ Shipped in v0.2 — `dev-doc` baseline narrowed to the infrastructure stack (`URL`, `HTML`, `CSS`, `JSON`, `XML`, `HTTP`, `HTTPS`, `UTF`, `IO`, `API`, `CLI`, `GUI`, `OS`, `CPU`, `RAM`, `SSD`, `USB`, `IDE`, `SDK`, `CI`, `CD`). Accessibility standards, engineering-practice initialisms, and AI/language-tech terms moved to project config via new `[rules.unexplained-abbreviation].whitelist` in `lucid-lint.toml` (additive over baseline). Breaking change for downstream users, flagged in CHANGELOG with the recovery snippet. Dogfooded in this repo's own [`lucid-lint.toml`](https://github.com/bastien-gallay/lucid-lint/blob/main/lucid-lint.toml). | — | v0.1 review feedback |
 
