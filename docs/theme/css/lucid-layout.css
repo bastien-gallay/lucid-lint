@@ -297,13 +297,14 @@
 }
 
 /* Hero rhythm: the first audience pill sits closer to the H1, then
-   the lede paragraph gets its normal rhythm, then the reading demo
-   is pushed out so it reads as a separate block. */
+   the lede paragraph gets its normal rhythm, then the stance panel
+   (Before/After) is the first block-level content — the reading
+   demo has been demoted below "Where to next". */
 .lucid-landing__title + .lucid-audience {
   margin-block-start: var(--lucid-space-md);
 }
-.lucid-landing__title ~ .reading-demo {
-  margin-block-start: var(--lucid-space-3xl);
+.lucid-landing__title ~ .lucid-stance {
+  margin-block-start: var(--lucid-space-xl);
 }
 
 /* Hide the auto-injected breadcrumbs on the landing: the display H1
@@ -414,16 +415,17 @@
 .lucid-audience {
   /* Distinct from both blockquote (tinted) and pagetoc (top-ruled):
      a framed callout on the paper-soft neutral, with a 1px ink-edge
-     rule. Body-sized — not a "big lead" broadcast. It's a gentle
-     frame around the lead paragraph, a whisper the reader can choose
-     to dwell on, not a pull-quote. */
+     rule. Sized at --text-lead (~1.125em of body) so the first
+     sentence carries more presence than the body paragraph that
+     follows — the lede should lead, not whisper. */
   max-width: none;
   margin-block: var(--lucid-space-xs) var(--lucid-space-xl);
   padding: var(--lucid-space-md) var(--lucid-space-lg);
   background: var(--lucid-paper-soft);
   border: 1px solid var(--lucid-paper-edge);
   border-radius: 6px;
-  font-size: var(--text-body, 1rem);
+  font-size: var(--text-lead);
+  line-height: var(--line-height-lead);
   color: var(--fg);
   font-weight: var(--weight-regular, 400);
 }
@@ -434,10 +436,148 @@
   border-color: var(--lucid-paper-dark-edge);
 }
 
+/* ---------- Stance panel ----------
+ * Introduction page only. Two stacked prose blocks (Before / After)
+ * that *show* what lucid-lint does before any feature list. Literal-
+ * over-decorative: typography does the work; no side-tab accents,
+ * no tint blocks, no icons. The label sits above each side in
+ * caption-case so the hierarchy is obvious without color. */
+
+.lucid-stance {
+  max-width: none;
+  margin-block: var(--lucid-space-xl) var(--lucid-space-2xl);
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+.lucid-stance__pair {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--lucid-space-lg);
+}
+@media (min-width: 720px) {
+  .lucid-stance__pair {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--lucid-space-xl);
+  }
+}
+.lucid-stance__side {
+  padding: var(--lucid-space-md) 0;
+  border-block-start: 1px solid var(--lucid-paper-edge);
+}
+.coal .lucid-stance__side,
+.navy .lucid-stance__side,
+.ayu  .lucid-stance__side {
+  border-block-start-color: var(--lucid-paper-dark-edge);
+}
+.lucid-stance__label {
+  margin: 0 0 var(--lucid-space-sm);
+  font-family: var(--reading-font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-semibold, 600);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lucid-fog);
+}
+.coal .lucid-stance__label,
+.navy .lucid-stance__label,
+.ayu  .lucid-stance__label { color: var(--lucid-fog-dark); }
+.lucid-stance__side[data-stance-side="after"] .lucid-stance__label {
+  color: var(--links);
+}
+.lucid-stance__prose {
+  max-width: none;
+  margin: 0;
+  font-size: var(--text-body);
+  line-height: var(--line-height-body);
+  color: var(--fg);
+}
+.lucid-stance__side[data-stance-side="before"] .lucid-stance__prose {
+  color: var(--lucid-fog);
+}
+.coal .lucid-stance__side[data-stance-side="before"] .lucid-stance__prose,
+.navy .lucid-stance__side[data-stance-side="before"] .lucid-stance__prose,
+.ayu  .lucid-stance__side[data-stance-side="before"] .lucid-stance__prose {
+  color: var(--lucid-fog-dark);
+}
+.lucid-stance__caption {
+  max-width: none;
+  margin-block: var(--lucid-space-md) 0;
+  font-size: var(--text-small);
+  color: var(--lucid-fog);
+  line-height: 1.5;
+}
+.coal .lucid-stance__caption,
+.navy .lucid-stance__caption,
+.ayu  .lucid-stance__caption { color: var(--lucid-fog-dark); }
+.lucid-stance__caption code { font-size: 0.92em; }
+
 /* ---------- Reading demonstrator ----------
- * Three-column font demo on the Introduction page. Each card
- * renders the same paragraph in one of the three presets. The
- * "Use this" buttons are wired in lucid-navigation.js. */
+ * Chip-selector variant (Introduction page): one live preview card
+ * + a segmented chip row. The previous three-card grid moved below
+ * the product-stance IA; keep the three-card rules below for any
+ * future surface that wants the parallel-compare treatment. */
+
+.reading-demo--chips {
+  padding: var(--lucid-space-lg);
+  background: var(--sidebar-bg);
+  border-radius: 8px;
+}
+.reading-demo__preview {
+  padding: var(--lucid-space-md);
+  background: var(--bg);
+  border-radius: 6px;
+  margin-block: var(--lucid-space-md);
+}
+.reading-demo__preview .reading-demo__sample {
+  margin-block-start: var(--lucid-space-sm);
+}
+.reading-demo__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lucid-space-xs);
+  margin-block: var(--lucid-space-md) 0;
+}
+.reading-demo__chip {
+  padding: var(--lucid-space-xs) var(--lucid-space-md);
+  min-height: 44px;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--reading-font-body);
+  font-size: var(--text-small);
+  font-weight: var(--weight-semibold, 600);
+  border: 1px solid var(--lucid-paper-edge);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 150ms, color 150ms, border-color 150ms;
+}
+.coal .reading-demo__chip,
+.navy .reading-demo__chip,
+.ayu  .reading-demo__chip {
+  border-color: var(--lucid-paper-dark-edge);
+}
+.reading-demo__chip:hover {
+  border-color: var(--links);
+  color: var(--links);
+}
+.reading-demo__chip[aria-checked="true"] {
+  background: var(--links);
+  color: var(--bg);
+  border-color: var(--links);
+  cursor: default;
+}
+.reading-demo__chip[aria-checked="true"] .reading-demo__default {
+  background: var(--bg);
+  color: var(--lucid-fog);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reading-demo__chip { transition: none; }
+}
+
+/* ---------- Reading demonstrator (legacy 3-card) ----------
+ * Three-column font demo. Each card renders the same paragraph in
+ * one of the three presets. The "Use this" buttons are wired in
+ * lucid-navigation.js. Still used for the chips preview swap. */
 
 .reading-demo {
   margin-block: var(--lucid-space-xl) var(--lucid-space-2xl);
@@ -617,40 +757,87 @@
   flex: 0 0 auto;
 }
 
-/* ---------- Language switch (header) ---------- */
+/* ---------- Language switch (header) ----------
+ * Segmented pill: "Bilingual from day one" is principle #4 — the
+ * switch has to read as a visible control, not an afterthought.
+ * The pill's border tracks --lucid-paper-edge so it sits quietly
+ * among the stock icon-buttons without adding visual weight. */
 
 .lucid-lang {
   display: inline-flex;
   align-items: center;
-  gap: var(--lucid-space-xs);
   margin-inline-start: var(--lucid-space-sm);
+  padding: 2px;
+  gap: 0;
+  border: 1px solid var(--lucid-paper-edge);
+  border-radius: 999px;
   font-family: var(--reading-font-body);
   font-size: var(--text-small);
   font-weight: var(--weight-semibold, 600);
 }
+.coal .lucid-lang,
+.navy .lucid-lang,
+.ayu  .lucid-lang {
+  border-color: var(--lucid-paper-dark-edge);
+}
 .lucid-lang__link {
   color: var(--lucid-fog);
   text-decoration: none;
-  padding: var(--lucid-space-2xs) var(--lucid-space-xs);
-  border-radius: 3px;
-  min-height: 44px;
+  padding: var(--lucid-space-2xs) var(--lucid-space-md);
+  border-radius: 999px;
+  min-height: 32px;
   display: inline-flex;
   align-items: center;
+  transition: background 150ms, color 150ms;
 }
 .coal .lucid-lang__link,
 .navy .lucid-lang__link,
 .ayu  .lucid-lang__link { color: var(--lucid-fog-dark); }
 .lucid-lang__link.is-active {
-  color: var(--fg);
+  background: var(--links);
+  color: var(--bg);
 }
-.lucid-lang__link:hover,
-.lucid-lang__link:focus-visible {
+.lucid-lang__link:hover:not(.is-active),
+.lucid-lang__link:focus-visible:not(.is-active) {
   color: var(--links);
 }
 .lucid-lang__sep {
-  color: var(--lucid-fog);
-  opacity: 0.5;
-  user-select: none;
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lucid-lang__link { transition: none; }
+}
+
+/* ---------- Page-nav chevrons ----------
+ * mdBook's default chrome renders ‹ › arrows as fixed elements
+ * along the page edges (.nav-chapters.previous / .nav-chapters.next).
+ * On desktop they float over the content and read as decorative.
+ * The sidebar + the bottom "Next chapter" link already cover the
+ * need. Hide the floating arrows at ≥ 700px; keep mobile where the
+ * sidebar collapses. */
+
+@media (min-width: 700px) {
+  .nav-chapters.previous,
+  .nav-chapters.next,
+  .nav-wrapper .previous,
+  .nav-wrapper .next,
+  .mobile-nav-chapters {
+    display: none !important;
+  }
+}
+
+/* ---------- GFM alert side-stripe cap ----------
+ * mdBook stock theme stamps a 4-px colored border on GitHub-flavored
+ * alert blockquotes (> [!NOTE]). That's the same side-tab pattern the
+ * brand explicitly bans. Cap it at 1 px across all alert flavors; the
+ * colored flavor-token still carries the semantic, the stripe just
+ * stops shouting. */
+
+.content blockquote.alert,
+.content blockquote.markdown-alert,
+.content blockquote[class*="alert-"] {
+  border-inline-start-width: 1px !important;
+  padding-inline-start: 1em;
 }
 
 /* ============================================================

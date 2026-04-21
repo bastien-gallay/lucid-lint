@@ -92,10 +92,9 @@ const LUCID_COPY = {
   const isFr = location.pathname.indexOf('/fr/') !== -1;
   const t = isFr ? LUCID_COPY.fr : LUCID_COPY.en;
 
-  // mdBook hard-codes <html lang> from book.toml [book].language.
-  // The FR stub lives under the same book, so override at runtime so
-  // screen readers and spellcheck pick the right language.
-  if (isFr) d.documentElement.setAttribute('lang', 'fr');
+  // Note: <html lang="fr"> is set earlier (in head.hbs, before body
+  // paint) so assistive tech reads it on first parse rather than
+  // after a post-body mutation. No override needed here.
 
   // ---- 1. Skip to content ----------------------------------
   (function skipLink() {
@@ -135,6 +134,9 @@ const LUCID_COPY = {
     nav.setAttribute('aria-label', t.crumbLabel);
 
     const ol = d.createElement('ol');
+    // VoiceOver strips list semantics from <ol> with list-style: none;
+    // re-assert the role so assistive tech still announces "list, N items".
+    ol.setAttribute('role', 'list');
     if (part) {
       const liPart = d.createElement('li');
       liPart.textContent = part.textContent.trim();
@@ -222,6 +224,73 @@ const LUCID_COPY = {
     title.insertBefore(img, title.firstChild);
   })();
 
+  // ---- 4b. FR sidebar cue ----------------------------------
+  // The book is single-locale (mdBook limitation) so the sidebar
+  // lists EN chapter titles. On /fr/* pages we can't swap them
+  // for a real FR sidebar without a parallel build, but we can
+  // frame them honestly: a brief FR header at the top, then the
+  // EN chapters under a "Documentation anglaise" divider. That
+  // stops the reader from thinking "I clicked FR and got English."
+  if (isFr) {
+    (function frSidebarCue() {
+      // mdBook's sidebar nests .sidebar > .sidebar-scrollbox > ol.chapter.
+      // Insert the cue and divider inside the scrollbox so both live as
+      // siblings of the chapter list — keeps insertBefore valid and lets
+      // the cue scroll with the list on short viewports.
+      const scrollbox = d.querySelector('.sidebar .sidebar-scrollbox');
+      if (!scrollbox) return;
+      if (scrollbox.querySelector('.lucid-fr-cue')) return;
+
+      const chapters = scrollbox.querySelector('.chapter');
+
+      const cue = d.createElement('div');
+      cue.className = 'lucid-fr-cue';
+      cue.innerHTML =
+        '<p class="lucid-fr-cue__title">Version française</p>' +
+        '<p class="lucid-fr-cue__note">' +
+        'La documentation complète est en chantier (F25). ' +
+        'En attendant, les chapitres ci-dessous sont en anglais.' +
+        '</p>';
+      scrollbox.insertBefore(cue, scrollbox.firstChild);
+
+      if (chapters) {
+        const divider = d.createElement('p');
+        divider.className = 'lucid-fr-cue__divider';
+        divider.textContent = 'Documentation anglaise';
+        scrollbox.insertBefore(divider, chapters);
+      }
+    })();
+  }
+
+  // ---- 4c. Theme picker relabel -----------------------------
+  // mdBook ships a 5-option theme menu (Light · Rust · Coal · Navy ·
+  // Ayu). lucid-colors.css collapses those five into two palettes,
+  // so the extra labels mislead. Trim the menu to Auto + Lucid light
+  // + Lucid dark in place; hide the rest. (A full index.hbs override
+  // was considered and rejected — the DOM-level trim keeps us on the
+  // stock template and survives mdBook upgrades.)
+  (function themePickerRelabel() {
+    const list = d.getElementById('mdbook-theme-list');
+    if (!list) return;
+    const labels = isFr
+      ? { auto: 'Auto', light: 'Lucid clair', coal: 'Lucid sombre' }
+      : { auto: 'Auto', light: 'Lucid light', coal: 'Lucid dark' };
+    const keep = {
+      'mdbook-theme-default_theme': labels.auto,
+      'mdbook-theme-light':         labels.light,
+      'mdbook-theme-coal':          labels.coal,
+    };
+    list.querySelectorAll('li').forEach((li) => {
+      const btn = li.querySelector('button');
+      if (!btn) return;
+      if (Object.prototype.hasOwnProperty.call(keep, btn.id)) {
+        btn.textContent = keep[btn.id];
+      } else {
+        li.hidden = true;
+      }
+    });
+  })();
+
   // ---- 5. Language switch ----------------------------------
   (function langSwitch() {
     const bar = d.querySelector('.right-buttons, .menu-bar .right-buttons, .menu-bar');
@@ -259,9 +328,19 @@ const LUCID_COPY = {
   })();
 
   // ---- 6. Reading demonstrator -----------------------------
+  // Two markups supported:
+  //  (a) Legacy 3-card:  .reading-demo__apply[data-apply]   (button per card)
+  //  (b) Chip-selector:  .reading-demo__chip[data-apply]    (radio chips)
+  // In (b) the single preview swaps font + label to match the
+  // selected chip; persistence + toast behavior is shared.
   (function demonstrator() {
-    const buttons = d.querySelectorAll('.reading-demo__apply[data-apply]');
-    if (!buttons.length) return;
+    const legacyButtons = d.querySelectorAll('.reading-demo__apply[data-apply]');
+    const chips = d.querySelectorAll('.reading-demo__chip[data-apply]');
+    const controls = [...legacyButtons, ...chips];
+    if (!controls.length) return;
+
+    const preview       = d.querySelector('.reading-demo--chips .reading-demo__sample');
+    const previewLabel  = d.querySelector('.reading-demo--chips [data-chip-label]');
 
     const applyPreset = (preset) => {
       d.documentElement.setAttribute('data-font', preset);
@@ -270,24 +349,30 @@ const LUCID_COPY = {
         const next = Object.assign({}, prev, { font: preset });
         localStorage.setItem('lucidLintReading', JSON.stringify(next));
       } catch (e) { /* silent */ }
-      // Update button pressed state for accessibility
-      buttons.forEach((b) => b.setAttribute('aria-pressed', b.dataset.apply === preset ? 'true' : 'false'));
-      // Toast
+      legacyButtons.forEach((b) => b.setAttribute('aria-pressed', b.dataset.apply === preset ? 'true' : 'false'));
+      chips.forEach((c) => c.setAttribute('aria-checked', c.dataset.apply === preset ? 'true' : 'false'));
+      if (preview) preview.setAttribute('data-demo', preset);
+      if (previewLabel) previewLabel.textContent = t.demoFontLabels[preset] || previewLabel.textContent;
       showToast(t.demoUsed + t.demoFontLabels[preset], preset);
     };
 
-    // Restore current preset on load, and give every button an
-    // accessible name that survives out-of-context readout
-    // ("Use Atkinson Hyperlegible Next" vs just "Use this").
     const current = d.documentElement.getAttribute('data-font') || 'atkinson';
-    buttons.forEach((b) => {
+    legacyButtons.forEach((b) => {
       b.setAttribute('aria-pressed', b.dataset.apply === current ? 'true' : 'false');
       const presetName = t.demoFontLabels[b.dataset.apply];
       if (presetName) b.setAttribute('aria-label', t.demoUsePrefix + presetName);
     });
+    chips.forEach((c) => {
+      c.setAttribute('aria-checked', c.dataset.apply === current ? 'true' : 'false');
+      const presetName = t.demoFontLabels[c.dataset.apply];
+      if (presetName) c.setAttribute('aria-label', t.demoUsePrefix + presetName);
+    });
+    // Ensure preview matches persisted preset on load
+    if (preview) preview.setAttribute('data-demo', current);
+    if (previewLabel && t.demoFontLabels[current]) previewLabel.textContent = t.demoFontLabels[current];
 
-    buttons.forEach((b) => {
-      b.addEventListener('click', () => applyPreset(b.dataset.apply));
+    controls.forEach((el) => {
+      el.addEventListener('click', () => applyPreset(el.dataset.apply));
     });
 
     let toastTimer;
