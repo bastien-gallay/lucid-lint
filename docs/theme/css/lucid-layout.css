@@ -773,3 +773,44 @@
     max-width: 48ch;
   }
 }
+
+/* ---------- Reading-progress line ----------
+ * A 2px --color-lucid line pinned to the viewport top, scaled by
+ * scroll depth via CSS `animation-timeline: scroll()`. Zero JS,
+ * hardware-accelerated, degrades cleanly in browsers that don't
+ * support the property (the element stays at scaleX(0) and is
+ * invisible). Gated off on the landing (its own H1 is the anchor)
+ * and the 404 (content fits the viewport). Hidden entirely under
+ * prefers-reduced-motion — the progress signal is worth less than
+ * honoring the user's motion preference. */
+
+@keyframes lucid-reading-progress {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  height: 2px;
+  background: var(--color-lucid);
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+  z-index: 50;
+  animation: lucid-reading-progress linear both;
+  animation-timeline: scroll(root);
+}
+
+/* Suppress on surfaces that carry their own attention: the landing
+   has the display H1 + lens mark; the 404 is a one-screen dead-end. */
+body:has(.lucid-landing__title)::before,
+body:has(.lucid-404)::before {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before { display: none; }
+}

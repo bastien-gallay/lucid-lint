@@ -199,15 +199,47 @@
  * A few spots where mdBook's stock CSS hardcodes colors that
  * ignore theme variables. We override directly. */
 
+/* Lens-glyph section divider: a centered focus-dot in --color-lucid
+   flanked by a thin edge-colored line. The dot "breaks" the line by
+   casting a paper-colored halo that masks the stroke behind it; in
+   dark mode the halo picks up the dark paper automatically via --bg.
+   Horizontal reach is capped so the motif reads as intentional
+   decoration, not as a full-width rule. */
 .content hr {
   border: none;
-  border-top: 1px solid var(--lucid-paper-edge);
-  margin-block: 2rem;
+  position: relative;
+  height: 5px;
+  max-width: 180px;
+  margin-inline: auto;
+  margin-block: 2.5rem;
 }
-.coal .content hr,
-.navy .content hr,
-.ayu .content hr {
-  border-top-color: var(--lucid-paper-dark-edge);
+.content hr::before {
+  content: "";
+  position: absolute;
+  inset-block: 50%;
+  inset-inline: 0;
+  height: 1px;
+  background: var(--lucid-paper-edge);
+  transform: translateY(-50%);
+}
+.coal .content hr::before,
+.navy .content hr::before,
+.ayu  .content hr::before {
+  background: var(--lucid-paper-dark-edge);
+}
+.content hr::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-lucid);
+  transform: translate(-50%, -50%);
+  /* Paper-colored halo masks the line behind the dot. Two-step ring:
+     inner bg ring gives the break; subtle outer edge ring finishes it. */
+  box-shadow: 0 0 0 3px var(--bg);
 }
 
 .content blockquote {
@@ -225,6 +257,22 @@
 }
 .content table tbody tr:nth-child(2n) {
   background-color: var(--table-alternate-bg);
+}
+
+/* Inline code chips — mdBook's stock CSS hardcodes a light background
+   on :not(pre) > code. In dark mode that collides with --inline-code-color
+   (near-white ink-dark), producing ~1.1:1 contrast on every metadata-table
+   cell and punctuation chip. Re-tie both themes to the palette so chips
+   inherit a paper-sink surface with ink foreground in either mode. */
+.content :not(pre) > code {
+  background-color: var(--lucid-paper-sink);
+  color: var(--inline-code-color);
+}
+.coal .content :not(pre) > code,
+.navy .content :not(pre) > code,
+.ayu  .content :not(pre) > code {
+  background-color: var(--lucid-paper-dark-sink);
+  color: var(--inline-code-color);
 }
 
 /* Focus ring — re-state here so it picks up --lucid-blue per theme
