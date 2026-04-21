@@ -227,6 +227,21 @@ html body {
   margin-block-start: 0;
 }
 
+/* Landing-page display H1 — anchors the introduction page before the
+   reading-preset carousel. Atkinson variable caps at weight 800, so
+   "900" in the brief translates to 800 here. Scale is expressed
+   against mdBook's 62.5% html base (1rem = 10px), so 3.6–5.6rem
+   reads as ~36–56px at standard zoom. Stays within .content so
+   sidebar / chrome H1s (e.g. .menu-title) are untouched, and rule
+   pages keep their Commit Mono template. */
+.content h1.lucid-landing__title {
+  font-size: clamp(3.6rem, 6vw, 5.6rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  margin-block-end: 0.3em;
+}
+
 .content h2 {
   font-size: var(--text-h2);
   font-weight: var(--weight-bold);

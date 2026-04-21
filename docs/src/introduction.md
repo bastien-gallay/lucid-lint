@@ -1,4 +1,4 @@
-# Introduction
+<h1 id="introduction" class="lucid-landing__title">Introduction</h1>
 
 <p class="lucid-audience" role="doc-subtitle">
 Built for readers whose attention is stretched — ADHD, dyslexia, fatigue, a
@@ -23,7 +23,7 @@ short list and gets out of the way.
         that cost low.
       </p>
       <button type="button" class="reading-demo__apply" data-apply="atkinson" aria-pressed="true">
-        Use this <span class="reading-demo__default">— default</span>
+        Use this <span class="reading-demo__default">default</span>
       </button>
     </article>
     <article class="reading-demo__card">
