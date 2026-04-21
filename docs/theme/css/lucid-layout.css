@@ -326,7 +326,7 @@
   max-width: 48ch;
   margin: var(--lucid-space-lg) auto 0;
 }
-.lucid-404__copy h3 {
+.lucid-404__copy h2 {
   margin-block: 0 var(--lucid-space-sm);
   font-size: var(--text-h2, 1.5rem);
 }
