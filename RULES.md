@@ -73,7 +73,7 @@ score is their weighted sum.
 
 | Category | Rules |
 |---|---|
-| `structure` | `sentence-too-long`, `paragraph-too-long`, `deeply-nested-lists`, `heading-jump`, `excessive-commas`, `long-enumeration`, `deep-subordination`, `line-length-wide` |
+| `structure` | `sentence-too-long`, `paragraph-too-long`, `deeply-nested-lists`, `heading-jump`, `excessive-commas`, `long-enumeration`, `deep-subordination`, `line-length-wide`, `mixed-numeric-format` |
 | `syntax` | `passive-voice`, `unclear-antecedent`, `nested-negation`, `conditional-stacking` |
 | `rhythm` | `consecutive-long-sentences`, `repetitive-connectors` |
 | `lexicon` | `low-lexical-diversity`, `excessive-nominalization`, `unexplained-abbreviation`, `weasel-words`, `jargon-undefined`, `all-caps-shouting` |
@@ -396,6 +396,28 @@ Per paragraph, count grapheme clusters on each line and report lines above `max_
 | `dev-doc` | 120 |
 | `public` | 100 |
 | `falc` | 80 |
+
+---
+
+#### `mixed-numeric-format`
+
+**Category** : `structure`
+**Severity** : `warning`
+**Default weight** : `1`
+**Condition tags** : `dyscalculia`, `general`
+**Bilingual** : yes, EN + FR
+
+**Intent** : flag sentences that mix digit numerals (`42`, `3.14`, `1,000`) with spelled-out numerals (`two`, `trois`, `twenty`, `cent`) in the same sentence. Inconsistent numeric presentation forces readers — especially those with dyscalculia — to switch surface forms mid-clause and re-anchor the referent.
+
+**References** : CDC Clear Communication Index (3.5 — "present numbers consistently throughout"), plainlanguage.gov (Chapter 4 — "use numerals").
+
+**Detection**
+
+Per sentence, scan for digit-numeric tokens (`\d+(?:[.,\s]\d+)*`) and for entries in the per-language spelled-numeral list. Emit one diagnostic per sentence where both surface forms co-occur. The ambiguous forms `one` (EN) and `un` / `une` (FR) are excluded from the spelled list because they double as indefinite pronouns and articles.
+
+**Parameters**
+
+None. The rule has no configurable threshold — a single co-occurrence of the two forms is sufficient.
 
 ---
 

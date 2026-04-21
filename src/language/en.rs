@@ -216,6 +216,48 @@ pub static CONDITIONALS: &[&str] = &[
     "only if",
 ];
 
+/// English spelled-out cardinal numerals (lowercased).
+///
+/// Used by the `mixed-numeric-format` rule to detect a sentence that
+/// mixes digits with spelled-out numerals (CDC Clear Communication Index,
+/// plainlanguage.gov: present numbers consistently throughout).
+///
+/// `one` is deliberately excluded — it doubles as an indefinite pronoun
+/// (`one of the readers`, `no one`) and the false-positive rate is
+/// prohibitive. The list therefore starts at `two`.
+pub static SPELLED_NUMERALS: &[&str] = &[
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight",
+    "nine",
+    "ten",
+    "eleven",
+    "twelve",
+    "thirteen",
+    "fourteen",
+    "fifteen",
+    "sixteen",
+    "seventeen",
+    "eighteen",
+    "nineteen",
+    "twenty",
+    "thirty",
+    "forty",
+    "fifty",
+    "sixty",
+    "seventy",
+    "eighty",
+    "ninety",
+    "hundred",
+    "thousand",
+    "million",
+    "billion",
+];
+
 #[cfg(test)]
 mod tests {
     use super::*;

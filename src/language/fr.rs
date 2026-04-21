@@ -113,6 +113,52 @@ pub static CONDITIONALS: &[&str] = &[
 /// (`s'il`, `s'ils`). Counted as one occurrence each.
 pub static SI_CLITICS: &[&str] = &["s'il", "s'ils"];
 
+/// French spelled-out cardinal numerals (lowercased).
+///
+/// Used by the `mixed-numeric-format` rule to detect a sentence that
+/// mixes digits with spelled-out numerals (CDC Clear Communication Index,
+/// plainlanguage.gov: present numbers consistently throughout).
+///
+/// `un` and `une` are deliberately excluded — they double as indefinite
+/// articles (`un lecteur`, `une page`) and the false-positive rate is
+/// prohibitive. The list therefore starts at `deux`. Regional variants
+/// for 70/80/90 (`septante`, `huitante`, `octante`, `nonante`) are
+/// included alongside the metropolitan compounds.
+pub static SPELLED_NUMERALS: &[&str] = &[
+    "deux",
+    "trois",
+    "quatre",
+    "cinq",
+    "six",
+    "sept",
+    "huit",
+    "neuf",
+    "dix",
+    "onze",
+    "douze",
+    "treize",
+    "quatorze",
+    "quinze",
+    "seize",
+    "vingt",
+    "vingts",
+    "trente",
+    "quarante",
+    "cinquante",
+    "soixante",
+    "septante",
+    "huitante",
+    "octante",
+    "nonante",
+    "cent",
+    "cents",
+    "mille",
+    "million",
+    "millions",
+    "milliard",
+    "milliards",
+];
+
 #[cfg(test)]
 mod tests {
     use super::*;

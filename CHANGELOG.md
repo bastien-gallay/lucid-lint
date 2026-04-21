@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`mixed-numeric-format` rule (F52)** — flags sentences that mix
+  digit numerals (`42`, `3.14`, `1,000`, `1 000`) with spelled-out
+  numerals (`two`, `trois`, `twenty`, `cent`) in the same sentence
+  (CDC Clear Communication Index 3.5, plainlanguage.gov Chapter 4).
+  Per-sentence scan using the shared tokenizer; code blocks excluded
+  upstream by the Markdown parser. No configurable threshold — a
+  single co-occurrence suffices. EN `one` and FR `un` / `une` are
+  excluded from the spelled-numeral lists because they double as
+  indefinite pronouns / articles. First `dyscalculia`-tagged
+  `structure` rule. See [`docs/src/rules/mixed-numeric-format.md`](docs/src/rules/mixed-numeric-format.md).
 - **`line-length-wide` rule (F50)** — flags source lines wider than
   the per-profile ceiling (WCAG 1.4.8 AAA / BDA Dyslexia Style Guide
   grounding). Per-paragraph grapheme-cluster scan; fenced code blocks
