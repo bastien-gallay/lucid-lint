@@ -132,6 +132,7 @@ pub const WEIGHTED_RULE_IDS: &[&str] = &[
     "all-caps-shouting",
     "line-length-wide",
     "mixed-numeric-format",
+    "redundant-intensifier",
 ];
 
 /// Default weight for a rule, keyed by `rule_id`.

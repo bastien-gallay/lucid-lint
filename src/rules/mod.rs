@@ -29,6 +29,7 @@ pub mod paragraph_too_long;
 pub mod passive_voice;
 
 pub mod readability_score;
+pub mod redundant_intensifier;
 pub mod repetitive_connectors;
 pub mod sentence_too_long;
 pub mod unclear_antecedent;
@@ -52,6 +53,7 @@ pub use nested_negation::NestedNegation;
 pub use paragraph_too_long::ParagraphTooLong;
 pub use passive_voice::PassiveVoice;
 pub use readability_score::ReadabilityScore;
+pub use redundant_intensifier::RedundantIntensifier;
 pub use repetitive_connectors::RepetitiveConnectors;
 pub use sentence_too_long::SentenceTooLong;
 pub use unclear_antecedent::UnclearAntecedent;
@@ -137,6 +139,7 @@ pub fn default_rules(profile: Profile) -> Vec<Box<dyn Rule>> {
         Box::new(AllCapsShouting::for_profile(profile)),
         Box::new(LineLengthWide::for_profile(profile)),
         Box::new(MixedNumericFormat::for_profile(profile)),
+        Box::new(RedundantIntensifier::for_profile(profile)),
     ]
 }
 
@@ -164,7 +167,7 @@ mod tests {
     #[test]
     fn filter_by_conditions_keeps_general_rules() {
         let kept = filter_by_conditions(default_rules(Profile::Public), &[]);
-        assert_eq!(kept.len(), 22);
+        assert_eq!(kept.len(), 23);
     }
 
     #[test]

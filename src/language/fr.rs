@@ -113,6 +113,30 @@ pub static CONDITIONALS: &[&str] = &[
 /// (`s'il`, `s'ils`). Counted as one occurrence each.
 pub static SI_CLITICS: &[&str] = &["s'il", "s'ils"];
 
+/// French redundant intensifiers (lowercased).
+///
+/// Mirror of [`crate::language::en::INTENSIFIERS`]: words whose role
+/// is to *upgrade* the confidence of a statement without adding
+/// information. plainlanguage.gov, the CDC Clear Communication Index,
+/// and the FALC guidelines all flag intensifiers as a plain-language
+/// anti-pattern.
+///
+/// Disjoint from [`WEASELS`] (which captures hedges that *downgrade*
+/// confidence: `plutôt`, `assez`, `presque`).
+pub static INTENSIFIERS: &[&str] = &[
+    "très",
+    "vraiment",
+    "extrêmement",
+    "absolument",
+    "totalement",
+    "complètement",
+    "terriblement",
+    "incroyablement",
+    "profondément",
+    "super",
+    "hyper",
+];
+
 /// French spelled-out cardinal numerals (lowercased).
 ///
 /// Used by the `mixed-numeric-format` rule to detect a sentence that

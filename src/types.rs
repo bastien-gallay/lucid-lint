@@ -166,7 +166,8 @@ impl Category {
             | "unexplained-abbreviation"
             | "weasel-words"
             | "jargon-undefined"
-            | "all-caps-shouting" => Self::Lexicon,
+            | "all-caps-shouting"
+            | "redundant-intensifier" => Self::Lexicon,
             "passive-voice" | "unclear-antecedent" | "nested-negation" | "conditional-stacking" => {
                 Self::Syntax
             },

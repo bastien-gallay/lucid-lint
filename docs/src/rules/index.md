@@ -12,7 +12,7 @@ Every rule belongs to exactly one of five fixed buckets. The taxonomy is authori
 |---|---|
 | **`structure`** | [`sentence-too-long`](./sentence-too-long.md) · [`paragraph-too-long`](./paragraph-too-long.md) · [`heading-jump`](./heading-jump.md) · [`deeply-nested-lists`](./deeply-nested-lists.md) · [`excessive-commas`](./excessive-commas.md) · [`long-enumeration`](./long-enumeration.md) · [`deep-subordination`](./deep-subordination.md) · [`line-length-wide`](./line-length-wide.md) · [`mixed-numeric-format`](./mixed-numeric-format.md) |
 | **`rhythm`** | [`consecutive-long-sentences`](./consecutive-long-sentences.md) · [`repetitive-connectors`](./repetitive-connectors.md) |
-| **`lexicon`** | [`low-lexical-diversity`](./low-lexical-diversity.md) · [`excessive-nominalization`](./excessive-nominalization.md) · [`unexplained-abbreviation`](./unexplained-abbreviation.md) · [`weasel-words`](./weasel-words.md) · [`jargon-undefined`](./jargon-undefined.md) · [`all-caps-shouting`](./all-caps-shouting.md) |
+| **`lexicon`** | [`low-lexical-diversity`](./low-lexical-diversity.md) · [`excessive-nominalization`](./excessive-nominalization.md) · [`unexplained-abbreviation`](./unexplained-abbreviation.md) · [`weasel-words`](./weasel-words.md) · [`jargon-undefined`](./jargon-undefined.md) · [`all-caps-shouting`](./all-caps-shouting.md) · [`redundant-intensifier`](./redundant-intensifier.md) |
 | **`syntax`** | [`passive-voice`](./passive-voice.md) · [`unclear-antecedent`](./unclear-antecedent.md) · [`nested-negation`](./nested-negation.md) · [`conditional-stacking`](./conditional-stacking.md) |
 | **`readability`** | [`readability-score`](./readability-score.md) |
 

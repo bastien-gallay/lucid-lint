@@ -74,9 +74,9 @@ score is their weighted sum.
 | Category | Rules |
 |---|---|
 | `structure` | `sentence-too-long`, `paragraph-too-long`, `deeply-nested-lists`, `heading-jump`, `excessive-commas`, `long-enumeration`, `deep-subordination`, `line-length-wide`, `mixed-numeric-format` |
+| `lexicon` | `low-lexical-diversity`, `excessive-nominalization`, `unexplained-abbreviation`, `weasel-words`, `jargon-undefined`, `all-caps-shouting`, `redundant-intensifier` |
 | `syntax` | `passive-voice`, `unclear-antecedent`, `nested-negation`, `conditional-stacking` |
 | `rhythm` | `consecutive-long-sentences`, `repetitive-connectors` |
-| `lexicon` | `low-lexical-diversity`, `excessive-nominalization`, `unexplained-abbreviation`, `weasel-words`, `jargon-undefined`, `all-caps-shouting` |
 | `readability` | `readability-score` |
 
 > v0.2 remapped the v0.1 taxonomy: `length` merged into `structure`;
@@ -785,6 +785,34 @@ Per paragraph, scan for runs of consecutive ALL-CAPS words. Minor connectors (`,
 | `falc` | 2 |
 
 `dev-doc` tolerates a 2-word emphasis run (`DO NOT`) common in technical docs.
+
+---
+
+#### `redundant-intensifier`
+
+**Category** : `lexicon`
+**Severity** : `warning`
+**Default weight** : `1`
+**Condition tags** : `general`
+**Bilingual** : yes, EN + FR
+
+**Intent** : flag intensifiers — adverbs that try to upgrade the confidence of a statement without adding information (`very important` → `important` or a quantified claim). Deliberate sibling of [`weasel-words`](#weasel-words): weasel words downgrade confidence, redundant intensifiers upgrade it. Lists are disjoint by construction.
+
+**References** : plainlanguage.gov Chapter 4, CDC Clear Communication Index.
+
+**Detection**
+
+Per paragraph, lowercase the text and look for each intensifier phrase using the shared word-bounded search. Hits inside fenced or inline code spans are ignored. Documents whose language is `Unknown` are skipped.
+
+**Parameters**
+
+| Parameter | Type | Default |
+|---|---|---|
+| `custom_intensifiers_en` | list<string> | `[]` |
+| `custom_intensifiers_fr` | list<string> | `[]` |
+| `disable` | list<string> | `[]` |
+
+**All profiles** : same thresholds; suppress per-phrase via `disable` or per-instance via inline directives.
 
 ---
 

@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`redundant-intensifier` rule (F62)** — flags intensifiers
+  (`very`, `really`, `extremely`, `absolutely`, … / FR `très`,
+  `vraiment`, `extrêmement`, `absolument`, …) that try to upgrade the
+  confidence of a statement without adding information
+  (plainlanguage.gov Chapter 4, CDC Clear Communication Index).
+  Deliberate sibling of `weasel-words`: weasel words downgrade
+  confidence, intensifiers upgrade it — the two lexical lists are
+  disjoint by construction. Per-language config supports
+  `custom_intensifiers_{en,fr}` and `disable` for per-phrase
+  suppression. Fenced / inline code spans are ignored; `Unknown`
+  language skips the rule. See [`docs/src/rules/redundant-intensifier.md`](docs/src/rules/redundant-intensifier.md).
 - **`mixed-numeric-format` rule (F52)** — flags sentences that mix
   digit numerals (`42`, `3.14`, `1,000`, `1 000`) with spelled-out
   numerals (`two`, `trois`, `twenty`, `cent`) in the same sentence

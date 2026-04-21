@@ -216,6 +216,33 @@ pub static CONDITIONALS: &[&str] = &[
     "only if",
 ];
 
+/// English redundant intensifiers (lowercased).
+///
+/// Intensifiers try to *upgrade* the confidence of a statement but
+/// rarely add information: "very important" reduces to "important" or,
+/// better, to a quantified claim. plainlanguage.gov (Chapter 4) and the
+/// CDC Clear Communication Index both flag these as plain-language
+/// anti-patterns.
+///
+/// Disjoint from [`WEASELS`] on purpose — that list captures hedges
+/// that *downgrade* confidence (`rather`, `quite`, `arguably`). A word
+/// belongs to one list or the other, never both.
+pub static INTENSIFIERS: &[&str] = &[
+    "very",
+    "really",
+    "extremely",
+    "absolutely",
+    "totally",
+    "completely",
+    "utterly",
+    "terribly",
+    "awfully",
+    "incredibly",
+    "highly",
+    "deeply",
+    "super",
+];
+
 /// English spelled-out cardinal numerals (lowercased).
 ///
 /// Used by the `mixed-numeric-format` rule to detect a sentence that
