@@ -85,7 +85,6 @@ Shipped in the tag: all 17 rules across 5 phases, the minimal inline-disable dir
 
 Current 🔴 queue, grouped by theme:
 
-- **Adoption blocker** — F78 (path exclusion, glob + `.lucidignore`)
 - **Suppression** — F19 (config-based diagnostic ignores)
 - **False-positive cleanup** — F22 (`excessive-commas`), F23 🚧 (`weasel-words`)
 - **Detector + escape hatch** — F9 + F31 (definition-aware abbreviation with project whitelist)
@@ -246,7 +245,8 @@ diagnostics after scanning.
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F78 | Path exclusion — `exclude = [...]` glob list in `lucid-lint.toml`, `.lucidignore` file (gitignore-style), `--exclude <glob>` CLI flag. Skips matching paths at discovery time, before parsing. Blocks adoption on any non-toy documentation repository. | 🔴 Next | Dogfood feedback 2026-04-21; surfaces the "Glob patterns and `.lucidignore`" item previously homeless in the v0.1 deferred list |
+| F78 | ✅ Shipped in v0.2 — `exclude = [...]` glob list in `[default]` of `lucid-lint.toml` and `--exclude <GLOB>` CLI flag (comma-delimited, repeatable). Patterns match against paths relative to the walked root; matching directories are pruned, not descended. Explicit file args bypass exclusion. Backed by `globset`. See [`docs/src/guide/configuration.md`](docs/src/guide/configuration.md#excluding-paths-v02). `.lucidignore` (gitignore-style file) deferred to F78b if user demand surfaces. | — | Dogfood feedback 2026-04-21 |
+| F78b | `.lucidignore` file (gitignore-style, with negations and nested files). Different crate (`ignore`) and a larger test matrix than the glob-list MVP. Ship only if users ask — the `exclude` list in `lucid-lint.toml` covers the dominant use case. | 🟢 Speculative | F78 deferral, 2026-04-21 |
 
 ### Suppression mechanism
 
