@@ -13,6 +13,7 @@ use crate::types::{Diagnostic, Language};
 pub mod all_caps_shouting;
 pub mod conditional_stacking;
 pub mod consecutive_long_sentences;
+pub mod consonant_cluster;
 pub mod deep_subordination;
 pub mod deeply_nested_lists;
 pub mod dense_punctuation_burst;
@@ -40,6 +41,7 @@ pub mod weasel_words;
 pub use all_caps_shouting::AllCapsShouting;
 pub use conditional_stacking::ConditionalStacking;
 pub use consecutive_long_sentences::ConsecutiveLongSentences;
+pub use consonant_cluster::ConsonantCluster;
 pub use deep_subordination::DeepSubordination;
 pub use deeply_nested_lists::DeeplyNestedLists;
 pub use dense_punctuation_burst::DensePunctuationBurst;
@@ -143,6 +145,7 @@ pub fn default_rules(profile: Profile) -> Vec<Box<dyn Rule>> {
         Box::new(MixedNumericFormat::for_profile(profile)),
         Box::new(RedundantIntensifier::for_profile(profile)),
         Box::new(DensePunctuationBurst::for_profile(profile)),
+        Box::new(ConsonantCluster::for_profile(profile)),
     ]
 }
 
@@ -170,7 +173,7 @@ mod tests {
     #[test]
     fn filter_by_conditions_keeps_general_rules() {
         let kept = filter_by_conditions(default_rules(Profile::Public), &[]);
-        assert_eq!(kept.len(), 24);
+        assert_eq!(kept.len(), 25);
     }
 
     #[test]

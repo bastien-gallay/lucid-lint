@@ -74,7 +74,7 @@ score is their weighted sum.
 | Category | Rules |
 |---|---|
 | `structure` | `sentence-too-long`, `paragraph-too-long`, `deeply-nested-lists`, `heading-jump`, `excessive-commas`, `long-enumeration`, `deep-subordination`, `line-length-wide`, `mixed-numeric-format` |
-| `lexicon` | `low-lexical-diversity`, `excessive-nominalization`, `unexplained-abbreviation`, `weasel-words`, `jargon-undefined`, `all-caps-shouting`, `redundant-intensifier` |
+| `lexicon` | `low-lexical-diversity`, `excessive-nominalization`, `unexplained-abbreviation`, `weasel-words`, `jargon-undefined`, `all-caps-shouting`, `redundant-intensifier`, `consonant-cluster` |
 | `syntax` | `passive-voice`, `unclear-antecedent`, `nested-negation`, `conditional-stacking`, `dense-punctuation-burst` |
 | `rhythm` | `consecutive-long-sentences`, `repetitive-connectors` |
 | `readability` | `readability-score` |
@@ -813,6 +813,40 @@ Per paragraph, lowercase the text and look for each intensifier phrase using the
 | `disable` | list<string> | `[]` |
 
 **All profiles** : same thresholds; suppress per-phrase via `disable` or per-instance via inline directives.
+
+---
+
+#### `consonant-cluster`
+
+**Category** : `lexicon`
+**Severity** : `warning`
+**Default weight** : `1`
+**Condition tags** : `dyslexia`, `general`
+**Bilingual** : yes, EN + FR
+
+**Intent** : flag words whose longest run of consecutive consonants meets or exceeds a per-profile threshold. Dense consonant clusters force a dyslexic reader to hold more phonemes in working memory before the next vowel "releases" the syllable (BDA Dyslexia Style Guide).
+
+**References** : BDA Dyslexia Style Guide.
+
+**Detection**
+
+Per source line, walk the grapheme stream once. A word is a maximal run of alphabetic characters; hyphens, apostrophes, and whitespace close the word. Within a word, track the longest run of consecutive consonants. Vowels are language-aware (French accented forms count as vowels; `y` is always a vowel). Emit one diagnostic per qualifying word.
+
+**Parameters**
+
+| Parameter | Type | Default |
+|---|---|---|
+| `min_run_length` | int | profile-dependent |
+
+**Thresholds by profile**
+
+| Profile | `min_run_length` |
+|---|---|
+| `dev-doc` | 6 |
+| `public` | 5 |
+| `falc` | 4 |
+
+`dev-doc` is tolerant of `strengths`-class words; `falc` catches any 4-consonant run.
 
 ---
 

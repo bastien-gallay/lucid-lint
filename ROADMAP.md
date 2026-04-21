@@ -163,7 +163,7 @@ research that justifies the rule.
 | F62 | ✅ `redundant-intensifier` shipped in v0.2 — see [`docs/src/rules/redundant-intensifier.md`](docs/src/rules/redundant-intensifier.md) | Lexicon | `general` | Plain-language guides | 🟡 Medium |
 | F52 | ✅ `mixed-numeric-format` shipped in v0.2 — see [`docs/src/rules/mixed-numeric-format.md`](docs/src/rules/mixed-numeric-format.md) | Structure | `dyscalculia`, `general` | CDC Clear Communication Index | 🟡 Medium |
 | F50 | ✅ `line-length-wide` shipped in v0.2 — see [`docs/src/rules/line-length-wide.md`](docs/src/rules/line-length-wide.md) | Structure | `dyslexia`, `general` | WCAG 1.4.8 (AAA) | 🟡 Medium |
-| F47 | `lexicon.consonant-cluster` | Lexicon | `dyslexia`, `general` | BDA Dyslexia Style Guide | 🟡 Medium |
+| F47 | ✅ `consonant-cluster` shipped in v0.2 — see [`docs/src/rules/consonant-cluster.md`](docs/src/rules/consonant-cluster.md) | Lexicon | `dyslexia`, `general` | BDA Dyslexia Style Guide | 🟡 Medium |
 | F54 | ✅ `dense-punctuation-burst` shipped in v0.2 — see [`docs/src/rules/dense-punctuation-burst.md`](docs/src/rules/dense-punctuation-burst.md) | Syntax | `general` | IFLA easy-to-read guidelines | 🟡 Medium |
 
 **Cut order if schedule slips:** F47 → F54 → F62 → F52 → F50 → F11. F55

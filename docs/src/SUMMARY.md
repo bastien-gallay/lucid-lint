@@ -34,6 +34,7 @@
   - [`jargon-undefined`](./rules/jargon-undefined.md)
   - [`all-caps-shouting`](./rules/all-caps-shouting.md)
   - [`redundant-intensifier`](./rules/redundant-intensifier.md)
+  - [`consonant-cluster`](./rules/consonant-cluster.md)
   - [`passive-voice`](./rules/passive-voice.md)
   - [`unclear-antecedent`](./rules/unclear-antecedent.md)
   - [`nested-negation`](./rules/nested-negation.md)

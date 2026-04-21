@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`consonant-cluster` rule (F47)** — flags words whose longest run of
+  consecutive consonants meets or exceeds a per-profile threshold (BDA
+  Dyslexia Style Guide). Language-aware vowel sets: French accented
+  forms (`é`, `è`, `ê`, `à`, `œ`, …) count as vowels; English fallback
+  still accepts common latin-1 accented vowels for borrowed words
+  (`café`, `naïve`); `y` is a vowel everywhere (lenient). Hyphens and
+  apostrophes close the word. Profile thresholds: `min_run_length` 6 /
+  5 / 4 (`dev-doc` / `public` / `falc`). Condition tags: `dyslexia`,
+  `general`. See [`docs/src/rules/consonant-cluster.md`](docs/src/rules/consonant-cluster.md).
 - **`dense-punctuation-burst` rule (F54)** — flags *local* bursts of
   punctuation: windows where ≥ N qualifying marks (`,`, `;`, `:`, `—`,
   `–`) cluster within W grapheme clusters (IFLA easy-to-read

@@ -167,7 +167,8 @@ impl Category {
             | "weasel-words"
             | "jargon-undefined"
             | "all-caps-shouting"
-            | "redundant-intensifier" => Self::Lexicon,
+            | "redundant-intensifier"
+            | "consonant-cluster" => Self::Lexicon,
             "passive-voice"
             | "unclear-antecedent"
             | "nested-negation"
