@@ -3,6 +3,7 @@
 //! Exercise the `lucid-lint` binary via `assert_cmd` using fixture files
 //! from `tests/corpus/`.
 
+use std::fs;
 use std::path::PathBuf;
 
 use assert_cmd::Command;
@@ -220,4 +221,88 @@ fn check_handles_directory_argument() {
         .arg(dir)
         .assert()
         .code(1); // sample.md has warnings
+}
+
+/// F78 — `--exclude` prunes files during directory recursion.
+///
+/// Fixture: a temp dir with two warnings-generating files. Excluding
+/// one by glob must leave the other discovered, and diagnostics must
+/// reference only the retained file.
+#[test]
+fn check_exclude_flag_prunes_files() {
+    let tmp = tempfile::tempdir().unwrap();
+    let root = tmp.path();
+
+    let noisy = "This is a deliberately long sentence that rambles on and on without any \
+                 clear purpose other than crossing the public-profile word budget so it \
+                 trips the sentence-too-long rule reliably in any locale.";
+
+    fs::write(root.join("keep.md"), noisy).unwrap();
+    fs::create_dir_all(root.join("vendor")).unwrap();
+    fs::write(root.join("vendor/skip.md"), noisy).unwrap();
+
+    Command::cargo_bin("lucid-lint")
+        .unwrap()
+        .arg("check")
+        .arg("--exclude")
+        .arg("vendor/**")
+        .arg(root)
+        .assert()
+        .code(1)
+        .stdout(predicate::str::contains("keep.md"))
+        .stdout(predicate::str::contains("vendor/skip.md").not());
+}
+
+/// F78 — `exclude = [...]` in `lucid-lint.toml` prunes the same way as
+/// the CLI flag. Covers the auto-discovery path: the config is written
+/// next to the files and found via `--config`.
+#[test]
+fn check_exclude_from_toml_config_prunes_files() {
+    let tmp = tempfile::tempdir().unwrap();
+    let root = tmp.path();
+
+    let noisy = "This is a deliberately long sentence that rambles on and on without any \
+                 clear purpose other than crossing the public-profile word budget so it \
+                 trips the sentence-too-long rule reliably in any locale.";
+
+    fs::write(root.join("keep.md"), noisy).unwrap();
+    fs::create_dir_all(root.join("fixtures")).unwrap();
+    fs::write(root.join("fixtures/skip.md"), noisy).unwrap();
+
+    let config = root.join("lucid-lint.toml");
+    fs::write(&config, "[default]\nexclude = [\"fixtures/**\"]\n").unwrap();
+
+    Command::cargo_bin("lucid-lint")
+        .unwrap()
+        .arg("check")
+        .arg("--config")
+        .arg(&config)
+        .arg(root)
+        .assert()
+        .code(1)
+        .stdout(predicate::str::contains("keep.md"))
+        .stdout(predicate::str::contains("fixtures/skip.md").not());
+}
+
+/// F78 — explicit file arguments bypass exclusion. If the user names a
+/// path directly, the glob list does not apply.
+#[test]
+fn check_exclude_does_not_filter_explicit_file_args() {
+    let tmp = tempfile::tempdir().unwrap();
+    let file = tmp.path().join("vendor.md");
+
+    let noisy = "This is a deliberately long sentence that rambles on and on without any \
+                 clear purpose other than crossing the public-profile word budget so it \
+                 trips the sentence-too-long rule reliably in any locale.";
+    fs::write(&file, noisy).unwrap();
+
+    Command::cargo_bin("lucid-lint")
+        .unwrap()
+        .arg("check")
+        .arg("--exclude")
+        .arg("**/vendor.md")
+        .arg(&file)
+        .assert()
+        .code(1)
+        .stdout(predicate::str::contains("vendor.md"));
 }

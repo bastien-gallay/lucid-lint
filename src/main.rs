@@ -6,6 +6,7 @@ use std::process::ExitCode;
 
 use anyhow::{Context, Result};
 use clap::Parser;
+use globset::{Glob, GlobSet, GlobSetBuilder};
 
 use lucid_lint::condition::ConditionTag;
 use lucid_lint::config::{Config as FileConfig, Profile};
@@ -48,6 +49,8 @@ fn run_check(args: CheckArgs) -> Result<ExitCode> {
         .with_readability_formula(formula)
         .with_scoring_config(scoring_config.clone());
 
+    let exclude_matcher = build_exclude_matcher(&args.exclude, file_config.as_ref())?;
+
     let mut all_diagnostics: Vec<Diagnostic> = Vec::new();
     let mut total_words: u32 = 0;
 
@@ -61,7 +64,7 @@ fn run_check(args: CheckArgs) -> Result<ExitCode> {
             total_words = total_words.saturating_add(report.word_count);
             all_diagnostics.extend(report.diagnostics);
         } else {
-            let files = collect_files(raw_path)?;
+            let files = collect_files(raw_path, exclude_matcher.as_ref())?;
             for file in files {
                 let report = engine
                     .lint_file(&file)
@@ -156,26 +159,41 @@ fn load_file_config(explicit: Option<&Path>) -> Result<Option<FileConfig>> {
     Ok(Some(cfg))
 }
 
-fn collect_files(path: &Path) -> Result<Vec<PathBuf>> {
+fn collect_files(path: &Path, exclude: Option<&GlobSet>) -> Result<Vec<PathBuf>> {
     if path.is_file() {
+        // Explicit file arguments bypass exclusion — if the user named
+        // it directly, they meant it.
         return Ok(vec![path.to_path_buf()]);
     }
     if path.is_dir() {
         let mut out = Vec::new();
-        collect_files_recursive(path, &mut out)?;
+        collect_files_recursive(path, path, exclude, &mut out)?;
         return Ok(out);
     }
     anyhow::bail!("path does not exist: {}", path.display())
 }
 
-fn collect_files_recursive(dir: &Path, out: &mut Vec<PathBuf>) -> Result<()> {
+/// Walk `dir` recursively, pruning entries that match the exclude set.
+///
+/// Exclusion globs are matched against the path **relative to `root`**
+/// so patterns like `vendor/**` behave intuitively regardless of
+/// whether the user passed a relative or absolute root.
+fn collect_files_recursive(
+    root: &Path,
+    dir: &Path,
+    exclude: Option<&GlobSet>,
+    out: &mut Vec<PathBuf>,
+) -> Result<()> {
     for entry in std::fs::read_dir(dir)
         .with_context(|| format!("failed to read directory {}", dir.display()))?
     {
         let entry = entry?;
         let path = entry.path();
+        if is_excluded(&path, root, exclude) {
+            continue;
+        }
         if path.is_dir() {
-            collect_files_recursive(&path, out)?;
+            collect_files_recursive(root, &path, exclude, out)?;
         } else if is_lintable(&path) {
             out.push(path);
         }
@@ -187,4 +205,42 @@ fn is_lintable(path: &Path) -> bool {
     path.extension()
         .and_then(|e| e.to_str())
         .is_some_and(|ext| matches!(ext, "md" | "markdown" | "txt"))
+}
+
+/// Build a [`GlobSet`] from CLI and TOML `exclude` lists (F78).
+///
+/// Returns `Ok(None)` when both lists are empty, avoiding the cost of
+/// matcher construction for the common case. Any invalid pattern is
+/// surfaced as an error pointing at the offending glob.
+fn build_exclude_matcher(cli: &[String], file: Option<&FileConfig>) -> Result<Option<GlobSet>> {
+    let from_file = file.map_or(&[] as &[String], |c| c.default.exclude.as_slice());
+    if cli.is_empty() && from_file.is_empty() {
+        return Ok(None);
+    }
+    let mut builder = GlobSetBuilder::new();
+    for pattern in from_file.iter().chain(cli.iter()) {
+        let glob =
+            Glob::new(pattern).with_context(|| format!("invalid exclude pattern `{pattern}`"))?;
+        builder.add(glob);
+    }
+    let set = builder.build().context("failed to compile exclude globs")?;
+    Ok(Some(set))
+}
+
+/// Match `path` against the exclude set, after stripping the walk
+/// `root` so patterns like `vendor/**` hit `/abs/root/vendor/skip.md`
+/// via its `vendor/skip.md` relative form. As a fallback, the raw
+/// path (with a leading `./` stripped) is also tested — covering
+/// absolute-path globs and explicit-file cases.
+fn is_excluded(path: &Path, root: &Path, exclude: Option<&GlobSet>) -> bool {
+    let Some(set) = exclude else {
+        return false;
+    };
+    if let Ok(rel) = path.strip_prefix(root) {
+        if set.is_match(rel) {
+            return true;
+        }
+    }
+    let stripped = path.strip_prefix("./").unwrap_or(path);
+    set.is_match(stripped)
 }

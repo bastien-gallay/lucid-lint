@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Path exclusion (F78)** — new `--exclude <GLOB>` CLI flag
+  (comma-delimited, repeatable) and `exclude = [...]` field in the
+  `[default]` section of `lucid-lint.toml`. Both lists are unioned and
+  applied during directory recursion: matching files are skipped,
+  matching directories are pruned without being entered. Patterns are
+  matched against the path relative to the walked root, so
+  `vendor/**` behaves the same whether the user passes a relative or
+  absolute root. Explicit file arguments bypass exclusion — naming a
+  path on the command line is treated as intent. Backed by the
+  `globset` crate. Unblocks adoption on large documentation
+  repositories. See [`docs/src/guide/configuration.md`](docs/src/guide/configuration.md#excluding-paths-v02).
 - **TOML config loader wiring (F77)** — `lucid-lint check` now
   auto-discovers a `lucid-lint.toml` at or above the current working
   directory (stopping at the nearest `.git` boundary) and applies its

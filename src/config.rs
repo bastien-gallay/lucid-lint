@@ -185,6 +185,18 @@ pub struct DefaultConfig {
     /// ```
     #[serde(default)]
     pub conditions: Vec<ConditionTag>,
+
+    /// Glob patterns of paths to skip at discovery time (F78). Matched
+    /// against the slash-normalised path of each candidate file and
+    /// every directory encountered during recursion. Matching
+    /// directories are not descended into.
+    ///
+    /// ```toml
+    /// [default]
+    /// exclude = ["vendor/**", "**/fixtures/**", "CHANGELOG.md"]
+    /// ```
+    #[serde(default)]
+    pub exclude: Vec<String>,
 }
 
 impl Default for DefaultConfig {
@@ -192,6 +204,7 @@ impl Default for DefaultConfig {
         Self {
             profile: Profile::DEFAULT,
             conditions: Vec::new(),
+            exclude: Vec::new(),
         }
     }
 }
@@ -333,6 +346,20 @@ conditions = ["autism"]
             ),
             Err(ConfigError::Parse(_))
         ));
+    }
+
+    #[test]
+    fn config_parses_exclude_list() {
+        let config = Config::from_toml_str(
+            r#"[default]
+exclude = ["vendor/**", "CHANGELOG.md"]
+"#,
+        )
+        .unwrap();
+        assert_eq!(
+            config.default.exclude,
+            vec!["vendor/**".to_string(), "CHANGELOG.md".to_string()]
+        );
     }
 
     #[test]

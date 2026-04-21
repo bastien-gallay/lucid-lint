@@ -85,6 +85,16 @@ pub(crate) struct CheckArgs {
     #[arg(long, value_enum, value_delimiter = ',')]
     pub(crate) conditions: Vec<CliConditionTag>,
 
+    /// Glob patterns of paths to skip at discovery time (F78).
+    ///
+    /// Comma-separated and repeatable. Merged with `[default].exclude`
+    /// from `lucid-lint.toml`; CLI and TOML are additive. Matching
+    /// directories are pruned (not descended into) during recursion.
+    ///
+    /// Examples: `--exclude 'vendor/**'`, `--exclude '**/fixtures/**,CHANGELOG.md'`.
+    #[arg(long, value_delimiter = ',', value_name = "GLOB")]
+    pub(crate) exclude: Vec<String>,
+
     /// Readability formula choice (F11).
     ///
     /// `auto` (default) selects Flesch-Kincaid for EN documents and
@@ -243,6 +253,30 @@ mod tests {
             Cli::try_parse_from(["lucid-lint", "check", "--format", "json", "file.md"]).unwrap();
         match args.command {
             Command::Check(a) => assert!(matches!(a.format, CliFormat::Json)),
+        }
+    }
+
+    #[test]
+    fn check_args_parse_exclude_list() {
+        let args = Cli::try_parse_from([
+            "lucid-lint",
+            "check",
+            "--exclude",
+            "vendor/**,CHANGELOG.md",
+            "--exclude",
+            "tests/fixtures/**",
+            "docs",
+        ])
+        .unwrap();
+        match args.command {
+            Command::Check(a) => assert_eq!(
+                a.exclude,
+                vec![
+                    "vendor/**".to_string(),
+                    "CHANGELOG.md".to_string(),
+                    "tests/fixtures/**".to_string(),
+                ]
+            ),
         }
     }
 

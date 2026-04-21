@@ -42,6 +42,9 @@ toml = "0.8"
 pulldown-cmark = { version = "0.12", default-features = false }
 unicode-segmentation = "1.12"
 
+# Path matching
+globset = "0.4"
+
 # Language detection
 # Simple heuristic for v0.1; revisit with `whatlang` if needed.
 

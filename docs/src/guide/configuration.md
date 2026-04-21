@@ -27,6 +27,7 @@ Top-level defaults applied to the whole run.
 |---|---|---|---|
 | `profile` | string | `"public"` | One of `dev-doc`, `public`, `falc` |
 | `conditions` | array of strings | `[]` | Active condition tags (v0.2+). See [Conditions](./conditions.md). |
+| `exclude` | array of glob strings | `[]` | Paths to skip during directory recursion (v0.2+). See [Excluding paths](#excluding-paths-v02). |
 
 ### `[rules.<rule-id>]`
 
@@ -65,6 +66,42 @@ An unset CLI flag defers to the TOML value; an unset TOML field defers to the pr
 ## Discovery
 
 `lucid-lint` walks up from the current working directory to the first `lucid-lint.toml` it finds, stopping at the nearest `.git` repo boundary. Passing `--config <path>` skips auto-discovery and loads the given file directly; a missing explicit path is an error, but a missing auto-discovered file is not.
+
+## Excluding paths (v0.2+)
+
+Large documentation repositories routinely contain generated output,
+vendored text, and snapshots that would drown the linter in noise. Use
+the `exclude` field in `[default]` — or the `--exclude <GLOB>` CLI flag
+— to skip them at discovery time, before parsing.
+
+```toml
+[default]
+exclude = [
+    "vendor/**",
+    "**/fixtures/**",
+    "CHANGELOG.md",
+]
+```
+
+Equivalently on the command line:
+
+```bash
+lucid-lint check --exclude 'vendor/**,**/fixtures/**,CHANGELOG.md' docs
+```
+
+Notes:
+
+- **Matching.** Globs are matched against the path **relative to the
+  walked root**. Passing `lucid-lint check docs` with
+  `exclude = ["drafts/**"]` skips `docs/drafts/...`.
+- **Prune, don't visit.** A matching directory is not descended into —
+  large excluded trees cost nothing to walk.
+- **Explicit files bypass.** If you pass `docs/CHANGELOG.md` directly
+  on the command line, it is linted even when `CHANGELOG.md` is in the
+  exclude list. If you named the path, you meant it.
+- **Additive.** CLI `--exclude` and TOML `exclude` are unioned, not
+  overridden. Comma-separate multiple patterns in a single flag, or
+  repeat `--exclude`.
 
 ## Per-rule overrides (v0.2+)
 
