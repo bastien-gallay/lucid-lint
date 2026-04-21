@@ -223,6 +223,93 @@ fn check_handles_directory_argument() {
         .code(1); // sample.md has warnings
 }
 
+/// F19 — `[[ignore]]` in `lucid-lint.toml` silences matching rule ids
+/// on stdin (which has no inline-disable escape hatch).
+#[test]
+fn check_config_ignore_silences_rule_on_stdin() {
+    let tmp = tempfile::tempdir().unwrap();
+    let config = tmp.path().join("lucid-lint.toml");
+    fs::write(
+        &config,
+        r#"[[ignore]]
+rule_id = "sentence-too-long"
+"#,
+    )
+    .unwrap();
+
+    let input = "This is a rather long sentence that keeps adding more and more words \
+                 until it exceeds the public profile threshold by a comfortable margin.";
+
+    Command::cargo_bin("lucid-lint")
+        .unwrap()
+        .arg("check")
+        .arg("--config")
+        .arg(&config)
+        .arg("-")
+        .write_stdin(input)
+        .assert()
+        .stdout(predicate::str::contains("sentence-too-long").not());
+}
+
+/// F19 — `[[ignore]]` also applies to Markdown files, giving users a
+/// global alternative to inline directives when silencing a rule
+/// everywhere at once is less noisy than sprinkling comments.
+#[test]
+fn check_config_ignore_silences_rule_in_markdown() {
+    let tmp = tempfile::tempdir().unwrap();
+    let doc = tmp.path().join("doc.md");
+    fs::write(
+        &doc,
+        "This is a rather long sentence that keeps adding more and more words \
+         until it exceeds the public profile threshold by a comfortable margin.\n",
+    )
+    .unwrap();
+
+    let config = tmp.path().join("lucid-lint.toml");
+    fs::write(
+        &config,
+        r#"[[ignore]]
+rule_id = "sentence-too-long"
+"#,
+    )
+    .unwrap();
+
+    Command::cargo_bin("lucid-lint")
+        .unwrap()
+        .arg("check")
+        .arg("--config")
+        .arg(&config)
+        .arg(&doc)
+        .assert()
+        .stdout(predicate::str::contains("sentence-too-long").not());
+}
+
+/// F19 — unknown rule ids in the config are tolerated silently
+/// (matches the `[scoring.weights]` precedent for future-compat).
+#[test]
+fn check_config_ignore_tolerates_unknown_rule_id() {
+    let tmp = tempfile::tempdir().unwrap();
+    let config = tmp.path().join("lucid-lint.toml");
+    fs::write(
+        &config,
+        r#"[[ignore]]
+rule_id = "rule-that-does-not-exist"
+"#,
+    )
+    .unwrap();
+
+    let input = "Short sentence. Another short one.";
+    Command::cargo_bin("lucid-lint")
+        .unwrap()
+        .arg("check")
+        .arg("--config")
+        .arg(&config)
+        .arg("-")
+        .write_stdin(input)
+        .assert()
+        .success();
+}
+
 /// F78 — `--exclude` prunes files during directory recursion.
 ///
 /// Fixture: a temp dir with two warnings-generating files. Excluding

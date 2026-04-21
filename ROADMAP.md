@@ -85,7 +85,6 @@ Shipped in the tag: all 17 rules across 5 phases, the minimal inline-disable dir
 
 Current 🔴 queue, grouped by theme:
 
-- **Suppression** — F19 (config-based diagnostic ignores)
 - **False-positive cleanup** — F22 (`excessive-commas`), F23 🚧 (`weasel-words`)
 - **Detector + escape hatch** — F9 + F31 (definition-aware abbreviation with project whitelist)
 - **Bilingual directive** — F25 (French docs mirror)
@@ -256,7 +255,7 @@ v0.1 ships the minimal inline-disable directive (see brainstorm
 | ID | Item | Priority | Origin |
 |---|---|---|---|
 | F18 | ✅ Block form shipped in v0.2: `<!-- lucid-lint-disable <rule-id> -->` … `<!-- lucid-lint-enable -->` silences one rule across every line in the scope. `enable` with no argument closes every open scope; with a rule id, closes only that rule's scope (so overlapping disables for different rules can nest). Unterminated `disable` extends to end-of-document. See [RULES.md → Suppressing diagnostics](RULES.md#suppressing-diagnostics). | 🔴 Next | v0.1 inline-disable brainstorm |
-| F19 | Config-based ignores (`[[ignore]]` in `lucid-lint.toml`) covering `.txt` and stdin | 🔴 Next | v0.1 inline-disable brainstorm |
+| F19 | ✅ Shipped in v0.2 — top-level `[[ignore]]` array-of-tables in `lucid-lint.toml`, each entry with a required `rule_id` silences every diagnostic for that rule across Markdown, plain text, and stdin. Unknown ids tolerated. Applied post-engine, pre-scoring, so scoring / rendering / exit-code logic all see the filtered view. Scope broadened from the roadmap's original "`.txt` and stdin" wording because a global filter is simpler and more useful; Markdown users can still prefer inline directives for local silencing. `reason` field tracked as F20. See [`docs/src/guide/configuration.md`](docs/src/guide/configuration.md#silencing-rules-globally-v02). | — | v0.1 inline-disable brainstorm |
 | F20 | `reason="..."` field, optional in v0.1, surfaced in reports and optionally required via config | 🟡 Later | v0.1 inline-disable brainstorm |
 | F21 | File-level directive (`disable-file`) and multi-rule lists | 🟡 Later | v0.1 inline-disable brainstorm |
 

@@ -82,6 +82,22 @@ pub struct Config {
     /// Scoring tunables (category caps and per-rule weight overrides).
     #[serde(default)]
     pub scoring: ScoringFileConfig,
+
+    /// Config-based diagnostic ignores (F19). Each `[[ignore]]` entry
+    /// silences every diagnostic with the matching `rule_id`, across
+    /// all input sources (Markdown, plain text, stdin). Complements
+    /// inline-disable directives, which remain the recommended local
+    /// escape hatch when you only want to silence one spot.
+    ///
+    /// ```toml
+    /// [[ignore]]
+    /// rule_id = "unexplained-abbreviation"
+    ///
+    /// [[ignore]]
+    /// rule_id = "weasel-words"
+    /// ```
+    #[serde(default, rename = "ignore")]
+    pub ignores: Vec<IgnoreSpec>,
 }
 
 impl Config {
@@ -207,6 +223,17 @@ impl Default for DefaultConfig {
             exclude: Vec::new(),
         }
     }
+}
+
+/// A single `[[ignore]]` entry from `lucid-lint.toml`.
+///
+/// Unknown rule ids are tolerated at load time so removing a rule in a
+/// future release does not break older configs — the same precedent
+/// as `[scoring.weights]`.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct IgnoreSpec {
+    /// Rule id to silence (e.g. `"sentence-too-long"`).
+    pub rule_id: String,
 }
 
 /// Per-rule settings, keyed by rule id.
@@ -346,6 +373,43 @@ conditions = ["autism"]
             ),
             Err(ConfigError::Parse(_))
         ));
+    }
+
+    #[test]
+    fn config_parses_ignore_entries() {
+        let config = Config::from_toml_str(
+            r#"
+[[ignore]]
+rule_id = "sentence-too-long"
+
+[[ignore]]
+rule_id = "weasel-words"
+"#,
+        )
+        .unwrap();
+        assert_eq!(config.ignores.len(), 2);
+        assert_eq!(config.ignores[0].rule_id, "sentence-too-long");
+        assert_eq!(config.ignores[1].rule_id, "weasel-words");
+    }
+
+    #[test]
+    fn config_ignores_default_to_empty() {
+        let config = Config::from_toml_str("").unwrap();
+        assert!(config.ignores.is_empty());
+    }
+
+    #[test]
+    fn config_ignore_tolerates_unknown_rule_id() {
+        // Same precedent as [scoring.weights]: removing a rule in a
+        // future release must not break older configs.
+        let config = Config::from_toml_str(
+            r#"
+[[ignore]]
+rule_id = "rule-that-does-not-exist"
+"#,
+        )
+        .unwrap();
+        assert_eq!(config.ignores.len(), 1);
     }
 
     #[test]

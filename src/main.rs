@@ -75,6 +75,11 @@ fn run_check(args: CheckArgs) -> Result<ExitCode> {
         }
     }
 
+    // F19: drop diagnostics whose rule id is listed in `[[ignore]]`.
+    // Applied here (post-engine, pre-scoring) so scoring, rendering,
+    // and exit-code logic all see the filtered view.
+    apply_config_ignores(&mut all_diagnostics, file_config.as_ref());
+
     // Aggregate across all inputs as a single document for v0.2 scoring.
     // Per-file and project-level roll-ups are tracked as F15 (ROADMAP).
     let scorecard = scoring::compute(&all_diagnostics, total_words, &scoring_config);
@@ -205,6 +210,21 @@ fn is_lintable(path: &Path) -> bool {
     path.extension()
         .and_then(|e| e.to_str())
         .is_some_and(|ext| matches!(ext, "md" | "markdown" | "txt"))
+}
+
+/// Drop diagnostics whose rule id appears in the config's `[[ignore]]`
+/// list (F19). Unknown rule ids in the config are tolerated silently,
+/// matching the `[scoring.weights]` precedent.
+fn apply_config_ignores(diagnostics: &mut Vec<Diagnostic>, file: Option<&FileConfig>) {
+    let Some(config) = file else {
+        return;
+    };
+    if config.ignores.is_empty() {
+        return;
+    }
+    let silenced: std::collections::HashSet<&str> =
+        config.ignores.iter().map(|i| i.rule_id.as_str()).collect();
+    diagnostics.retain(|d| !silenced.contains(d.rule_id.as_str()));
 }
 
 /// Build a [`GlobSet`] from CLI and TOML `exclude` lists (F78).

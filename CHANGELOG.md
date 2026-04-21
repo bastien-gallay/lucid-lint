@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Config-based diagnostic ignores (F19)** — new top-level
+  `[[ignore]]` array-of-tables in `lucid-lint.toml` silences every
+  diagnostic with the matching `rule_id`, across Markdown, plain
+  text, and stdin. Fills the gap for formats that have no inline-
+  disable escape hatch, and gives users a project-wide alternative
+  to sprinkling inline directives when a rule is globally noisy.
+  Each entry requires a `rule_id` string; unknown ids are tolerated
+  silently so removing a rule in a future release never breaks an
+  older config. The filter runs after rule emission and before
+  scoring, so score, render, and exit-code logic all see the
+  filtered view. A `reason = "..."` field is tracked separately as
+  F20. See [`docs/src/guide/configuration.md`](docs/src/guide/configuration.md#silencing-rules-globally-v02).
 - **Path exclusion (F78)** — new `--exclude <GLOB>` CLI flag
   (comma-delimited, repeatable) and `exclude = [...]` field in the
   `[default]` section of `lucid-lint.toml`. Both lists are unioned and

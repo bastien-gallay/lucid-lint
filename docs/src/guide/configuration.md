@@ -103,6 +103,39 @@ Notes:
   overridden. Comma-separate multiple patterns in a single flag, or
   repeat `--exclude`.
 
+## Silencing rules globally (v0.2+)
+
+Markdown documents support
+[inline-disable directives](./suppression.md) for local silencing, but
+plain text and stdin have no such escape hatch. `[[ignore]]` fills
+that gap — and works uniformly across all input formats.
+
+```toml
+[[ignore]]
+rule_id = "unexplained-abbreviation"
+
+[[ignore]]
+rule_id = "weasel-words"
+```
+
+Each `[[ignore]]` entry removes every diagnostic whose `rule_id`
+matches, across Markdown files, plain text, and stdin. The filter is
+applied after all rules have run but before scoring, so the score
+reflects the post-filter view too.
+
+Notes:
+
+- **Global scope.** The filter is not per-file. Inline directives
+  remain the recommended escape hatch for spot silencing in Markdown
+  — reach for `[[ignore]]` only when a rule is genuinely noisy
+  project-wide.
+- **Unknown ids tolerated.** Entries referencing rules that no longer
+  exist are dropped silently, so removing a rule in a future release
+  does not break older configs.
+- **Future fields.** A `reason = "..."` field on each entry is
+  tracked as F20 — when it lands it will be surfaced in reports and
+  optionally required via config.
+
 ## Per-rule overrides (v0.2+)
 
 At time of writing, only `readability-score` honours its TOML sub-table (the `formula` field, shipped with F11 / F77). Extending TOML-driven config to the other rules lands rule-by-rule as each `Config` gains a `Deserialize` impl. Until then, `[rules.<id>]` tables for other rules parse without error but have no runtime effect.
