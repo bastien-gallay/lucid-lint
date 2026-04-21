@@ -89,6 +89,25 @@ docs-build: sync-roadmap
 docs-serve: sync-roadmap
     cd docs && mdbook serve --open
 
+# Pre-deploy gate: verify the built book doesn't ship banned stock fonts.
+# Not wired into `just check` (mdbook build is too slow for every dev loop);
+# intended for release-candidate branches and the CI docs-publish workflow.
+docs-check-clean: docs-build
+    #!/usr/bin/env bash
+    set -euo pipefail
+    # Match active font declarations only — `font-family: "Banned"`, CSS
+    # custom-property values like `--mono-font: "Banned"`, and @font-face
+    # sources like `src: local('Banned')`. License attributions and our
+    # own override-documentation comments are ignored.
+    active='(font-family|--[a-z-]+-font|local)[^;]*[\x27"](Open Sans|Source Code Pro)\b'
+    hits=$(grep -RIEn --include='*.css' --include='*.html' "$active" docs/book/ || true)
+    if [ -n "$hits" ]; then
+      echo "docs-check-clean: banned font reference(s) found:" >&2
+      echo "$hits" >&2
+      exit 1
+    fi
+    echo "docs-check-clean: clean — no banned font references in docs/book/"
+
 # Clean generated artifacts
 clean:
     cargo clean

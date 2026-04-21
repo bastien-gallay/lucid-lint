@@ -33,6 +33,13 @@ CSS_DIR = ROOT / "docs" / "book" / "css"
 GENERAL_REPLACEMENTS = {
     '"Open Sans", sans-serif': '"Atkinson Hyperlegible Next", sans-serif',
 }
+VARIABLES_REPLACEMENTS = {
+    # mdBook's variables.css seeds --mono-font with "Source Code Pro"; our
+    # lucid-typography.css redeclares --mono-font at :root with Commit Mono,
+    # which wins the cascade at the live layer. The string still ships in
+    # the stock file — rewrite to Commit Mono so the two layers agree.
+    '"Source Code Pro", Consolas, "Ubuntu Mono"': '"Commit Mono", Consolas, "Ubuntu Mono"',
+}
 FONTS_REPLACEMENTS = {
     # Rename every Open Sans reference to a unique sigil that contains
     # NO "Open Sans" substring, so downstream string-matchers don't
@@ -49,6 +56,13 @@ FONTS_REPLACEMENTS = {
     "'Open Sans Bold Italic'": "'mdbook-stock-unused-bold-italic'",
     "'Open Sans ExtraBold'": "'mdbook-stock-unused-extrabold'",
     "'Open Sans ExtraBold Italic'": "'mdbook-stock-unused-extrabold-italic'",
+    "'Source Code Pro'": "'mdbook-stock-unused-mono'",
+    "'Source Code Pro Light'": "'mdbook-stock-unused-mono-light'",
+    "'Source Code Pro Regular'": "'mdbook-stock-unused-mono-regular'",
+    "'Source Code Pro Medium'": "'mdbook-stock-unused-mono-medium'",
+    "'Source Code Pro Semibold'": "'mdbook-stock-unused-mono-semibold'",
+    "'Source Code Pro Bold'": "'mdbook-stock-unused-mono-bold'",
+    "'Source Code Pro Black'": "'mdbook-stock-unused-mono-black'",
 }
 
 
@@ -70,6 +84,9 @@ def main() -> int:
     touched = 0
     for path in CSS_DIR.glob("general*.css"):
         if sanitize(path, GENERAL_REPLACEMENTS):
+            touched += 1
+    for path in CSS_DIR.glob("variables*.css"):
+        if sanitize(path, VARIABLES_REPLACEMENTS):
             touched += 1
     fonts_dir = ROOT / "docs" / "book" / "fonts"
     if fonts_dir.exists():

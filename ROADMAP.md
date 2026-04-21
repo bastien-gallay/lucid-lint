@@ -14,9 +14,11 @@ v0.1 shipped on 2026-04-20 with 17 rules. The **v0.2 must-ship bundle** — hybr
 
 | Priority | Meaning |
 |---|---|
-| 🔴 High | Expected to land in v0.2 |
-| 🟡 Medium | Likely v0.3 or plugin |
-| 🟢 Low | Nice-to-have, speculative |
+| 🔴 Next | Actively queued for the next cut |
+| 🟡 Later | Likely someday, not scheduled |
+| 🟢 Speculative | Nice-to-have, exploratory |
+
+Shipped items (✅) have their priority column set to `—` — the tag is meaningless once the item has landed.
 
 ---
 
@@ -79,37 +81,48 @@ Shipped in the tag: all 17 rules across 5 phases, the minimal inline-disable dir
 
 ## v0.2 — First major iteration
 
+### Next up (v0.2.x polish bundle)
+
+Current 🔴 queue, grouped by theme:
+
+- **Adoption blocker** — F78 (path exclusion, glob + `.lucidignore`)
+- **Suppression** — F19 (config-based diagnostic ignores)
+- **False-positive cleanup** — F22 (`excessive-commas`), F23 🚧 (`weasel-words`)
+- **Detector + escape hatch** — F9 + F31 (definition-aware abbreviation with project whitelist)
+- **Bilingual directive** — F25 (French docs mirror)
+- **Docs-site finishing** — F34 (responsive), F35 (a11y audit sweep)
+
 ### Architecture
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F14 | ✅ Hybrid scoring model shipped in v0.2 (global score + per-category sub-scores + diagnostics). `X/max` arbitrary-max at both levels, 5 fixed categories (Structure · Rhythm · Lexicon · Syntax · Readability), composition = weighted sum × density-normalization × per-category cap, `weight` field added to `Diagnostic`, `--min-score=N` CLI flag. See [`docs/src/guide/scoring.md`](docs/src/guide/scoring.md). Letter-grade / traffic-light / reading-time decorations deferred (F39–F41). | 🔴 High | Architecture decision discussion |
-| F15 | 🚧 Document-level scoring shipped in v0.2 (multi-path runs are aggregated as one document). Project-level roll-up (per-file breakdown + project summary) still open. Section-level deferred → F38. | 🔴 High | Linked to F14 |
-| F17 | Per-family sub-scores | 🟡 Medium | Linked to F14 |
-| F32 | ✅ Shipped in v0.2 — `lucid-lint check --format=sarif` emits a SARIF v2.1.0 log compatible with GitHub Code Scanning. One rule descriptor per observed rule id (category, default severity, default weight, `helpUri` to the per-rule mdBook page); per-result properties carry weight + section. Workflow snippet in [`docs/src/guide/ci-integration.md`](docs/src/guide/ci-integration.md#github-code-scanning-sarif). | 🔴 High | v0.1 AGENTS.md audit |
-| F37 | ✅ Rule-message clarity audit completed: all 17 rules reviewed against "what do I change?" bar. 15 rules already actionable; `heading-jump` updated (first-heading-not-H1 and missing-H1 variants now include repair guidance). `readability-score` info variant left observational by design (fires only when `always_report` is set). | 🔴 High | F14 `brainstorm/20260420-score-semantics.md` |
-| F38 | Section-level granularity for scoring (deferred from F15) — per-heading sub-scores once document + project are proven in the wild. | 🟡 Medium | F14 `brainstorm/20260420-score-semantics.md` |
-| F39 | Letter-grade decoration (A–F) on the `X/max` score — promote when user feedback shows the numbers feel noisy or hard to compare across docs. | 🟡 Medium | F14 `brainstorm/20260420-score-semantics.md` |
-| F40 | Traffic-light (🔴🟡🟢) + pass/fail margin in the TTY output — promote when CI users ask for a stronger glance signal than the number alone. | 🟡 Medium | F14 `brainstorm/20260420-score-semantics.md` |
-| F41 | Reading-time-seconds as an alternative score unit — ties score to concrete user outcome. Requires validated heuristic + companion metrics (comfort, fatigue, understandability) so the time unit doesn't monopolize the read. | 🟢 Low | F14 `brainstorm/20260420-score-semantics.md` |
-| F71 | ✅ Shipped in v0.2 — `ConditionTag` enum (fixed 7-variant ontology: `a11y-markup`, `dyslexia`, `dyscalculia`, `aphasia`, `adhd`, `non-native`, `general`) plus `Rule::condition_tags()` trait method (default `&[General]`). All 17 v0.2 rules are `general`; future tagged rules (F48, F55, F56) opt in by overriding. See [`docs/src/guide/conditions.md`](docs/src/guide/conditions.md). | 🔴 High | Rule-system-growth brainstorm (2026-04-20) |
-| F72 | ✅ Shipped in v0.2 — `[default] conditions = [...]` config field and `--conditions` CLI flag (comma-separated). Filter semantics: rules tagged `general` always run; tagged-only rules run iff their tags intersect the active list. Profiles unchanged; FALC retains its regulatory meaning. See [`docs/src/guide/conditions.md`](docs/src/guide/conditions.md). | 🔴 High | Rule-system-growth brainstorm (2026-04-20) |
+| F14 | ✅ Hybrid scoring model shipped in v0.2 (global score + per-category sub-scores + diagnostics). `X/max` arbitrary-max at both levels, 5 fixed categories (Structure · Rhythm · Lexicon · Syntax · Readability), composition = weighted sum × density-normalization × per-category cap, `weight` field added to `Diagnostic`, `--min-score=N` CLI flag. See [`docs/src/guide/scoring.md`](docs/src/guide/scoring.md). Letter-grade / traffic-light / reading-time decorations deferred (F39–F41). | 🔴 Next | Architecture decision discussion |
+| F15 | 🚧 Document-level scoring shipped in v0.2 (multi-path runs are aggregated as one document). Project-level roll-up (per-file breakdown + project summary) still open. Section-level deferred → F38. | 🔴 Next | Linked to F14 |
+| F17 | Per-family sub-scores | 🟡 Later | Linked to F14 |
+| F32 | ✅ Shipped in v0.2 — `lucid-lint check --format=sarif` emits a SARIF v2.1.0 log compatible with GitHub Code Scanning. One rule descriptor per observed rule id (category, default severity, default weight, `helpUri` to the per-rule mdBook page); per-result properties carry weight + section. Workflow snippet in [`docs/src/guide/ci-integration.md`](docs/src/guide/ci-integration.md#github-code-scanning-sarif). | 🔴 Next | v0.1 AGENTS.md audit |
+| F37 | ✅ Rule-message clarity audit completed: all 17 rules reviewed against "what do I change?" bar. 15 rules already actionable; `heading-jump` updated (first-heading-not-H1 and missing-H1 variants now include repair guidance). `readability-score` info variant left observational by design (fires only when `always_report` is set). | 🔴 Next | F14 `brainstorm/20260420-score-semantics.md` |
+| F38 | Section-level granularity for scoring (deferred from F15) — per-heading sub-scores once document + project are proven in the wild. | 🟡 Later | F14 `brainstorm/20260420-score-semantics.md` |
+| F39 | Letter-grade decoration (A–F) on the `X/max` score — promote when user feedback shows the numbers feel noisy or hard to compare across docs. | 🟡 Later | F14 `brainstorm/20260420-score-semantics.md` |
+| F40 | Traffic-light (🔴🟡🟢) + pass/fail margin in the TTY output — promote when CI users ask for a stronger glance signal than the number alone. | 🟡 Later | F14 `brainstorm/20260420-score-semantics.md` |
+| F41 | Reading-time-seconds as an alternative score unit — ties score to concrete user outcome. Requires validated heuristic + companion metrics (comfort, fatigue, understandability) so the time unit doesn't monopolize the read. | 🟢 Speculative | F14 `brainstorm/20260420-score-semantics.md` |
+| F71 | ✅ Shipped in v0.2 — `ConditionTag` enum (fixed 7-variant ontology: `a11y-markup`, `dyslexia`, `dyscalculia`, `aphasia`, `adhd`, `non-native`, `general`) plus `Rule::condition_tags()` trait method (default `&[General]`). All 17 v0.2 rules are `general`; future tagged rules (F48, F55, F56) opt in by overriding. See [`docs/src/guide/conditions.md`](docs/src/guide/conditions.md). | 🔴 Next | Rule-system-growth brainstorm (2026-04-20) |
+| F72 | ✅ Shipped in v0.2 — `[default] conditions = [...]` config field and `--conditions` CLI flag (comma-separated). Filter semantics: rules tagged `general` always run; tagged-only rules run iff their tags intersect the active list. Profiles unchanged; FALC retains its regulatory meaning. See [`docs/src/guide/conditions.md`](docs/src/guide/conditions.md). | 🔴 Next | Rule-system-growth brainstorm (2026-04-20) |
 
 ### Rules refinement
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F9 | Definition-aware `unexplained-abbreviation` (two-pass) | 🔴 High | Rule 10 simplified in v0.1 |
-| F10 | 🚧 Must-ship slice shipped in v0.2 — `readability-score` auto-selects the formula by detected language: Flesch-Kincaid for EN (kept), Kandel & Moles (1958) for FR. Kandel-Moles ease scores are converted to a grade-equivalent so per-profile `max_grade_level` stays comparable across languages. Unknown language → Flesch-Kincaid. See [`docs/src/rules/readability-score.md`](docs/src/rules/readability-score.md). Still open: Gunning Fog / SMOG / Dale-Chall (EN), Scolarius / Flesch-Kandel (FR), `--readability-verbose` multi-formula reports, per-file override (covered by F11). | 🔴 High | Rule 11 simplified in v0.1; scope expanded in rule-system-growth brainstorm (2026-04-20) |
-| F11 | ✅ Shipped in v0.2 — `--readability-formula {auto,flesch-kincaid,kandel-moles}` CLI flag + `FormulaChoice` enum on `readability_score::Config` + `Engine::with_readability_formula(choice)`. `auto` (default) keeps F10 per-language selection; `flesch-kincaid` / `kandel-moles` pin a formula for cross-document comparison. TOML config wiring is tracked separately as F77. | 🟡 Medium | Rule 11 |
-| F13 | `missing-connectors` rule (15b not shipped in v0.1) | 🟡 Medium | Rule 15 decomposition |
-| F1 | Custom stoplist parameter for `low-lexical-diversity` | 🟡 Medium | Rule 5 |
-| F2 | Sentence-level low-lexical-diversity density | 🟢 Low | Rule 5 |
-| F3 | Comma density metric (relative) for `excessive-commas` | 🟢 Low | Rule 3a |
-| F22 | Context-aware relaxation for `excessive-commas` (research needed before design) | 🔴 High | v0.1 dogfood: 5 false-ish positives on technical docs |
-| F23 | 🚧 First slice shipped in v0.2 — hits inside inline code spans and directional `rather than` / `plutôt que` pairings are now skipped. Still open: straight-quoted terms (e.g. `"many X"` outside backticks) and `"many X"` where X is a concrete noun. | 🔴 High | v0.1 dogfood: 11 false-ish positives on this repo's own docs |
-| F24 | Refine `excessive-nominalization` suffix list (drop or gate `-al`; many adjectives — `crucial`, `horizontal`, `positional`, `attentional` — are flagged despite not being abstract nouns) | 🟡 Medium | v0.1 dogfood |
-| F31 | Split `unexplained-abbreviation` built-in whitelist: the accessibility (`WCAG`, `WAI`, `ARIA`, `RGAA`, `EAA`, `FALC`, `AA`, `AAA`, `ADHD`) and AI (`LLM`, `NLP`) initialisms are well-known inside `lucid-lint` but narrower for a generic tech audience. Move them into a project-scoped whitelist once F19 lands CLI-level config loading, keeping only truly ubiquitous tech acronyms (`URL`, `HTML`, `API`, `CPU`, …) in the shipped `dev-doc` baseline. | 🟡 Medium | v0.1 review feedback |
+| F9 | Definition-aware `unexplained-abbreviation` (two-pass). Ship paired with **F31** (project-scoped whitelist) — the detector is only useful with an escape hatch. | 🔴 Next | Rule 10 simplified in v0.1 |
+| F10 | 🚧 Must-ship slice shipped in v0.2 — `readability-score` auto-selects the formula by detected language: Flesch-Kincaid for EN (kept), Kandel & Moles (1958) for FR. Kandel-Moles ease scores are converted to a grade-equivalent so per-profile `max_grade_level` stays comparable across languages. Unknown language → Flesch-Kincaid. See [`docs/src/rules/readability-score.md`](docs/src/rules/readability-score.md). Still open: Gunning Fog / SMOG / Dale-Chall (EN), Scolarius / Flesch-Kandel (FR), `--readability-verbose` multi-formula reports, per-file override (covered by F11). | 🟡 Later | Rule 11 simplified in v0.1; scope expanded in rule-system-growth brainstorm (2026-04-20) |
+| F11 | ✅ Shipped in v0.2 — `--readability-formula {auto,flesch-kincaid,kandel-moles}` CLI flag + `FormulaChoice` enum on `readability_score::Config` + `Engine::with_readability_formula(choice)`. `auto` (default) keeps F10 per-language selection; `flesch-kincaid` / `kandel-moles` pin a formula for cross-document comparison. TOML config wiring is tracked separately as F77. | 🟡 Later | Rule 11 |
+| F13 | `missing-connectors` rule (15b not shipped in v0.1) | 🟡 Later | Rule 15 decomposition |
+| F1 | Custom stoplist parameter for `low-lexical-diversity` | 🟡 Later | Rule 5 |
+| F2 | Sentence-level low-lexical-diversity density | 🟢 Speculative | Rule 5 |
+| F3 | Comma density metric (relative) for `excessive-commas` | 🟢 Speculative | Rule 3a |
+| F22 | Context-aware relaxation for `excessive-commas` (research needed before design) | 🔴 Next | v0.1 dogfood: 5 false-ish positives on technical docs |
+| F23 | 🚧 First slice shipped in v0.2 — hits inside inline code spans and directional `rather than` / `plutôt que` pairings are now skipped. Still open: straight-quoted terms (e.g. `"many X"` outside backticks) and `"many X"` where X is a concrete noun. | 🔴 Next | v0.1 dogfood: 11 false-ish positives on this repo's own docs |
+| F24 | Refine `excessive-nominalization` suffix list (drop or gate `-al`; many adjectives — `crucial`, `horizontal`, `positional`, `attentional` — are flagged despite not being abstract nouns) | 🟡 Later | v0.1 dogfood |
+| F31 | Split `unexplained-abbreviation` built-in whitelist: the accessibility (`WCAG`, `WAI`, `ARIA`, `RGAA`, `EAA`, `FALC`, `AA`, `AAA`, `ADHD`) and AI (`LLM`, `NLP`) initialisms are well-known inside `lucid-lint` but narrower for a generic tech audience. Move them into a project-scoped whitelist once F19 lands CLI-level config loading, keeping only truly ubiquitous tech acronyms (`URL`, `HTML`, `API`, `CPU`, …) in the shipped `dev-doc` baseline. F77 config loader is now shipped, so this is unblocked. Pair with **F9**. | 🔴 Next | v0.1 review feedback |
 
 <!-- lucid-lint disable-next-line weasel-words -->
 
@@ -152,19 +165,19 @@ research that justifies the rule.
 
 | ID | Rule | Category | Tags | Grounding | Priority |
 |---|---|---|---|---|---|
-| F48 | ✅ `all-caps-shouting` shipped in v0.2 — see [`docs/src/rules/all-caps-shouting.md`](docs/src/rules/all-caps-shouting.md) | Lexicon | `a11y-markup`, `dyslexia`, `general` | WCAG 3.1.5, BDA Dyslexia Style Guide | 🔴 High |
-| F55 | ✅ `nested-negation` shipped in v0.2 — see [`docs/src/rules/nested-negation.md`](docs/src/rules/nested-negation.md) | Syntax | `aphasia`, `adhd`, `general` | FALC, CDC Clear Communication Index | 🔴 High |
-| F56 | ✅ `conditional-stacking` shipped in v0.2 — see [`docs/src/rules/conditional-stacking.md`](docs/src/rules/conditional-stacking.md) | Syntax | `aphasia`, `adhd`, `general` | FALC, plainlanguage.gov | 🔴 High |
+| F48 | ✅ `all-caps-shouting` shipped in v0.2 — see [`docs/src/rules/all-caps-shouting.md`](docs/src/rules/all-caps-shouting.md) | Lexicon | `a11y-markup`, `dyslexia`, `general` | WCAG 3.1.5, BDA Dyslexia Style Guide | 🔴 Next |
+| F55 | ✅ `nested-negation` shipped in v0.2 — see [`docs/src/rules/nested-negation.md`](docs/src/rules/nested-negation.md) | Syntax | `aphasia`, `adhd`, `general` | FALC, CDC Clear Communication Index | 🔴 Next |
+| F56 | ✅ `conditional-stacking` shipped in v0.2 — see [`docs/src/rules/conditional-stacking.md`](docs/src/rules/conditional-stacking.md) | Syntax | `aphasia`, `adhd`, `general` | FALC, plainlanguage.gov | 🔴 Next |
 
 **Should-ship v0.2 (cuttable under time pressure, in suggested cut order):**
 
 | ID | Rule | Category | Tags | Grounding | Priority |
 |---|---|---|---|---|---|
-| F62 | ✅ `redundant-intensifier` shipped in v0.2 — see [`docs/src/rules/redundant-intensifier.md`](docs/src/rules/redundant-intensifier.md) | Lexicon | `general` | Plain-language guides | 🟡 Medium |
-| F52 | ✅ `mixed-numeric-format` shipped in v0.2 — see [`docs/src/rules/mixed-numeric-format.md`](docs/src/rules/mixed-numeric-format.md) | Structure | `dyscalculia`, `general` | CDC Clear Communication Index | 🟡 Medium |
-| F50 | ✅ `line-length-wide` shipped in v0.2 — see [`docs/src/rules/line-length-wide.md`](docs/src/rules/line-length-wide.md) | Structure | `dyslexia`, `general` | WCAG 1.4.8 (AAA) | 🟡 Medium |
-| F47 | ✅ `consonant-cluster` shipped in v0.2 — see [`docs/src/rules/consonant-cluster.md`](docs/src/rules/consonant-cluster.md) | Lexicon | `dyslexia`, `general` | BDA Dyslexia Style Guide | 🟡 Medium |
-| F54 | ✅ `dense-punctuation-burst` shipped in v0.2 — see [`docs/src/rules/dense-punctuation-burst.md`](docs/src/rules/dense-punctuation-burst.md) | Syntax | `general` | IFLA easy-to-read guidelines | 🟡 Medium |
+| F62 | ✅ `redundant-intensifier` shipped in v0.2 — see [`docs/src/rules/redundant-intensifier.md`](docs/src/rules/redundant-intensifier.md) | Lexicon | `general` | Plain-language guides | 🟡 Later |
+| F52 | ✅ `mixed-numeric-format` shipped in v0.2 — see [`docs/src/rules/mixed-numeric-format.md`](docs/src/rules/mixed-numeric-format.md) | Structure | `dyscalculia`, `general` | CDC Clear Communication Index | 🟡 Later |
+| F50 | ✅ `line-length-wide` shipped in v0.2 — see [`docs/src/rules/line-length-wide.md`](docs/src/rules/line-length-wide.md) | Structure | `dyslexia`, `general` | WCAG 1.4.8 (AAA) | 🟡 Later |
+| F47 | ✅ `consonant-cluster` shipped in v0.2 — see [`docs/src/rules/consonant-cluster.md`](docs/src/rules/consonant-cluster.md) | Lexicon | `dyslexia`, `general` | BDA Dyslexia Style Guide | 🟡 Later |
+| F54 | ✅ `dense-punctuation-burst` shipped in v0.2 — see [`docs/src/rules/dense-punctuation-burst.md`](docs/src/rules/dense-punctuation-burst.md) | Syntax | `general` | IFLA easy-to-read guidelines | 🟡 Later |
 
 **Cut order if schedule slips:** F47 → F54 → F62 → F52 → F50 → F11. F55
 and F56 are non-negotiable (trivial implementation cost, strong
@@ -174,55 +187,66 @@ grounding).
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F5 | Native AsciiDoc support | 🟡 Medium | Format scope v0.1 |
-| F6 | Native HTML support | 🟡 Medium | Relevant for EAA compliance |
-| F7 | `.docx` support via Pandoc integration | 🟡 Medium | FALC institutional target |
-| F8 | Companion script `pandoc → lucid-lint` | 🔴 High | Documented in v0.1 README |
+| F5 | Native AsciiDoc support | 🟡 Later | Format scope v0.1 |
+| F6 | Native HTML support | 🟡 Later | Relevant for EAA compliance |
+| F7 | `.docx` support via Pandoc integration | 🟡 Later | FALC institutional target |
+| F8 | Companion script `pandoc → lucid-lint` | 🟡 Later | Documented in v0.1 README |
 
 ### Documentation rules plugin
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F4 | `code-block-without-lang` rule | 🟡 Medium | Rule 8 dropped from v0.1, candidate for `lucid-lint-docs` plugin |
+| F4 | `code-block-without-lang` rule | 🟡 Later | Rule 8 dropped from v0.1, candidate for `lucid-lint-docs` plugin |
 
 ### Docs site — bilingual
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F25 | French mirror of the mdBook docs (`/fr/` tree) — until then, the header EN/FR switch links to a "French version — coming in v0.2" stub | 🔴 High | v0.1 docs `/shape` session, bilingual-equality prime directive |
+| F25 | French mirror of the mdBook docs (`/fr/` tree) — until then, the header EN/FR switch links to a "French version — coming in v0.2" stub | 🔴 Next | v0.1 docs `/shape` session, bilingual-equality prime directive |
 
 ### Docs site — content
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F27 | ✅ Shipped in v0.2 — `docs/src/roadmap.md` is auto-generated from the root `ROADMAP.md` by [`scripts/sync-roadmap.py`](scripts/sync-roadmap.py). `just docs-build` / `just docs-serve` run the sync first, so the mdBook site always ships the current roadmap. Relative links are rewritten (targets under `docs/src/` become docs-relative; others become absolute GitHub URLs) so the `docs_links_stay_inside_docs` gate still passes. | 🔴 High | v0.1 docs review |
-| F28 | ✅ Shipped in v0.2 — one page per rule under `docs/src/rules/`, wired into `docs/src/SUMMARY.md`, enforced by [`tests/rule_docs_coverage.rs`](tests/rule_docs_coverage.rs). Each page carries category, severity, default weight, parameters per profile, EN/FR examples where applicable, and suppression guidance. | 🔴 High | v0.1 docs review |
-| F29 | Rule numbering scheme based on category (e.g. `STR-001` for structural, `LEX-002` for lexical, `SYN-003` for syntactic). Stable IDs that survive renames, referenced from both diagnostics output and the docs. | 🟡 Medium | v0.1 docs review |
-| F30 | Audit every rule mention across the docs and link it to its reference page (F28). Requires F28 to land first. | 🟡 Medium | v0.1 docs review |
-| F42 | ✅ Shipped in v0.2 — rule documentation coverage gate. [`tests/rule_docs_coverage.rs`](tests/rule_docs_coverage.rs) cross-checks every shipped rule id against its mdBook page, `Category::for_rule`, `scoring::WEIGHTED_RULE_IDS`, and (on CI, gated by `RULE_DOCS_GATE_GIT=1`) the `## [Unreleased]` section of `CHANGELOG.md`. Contract documented in [`CONTRIBUTING.md`](CONTRIBUTING.md#adding-or-modifying-a-rule--documentation-contract). | 🔴 High | v0.2 interlude |
-| F43 | ✅ Shipped in v0.2 — `RULES.md` category drift fixed. Per-rule `**Category**` lines and the Categories table now match `Category::for_rule`: `excessive-commas` and `deep-subordination` are `structure`, `repetitive-connectors` is `rhythm`, `unclear-antecedent` is `syntax`. The drift banners on the four per-rule mdBook pages are removed. | 🟡 Medium | Surfaced by F42 interlude |
-| F44 | Coverage test for F30 rule-mention linking — assert each rule id mentioned in `docs/src/**/*.md` is linked on first-per-section occurrence. Follow-up from F30. | 🟡 Medium | F30 follow-up |
+| F27 | ✅ Shipped in v0.2 — `docs/src/roadmap.md` is auto-generated from the root `ROADMAP.md` by [`scripts/sync-roadmap.py`](scripts/sync-roadmap.py). `just docs-build` / `just docs-serve` run the sync first, so the mdBook site always ships the current roadmap. Relative links are rewritten (targets under `docs/src/` become docs-relative; others become absolute GitHub URLs) so the `docs_links_stay_inside_docs` gate still passes. | 🔴 Next | v0.1 docs review |
+| F28 | ✅ Shipped in v0.2 — one page per rule under `docs/src/rules/`, wired into `docs/src/SUMMARY.md`, enforced by [`tests/rule_docs_coverage.rs`](tests/rule_docs_coverage.rs). Each page carries category, severity, default weight, parameters per profile, EN/FR examples where applicable, and suppression guidance. | 🔴 Next | v0.1 docs review |
+| F29 | Rule numbering scheme based on category (e.g. `STR-001` for structural, `LEX-002` for lexical, `SYN-003` for syntactic). Stable IDs that survive renames, referenced from both diagnostics output and the docs. | 🟡 Later | v0.1 docs review |
+| F30 | Audit every rule mention across the docs and link it to its reference page (F28). Requires F28 to land first. | 🟡 Later | v0.1 docs review |
+| F42 | ✅ Shipped in v0.2 — rule documentation coverage gate. [`tests/rule_docs_coverage.rs`](tests/rule_docs_coverage.rs) cross-checks every shipped rule id against its mdBook page, `Category::for_rule`, `scoring::WEIGHTED_RULE_IDS`, and (on CI, gated by `RULE_DOCS_GATE_GIT=1`) the `## [Unreleased]` section of `CHANGELOG.md`. Contract documented in [`CONTRIBUTING.md`](CONTRIBUTING.md#adding-or-modifying-a-rule--documentation-contract). | 🔴 Next | v0.2 interlude |
+| F43 | ✅ Shipped in v0.2 — `RULES.md` category drift fixed. Per-rule `**Category**` lines and the Categories table now match `Category::for_rule`: `excessive-commas` and `deep-subordination` are `structure`, `repetitive-connectors` is `rhythm`, `unclear-antecedent` is `syntax`. The drift banners on the four per-rule mdBook pages are removed. | 🟡 Later | Surfaced by F42 interlude |
+| F44 | Coverage test for F30 rule-mention linking — assert each rule id mentioned in `docs/src/**/*.md` is linked on first-per-section occurrence. Follow-up from F30. | 🟡 Later | F30 follow-up |
 
 ### Docs site — theming
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F26 | ✅ MVP shipped in v0.2 via DOM-level trim in `lucid-navigation.js` — the picker now shows three honest items (`Auto · Lucid light · Lucid dark`); the stock Rust / Navy / Ayu `<li>`s are marked `hidden` so they're inert for keyboard and screen-reader. CSS class mapping is unchanged (`.light` / `.rust` → lucid-light, `.coal` / `.navy` / `.ayu` → lucid-dark), so pre-existing localStorage selections still render correctly. Follow-up (optional): a full `index.hbs` override to drop the stock markup entirely rather than hide it; preferred once the mdBook upgrade cadence settles. | 🟡 Medium | v0.1 docs `/colorize` session; mdBook stock limitation |
+| F26 | ✅ MVP shipped in v0.2 via DOM-level trim in `lucid-navigation.js` — the picker now shows three honest items (`Auto · Lucid light · Lucid dark`); the stock Rust / Navy / Ayu `<li>`s are marked `hidden` so they're inert for keyboard and screen-reader. CSS class mapping is unchanged (`.light` / `.rust` → lucid-light, `.coal` / `.navy` / `.ayu` → lucid-dark), so pre-existing localStorage selections still render correctly. Follow-up (optional): a full `index.hbs` override to drop the stock markup entirely rather than hide it; preferred once the mdBook upgrade cadence settles. | 🟡 Later | v0.1 docs `/colorize` session; mdBook stock limitation |
+| F73 | ✅ Pre-deploy font-leak gate shipped in v0.2 — `just docs-check-clean` rebuilds the book, runs `scripts/sanitize-stock-css.py`, and greps the output for active `font-family` / `--*-font` / `local()` references to `Open Sans` or `Source Code Pro`. Not wired into `just check` (mdbook build is too slow for the dev loop); wire it into the docs-publish CI workflow before any release-candidate goes live. | 🟡 Later | v0.2 `/critique` polish pass follow-up |
 
 ### Docs site — reading preferences
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F33 | Full reading-preferences popover UI — cog button in the header opens a popover with font radio (Atkinson / Standard / OpenDyslexic), line-spacing slider (1.4–2.0, 0.05 step) and text-size slider (90–130 %, 5 % step). v0.1 ships only the Introduction-page demonstrator; the CSS-variable plumbing (`--reading-scale`, `--reading-line-height`, `[data-font]`) is already in place, so this is UI work only. | 🔴 High | v0.1 docs `/shape` + `/typeset` sessions |
-| F34 | Responsive / mobile adaptation — right-rail page TOC and header controls collapse gracefully below 700 px; touch targets verified ≥ 44 × 44 px; sidebar drawer behaviour polished. | 🔴 High | v0.1 docs `/layout` session, deferred to `/adapt` |
-| F35 | Accessibility audit sweep — full AAA pass on both themes (contrast, focus order, `prefers-reduced-motion` coverage, keyboard-only walk-through, skip-link), plus a published accessibility statement page. The v0.1 site clears AAA on the spot-checks; F35 makes it systematic and publishes the evidence. | 🔴 High | v0.1 docs `/audit` plan |
-| F36 | Final polish pass — optical alignment, spacing rhythm, edge-state copy, favicon PNG fallback, social-card refinement, re-running `/critique` to verify the score moves above 30/40. | 🟡 Medium | v0.1 docs `/polish` plan |
+| F33 | Full reading-preferences popover UI — cog button in the header opens a popover with font radio (Atkinson / Standard / OpenDyslexic), line-spacing slider (1.4–2.0, 0.05 step) and text-size slider (90–130 %, 5 % step). v0.1 ships only the Introduction-page demonstrator; the CSS-variable plumbing (`--reading-scale`, `--reading-line-height`, `[data-font]`) is already in place, so this is UI work only. | 🟡 Later | v0.1 docs `/shape` + `/typeset` sessions |
+| F34 | Responsive / mobile adaptation — right-rail page TOC and header controls collapse gracefully below 700 px; touch targets verified ≥ 44 × 44 px; sidebar drawer behaviour polished. | 🔴 Next | v0.1 docs `/layout` session, deferred to `/adapt` |
+| F35 | Accessibility audit sweep — full AAA pass on both themes (contrast, focus order, `prefers-reduced-motion` coverage, keyboard-only walk-through, skip-link), plus a published accessibility statement page. The v0.1 site clears AAA on the spot-checks; F35 makes it systematic and publishes the evidence. | 🔴 Next | v0.1 docs `/audit` plan |
+| F36 | Final polish pass — optical alignment, spacing rhythm, edge-state copy, favicon PNG fallback, social-card refinement, re-running `/critique` to verify the score moves above 30/40. | 🟡 Later | v0.1 docs `/polish` plan |
 
 ### Quality features
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F12 | Score evolution dashboard across runs | 🟢 Low | Rule 11, inspired by coverage reports |
+| F12 | Score evolution dashboard across runs | 🟢 Speculative | Rule 11, inspired by coverage reports |
+
+### Scope control
+
+File/directory discovery. Distinct from suppression (below): scope
+control excludes inputs before they are scanned; suppression hides
+diagnostics after scanning.
+
+| ID | Item | Priority | Origin |
+|---|---|---|---|
+| F78 | Path exclusion — `exclude = [...]` glob list in `lucid-lint.toml`, `.lucidignore` file (gitignore-style), `--exclude <glob>` CLI flag. Skips matching paths at discovery time, before parsing. Blocks adoption on any non-toy documentation repository. | 🔴 Next | Dogfood feedback 2026-04-21; surfaces the "Glob patterns and `.lucidignore`" item previously homeless in the v0.1 deferred list |
 
 ### Suppression mechanism
 
@@ -231,10 +255,10 @@ v0.1 ships the minimal inline-disable directive (see brainstorm
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F18 | ✅ Block form shipped in v0.2: `<!-- lucid-lint-disable <rule-id> -->` … `<!-- lucid-lint-enable -->` silences one rule across every line in the scope. `enable` with no argument closes every open scope; with a rule id, closes only that rule's scope (so overlapping disables for different rules can nest). Unterminated `disable` extends to end-of-document. See [RULES.md → Suppressing diagnostics](RULES.md#suppressing-diagnostics). | 🔴 High | v0.1 inline-disable brainstorm |
-| F19 | Config-based ignores (`[[ignore]]` in `lucid-lint.toml`) covering `.txt` and stdin | 🔴 High | v0.1 inline-disable brainstorm |
-| F20 | `reason="..."` field, optional in v0.1, surfaced in reports and optionally required via config | 🟡 Medium | v0.1 inline-disable brainstorm |
-| F21 | File-level directive (`disable-file`) and multi-rule lists | 🟡 Medium | v0.1 inline-disable brainstorm |
+| F18 | ✅ Block form shipped in v0.2: `<!-- lucid-lint-disable <rule-id> -->` … `<!-- lucid-lint-enable -->` silences one rule across every line in the scope. `enable` with no argument closes every open scope; with a rule id, closes only that rule's scope (so overlapping disables for different rules can nest). Unterminated `disable` extends to end-of-document. See [RULES.md → Suppressing diagnostics](RULES.md#suppressing-diagnostics). | 🔴 Next | v0.1 inline-disable brainstorm |
+| F19 | Config-based ignores (`[[ignore]]` in `lucid-lint.toml`) covering `.txt` and stdin | 🔴 Next | v0.1 inline-disable brainstorm |
+| F20 | `reason="..."` field, optional in v0.1, surfaced in reports and optionally required via config | 🟡 Later | v0.1 inline-disable brainstorm |
+| F21 | File-level directive (`disable-file`) and multi-rule lists | 🟡 Later | v0.1 inline-disable brainstorm |
 
 ---
 
@@ -244,7 +268,7 @@ v0.1 ships the minimal inline-disable directive (see brainstorm
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F16 | `lucid-lint-llm` plugin (LLM-as-Judge rules) | 🟢 Low | Research on existing tools |
+| F16 | `lucid-lint-llm` plugin (LLM-as-Judge rules) | 🟢 Speculative | Research on existing tools |
 
 The plugin would add rules like `unclear-antecedent-semantic` that use an LLM to detect semantic ambiguities the pattern-based heuristics miss.
 
@@ -254,7 +278,7 @@ Disabled by default due to non-determinism, API cost, and latency incompatible w
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F75 | `lucid-lint-nlp` plugin specification and scaffolding (Python subprocess or WASM-based). Replaces heuristic rules with POS- / dependency-tree- / anaphora-backed precise versions. | 🟡 Medium | Rule-system-growth brainstorm (2026-04-20) |
+| F75 | `lucid-lint-nlp` plugin specification and scaffolding (Python subprocess or WASM-based). Replaces heuristic rules with POS- / dependency-tree- / anaphora-backed precise versions. | 🟡 Later | Rule-system-growth brainstorm (2026-04-20) |
 
 Candidate rules for the plugin:
 
@@ -291,7 +315,7 @@ depend on earlier features (F9, F14). Naming uses the provisional
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F73 | Differential diagnostics — `--compare=<ref>` CLI mode. Runs against two revisions of the same text(s) and reports score-delta + diagnostic-delta. Pitch: CI/PR comment framing ("this PR adds 2 warnings, removes 5, net −3"), inverting alarm fatigue the way coverage tools do. CLI + JSON + SARIF-run-comparison. No dashboard (that is F12). | 🟡 Medium | Rule-system-growth brainstorm (2026-04-20). Depends on F14 stabilising. |
+| F73 | Differential diagnostics — `--compare=<ref>` CLI mode. Runs against two revisions of the same text(s) and reports score-delta + diagnostic-delta. Pitch: CI/PR comment framing ("this PR adds 2 warnings, removes 5, net −3"), inverting alarm fatigue the way coverage tools do. CLI + JSON + SARIF-run-comparison. No dashboard (that is F12). | 🟡 Later | Rule-system-growth brainstorm (2026-04-20). Depends on F14 stabilising. |
 
 ### Ecosystem interop
 
@@ -315,8 +339,8 @@ single-rule problem.
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F77 | ✅ Shipped in v0.2 — `main.rs` now auto-discovers `lucid-lint.toml` walking up from the CWD (stopping at the nearest `.git` boundary) and applies `[default].profile`, `[default].conditions`, `[scoring]` via `ScoringFileConfig::into_scoring_config`, and `[rules.readability-score].formula`. New `--config <path>` flag overrides discovery. Precedence: built-in profile defaults → TOML → CLI flags. Per-rule TOML overrides beyond `readability-score` extend rule-by-rule as each `Config` gains `Deserialize`. See [`docs/src/guide/configuration.md`](docs/src/guide/configuration.md). | 🔴 High | F11 follow-up (2026-04-21) |
-| F76 | Interop suppression mechanism. Rules declare overlapping external linter rules in their metadata (e.g. `Rule::external_overlaps() -> &[(Linter, &'static str)]`, enum `Linter::Markdownlint \| Vale \| Proselint \| Textlint`). Users opt in via `[interop] suppress_when = ["markdownlint"]` in `lucid-lint.toml` (CLI equivalent: `--interop-suppress=markdownlint`); opt-out is default, so coverage never silently drops. When active, affected rules are skipped at emission time with an info-level trace in `--verbose`. Ships CLI + LSP (the LSP path is the real motivator: two servers squiggling the same span with different severities and wording erodes trust in both). Only `deeply-nested-lists` qualifies at time of writing (MD007); framework is designed to scale to future overlaps. Non-goal: detecting whether the external linter is actually installed or configured — the config field is the signal. | 🟡 Medium | Markdownlint-overlap scan (2026-04-20) |
+| F77 | ✅ Shipped in v0.2 — `main.rs` now auto-discovers `lucid-lint.toml` walking up from the CWD (stopping at the nearest `.git` boundary) and applies `[default].profile`, `[default].conditions`, `[scoring]` via `ScoringFileConfig::into_scoring_config`, and `[rules.readability-score].formula`. New `--config <path>` flag overrides discovery. Precedence: built-in profile defaults → TOML → CLI flags. Per-rule TOML overrides beyond `readability-score` extend rule-by-rule as each `Config` gains `Deserialize`. See [`docs/src/guide/configuration.md`](docs/src/guide/configuration.md). | 🔴 Next | F11 follow-up (2026-04-21) |
+| F76 | Interop suppression mechanism. Rules declare overlapping external linter rules in their metadata (e.g. `Rule::external_overlaps() -> &[(Linter, &'static str)]`, enum `Linter::Markdownlint \| Vale \| Proselint \| Textlint`). Users opt in via `[interop] suppress_when = ["markdownlint"]` in `lucid-lint.toml` (CLI equivalent: `--interop-suppress=markdownlint`); opt-out is default, so coverage never silently drops. When active, affected rules are skipped at emission time with an info-level trace in `--verbose`. Ships CLI + LSP (the LSP path is the real motivator: two servers squiggling the same span with different severities and wording erodes trust in both). Only `deeply-nested-lists` qualifies at time of writing (MD007); framework is designed to scale to future overlaps. Non-goal: detecting whether the external linter is actually installed or configured — the config field is the signal. | 🟡 Later | Markdownlint-overlap scan (2026-04-20) |
 
 ### Research track
 
@@ -325,9 +349,9 @@ forgotten.
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F64 | `structure.paragraph-landmark-density` — reprise-points for attention-fragile readers. Research needed to define "landmark" (bold / italic / headers / list-starts / code spans?). | 🟢 Low | Rule-system-growth brainstorm (2026-04-20) |
-| F70 | `structure.lede-buried` — journalistic inverted-pyramid check. Strong candidate for a future `lucid-lint-journalism` plugin rather than core. | 🟢 Low | Rule-system-growth brainstorm (2026-04-20) |
-| F74 | Rule-discovery corpus project — mine writer-heavy git histories for patterns that authors repeatedly rewrite. Source of evidence-grounded rule proposals. Intern / student project scale. | 🟢 Low | Rule-system-growth brainstorm (2026-04-20) |
+| F64 | `structure.paragraph-landmark-density` — reprise-points for attention-fragile readers. Research needed to define "landmark" (bold / italic / headers / list-starts / code spans?). | 🟢 Speculative | Rule-system-growth brainstorm (2026-04-20) |
+| F70 | `structure.lede-buried` — journalistic inverted-pyramid check. Strong candidate for a future `lucid-lint-journalism` plugin rather than core. | 🟢 Speculative | Rule-system-growth brainstorm (2026-04-20) |
+| F74 | Rule-discovery corpus project — mine writer-heavy git histories for patterns that authors repeatedly rewrite. Source of evidence-grounded rule proposals. Intern / student project scale. | 🟢 Speculative | Rule-system-growth brainstorm (2026-04-20) |
 
 Additional research directions captured for posterity but not yet ID'd:
 
@@ -410,7 +434,7 @@ A number of configuration and ergonomics questions were raised but postponed. Th
 
 - Language detection: simple heuristic (stop-words) vs. dedicated crate (`whatlang`)
 - Parallelism: `rayon` for multi-file processing
-- Glob patterns and `.lucidignore`
+- Glob patterns and `.lucidignore` (now tracked as **F78**)
 - Core library exposed as `lucid-lint-core` for third-party integration
 
 ### Project
