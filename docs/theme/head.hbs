@@ -14,9 +14,28 @@
 
 <script>
 (function () {
+  var root = document.documentElement;
+
+  // mdBook hard-codes <html lang> from book.toml [book].language.
+  // The FR stub lives under the same book, so override in <head>
+  // (before body paint) so assistive tech and spellcheck pick the
+  // right language on first readout, not after a DOM mutation.
+  if (location.pathname.indexOf('/fr/') !== -1) {
+    root.setAttribute('lang', 'fr');
+  }
+
+  // mdBook injects <base href="{site-url}"> into 404.html only. Correct
+  // for GitHub Pages (site lives at /lucid-lint/), but `mdbook serve`
+  // runs at / — the prefix then 404s every stylesheet and the page
+  // renders unstyled. Rewrite the base href on localhost so the dev
+  // experience matches production.
+  if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+    var b = document.querySelector('base');
+    if (b) b.setAttribute('href', '/');
+  }
+
   try {
     var p = JSON.parse(localStorage.getItem('lucidLintReading') || '{}');
-    var root = document.documentElement;
     if (p.font)    root.setAttribute('data-font', p.font);
     if (p.spacing) root.style.setProperty('--reading-line-height', p.spacing);
     if (p.size)    root.style.setProperty('--reading-scale', p.size);
