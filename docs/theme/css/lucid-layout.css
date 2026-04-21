@@ -103,8 +103,8 @@
 }
 
 /* ---------- Page TOC (right rail) ----------
- * Positioned absolutely to the right of .content on viewports
- * ≥ 1200px. On narrower screens it collapses gracefully above
+ * Positioned absolutely to the right of the centered <main> on
+ * viewports ≥ 1360px. On narrower screens it collapses above
  * the content (a dismissible "on this page" box), and on small
  * phones it hides entirely — /adapt will revisit.
  * ---------------------------------------- */
@@ -166,15 +166,21 @@
   font-weight: var(--weight-semibold, 600);
 }
 
-@media (min-width: 1200px) {
+/* 1360px: the minimum viewport at which a 220px TOC + xl gap fits
+   in the right gutter past a centered 840px <main>. Below this, the
+   TOC stays in-flow above the content (top-ruled box) — see the
+   default .lucid-pagetoc block above. */
+@media (min-width: 1360px) {
   .content { position: relative; }
   .lucid-pagetoc {
     position: absolute;
     top: 0;
-    /* Offset from the end of the content box, not from a fixed
-       --content-max-width. Prevents overlap if a future wide page
-       (tables, reading-demo) pushes content beyond 840px. */
-    inset-inline-start: calc(100% + var(--lucid-space-xl));
+    /* Anchor to the right edge of the centered <main> (840px cap),
+       not the wide .content box. .content spans the full reading
+       area (~1410px at a 1440 viewport); anchoring to 100% of that
+       pushed the TOC off-screen. 50% + half the content-max-width
+       lands exactly at main's right edge, + xl gap. */
+    inset-inline-start: calc(50% + var(--content-max-width) / 2 + var(--lucid-space-xl));
     width: 220px;
     max-height: calc(100vh - 4rem);
     overflow-y: auto;
@@ -182,7 +188,11 @@
     border-block-start: none;
     padding: 0;
   }
-  .lucid-pagetoc,
+  /* Sticky applies to the inner list only. The .lucid-pagetoc
+     container must stay position: absolute (set above) so it
+     floats into the right rail and does NOT reserve vertical
+     space inside .content — otherwise the first heading gets
+     pushed down by the full height of the TOC. */
   .lucid-pagetoc ul {
     position: sticky;
     top: var(--lucid-space-xl);
@@ -247,9 +257,13 @@
  * our 1.5em heading margin-top. Reconfirm here, and lift the first
  * heading's margin so it doesn't push below the breadcrumb. */
 
-.content h1:first-child,
-.content h2:first-child,
-.content h3:first-child { margin-block-start: 0; }
+/* :first-of-type (not :first-child) so the rule survives the pageToc
+   injection: lucid-navigation.js inserts .lucid-pagetoc as first child
+   of .content, which would otherwise disqualify the heading from the
+   reset and let its default top margin push the H1 down the page. */
+.content h1:first-of-type,
+.content h2:first-of-type,
+.content h3:first-of-type { margin-block-start: 0; }
 
 .lucid-breadcrumbs + h1 { margin-block-start: 0; }
 
@@ -765,10 +779,11 @@
   }
 }
 
-/* Tablet landscape (≥ 700px, < 1200px): the TOC is inline above
-   content. Constrain its width so it doesn't stretch the full
-   content measure on iPad-ish viewports — easier to scan. */
-@media (min-width: 700px) and (max-width: 1199px) {
+/* Tablet / narrow-desktop (≥ 700px, < 1360px): the TOC is inline
+   above content — the right gutter isn't wide enough to host a
+   220px rail past a centered 840px <main>. Constrain its width so
+   it doesn't stretch the full content measure — easier to scan. */
+@media (min-width: 700px) and (max-width: 1359px) {
   .lucid-pagetoc {
     max-width: 48ch;
   }
