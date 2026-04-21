@@ -14,6 +14,7 @@ use clap::{Parser, Subcommand, ValueEnum};
 use lucid_lint::condition::ConditionTag;
 use lucid_lint::config::Profile as ProfileConfig;
 use lucid_lint::output::Format as FormatConfig;
+use lucid_lint::rules::readability_score::FormulaChoice;
 
 /// Top-level CLI.
 #[derive(Debug, Parser)]
@@ -72,6 +73,38 @@ pub(crate) struct CheckArgs {
     /// `general` only run when their tag appears here.
     #[arg(long, value_enum, value_delimiter = ',')]
     pub(crate) conditions: Vec<CliConditionTag>,
+
+    /// Readability formula choice (F11).
+    ///
+    /// `auto` (default) selects Flesch-Kincaid for EN documents and
+    /// Kandel-Moles for FR. `flesch-kincaid` / `kandel-moles` pin a
+    /// concrete formula regardless of detected language — useful for
+    /// cross-document score comparison.
+    #[arg(long, value_enum, default_value = "auto")]
+    pub(crate) readability_formula: CliFormulaChoice,
+}
+
+/// Formula choice values accepted on the command line.
+#[derive(Debug, Clone, Copy, ValueEnum)]
+pub(crate) enum CliFormulaChoice {
+    /// Per-language auto-select (F10 behaviour).
+    Auto,
+    /// Flesch-Kincaid grade level, regardless of language.
+    #[value(name = "flesch-kincaid")]
+    FleschKincaid,
+    /// Kandel-Moles ease score, regardless of language.
+    #[value(name = "kandel-moles")]
+    KandelMoles,
+}
+
+impl From<CliFormulaChoice> for FormulaChoice {
+    fn from(value: CliFormulaChoice) -> Self {
+        match value {
+            CliFormulaChoice::Auto => Self::Auto,
+            CliFormulaChoice::FleschKincaid => Self::FleschKincaid,
+            CliFormulaChoice::KandelMoles => Self::KandelMoles,
+        }
+    }
 }
 
 /// Condition-tag values accepted on the command line.

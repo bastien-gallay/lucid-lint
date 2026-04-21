@@ -2,9 +2,9 @@
 
 # lucid-lint — Roadmap
 
-> Future rules, refinements, and platform extensions tracked from v0.1 design discussions.
+> Future rules, refinements, and platform extensions tracked from v0.1 onwards.
 
-This document captures ideas that emerged while designing v0.1. They are intentionally deferred.
+v0.1 shipped on 2026-04-20 with 17 rules. The **v0.2 must-ship bundle** — hybrid scoring (F14), SARIF output (F32), condition-tag ontology (F71+F72), F10 per-language readability auto-select, F48 `all-caps-shouting`, F55 `nested-negation`, F56 `conditional-stacking`, F50 `line-length-wide`, F52 `mixed-numeric-format`, F62 `redundant-intensifier`, F54 `dense-punctuation-burst`, F47 `consonant-cluster`, and F11 user-configurable readability formula — is **complete** (rule count 17 → 25). This document now tracks v0.2 should-ship polish, v0.3 candidates, and longer-horizon research.
 
 ## Legend
 
@@ -103,7 +103,7 @@ Shipped in the tag: all 17 rules across 5 phases, the minimal inline-disable dir
 |---|---|---|---|
 | F9 | Definition-aware `unexplained-abbreviation` (two-pass) | 🔴 High | Rule 10 simplified in v0.1 |
 | F10 | 🚧 Must-ship slice shipped in v0.2 — `readability-score` auto-selects the formula by detected language: Flesch-Kincaid for EN (kept), Kandel & Moles (1958) for FR. Kandel-Moles ease scores are converted to a grade-equivalent so per-profile `max_grade_level` stays comparable across languages. Unknown language → Flesch-Kincaid. See [`docs/src/rules/readability-score.md`](./rules/readability-score.md). Still open: Gunning Fog / SMOG / Dale-Chall (EN), Scolarius / Flesch-Kandel (FR), `--readability-verbose` multi-formula reports, per-file override (covered by F11). | 🔴 High | Rule 11 simplified in v0.1; scope expanded in rule-system-growth brainstorm (2026-04-20) |
-| F11 | User-configurable readability formula choice | 🟡 Medium | Rule 11 |
+| F11 | ✅ Shipped in v0.2 — `--readability-formula {auto,flesch-kincaid,kandel-moles}` CLI flag + `FormulaChoice` enum on `readability_score::Config` + `Engine::with_readability_formula(choice)`. `auto` (default) keeps F10 per-language selection; `flesch-kincaid` / `kandel-moles` pin a formula for cross-document comparison. TOML config wiring is tracked separately as F77. | 🟡 Medium | Rule 11 |
 | F13 | `missing-connectors` rule (15b not shipped in v0.1) | 🟡 Medium | Rule 15 decomposition |
 | F1 | Custom stoplist parameter for `low-lexical-diversity` | 🟡 Medium | Rule 5 |
 | F2 | Sentence-level low-lexical-diversity density | 🟢 Low | Rule 5 |
@@ -209,7 +209,7 @@ grounding).
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F26 | Override `index.hbs` (or `book.js`) to replace the mdBook theme picker with a two-option toggle labelled "Lucid light / Lucid dark". In v0.1 the `.light` + `.rust` classes both resolve to lucid-light and `.coal` + `.navy` + `.ayu` to lucid-dark — the palette is consistent but the menu labels still read `Light / Rust / Coal / Navy / Ayu`. | 🟡 Medium | v0.1 docs `/colorize` session; mdBook stock limitation |
+| F26 | ✅ MVP shipped in v0.2 via DOM-level trim in `lucid-navigation.js` — the picker now shows three honest items (`Auto · Lucid light · Lucid dark`); the stock Rust / Navy / Ayu `<li>`s are marked `hidden` so they're inert for keyboard and screen-reader. CSS class mapping is unchanged (`.light` / `.rust` → lucid-light, `.coal` / `.navy` / `.ayu` → lucid-dark), so pre-existing localStorage selections still render correctly. Follow-up (optional): a full `index.hbs` override to drop the stock markup entirely rather than hide it; preferred once the mdBook upgrade cadence settles. | 🟡 Medium | v0.1 docs `/colorize` session; mdBook stock limitation |
 
 ### Docs site — reading preferences
 
@@ -317,6 +317,7 @@ single-rule problem.
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
+| F77 | 🔴 TOML config loader wiring — `Config::from_file` / `from_toml_str` exist and are fully tested in `src/config.rs`, but `main.rs` never calls them. As a result, `lucid-lint.toml` at the project root currently has no runtime effect even though `README.md` / `AGENTS.md` advertise it. Ship: auto-discover `lucid-lint.toml` walking up from the CWD, layer it under the CLI flags (CLI wins), apply `[default].profile` + `conditions`, `[rules.<id>]` per-rule overrides (start with `readability-score.formula`, extend to every rule's public `Config`), and `[scoring]` via the already-wired `ScoringFileConfig::into_scoring_config`. Precedence: built-in profile defaults → TOML → CLI flags. Gap surfaced during F11 (2026-04-21). | 🔴 High | F11 follow-up (2026-04-21) |
 | F76 | Interop suppression mechanism. Rules declare overlapping external linter rules in their metadata (e.g. `Rule::external_overlaps() -> &[(Linter, &'static str)]`, enum `Linter::Markdownlint \| Vale \| Proselint \| Textlint`). Users opt in via `[interop] suppress_when = ["markdownlint"]` in `lucid-lint.toml` (CLI equivalent: `--interop-suppress=markdownlint`); opt-out is default, so coverage never silently drops. When active, affected rules are skipped at emission time with an info-level trace in `--verbose`. Ships CLI + LSP (the LSP path is the real motivator: two servers squiggling the same span with different severities and wording erodes trust in both). Only `deeply-nested-lists` qualifies at time of writing (MD007); framework is designed to scale to future overlaps. Non-goal: detecting whether the external linter is actually installed or configured — the config field is the signal. | 🟡 Medium | Markdownlint-overlap scan (2026-04-20) |
 
 ### Research track

@@ -1175,7 +1175,7 @@ The result is an ease score on roughly `0..100` (higher = easier), Flesch-style.
 | 12–16 | College |
 | > 16 | Expert |
 
-User-configurable formula choice (`Gunning Fog`, `SMOG`, `Dale-Chall`, `Scolarius`, `Flesch-Kandel`) and multi-formula reports under `--readability-verbose` are tracked as F11 / F10 should-ship.
+The `--readability-formula` CLI flag (F11, v0.2) pins a formula regardless of detected language — `auto` (default) keeps the per-language behaviour, `flesch-kincaid` / `kandel-moles` force the respective formula. Additional formulas (`Gunning Fog`, `SMOG`, `Dale-Chall`, `Scolarius`) and multi-formula `--readability-verbose` reports are tracked as F10 should-ship.
 
 **Granularity** : computed per document. One diagnostic per file.
 

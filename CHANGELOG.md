@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **User-configurable readability formula (F11)** — new
+  `--readability-formula` CLI flag and `FormulaChoice` enum exposed on
+  `readability_score::Config`. `auto` (default) preserves the F10
+  per-language behaviour; `flesch-kincaid` and `kandel-moles` pin a
+  concrete formula regardless of detected language, which is useful
+  for cross-document comparison on mixed corpora. Wired into the
+  engine via `Engine::with_readability_formula(choice)`. See
+  [`docs/src/rules/readability-score.md`](docs/src/rules/readability-score.md).
 - **`consonant-cluster` rule (F47)** — flags words whose longest run of
   consecutive consonants meets or exceeds a per-profile threshold (BDA
   Dyslexia Style Guide). Language-aware vowel sets: French accented

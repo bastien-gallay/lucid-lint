@@ -9,6 +9,7 @@ use crate::condition::ConditionTag;
 use crate::config::Profile;
 use crate::language::{default_language, detect_language};
 use crate::parser::{parse_markdown, parse_plain, word_count};
+use crate::rules::readability_score::{self, FormulaChoice, ReadabilityScore};
 use crate::rules::{default_rules, filter_by_conditions, Rule};
 use crate::scoring::{self, Scorecard, ScoringConfig};
 use crate::types::{Diagnostic, Language, SourceFile};
@@ -74,6 +75,28 @@ impl Engine {
     #[must_use]
     pub fn with_scoring_config(mut self, scoring_config: ScoringConfig) -> Self {
         self.scoring_config = scoring_config;
+        self
+    }
+
+    /// Override the [`ReadabilityScore`] rule's formula choice (F11).
+    ///
+    /// When `FormulaChoice::Auto` is passed the engine keeps the default
+    /// per-language selection; other variants pin a concrete formula
+    /// regardless of the document's detected language.
+    ///
+    /// If the rule set does not currently include a `readability-score`
+    /// rule (e.g., it was filtered out), this is a no-op — the rule will
+    /// not be re-added.
+    #[must_use]
+    pub fn with_readability_formula(mut self, formula: FormulaChoice) -> Self {
+        for rule in &mut self.rules {
+            if rule.id() == ReadabilityScore::ID {
+                let config =
+                    readability_score::Config::for_profile(self.profile).with_formula(formula);
+                *rule = Box::new(ReadabilityScore::new(config));
+                break;
+            }
+        }
         self
     }
 

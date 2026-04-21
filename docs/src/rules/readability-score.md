@@ -1,5 +1,11 @@
 # `readability-score`
 
+## What it flags
+
+A document-level readability index. Readability formulas are the historical synthetic signal for text complexity — simple, reproducible, recognized by US/UK government guidelines and WCAG. Treat it like cyclomatic complexity: a metric first, a warning second.
+
+## At a glance
+
 | | |
 |---|---|
 | **Category** | `readability` |
@@ -7,10 +13,6 @@
 | **Default weight** | `5` |
 | **Languages** | EN — Flesch-Kincaid · FR — Kandel-Moles (auto-selected per detected language; v0.2+) |
 | **Source** | [`src/rules/readability_score.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/readability_score.rs) |
-
-## What it flags
-
-A document-level readability index. Readability formulas are the historical synthetic signal for text complexity — simple, reproducible, recognized by US/UK government guidelines and WCAG. Treat it like cyclomatic complexity: a metric first, a warning second.
 
 ## Detection (v0.2 — per-language formula)
 
@@ -42,7 +44,7 @@ The result is an ease score on roughly `0..100` (higher = easier), Flesch-style.
 | 12–16 | College |
 | > 16 | Expert |
 
-User-configurable formula choice (`Gunning Fog`, `SMOG`, `Dale-Chall`, `Scolarius`, `Flesch-Kandel`) is tracked as **[F11](../roadmap.md)** on the [roadmap](../roadmap.md). Multi-formula reports under `--readability-verbose` are part of the same follow-up.
+The `--readability-formula` flag (shipped with F11 in v0.2) pins a formula regardless of detected language: `--readability-formula flesch-kincaid` or `--readability-formula kandel-moles`. Default `auto` keeps the per-language behaviour. Additional formulas (`Gunning Fog`, `SMOG`, `Dale-Chall`, `Scolarius`) and multi-formula `--readability-verbose` reports remain on the [roadmap](../roadmap.md).
 
 ## Parameters
 
@@ -50,6 +52,9 @@ User-configurable formula choice (`Gunning Fog`, `SMOG`, `Dale-Chall`, `Scolariu
 |---|---|---|---|---|
 | `max_grade_level` | `float` | 14 | 9 | 6 |
 | `always_report` | `bool` | `true` | `true` | `true` |
+| `formula` | `auto` \| `flesch-kincaid` \| `kandel-moles` | `auto` | `auto` | `auto` |
+
+Override `formula` via `--readability-formula` on the CLI; `auto` uses the detected language, other values pin the formula.
 
 ## Output modes
 

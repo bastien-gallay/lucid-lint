@@ -5,7 +5,8 @@
 //! above — this is "cyclomatic complexity for prose": a metric first, a
 //! warning second.
 //!
-//! The formula is selected per detected document language (F10):
+//! The formula is selected per detected document language (F10) unless
+//! the user pins a specific one via [`FormulaChoice`] (F11):
 //!
 //! - **English** — Flesch-Kincaid grade level.
 //! - **French** — Kandel-Moles ease score, converted to a grade
@@ -13,19 +14,57 @@
 //!   meaningful across languages.
 //! - **Unknown** — falls back to Flesch-Kincaid.
 //!
-//! User-configurable formula choice (F11), `--readability-verbose`
-//! multi-formula reports, and the should-ship alternatives (Gunning Fog,
-//! SMOG, Dale-Chall, Scolarius) are tracked separately on the roadmap.
+//! `--readability-verbose` multi-formula reports and the should-ship
+//! alternatives (Gunning Fog, SMOG, Dale-Chall, Scolarius) are tracked
+//! separately on the roadmap.
 //!
 //! See [`RULES.md`](../../RULES.md#readability-score) for the rule's
 //! rationale and thresholds.
 
 use unicode_segmentation::UnicodeSegmentation;
 
+use serde::{Deserialize, Serialize};
+
 use crate::config::Profile;
 use crate::parser::{split_sentences, Document};
 use crate::rules::Rule;
 use crate::types::{Diagnostic, Language, Location, Severity};
+
+/// User-selectable readability formula (F11).
+///
+/// [`FormulaChoice::Auto`] keeps the F10 per-language behaviour
+/// (English → Flesch-Kincaid, French → Kandel-Moles). Other variants
+/// force a specific formula regardless of detected language — useful
+/// when a user knows their corpus language or wants to compare scores
+/// cross-document with a fixed metric.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum FormulaChoice {
+    /// Select the formula from the detected document language.
+    #[default]
+    Auto,
+    /// Force Flesch-Kincaid grade level, regardless of language.
+    FleschKincaid,
+    /// Force Kandel-Moles ease score, regardless of language.
+    KandelMoles,
+}
+
+impl FormulaChoice {
+    /// Parse a formula choice from a CLI-style string.
+    ///
+    /// # Errors
+    ///
+    /// Returns the input back as an error payload when it does not match
+    /// a known variant. Callers typically wrap this in a `clap` parser.
+    pub fn from_cli(name: &str) -> Result<Self, String> {
+        match name.to_ascii_lowercase().as_str() {
+            "auto" => Ok(Self::Auto),
+            "flesch-kincaid" | "flesch_kincaid" | "fleschkincaid" | "fk" => Ok(Self::FleschKincaid),
+            "kandel-moles" | "kandel_moles" | "kandelmoles" | "km" => Ok(Self::KandelMoles),
+            other => Err(other.to_string()),
+        }
+    }
+}
 
 /// Configuration for [`ReadabilityScore`].
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -38,6 +77,12 @@ pub struct Config {
     /// When true, always emit an `info` diagnostic with the score, even
     /// when the document is within the target range.
     pub always_report: bool,
+
+    /// User-selectable readability formula (F11).
+    ///
+    /// Defaults to [`FormulaChoice::Auto`], which preserves the F10
+    /// per-language behaviour.
+    pub formula: FormulaChoice,
 }
 
 impl Config {
@@ -52,7 +97,15 @@ impl Config {
         Self {
             max_grade_level,
             always_report: true,
+            formula: FormulaChoice::Auto,
         }
+    }
+
+    /// Override the formula choice, returning the mutated config.
+    #[must_use]
+    pub const fn with_formula(mut self, formula: FormulaChoice) -> Self {
+        self.formula = formula;
+        self
     }
 }
 
@@ -110,7 +163,7 @@ impl Rule for ReadabilityScore {
         #[allow(clippy::cast_precision_loss)]
         let syllables_f = syllables as f64;
 
-        let formula = Formula::for_language(language);
+        let formula = Formula::resolve(self.config.formula, language);
         let report = formula.compute(words_f, sentences_f, syllables_f);
 
         let above_threshold = report.grade_equivalent > self.config.max_grade_level;
@@ -143,6 +196,17 @@ impl Formula {
         match language {
             Language::Fr => Self::KandelMoles,
             Language::En | Language::Unknown => Self::FleschKincaid,
+        }
+    }
+
+    /// Pick a concrete formula given the user's [`FormulaChoice`] and
+    /// the document's detected language. `Auto` defers to
+    /// [`Formula::for_language`]; every other variant pins the choice.
+    fn resolve(choice: FormulaChoice, language: Language) -> Self {
+        match choice {
+            FormulaChoice::Auto => Self::for_language(language),
+            FormulaChoice::FleschKincaid => Self::FleschKincaid,
+            FormulaChoice::KandelMoles => Self::KandelMoles,
         }
     }
 
@@ -314,6 +378,7 @@ mod tests {
         let cfg = Config {
             max_grade_level: 9.0,
             always_report: false,
+            formula: FormulaChoice::Auto,
         };
         let doc = parse_plain("The cat sat on the mat.", SourceFile::Anonymous);
         let diags = ReadabilityScore::new(cfg).check(&doc, Language::En);
@@ -325,6 +390,7 @@ mod tests {
         let cfg = Config {
             max_grade_level: -10.0,
             always_report: false,
+            formula: FormulaChoice::Auto,
         };
         let doc = parse_plain("The cat sat on the mat.", SourceFile::Anonymous);
         let diags = ReadabilityScore::new(cfg).check(&doc, Language::En);
@@ -422,6 +488,93 @@ mod tests {
             Formula::for_language(Language::Unknown),
             Formula::FleschKincaid
         );
+    }
+
+    #[test]
+    fn formula_choice_auto_matches_language() {
+        // EN input with FormulaChoice::Auto → Flesch-Kincaid.
+        let diags = lint_lang(
+            "The cat sat on the mat. The dog ran.",
+            Profile::Public,
+            Language::En,
+        );
+        assert!(diags[0].message.starts_with("Flesch-Kincaid"));
+        // FR input with FormulaChoice::Auto → Kandel-Moles.
+        let fr_diags = lint_lang(
+            "Le chat était sur le tapis. Le chien courait.",
+            Profile::Public,
+            Language::Fr,
+        );
+        assert!(fr_diags[0].message.starts_with("Kandel-Moles"));
+    }
+
+    #[test]
+    fn formula_choice_overrides_language() {
+        // Force Kandel-Moles on English input (user opt-in).
+        let doc = parse_plain(
+            "The cat sat on the mat. The dog ran.",
+            SourceFile::Anonymous,
+        );
+        let rule = ReadabilityScore::new(
+            Config::for_profile(Profile::Public).with_formula(FormulaChoice::KandelMoles),
+        );
+        let diags = rule.check(&doc, Language::En);
+        assert_eq!(diags.len(), 1);
+        assert!(
+            diags[0].message.starts_with("Kandel-Moles"),
+            "forced KM must override language auto-select: got {}",
+            diags[0].message
+        );
+
+        // Force Flesch-Kincaid on French input.
+        let fr_doc = parse_plain(
+            "Le chat était sur le tapis. Le chien courait.",
+            SourceFile::Anonymous,
+        );
+        let rule = ReadabilityScore::new(
+            Config::for_profile(Profile::Public).with_formula(FormulaChoice::FleschKincaid),
+        );
+        let diags = rule.check(&fr_doc, Language::Fr);
+        assert_eq!(diags.len(), 1);
+        assert!(
+            diags[0].message.starts_with("Flesch-Kincaid"),
+            "forced FK must override language auto-select: got {}",
+            diags[0].message
+        );
+    }
+
+    #[test]
+    fn formula_choice_from_cli_accepts_aliases() {
+        assert_eq!(
+            FormulaChoice::from_cli("auto").unwrap(),
+            FormulaChoice::Auto
+        );
+        assert_eq!(
+            FormulaChoice::from_cli("flesch-kincaid").unwrap(),
+            FormulaChoice::FleschKincaid
+        );
+        assert_eq!(
+            FormulaChoice::from_cli("FK").unwrap(),
+            FormulaChoice::FleschKincaid
+        );
+        assert_eq!(
+            FormulaChoice::from_cli("kandel-moles").unwrap(),
+            FormulaChoice::KandelMoles
+        );
+        assert_eq!(
+            FormulaChoice::from_cli("km").unwrap(),
+            FormulaChoice::KandelMoles
+        );
+        assert!(FormulaChoice::from_cli("smog").is_err());
+    }
+
+    #[test]
+    fn config_with_formula_preserves_other_fields() {
+        let base = Config::for_profile(Profile::Falc);
+        let overridden = base.with_formula(FormulaChoice::KandelMoles);
+        assert!((overridden.max_grade_level - base.max_grade_level).abs() < f64::EPSILON);
+        assert_eq!(overridden.always_report, base.always_report);
+        assert_eq!(overridden.formula, FormulaChoice::KandelMoles);
     }
 
     #[test]
