@@ -311,6 +311,14 @@
   text-align: center;
   color: var(--fg);
 }
+
+/* The 404's right-rail ToC surfaces both EN and FR headings regardless
+   of :lang(), because lucid-navigation.js generates it from the raw
+   DOM headings. The page has one heading per locale so the ToC adds
+   no navigation value — hide it entirely on this surface. */
+.content:has(.lucid-404) .lucid-pagetoc {
+  display: none;
+}
 .lucid-404__glyph {
   display: block;
   margin-inline: auto;
