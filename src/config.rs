@@ -5,12 +5,17 @@
 
 use std::fmt;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 use crate::condition::ConditionTag;
+use crate::rules::readability_score::FormulaChoice;
+
+/// Canonical filename the loader looks for when walking up from the
+/// current working directory.
+pub const CONFIG_FILENAME: &str = "lucid-lint.toml";
 
 /// A preset bundle of rule thresholds tuned for a specific audience.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -98,6 +103,67 @@ impl Config {
     /// Returns [`ConfigError::Parse`] if the string is not valid TOML.
     pub fn from_toml_str(s: &str) -> Result<Self, ConfigError> {
         toml::from_str(s).map_err(|e| ConfigError::Parse(e.to_string()))
+    }
+
+    /// Walk up from `start` (inclusive) looking for [`CONFIG_FILENAME`].
+    ///
+    /// Returns the resolved path of the first match, or `None` if none
+    /// was found up to the filesystem root. The walk stops at the first
+    /// `.git` directory parent as well — a reasonable "repo boundary"
+    /// heuristic that prevents the loader from leaking into unrelated
+    /// parent projects on shared machines.
+    #[must_use]
+    pub fn discover_from(start: &Path) -> Option<PathBuf> {
+        let mut current = if start.is_file() {
+            start.parent()?
+        } else {
+            start
+        };
+        loop {
+            let candidate = current.join(CONFIG_FILENAME);
+            if candidate.is_file() {
+                return Some(candidate);
+            }
+            // Repo boundary: stop if we just inspected a directory that
+            // contains a `.git` entry (file or directory).
+            if current.join(".git").exists() {
+                return None;
+            }
+            match current.parent() {
+                Some(parent) => current = parent,
+                None => return None,
+            }
+        }
+    }
+
+    /// Extract the `[rules.readability-score].formula` field when
+    /// present. Returns `None` if the sub-table or field is missing,
+    /// and an error if the field exists but is not a recognised string
+    /// value (typo-guarding).
+    ///
+    /// # Errors
+    ///
+    /// Returns [`ConfigError::Parse`] if `formula` is present but not
+    /// a recognised value.
+    pub fn readability_formula(&self) -> Result<Option<FormulaChoice>, ConfigError> {
+        let Some(sub) = self.rules.entries.get("readability-score") else {
+            return Ok(None);
+        };
+        let Some(value) = sub.get("formula") else {
+            return Ok(None);
+        };
+        let Some(raw) = value.as_str() else {
+            return Err(ConfigError::Parse(format!(
+                "[rules.readability-score].formula must be a string, got {}",
+                value.type_str()
+            )));
+        };
+        FormulaChoice::from_cli(raw).map(Some).map_err(|bad| {
+            ConfigError::Parse(format!(
+                "[rules.readability-score].formula = {bad:?} is not a recognised value \
+                 (expected one of: auto, flesch-kincaid, kandel-moles)"
+            ))
+        })
     }
 }
 
@@ -332,5 +398,90 @@ weasel-words = 2
         assert_eq!(runtime.category_max, crate::scoring::DEFAULT_CATEGORY_MAX);
         assert_eq!(runtime.category_cap, crate::scoring::DEFAULT_CATEGORY_CAP);
         assert!(runtime.weight_overrides.is_empty());
+    }
+
+    #[test]
+    fn readability_formula_absent_when_unset() {
+        let config = Config::from_toml_str("").unwrap();
+        assert_eq!(config.readability_formula().unwrap(), None);
+    }
+
+    #[test]
+    fn readability_formula_reads_from_rule_table() {
+        let config = Config::from_toml_str(
+            r#"
+[rules.readability-score]
+formula = "kandel-moles"
+"#,
+        )
+        .unwrap();
+        assert_eq!(
+            config.readability_formula().unwrap(),
+            Some(FormulaChoice::KandelMoles)
+        );
+    }
+
+    #[test]
+    fn readability_formula_rejects_unknown_value() {
+        let config = Config::from_toml_str(
+            r#"
+[rules.readability-score]
+formula = "gunning-fog"
+"#,
+        )
+        .unwrap();
+        assert!(matches!(
+            config.readability_formula(),
+            Err(ConfigError::Parse(_))
+        ));
+    }
+
+    #[test]
+    fn readability_formula_rejects_non_string() {
+        let config = Config::from_toml_str(
+            r#"
+[rules.readability-score]
+formula = 42
+"#,
+        )
+        .unwrap();
+        assert!(matches!(
+            config.readability_formula(),
+            Err(ConfigError::Parse(_))
+        ));
+    }
+
+    #[test]
+    fn discover_walks_up_and_stops_at_repo_boundary() {
+        use std::fs::File;
+
+        let tmp = tempfile::tempdir().expect("tempdir");
+        let root = tmp.path();
+        // Simulate a parent "other project" and a nested repo inside.
+        let outer_config = root.join(CONFIG_FILENAME);
+        File::create(&outer_config).unwrap();
+
+        let repo = root.join("inner-repo");
+        fs::create_dir_all(&repo).unwrap();
+        fs::create_dir_all(repo.join(".git")).unwrap();
+        let deep = repo.join("src").join("nested");
+        fs::create_dir_all(&deep).unwrap();
+
+        // From a deep dir inside the repo: since no `lucid-lint.toml`
+        // exists at or below the `.git` boundary, discovery returns None
+        // — not the outer-project config above the boundary.
+        assert!(Config::discover_from(&deep).is_none());
+
+        // Drop a config inside the repo → discovery picks it up.
+        let repo_config = repo.join(CONFIG_FILENAME);
+        File::create(&repo_config).unwrap();
+        let found = Config::discover_from(&deep).expect("expected repo config");
+        assert_eq!(found, repo_config);
+    }
+
+    #[test]
+    fn discover_returns_none_when_no_file_exists() {
+        let tmp = tempfile::tempdir().expect("tempdir");
+        assert!(Config::discover_from(tmp.path()).is_none());
     }
 }

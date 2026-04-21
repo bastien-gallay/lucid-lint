@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **TOML config loader wiring (F77)** — `lucid-lint check` now
+  auto-discovers a `lucid-lint.toml` at or above the current working
+  directory (stopping at the nearest `.git` boundary) and applies its
+  `[default].profile`, `[default].conditions`, `[scoring]` weights /
+  caps, and `[rules.readability-score].formula` fields. A new
+  `--config <path>` flag overrides discovery; a missing explicit path
+  is an error, a missing auto-discovered file is not. Precedence:
+  built-in profile defaults → TOML → CLI flags (unset CLI defers to
+  TOML; unset TOML defers to the preset). Per-rule TOML overrides
+  beyond `readability-score` will land as each rule's `Config` gains a
+  `Deserialize` impl. See [`docs/src/guide/configuration.md`](docs/src/guide/configuration.md).
 - **User-configurable readability formula (F11)** — new
   `--readability-formula` CLI flag and `FormulaChoice` enum exposed on
   `readability_score::Config`. `auto` (default) preserves the F10

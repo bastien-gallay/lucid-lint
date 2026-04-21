@@ -47,8 +47,19 @@ pub(crate) struct CheckArgs {
     pub(crate) paths: Vec<PathBuf>,
 
     /// Profile preset.
-    #[arg(long, value_enum, default_value = "public")]
-    pub(crate) profile: CliProfile,
+    ///
+    /// When omitted, the profile is read from `[default].profile` in
+    /// the discovered `lucid-lint.toml`, or falls back to `public`.
+    #[arg(long, value_enum)]
+    pub(crate) profile: Option<CliProfile>,
+
+    /// Path to a `lucid-lint.toml` config file.
+    ///
+    /// When omitted, the loader walks up from the current directory to
+    /// the first `lucid-lint.toml` it finds, stopping at the nearest
+    /// `.git` repo boundary.
+    #[arg(long, value_name = "PATH")]
+    pub(crate) config: Option<PathBuf>,
 
     /// Output format.
     #[arg(long, value_enum, default_value = "tty")]
@@ -79,9 +90,11 @@ pub(crate) struct CheckArgs {
     /// `auto` (default) selects Flesch-Kincaid for EN documents and
     /// Kandel-Moles for FR. `flesch-kincaid` / `kandel-moles` pin a
     /// concrete formula regardless of detected language — useful for
-    /// cross-document score comparison.
-    #[arg(long, value_enum, default_value = "auto")]
-    pub(crate) readability_formula: CliFormulaChoice,
+    /// cross-document score comparison. When omitted, falls back to
+    /// `[rules.readability-score].formula` in `lucid-lint.toml`, then
+    /// to `auto`.
+    #[arg(long, value_enum)]
+    pub(crate) readability_formula: Option<CliFormulaChoice>,
 }
 
 /// Formula choice values accepted on the command line.
@@ -204,7 +217,12 @@ mod tests {
         match args.command {
             Command::Check(a) => {
                 assert_eq!(a.paths.len(), 1);
-                assert!(matches!(a.profile, CliProfile::Public));
+                assert!(
+                    a.profile.is_none(),
+                    "unspecified --profile must be None so main.rs can consult TOML"
+                );
+                assert!(a.config.is_none());
+                assert!(a.readability_formula.is_none());
                 assert!(matches!(a.format, CliFormat::Tty));
             },
         }
@@ -215,7 +233,7 @@ mod tests {
         let args =
             Cli::try_parse_from(["lucid-lint", "check", "--profile", "falc", "file.md"]).unwrap();
         match args.command {
-            Command::Check(a) => assert!(matches!(a.profile, CliProfile::Falc)),
+            Command::Check(a) => assert!(matches!(a.profile, Some(CliProfile::Falc))),
         }
     }
 

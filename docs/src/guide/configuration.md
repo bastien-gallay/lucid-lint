@@ -60,6 +60,17 @@ From lowest to highest:
 2. `lucid-lint.toml` overrides
 3. CLI flags
 
+An unset CLI flag defers to the TOML value; an unset TOML field defers to the profile preset.
+
 ## Discovery
 
-`lucid-lint` looks for `lucid-lint.toml` in the current working directory. Explicit config file loading via `--config <path>` is on the roadmap for v0.2.
+`lucid-lint` walks up from the current working directory to the first `lucid-lint.toml` it finds, stopping at the nearest `.git` repo boundary. Passing `--config <path>` skips auto-discovery and loads the given file directly; a missing explicit path is an error, but a missing auto-discovered file is not.
+
+## Per-rule overrides (v0.2+)
+
+At time of writing, only `readability-score` honours its TOML sub-table (the `formula` field, shipped with F11 / F77). Extending TOML-driven config to the other rules lands rule-by-rule as each `Config` gains a `Deserialize` impl. Until then, `[rules.<id>]` tables for other rules parse without error but have no runtime effect.
+
+```toml
+[rules.readability-score]
+formula = "kandel-moles"  # or "flesch-kincaid", "auto"
+```

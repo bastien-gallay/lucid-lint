@@ -8,7 +8,7 @@ use anyhow::{Context, Result};
 use clap::Parser;
 
 use lucid_lint::condition::ConditionTag;
-use lucid_lint::config::Profile;
+use lucid_lint::config::{Config as FileConfig, Profile};
 use lucid_lint::output::Format;
 use lucid_lint::rules::readability_score::FormulaChoice;
 use lucid_lint::scoring::{self, ScoringConfig};
@@ -33,13 +33,20 @@ fn main() -> ExitCode {
 }
 
 fn run_check(args: CheckArgs) -> Result<ExitCode> {
-    let profile: Profile = args.profile.into();
+    let file_config = load_file_config(args.config.as_deref())?;
+
+    let profile = resolve_profile(args.profile, file_config.as_ref());
     let format: Format = args.format.into();
-    let conditions: Vec<ConditionTag> = args.conditions.iter().copied().map(Into::into).collect();
-    let formula: FormulaChoice = args.readability_formula.into();
-    let engine =
-        Engine::with_profile_and_conditions(profile, &conditions).with_readability_formula(formula);
-    let scoring_config = ScoringConfig::default();
+    let conditions = resolve_conditions(&args.conditions, file_config.as_ref());
+    let formula = resolve_formula(args.readability_formula, file_config.as_ref())?;
+    let scoring_config: ScoringConfig = file_config
+        .as_ref()
+        .map(|c| c.scoring.clone().into_scoring_config())
+        .unwrap_or_default();
+
+    let engine = Engine::with_profile_and_conditions(profile, &conditions)
+        .with_readability_formula(formula)
+        .with_scoring_config(scoring_config.clone());
 
     let mut all_diagnostics: Vec<Diagnostic> = Vec::new();
     let mut total_words: u32 = 0;
@@ -92,6 +99,61 @@ fn run_check(args: CheckArgs) -> Result<ExitCode> {
 
 fn is_stdin_marker(path: &Path) -> bool {
     path.as_os_str() == "-"
+}
+
+fn resolve_profile(cli: Option<cli::CliProfile>, file: Option<&FileConfig>) -> Profile {
+    if let Some(p) = cli {
+        return p.into();
+    }
+    file.map(|c| c.default.profile).unwrap_or_default()
+}
+
+fn resolve_conditions(
+    cli: &[cli::CliConditionTag],
+    file: Option<&FileConfig>,
+) -> Vec<ConditionTag> {
+    if !cli.is_empty() {
+        return cli.iter().copied().map(Into::into).collect();
+    }
+    file.map(|c| c.default.conditions.clone())
+        .unwrap_or_default()
+}
+
+fn resolve_formula(
+    cli: Option<cli::CliFormulaChoice>,
+    file: Option<&FileConfig>,
+) -> Result<FormulaChoice> {
+    if let Some(choice) = cli {
+        return Ok(choice.into());
+    }
+    let from_file = match file {
+        Some(c) => c
+            .readability_formula()
+            .map_err(|e| anyhow::anyhow!("{e}"))?,
+        None => None,
+    };
+    Ok(from_file.unwrap_or_default())
+}
+
+/// Load the user's `lucid-lint.toml`.
+///
+/// If `explicit` is `Some`, the path must exist and parse cleanly — any
+/// error is surfaced. Otherwise auto-discover by walking up from the
+/// current working directory; a missing file is not an error (returns
+/// `Ok(None)`), but a present-but-unparseable one is.
+fn load_file_config(explicit: Option<&Path>) -> Result<Option<FileConfig>> {
+    if let Some(path) = explicit {
+        let cfg = FileConfig::from_file(path)
+            .with_context(|| format!("failed to load config {}", path.display()))?;
+        return Ok(Some(cfg));
+    }
+    let cwd = std::env::current_dir().context("failed to resolve current directory")?;
+    let Some(path) = FileConfig::discover_from(&cwd) else {
+        return Ok(None);
+    };
+    let cfg = FileConfig::from_file(&path)
+        .with_context(|| format!("failed to load config {}", path.display()))?;
+    Ok(Some(cfg))
 }
 
 fn collect_files(path: &Path) -> Result<Vec<PathBuf>> {
