@@ -83,6 +83,7 @@ sync-roadmap:
 # Build the mdBook documentation
 docs-build: sync-roadmap
     cd docs && mdbook build
+    python3 scripts/sanitize-stock-css.py
 
 # Serve docs locally with hot reload
 docs-serve: sync-roadmap
