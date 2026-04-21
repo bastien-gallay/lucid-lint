@@ -110,14 +110,22 @@
  * ---------------------------------------- */
 
 .lucid-pagetoc {
+  /* Distinct surface from the audience callout and blockquote — a
+     1px top rule instead of a tinted block. Reads as navigation,
+     not content. Keeps --quote-bg reserved for pull-quotes. */
   max-width: none;
   margin-block: 0 var(--lucid-space-lg);
-  padding: var(--lucid-space-md);
-  background: var(--quote-bg);
-  border-radius: 6px;
+  padding-block: var(--lucid-space-md) 0;
+  background: transparent;
+  border-block-start: 1px solid var(--lucid-paper-edge);
   font-family: var(--reading-font-body);
   font-size: var(--text-small);
   line-height: 1.5;
+}
+.coal .lucid-pagetoc,
+.navy .lucid-pagetoc,
+.ayu  .lucid-pagetoc {
+  border-block-start-color: var(--lucid-paper-dark-edge);
 }
 .lucid-pagetoc__label {
   margin: 0 0 var(--lucid-space-sm);
@@ -163,11 +171,15 @@
   .lucid-pagetoc {
     position: absolute;
     top: 0;
-    inset-inline-start: calc(var(--content-max-width, 840px) + var(--lucid-space-xl));
+    /* Offset from the end of the content box, not from a fixed
+       --content-max-width. Prevents overlap if a future wide page
+       (tables, reading-demo) pushes content beyond 840px. */
+    inset-inline-start: calc(100% + var(--lucid-space-xl));
     width: 220px;
     max-height: calc(100vh - 4rem);
     overflow-y: auto;
     background: transparent;
+    border-block-start: none;
     padding: 0;
   }
   .lucid-pagetoc,
@@ -251,17 +263,153 @@
   width: 100%;
 }
 
+/* ---------- Landing hero ----------
+ * Introduction page only. The lens mark (ring + clean line) is the
+ * "post-lens" counterpart to the 404's pre-lens wave — together they
+ * bookend the brand's clarity metaphor. Scope is carried entirely by
+ * the .lucid-landing__title class on the H1; sibling selectors handle
+ * the rest so rule pages are never touched. */
+
+.lucid-landing__mark {
+  display: block;
+  width: clamp(96px, 12vw, 128px);
+  height: auto;
+  margin-block: var(--lucid-space-lg) var(--lucid-space-md);
+  color: var(--color-lucid);
+  overflow: visible;
+}
+.lucid-landing__mark-line {
+  stroke: var(--color-ink);
+}
+
+/* Hero rhythm: the first audience pill sits closer to the H1, then
+   the lede paragraph gets its normal rhythm, then the reading demo
+   is pushed out so it reads as a separate block. */
+.lucid-landing__title + .lucid-audience {
+  margin-block-start: var(--lucid-space-md);
+}
+.lucid-landing__title ~ .reading-demo {
+  margin-block-start: var(--lucid-space-3xl);
+}
+
+/* Hide the auto-injected breadcrumbs on the landing: the display H1
+   is its own anchor, and "Introduction" stacked above "Introduction"
+   is noise. Scope is carried by the landing title presence. */
+.content:has(.lucid-landing__title) .lucid-breadcrumbs {
+  display: none;
+}
+
+/* ---------- 404 page ----------
+ * "Pre-lens" empty state from the brand spec: the messy wave that
+ * hasn't yet been clarified. Single glyph, single line of copy, one
+ * link back. Bilingual via :lang() — head.hbs sets <html lang> for
+ * /fr/* paths before paint, so the right block shows on first render. */
+
+.lucid-404 {
+  max-width: none;
+  margin-block: var(--lucid-space-2xl) var(--lucid-space-xl);
+  text-align: center;
+  color: var(--fg);
+}
+.lucid-404__glyph {
+  display: block;
+  margin-inline: auto;
+  color: var(--lucid-fog);
+  width: clamp(220px, 40vw, 360px);
+  height: auto;
+}
+.coal .lucid-404__glyph,
+.navy .lucid-404__glyph,
+.ayu  .lucid-404__glyph { color: var(--lucid-fog-dark); }
+
+.lucid-404__copy {
+  max-width: 48ch;
+  margin: var(--lucid-space-lg) auto 0;
+}
+.lucid-404__copy h3 {
+  margin-block: 0 var(--lucid-space-sm);
+  font-size: var(--text-h2, 1.5rem);
+}
+.lucid-404__copy p {
+  color: var(--lucid-fog);
+  margin: 0;
+}
+.coal .lucid-404__copy p,
+.navy .lucid-404__copy p,
+.ayu  .lucid-404__copy p { color: var(--lucid-fog-dark); }
+
+/* Show only the copy block matching <html lang>. Default is EN;
+   :lang(fr) path swaps to FR. */
+.lucid-404__copy--fr { display: none; }
+:root:lang(fr) .lucid-404__copy--en { display: none; }
+:root:lang(fr) .lucid-404__copy--fr { display: block; }
+
+/* ---------- FR sidebar cue ----------
+ * Injected by lucid-navigation.js when location is under /fr/*.
+ * Frames the English chapter list honestly rather than pretending
+ * the sidebar is French. Tone matches "en chantier": calm, not
+ * apologetic. */
+
+.lucid-fr-cue {
+  padding: var(--lucid-space-md) var(--lucid-space-md) var(--lucid-space-sm);
+  border-block-end: 1px solid var(--sidebar-header-border-color, var(--lucid-paper-edge));
+  margin-block-end: var(--lucid-space-md);
+}
+.lucid-fr-cue__title {
+  margin: 0 0 var(--lucid-space-xs);
+  font-weight: var(--weight-semibold, 600);
+  color: var(--links);
+  font-size: 0.95rem;
+}
+.lucid-fr-cue__note {
+  margin: 0;
+  color: var(--lucid-fog);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+.coal .lucid-fr-cue__note,
+.navy .lucid-fr-cue__note,
+.ayu  .lucid-fr-cue__note {
+  color: var(--lucid-fog-dark);
+}
+.lucid-fr-cue__divider {
+  margin: 0 0 var(--lucid-space-xs);
+  padding-inline: var(--lucid-space-md);
+  color: var(--lucid-fog);
+  font-size: 0.78rem;
+  font-weight: var(--weight-semibold, 600);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.coal .lucid-fr-cue__divider,
+.navy .lucid-fr-cue__divider,
+.ayu  .lucid-fr-cue__divider {
+  color: var(--lucid-fog-dark);
+}
+
 /* ---------- Audience callout ---------- */
 
 .lucid-audience {
+  /* Distinct from both blockquote (tinted) and pagetoc (top-ruled):
+     a framed callout on the paper-soft neutral, with a 1px ink-edge
+     rule. Body-sized — not a "big lead" broadcast. It's a gentle
+     frame around the lead paragraph, a whisper the reader can choose
+     to dwell on, not a pull-quote. */
   max-width: none;
   margin-block: var(--lucid-space-xs) var(--lucid-space-xl);
   padding: var(--lucid-space-md) var(--lucid-space-lg);
-  background: var(--quote-bg);
+  background: var(--lucid-paper-soft);
+  border: 1px solid var(--lucid-paper-edge);
   border-radius: 6px;
-  font-size: var(--text-lead);
+  font-size: var(--text-body, 1rem);
   color: var(--fg);
   font-weight: var(--weight-regular, 400);
+}
+.coal .lucid-audience,
+.navy .lucid-audience,
+.ayu  .lucid-audience {
+  background: var(--lucid-paper-dark-soft);
+  border-color: var(--lucid-paper-dark-edge);
 }
 
 /* ---------- Reading demonstrator ----------
@@ -367,14 +515,38 @@
   cursor: default;
 }
 .reading-demo__default {
+  /* Self-contained chip — opts out of the apply-button inversion so
+     "default" reads as meta-label in every state, not as echoed
+     button copy. */
+  display: inline-block;
+  padding: 0.05em 0.5em;
+  margin-inline-start: 0.4em;
+  background: var(--lucid-paper-sink);
   color: var(--lucid-fog);
+  border-radius: 999px;
   font-weight: var(--weight-regular, 400);
-  font-size: 0.85em;
-  margin-inline-start: 0.25em;
+  font-size: 0.72em;
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+  vertical-align: 0.1em;
 }
+.coal .reading-demo__default,
+.navy .reading-demo__default,
+.ayu  .reading-demo__default {
+  background: var(--lucid-paper-dark-sink);
+  color: var(--lucid-fog-dark);
+}
+/* When the button is pressed (active preset), keep the chip on its
+   own neutral surface rather than following the inverted button. */
 .reading-demo__apply[aria-pressed="true"] .reading-demo__default {
-  color: inherit;
-  opacity: 0.7;
+  background: var(--lucid-paper);
+  color: var(--lucid-fog);
+}
+.coal .reading-demo__apply[aria-pressed="true"] .reading-demo__default,
+.navy .reading-demo__apply[aria-pressed="true"] .reading-demo__default,
+.ayu  .reading-demo__apply[aria-pressed="true"] .reading-demo__default {
+  background: var(--lucid-paper-dark);
+  color: var(--lucid-fog-dark);
 }
 @media (prefers-reduced-motion: reduce) {
   .reading-demo__apply { transition: none; }

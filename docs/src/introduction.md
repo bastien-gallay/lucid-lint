@@ -1,3 +1,10 @@
+<svg class="lucid-landing__mark" viewBox="0 0 120 36" aria-hidden="true" focusable="false">
+  <title>lucid-lint lens</title>
+  <circle cx="18" cy="18" r="12" fill="none" stroke="currentColor" stroke-width="2.25"/>
+  <circle cx="18" cy="18" r="2" fill="currentColor"/>
+  <line class="lucid-landing__mark-line" x1="32" y1="18" x2="116" y2="18" stroke-width="1.75" stroke-linecap="round"/>
+</svg>
+
 <h1 id="introduction" class="lucid-landing__title">Introduction</h1>
 
 <p class="lucid-audience" role="doc-subtitle">
