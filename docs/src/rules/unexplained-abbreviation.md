@@ -1,5 +1,13 @@
 # `unexplained-abbreviation`
 
+## What it flags
+
+Acronyms used without a nearby definition. Each forced interruption to guess or look up an acronym breaks the flow and raises the risk of losing attention.
+
+**References.** WCAG 2.1 SC 3.1.4 (Abbreviations); RGAA 9.4.
+
+## At a glance
+
 | | |
 |---|---|
 | **Category** | `lexicon` |
@@ -8,19 +16,22 @@
 | **Languages** | EN · FR (whitelists differ) |
 | **Source** | [`src/rules/unexplained_abbreviation.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/unexplained_abbreviation.rs) |
 
-## What it flags
+## Detection (v0.2, two-pass — F9)
 
-Acronyms used without a nearby definition. Each forced interruption to guess or look up an acronym breaks the flow and raises the risk of losing attention.
+1. **Pre-scan** the whole document for acronyms defined in either canonical form:
+   - `Full Expansion (ACRONYM)` — example: `World Wide Web (WWW)`
+   - `ACRONYM (Full Expansion)` — example: `WWW (World Wide Web)`
 
-**References.** WCAG 2.1 SC 3.1.4 (Abbreviations); RGAA 9.4.
+   The "expansion" side must contain at least two alphabetic words, so short parenthetical notes like `(TBD)` or `(check later)` do not count as definitions.
 
-## Detection (v0.1 simplified)
+2. **Match** sequences of 2+ consecutive uppercase letters (optionally with digits) in the main text.
+3. **Filter** each candidate against three layers, in order:
+   1. Defined in document (from the pre-scan) — strongest.
+   2. User whitelist from `[rules.unexplained-abbreviation].whitelist`.
+   3. Baseline whitelist (profile-driven).
+4. **Flag** each remaining occurrence.
 
-1. Match sequences of 2+ consecutive uppercase letters (optionally with digits).
-2. Subtract the whitelist.
-3. Flag each remaining occurrence.
-
-A two-pass definition-aware version (check whether the acronym is defined anywhere in the document) is tracked as **[F9](../roadmap.md)** on the [roadmap](../roadmap.md).
+A single definition anywhere in the document silences every occurrence of the same acronym — matching how readers actually use documentation (scroll back once to find the expansion, remember it thereafter).
 
 ## Parameters
 
@@ -29,7 +40,16 @@ A two-pass definition-aware version (check whether the acronym is defined anywhe
 | `min_length` | `int` | 3 | 2 | 2 |
 | `whitelist` | `list` | extended | minimal | empty |
 
-**Default whitelist (v0.1):** general IT (`URL, HTML, CSS, JSON, XML, HTTP, HTTPS, API, CLI, GUI, OS, CPU, RAM, SSD, USB, WiFi`) plus common FR/EN (`PDF, SMS, GPS, ID, OK, FAQ`). Narrower project-scoped overrides are tracked as **[F31](../roadmap.md)**.
+**Default whitelist (v0.2, narrowed by F31):** the infrastructure stack — `URL, HTML, CSS, JSON, XML, HTTP, HTTPS, UTF, IO, API, CLI, GUI, OS, CPU, RAM, SSD, USB, IDE, SDK, CI, CD` — plus common FR/EN acronyms and RFC 2119 emphasis keywords (`PDF, SMS, GPS, ID, OK, FAQ`, `MUST, SHALL, SHOULD, …`).
+
+**What changed in v0.2:** accessibility standards (`WCAG`, `ARIA`, `RGAA`, …), AI/language-tech initialisms (`LLM`, `NLP`), and engineering-practice acronyms (`YAGNI`, `DRY`, `TDD`, …) are no longer in the shipped baseline. Projects that use these should add them to `[rules.unexplained-abbreviation].whitelist` in `lucid-lint.toml` — see the [configuration guide](../guide/configuration.md#silencing-rules-globally-v02).
+
+```toml
+[rules.unexplained-abbreviation]
+whitelist = ["WCAG", "ARIA", "ADHD", "LLM"]
+```
+
+User-whitelist entries are **additive** over the baseline — they extend it, never replace it.
 
 ## Suppression
 

@@ -138,9 +138,24 @@ Notes:
 
 ## Per-rule overrides (v0.2+)
 
-At time of writing, only `readability-score` honours its TOML sub-table (the `formula` field, shipped with F11 / F77). Extending TOML-driven config to the other rules lands rule-by-rule as each `Config` gains a `Deserialize` impl. Until then, `[rules.<id>]` tables for other rules parse without error but have no runtime effect.
+TOML-driven config is wired rule-by-rule as each `Config` gains a dedicated accessor. Two rules honour it today:
+
+### `[rules.readability-score]`
 
 ```toml
 [rules.readability-score]
 formula = "kandel-moles"  # or "flesch-kincaid", "auto"
 ```
+
+Pins the readability formula regardless of detected language. `auto` (default) preserves the F10 per-language selection.
+
+### `[rules.unexplained-abbreviation]`
+
+```toml
+[rules.unexplained-abbreviation]
+whitelist = ["WCAG", "ARIA", "ADHD", "LLM"]
+```
+
+Entries are **additive** over the profile baseline (F31). Use this to restore project-specific acronyms — accessibility standards, domain initialisms, engineering-practice terms — that the v0.2 baseline no longer ships. Each entry is silenced globally across the document, same as if it had been defined inline via `Expansion (ACRONYM)`.
+
+Tables for other rules parse without error but have no runtime effect. Extending this list is a mechanical per-rule change and will continue through the v0.2.x cycle.

@@ -180,6 +180,8 @@ fn check_accepts_stdin() {
     Command::cargo_bin("lucid-lint")
         .unwrap()
         .arg("check")
+        .arg("--profile")
+        .arg("public")
         .arg("-")
         .write_stdin(input)
         .assert()
@@ -218,6 +220,8 @@ fn check_handles_directory_argument() {
     Command::cargo_bin("lucid-lint")
         .unwrap()
         .arg("check")
+        .arg("--profile")
+        .arg("public")
         .arg(dir)
         .assert()
         .code(1); // sample.md has warnings

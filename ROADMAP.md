@@ -86,7 +86,6 @@ Shipped in the tag: all 17 rules across 5 phases, the minimal inline-disable dir
 Current 🔴 queue, grouped by theme:
 
 - **False-positive cleanup** — F22 (`excessive-commas`), F23 🚧 (`weasel-words`)
-- **Detector + escape hatch** — F9 + F31 (definition-aware abbreviation with project whitelist)
 - **Bilingual directive** — F25 (French docs mirror)
 - **Docs-site finishing** — F34 (responsive), F35 (a11y audit sweep)
 
@@ -110,7 +109,7 @@ Current 🔴 queue, grouped by theme:
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F9 | Definition-aware `unexplained-abbreviation` (two-pass). Ship paired with **F31** (project-scoped whitelist) — the detector is only useful with an escape hatch. | 🔴 Next | Rule 10 simplified in v0.1 |
+| F9 | ✅ Shipped in v0.2 — definition-aware `unexplained-abbreviation` is now two-pass. A pre-scan collects acronyms defined anywhere in the document in either canonical form (`Expansion (ACRONYM)` or `ACRONYM (Expansion)`; expansion side ≥ 2 alphabetic words to reject `(TBD)`-shaped noise), and a single definition silences every occurrence of that token. Silencing precedence: defined-in-doc → user whitelist → baseline. See [`docs/src/rules/unexplained-abbreviation.md`](docs/src/rules/unexplained-abbreviation.md). | — | Rule 10 simplified in v0.1 |
 | F10 | 🚧 Must-ship slice shipped in v0.2 — `readability-score` auto-selects the formula by detected language: Flesch-Kincaid for EN (kept), Kandel & Moles (1958) for FR. Kandel-Moles ease scores are converted to a grade-equivalent so per-profile `max_grade_level` stays comparable across languages. Unknown language → Flesch-Kincaid. See [`docs/src/rules/readability-score.md`](docs/src/rules/readability-score.md). Still open: Gunning Fog / SMOG / Dale-Chall (EN), Scolarius / Flesch-Kandel (FR), `--readability-verbose` multi-formula reports, per-file override (covered by F11). | 🟡 Later | Rule 11 simplified in v0.1; scope expanded in rule-system-growth brainstorm (2026-04-20) |
 | F11 | ✅ Shipped in v0.2 — `--readability-formula {auto,flesch-kincaid,kandel-moles}` CLI flag + `FormulaChoice` enum on `readability_score::Config` + `Engine::with_readability_formula(choice)`. `auto` (default) keeps F10 per-language selection; `flesch-kincaid` / `kandel-moles` pin a formula for cross-document comparison. TOML config wiring is tracked separately as F77. | 🟡 Later | Rule 11 |
 | F13 | `missing-connectors` rule (15b not shipped in v0.1) | 🟡 Later | Rule 15 decomposition |
@@ -120,7 +119,7 @@ Current 🔴 queue, grouped by theme:
 | F22 | Context-aware relaxation for `excessive-commas` (research needed before design) | 🔴 Next | v0.1 dogfood: 5 false-ish positives on technical docs |
 | F23 | 🚧 First slice shipped in v0.2 — hits inside inline code spans and directional `rather than` / `plutôt que` pairings are now skipped. Still open: straight-quoted terms (e.g. `"many X"` outside backticks) and `"many X"` where X is a concrete noun. | 🔴 Next | v0.1 dogfood: 11 false-ish positives on this repo's own docs |
 | F24 | Refine `excessive-nominalization` suffix list (drop or gate `-al`; many adjectives — `crucial`, `horizontal`, `positional`, `attentional` — are flagged despite not being abstract nouns) | 🟡 Later | v0.1 dogfood |
-| F31 | Split `unexplained-abbreviation` built-in whitelist: the accessibility (`WCAG`, `WAI`, `ARIA`, `RGAA`, `EAA`, `FALC`, `AA`, `AAA`, `ADHD`) and AI (`LLM`, `NLP`) initialisms are well-known inside `lucid-lint` but narrower for a generic tech audience. Move them into a project-scoped whitelist once F19 lands CLI-level config loading, keeping only truly ubiquitous tech acronyms (`URL`, `HTML`, `API`, `CPU`, …) in the shipped `dev-doc` baseline. F77 config loader is now shipped, so this is unblocked. Pair with **F9**. | 🔴 Next | v0.1 review feedback |
+| F31 | ✅ Shipped in v0.2 — `dev-doc` baseline narrowed to the infrastructure stack (`URL`, `HTML`, `CSS`, `JSON`, `XML`, `HTTP`, `HTTPS`, `UTF`, `IO`, `API`, `CLI`, `GUI`, `OS`, `CPU`, `RAM`, `SSD`, `USB`, `IDE`, `SDK`, `CI`, `CD`). Accessibility standards, engineering-practice initialisms, and AI/language-tech terms moved to project config via new `[rules.unexplained-abbreviation].whitelist` in `lucid-lint.toml` (additive over baseline). Breaking change for downstream users, flagged in CHANGELOG with the recovery snippet. Dogfooded in this repo's own [`lucid-lint.toml`](lucid-lint.toml). | — | v0.1 review feedback |
 
 <!-- lucid-lint disable-next-line weasel-words -->
 

@@ -1,9 +1,16 @@
 //! Rule: `unexplained-abbreviation`.
 //!
-//! Flags uppercase acronym-like tokens not present in a whitelist. An
-//! undefined acronym forces the reader to guess or lookup, breaking the
-//! flow. The v0.1 form is pattern-based; a two-pass definition-aware
-//! version is tracked as F9 in `ROADMAP.md`.
+//! Flags uppercase acronym-like tokens that are not whitelisted and
+//! not defined in the document. An undefined acronym forces the
+//! reader to guess or look up, breaking the flow.
+//!
+//! The v0.2 rule is two-pass (F9): a pre-scan of the whole document
+//! collects acronyms defined in either canonical form —
+//! `Full Expansion (ACRONYM)` or `ACRONYM (Full Expansion)` — and
+//! subsequent occurrences of those tokens are silenced. The baseline
+//! whitelist is narrower than v0.1 (F31): only the ubiquitous
+//! infrastructure stack ships in `dev-doc`. Project-specific
+//! acronyms belong in `[rules.unexplained-abbreviation].whitelist`.
 //!
 //! See [`RULES.md`](../../RULES.md#unexplained-abbreviation) for the
 //! rule's rationale and references (WCAG 3.1.4, RGAA 9.4).
@@ -44,18 +51,19 @@ static COMMON_WHITELIST: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     .collect()
 });
 
-/// Technical and accessibility acronyms accepted in `dev-doc` prose.
+/// Infrastructure-stack acronyms accepted in `dev-doc` prose without
+/// explicit definition. F31 narrowed this list to items a general
+/// tech-adjacent reader can be expected to know — the web stack, the
+/// hardware stack, and common transport protocols. Domain-specific
+/// initialisms (accessibility standards, engineering-practice
+/// acronyms, AI/language tech) now belong in the user whitelist via
+/// `[rules.unexplained-abbreviation].whitelist` in `lucid-lint.toml`.
 static TECH_WHITELIST: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     [
         // Web / protocol
         "URL", "HTML", "CSS", "JSON", "XML", "HTTP", "HTTPS", "UTF", "IO",
         // Programming / tooling
-        "API", "CLI", "GUI", "OS", "CPU", "RAM", "SSD", "USB", "IDE", "SDK", "CI", "CD", "LRU",
-        "WASM", "MIT", // AI / language tech
-        "LLM", "NLP", // Accessibility and readability standards
-        "WCAG", "WAI", "ARIA", "RGAA", "EAA", "FALC", "AA", "AAA", "ADHD",
-        // Ubiquitous engineering-practice initialisms
-        "YAGNI", "DRY", "KISS", "SOLID", "TDD", "BDD", "MVP",
+        "API", "CLI", "GUI", "OS", "CPU", "RAM", "SSD", "USB", "IDE", "SDK", "CI", "CD",
     ]
     .into_iter()
     .collect()
@@ -112,6 +120,15 @@ impl Config {
             },
         }
     }
+
+    /// Append project-specific entries to the user whitelist. Additive
+    /// over the profile baseline — callers use this to restore narrower
+    /// acronyms that F31 moved out of the shipped baseline.
+    #[must_use]
+    pub fn with_extra_whitelist(mut self, extra: Vec<String>) -> Self {
+        self.whitelist.extend(extra);
+        self
+    }
 }
 
 /// The [`UnexplainedAbbreviation`] rule.
@@ -144,14 +161,25 @@ impl Rule for UnexplainedAbbreviation {
 
     fn check(&self, document: &Document, _language: Language) -> Vec<Diagnostic> {
         let min = self.config.min_length.get();
-        let mut diagnostics = Vec::new();
 
+        // Pass 1 (F9): collect acronyms defined anywhere in the
+        // document in either canonical form. A single definition
+        // silences every subsequent occurrence, matching how readers
+        // actually use documentation (scroll up to find the expansion
+        // once, remember it thereafter).
+        let defined = collect_defined_acronyms(document, min);
+
+        // Pass 2: emit diagnostics for the rest.
+        let mut diagnostics = Vec::new();
         for (paragraph, section_title) in document.paragraphs_with_section() {
             for (byte_offset, token) in iter_acronyms(&paragraph.text) {
                 let letter_count =
                     u32::try_from(token.chars().filter(|c| c.is_alphabetic()).count())
                         .unwrap_or(u32::MAX);
                 if letter_count < min {
+                    continue;
+                }
+                if defined.contains(token) {
                     continue;
                 }
                 if self.config.is_whitelisted(token) {
@@ -172,6 +200,123 @@ impl Rule for UnexplainedAbbreviation {
         diagnostics.sort_by_key(|d| (d.location.line, d.location.column));
         diagnostics
     }
+}
+
+/// Pre-scan the document and collect every acronym that is explicitly
+/// defined in either canonical form:
+///
+/// - `Full Expansion (ACRONYM)` — the expansion precedes, the acronym
+///   is in parentheses. Example: `World Wide Web (WWW)`.
+/// - `ACRONYM (Full Expansion)` — the acronym precedes, the expansion
+///   is in parentheses. Example: `WWW (World Wide Web)`.
+///
+/// The "expansion" side must contain at least two alphabetic words so
+/// that throwaway notes like `SEO (check later)` do not accidentally
+/// count as definitions.
+fn collect_defined_acronyms(document: &Document, min_letters: u32) -> HashSet<String> {
+    let mut defined = HashSet::new();
+    for (paragraph, _section) in document.paragraphs_with_section() {
+        let text = paragraph.text.as_str();
+        collect_defined_in_text(text, min_letters, &mut defined);
+    }
+    defined
+}
+
+fn collect_defined_in_text(text: &str, min_letters: u32, out: &mut HashSet<String>) {
+    // Collect every acronym with its byte span in a single pass, then
+    // inspect neighbouring parenthesised phrases to decide whether the
+    // acronym is defined.
+    let acronyms: Vec<(usize, &str)> = iter_acronyms(text)
+        .filter(|(_, tok)| {
+            let letters = u32::try_from(tok.chars().filter(|c| c.is_alphabetic()).count())
+                .unwrap_or(u32::MAX);
+            letters >= min_letters
+        })
+        .collect();
+    let bytes = text.as_bytes();
+    for &(start, token) in &acronyms {
+        let end = start + token.len();
+
+        // Form 1: `ACRONYM (expansion)` — inspect what follows.
+        if let Some(paren_open) = next_non_space(bytes, end) {
+            if bytes.get(paren_open) == Some(&b'(') {
+                if let Some(paren_close) = find_matching_close(bytes, paren_open + 1) {
+                    let inner = &text[paren_open + 1..paren_close];
+                    if has_two_alpha_words(inner) {
+                        out.insert(token.to_string());
+                        continue;
+                    }
+                }
+            }
+        }
+
+        // Form 2: `Expansion (ACRONYM)` — inspect the immediate
+        // surroundings: we must be inside parentheses preceded by at
+        // least two alphabetic words.
+        if start > 0 && bytes.get(start - 1) == Some(&b'(') {
+            if let Some(paren_close) = find_matching_close(bytes, start) {
+                if paren_close == end {
+                    // Walk left past the `(` and any whitespace, then
+                    // inspect the phrase up to the previous sentence
+                    // boundary.
+                    let before = &text[..start.saturating_sub(1)];
+                    if has_two_alpha_words(trim_to_definition_head(before)) {
+                        out.insert(token.to_string());
+                    }
+                }
+            }
+        }
+    }
+}
+
+/// Return the byte index of the first non-space character at or after
+/// `start`, or `None` if only whitespace remains.
+fn next_non_space(bytes: &[u8], start: usize) -> Option<usize> {
+    (start..bytes.len()).find(|&i| !matches!(bytes[i], b' ' | b'\t'))
+}
+
+/// Find the matching `)` for an `(` opened at `open_plus_one - 1`.
+/// Handles one level of nesting — enough for the `Definition (outer
+/// (nested) thing)` edge case without a full paren stack.
+fn find_matching_close(bytes: &[u8], start: usize) -> Option<usize> {
+    let mut depth: i32 = 1;
+    let mut i = start;
+    while i < bytes.len() {
+        match bytes[i] {
+            b'(' => depth += 1,
+            b')' => {
+                depth -= 1;
+                if depth == 0 {
+                    return Some(i);
+                }
+            },
+            b'\n' => return None, // definitions don't span paragraphs
+            _ => {},
+        }
+        i += 1;
+    }
+    None
+}
+
+/// Trim to the phrase immediately preceding the opening `(` — walk
+/// back to the nearest sentence terminator, colon, or newline so that
+/// a prior sentence cannot be mistaken for the expansion.
+fn trim_to_definition_head(before: &str) -> &str {
+    let cut = before
+        .rfind(['.', '!', '?', ':', '\n'])
+        .map_or(0, |i| i + 1);
+    before[cut..].trim()
+}
+
+/// Does `text` contain at least two whitespace-separated tokens that
+/// start with an alphabetic character? Short parenthetical notes like
+/// `(yes)`, `(TBD)`, `(check later)` with fewer than two alpha words
+/// fail this test, preventing spurious "definitions".
+fn has_two_alpha_words(text: &str) -> bool {
+    text.split_whitespace()
+        .filter(|w| w.chars().next().is_some_and(char::is_alphabetic))
+        .count()
+        >= 2
 }
 
 /// Iterate uppercase acronym-shaped tokens in `text`, yielding
@@ -276,8 +421,10 @@ fn build_diagnostic(
     let length = u32::try_from(token.chars().count()).unwrap_or(u32::MAX);
     let location = Location::new(source.clone(), line, column, length);
     let message = format!(
-        "Acronym \"{token}\" is not whitelisted. Define it on first use, e.g. \"{token} \
-         (Full Expansion)\"."
+        "Acronym \"{token}\" is not defined and not whitelisted. Define it on first use \
+         — e.g. \"Full Expansion ({token})\" or \"{token} (Full Expansion)\" — or add it \
+         to `[rules.unexplained-abbreviation].whitelist` in `lucid-lint.toml` for \
+         project-wide terms."
     );
     let diag = Diagnostic::new(
         UnexplainedAbbreviation::ID,
@@ -393,6 +540,77 @@ mod tests {
         let doc = parse_plain("Send it through the ZQX.", SourceFile::Anonymous);
         let diags = UnexplainedAbbreviation::new(cfg).check(&doc, Language::En);
         assert!(diags.is_empty());
+    }
+
+    // --- F9: two-pass definition detection ---
+
+    #[test]
+    fn definition_with_expansion_first_silences_rule() {
+        // "World Wide Web (WWW)" defines WWW → subsequent WWW silenced.
+        let text = "The World Wide Web (WWW) is huge. The WWW is everywhere.";
+        assert!(lint(text, Profile::Public).is_empty());
+    }
+
+    #[test]
+    fn definition_with_acronym_first_silences_rule() {
+        // "WWW (World Wide Web)" also counts.
+        let text = "WWW (World Wide Web) powers the internet. WWW is universal.";
+        assert!(lint(text, Profile::Public).is_empty());
+    }
+
+    #[test]
+    fn definition_silences_even_prior_occurrences() {
+        // Definition-anywhere → doc-scoped silencing. A reader who hits
+        // "WWW" on line 1 can scroll to line 2's expansion.
+        let text = "The WWW is everywhere. Note: WWW (World Wide Web).";
+        assert!(lint(text, Profile::Public).is_empty());
+    }
+
+    #[test]
+    fn short_parenthetical_note_is_not_a_definition() {
+        // "(TBD)" is too short — must not count as a definition of ZQX.
+        let text = "The ZQX (TBD). Later the ZQX acts up.";
+        let diags = lint(text, Profile::Public);
+        assert_eq!(diags.len(), 2);
+    }
+
+    #[test]
+    fn definition_does_not_carry_across_sentence_boundary_on_the_left() {
+        // "A prior sentence. Other text (ZQX)" must NOT count as a
+        // definition of ZQX — the expansion candidate is only the
+        // current sentence's leading words, not everything before.
+        let text = "A prior sentence. Foo (ZQX). Use ZQX elsewhere.";
+        let diags = lint(text, Profile::Public);
+        // "Foo" alone is one word — not enough for a definition.
+        assert_eq!(diags.len(), 2);
+    }
+
+    // --- F31: narrowed baseline + additive user whitelist ---
+
+    #[test]
+    fn baseline_no_longer_ships_accessibility_acronyms() {
+        // WCAG was in the pre-F31 tech whitelist; now it must be flagged
+        // in dev-doc unless the user restored it.
+        let diags = lint("Follow WCAG guidelines.", Profile::DevDoc);
+        assert_eq!(diags.len(), 1);
+        assert!(diags[0].message.contains("WCAG"));
+    }
+
+    #[test]
+    fn baseline_still_ships_web_stack() {
+        // URL/HTML/HTTP/API remain in the baseline — F31 only removed
+        // domain-specific initialisms.
+        assert!(lint("The HTTP URL hits an API.", Profile::DevDoc).is_empty());
+    }
+
+    #[test]
+    fn with_extra_whitelist_restores_project_acronyms() {
+        let rule = UnexplainedAbbreviation::new(
+            Config::for_profile(Profile::DevDoc)
+                .with_extra_whitelist(vec!["WCAG".to_string(), "ARIA".to_string()]),
+        );
+        let doc = parse_plain("WCAG and ARIA apply.", SourceFile::Anonymous);
+        assert!(rule.check(&doc, Language::En).is_empty());
     }
 
     #[test]

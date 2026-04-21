@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Definition-aware `unexplained-abbreviation` + project whitelist
+  (F9 + F31)** — the rule is now two-pass. A pre-scan collects
+  acronyms defined in the document in either canonical form
+  (`Full Expansion (ACRONYM)` or `ACRONYM (Full Expansion)`) and a
+  single definition anywhere in the document silences every
+  occurrence of the same acronym. The parenthesised half of a
+  definition must contain at least two alphabetic words, so
+  throwaway notes like `(TBD)` or `(check later)` do not count.
+  Paired with F31: the shipped `dev-doc` baseline whitelist is
+  narrowed to the ubiquitous infrastructure stack (`URL`, `HTML`,
+  `API`, `CPU`, `IDE`, …). Accessibility standards (`WCAG`, `ARIA`,
+  `RGAA`, …), engineering-practice initialisms (`YAGNI`, `DRY`,
+  `TDD`, …), and AI/language-tech terms (`LLM`, `NLP`) are no longer
+  part of the baseline. Projects that use them add them to
+  `[rules.unexplained-abbreviation].whitelist` in `lucid-lint.toml`
+  — user entries are additive over the baseline. Silencing
+  precedence is now `defined-in-doc → user whitelist → baseline`.
+  See [`docs/src/rules/unexplained-abbreviation.md`](docs/src/rules/unexplained-abbreviation.md).
+
 - **Config-based diagnostic ignores (F19)** — new top-level
   `[[ignore]]` array-of-tables in `lucid-lint.toml` silences every
   diagnostic with the matching `rule_id`, across Markdown, plain
@@ -229,6 +248,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Breaking — `unexplained-abbreviation` baseline whitelist (F31).**
+  Removed from the shipped `dev-doc` defaults: `WCAG`, `WAI`, `ARIA`,
+  `RGAA`, `EAA`, `FALC`, `AA`, `AAA`, `ADHD`, `LLM`, `NLP`, `YAGNI`,
+  `DRY`, `KISS`, `SOLID`, `TDD`, `BDD`, `MVP`, `WASM`, `MIT`, `LRU`.
+  Projects that relied on these being built-in must add them to
+  `[rules.unexplained-abbreviation].whitelist` in `lucid-lint.toml`
+  to restore the previous behaviour. The diagnostic message now
+  names the TOML field so the fix is self-evident. See
+  [`lucid-lint.toml`](lucid-lint.toml) at the repo root for the
+  full dogfood list lucid-lint uses on its own docs.
 - **Breaking — `Category` remap.** The six v0.1 variants collapse to
   five: `length` / `structure` → `Structure`, `rhythm` → `Rhythm`,
   `lexical` → `Lexicon`, `style` / `repetitive-connectors` → `Syntax` /

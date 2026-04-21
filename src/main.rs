@@ -45,8 +45,16 @@ fn run_check(args: CheckArgs) -> Result<ExitCode> {
         .map(|c| c.scoring.clone().into_scoring_config())
         .unwrap_or_default();
 
+    let unexplained_whitelist = match file_config.as_ref() {
+        Some(c) => c
+            .unexplained_abbreviation_whitelist()
+            .map_err(|e| anyhow::anyhow!("{e}"))?,
+        None => Vec::new(),
+    };
+
     let engine = Engine::with_profile_and_conditions(profile, &conditions)
         .with_readability_formula(formula)
+        .with_unexplained_whitelist(unexplained_whitelist)
         .with_scoring_config(scoring_config.clone());
 
     let exclude_matcher = build_exclude_matcher(&args.exclude, file_config.as_ref())?;

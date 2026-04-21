@@ -152,6 +152,41 @@ impl Config {
         }
     }
 
+    /// Extract the `[rules.unexplained-abbreviation].whitelist` field
+    /// when present. Returns an empty list if the sub-table or field is
+    /// missing, and an error if the field exists but is not an array
+    /// of strings (typo-guarding).
+    ///
+    /// # Errors
+    ///
+    /// Returns [`ConfigError::Parse`] if `whitelist` is present but not
+    /// an array of strings.
+    pub fn unexplained_abbreviation_whitelist(&self) -> Result<Vec<String>, ConfigError> {
+        let Some(sub) = self.rules.entries.get("unexplained-abbreviation") else {
+            return Ok(Vec::new());
+        };
+        let Some(value) = sub.get("whitelist") else {
+            return Ok(Vec::new());
+        };
+        let Some(array) = value.as_array() else {
+            return Err(ConfigError::Parse(format!(
+                "[rules.unexplained-abbreviation].whitelist must be an array of strings, got {}",
+                value.type_str()
+            )));
+        };
+        let mut out = Vec::with_capacity(array.len());
+        for (idx, entry) in array.iter().enumerate() {
+            let Some(s) = entry.as_str() else {
+                return Err(ConfigError::Parse(format!(
+                    "[rules.unexplained-abbreviation].whitelist[{idx}] must be a string, got {}",
+                    entry.type_str()
+                )));
+            };
+            out.push(s.to_string());
+        }
+        Ok(out)
+    }
+
     /// Extract the `[rules.readability-score].formula` field when
     /// present. Returns `None` if the sub-table or field is missing,
     /// and an error if the field exists but is not a recognised string
@@ -489,6 +524,58 @@ weasel-words = 2
         assert_eq!(runtime.category_max, crate::scoring::DEFAULT_CATEGORY_MAX);
         assert_eq!(runtime.category_cap, crate::scoring::DEFAULT_CATEGORY_CAP);
         assert!(runtime.weight_overrides.is_empty());
+    }
+
+    #[test]
+    fn unexplained_whitelist_defaults_to_empty() {
+        let config = Config::from_toml_str("").unwrap();
+        assert!(config
+            .unexplained_abbreviation_whitelist()
+            .unwrap()
+            .is_empty());
+    }
+
+    #[test]
+    fn unexplained_whitelist_parses_array_of_strings() {
+        let config = Config::from_toml_str(
+            r#"
+[rules.unexplained-abbreviation]
+whitelist = ["WCAG", "ARIA", "ADHD"]
+"#,
+        )
+        .unwrap();
+        let list = config.unexplained_abbreviation_whitelist().unwrap();
+        assert_eq!(list, vec!["WCAG", "ARIA", "ADHD"]);
+    }
+
+    #[test]
+    fn unexplained_whitelist_rejects_non_array() {
+        let config = Config::from_toml_str(
+            r#"
+[rules.unexplained-abbreviation]
+whitelist = "WCAG"
+"#,
+        )
+        .unwrap();
+        assert!(matches!(
+            config.unexplained_abbreviation_whitelist(),
+            Err(ConfigError::Parse(_))
+        ));
+    }
+
+    #[test]
+    fn unexplained_whitelist_rejects_non_string_entry() {
+        let config = Config::from_toml_str(
+            r#"
+[rules.unexplained-abbreviation]
+whitelist = ["WCAG", 42]
+"#,
+        )
+        .unwrap();
+        assert!(matches!(
+            config.unexplained_abbreviation_whitelist(),
+            Err(ConfigError::Parse(_))
+        ));
     }
 
     #[test]

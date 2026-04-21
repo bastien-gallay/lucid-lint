@@ -10,6 +10,7 @@ use crate::config::Profile;
 use crate::language::{default_language, detect_language};
 use crate::parser::{parse_markdown, parse_plain, word_count};
 use crate::rules::readability_score::{self, FormulaChoice, ReadabilityScore};
+use crate::rules::unexplained_abbreviation::{self, UnexplainedAbbreviation};
 use crate::rules::{default_rules, filter_by_conditions, Rule};
 use crate::scoring::{self, Scorecard, ScoringConfig};
 use crate::types::{Diagnostic, Language, SourceFile};
@@ -94,6 +95,30 @@ impl Engine {
                 let config =
                     readability_score::Config::for_profile(self.profile).with_formula(formula);
                 *rule = Box::new(ReadabilityScore::new(config));
+                break;
+            }
+        }
+        self
+    }
+
+    /// Extend the [`UnexplainedAbbreviation`] rule's user whitelist
+    /// with project-specific entries (F31). The extras are additive
+    /// over the profile baseline — callers typically use this to
+    /// restore the narrower acronyms that F31 moved out of the shipped
+    /// `dev-doc` baseline (`WCAG`, `ARIA`, `ADHD`, `LLM`, …).
+    ///
+    /// If the rule set does not currently include an
+    /// `unexplained-abbreviation` rule, this is a no-op.
+    #[must_use]
+    pub fn with_unexplained_whitelist(mut self, extra: Vec<String>) -> Self {
+        if extra.is_empty() {
+            return self;
+        }
+        for rule in &mut self.rules {
+            if rule.id() == UnexplainedAbbreviation::ID {
+                let config = unexplained_abbreviation::Config::for_profile(self.profile)
+                    .with_extra_whitelist(extra);
+                *rule = Box::new(UnexplainedAbbreviation::new(config));
                 break;
             }
         }

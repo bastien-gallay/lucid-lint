@@ -1,0 +1,70 @@
+## `lucid-lint` self-lint configuration
+##
+## F31 narrowed the shipped `dev-doc` baseline whitelist to the
+## ubiquitous infrastructure stack (HTTP, API, CPU, …). This file
+## restores the project-specific acronyms that lucid-lint's own
+## documentation uses — accessibility standards, engineering-practice
+## initialisms, and AI/language-tech terms — so `just dogfood` stays
+## clean without the tool having to special-case itself.
+
+[default]
+profile = "dev-doc"
+
+[rules.unexplained-abbreviation]
+whitelist = [
+    # Accessibility standards
+    "WCAG",
+    "WAI",
+    "ARIA",
+    "RGAA",
+    "EAA",
+    "FALC",
+    "AA",
+    "AAA",
+    "ADHD",
+    "BDA",
+    "CDC",
+    "CCI",
+    "IFLA",
+    # AI / language technology
+    "LLM",
+    "NLP",
+    "POS",
+    "TTS",
+    "TTR",
+    "COCA",
+    # Engineering-practice initialisms
+    "YAGNI",
+    "DRY",
+    "KISS",
+    "SOLID",
+    "TDD",
+    "BDD",
+    "MVP",
+    "CUPID",
+    # Documentation terminology (appears unquoted in rule prose)
+    "ALL",
+    "CAPS",
+    "ASCII",
+    "CSV",
+    "INI",
+    "CDN",
+    "OSS",
+    "RDJSON",
+    "SMOG",
+    "ROADMAP",
+    "WOFF2",
+    "SIL",
+    "OFL",
+    # Project-internal
+    "SARIF",
+    "MD001",
+    "MD007",
+    "RFC",
+    "WASM",
+    "MIT",
+    "LRU",
+    "TOML",
+    "YAML",
+    "LSP",
+]
