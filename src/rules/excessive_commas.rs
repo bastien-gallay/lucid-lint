@@ -12,7 +12,7 @@ use std::num::NonZeroU32;
 
 use crate::config::Profile;
 use crate::parser::{split_sentences, Document};
-use crate::rules::enumeration::enumeration_comma_count;
+use crate::rules::enumeration::{enumeration_comma_count, parenthesised_list_comma_count};
 use crate::rules::Rule;
 use crate::types::{Diagnostic, Language, Location, Severity, SourceFile};
 
@@ -78,8 +78,14 @@ impl Rule for ExcessiveCommas {
                     // Discount commas that belong to a recognized inline
                     // enumeration: those are style questions for the
                     // `long-enumeration` rule, not subordination load.
+                    // Parenthesised token lists `(A, B, C, …)` are
+                    // discounted too — the Oxford detector misses them
+                    // and they dominate doc-prose FPs (F22).
                     let enum_commas = enumeration_comma_count(&sentence.text, language);
-                    let count = total.saturating_sub(enum_commas);
+                    let paren_commas = parenthesised_list_comma_count(&sentence.text);
+                    let count = total
+                        .saturating_sub(enum_commas)
+                        .saturating_sub(paren_commas);
                     if count > max {
                         Some(build_diagnostic(
                             &document.source,
@@ -212,6 +218,29 @@ mod tests {
         let text = "First, second, third, fourth, tail.";
         let diags = lint(text, Profile::Public);
         assert_eq!(diags[0].category(), crate::types::Category::Structure);
+    }
+
+    #[test]
+    fn parenthesised_token_list_is_discounted() {
+        // 6 raw commas, but 5 of them sit inside two parenthesised token
+        // lists — the effective subordination count is 1, well under the
+        // dev-doc threshold of 4.
+        let text = "Numerals come in digit form (`1`, `2`, `3`) and spelled form \
+                    (`one`, `two`, `three`, `four`), matching behavior.";
+        assert!(lint(text, Profile::DevDoc).is_empty());
+    }
+
+    #[test]
+    fn parenthesised_list_plus_subordination_still_triggers() {
+        // 3 paren commas discounted, but 4 subordination commas remain,
+        // pushing above the dev-doc threshold of 4.
+        // 8 raw commas total: 3 inside the paren list (discounted), 5 in
+        // surrounding subordinate clauses. Net 5 > DevDoc threshold 4.
+        let text = "Although we listed the colours (red, green, blue, yellow) in the brief, \
+                    the team decided, after much debate among stakeholders, to revise the palette, \
+                    before shipping, despite the tight deadline.";
+        let diags = lint(text, Profile::DevDoc);
+        assert!(!diags.is_empty());
     }
 
     #[test]

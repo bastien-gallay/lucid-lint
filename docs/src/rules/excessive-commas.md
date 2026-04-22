@@ -18,7 +18,7 @@ Sentences whose comma count exceeds a per-profile ceiling. The comma is the most
 
 Count commas per sentence, report those above `max_commas`.
 
-**Interaction.** When [`long-enumeration`](./long-enumeration.md) fires on the same sentence, this rule is suppressed for that sentence to avoid double-reporting. The shared enumeration detector also discounts Oxford-style enumeration commas (3+ short items).
+**Interaction.** When [`long-enumeration`](./long-enumeration.md) fires on the same sentence, this rule is suppressed for that sentence to avoid double-reporting. The shared enumeration detector also discounts Oxford-style enumeration commas (3+ short items) and commas inside `(A, B, C, …)` parenthesised token lists (3+ short comma-separated segments inside balanced parens) — both discounts are language-agnostic.
 
 ## Parameters
 
@@ -28,7 +28,7 @@ Count commas per sentence, report those above `max_commas`.
 
 ## Known false positives
 
-Technical prose enumerating short items still fires; context-aware relaxations (parentheticals, post-colon short lists, non-Oxford enumerations) are tracked as **[F22](../roadmap.md)** in the [roadmap](../roadmap.md).
+Parenthesised token lists `(A, B, C, …)` are now discounted (F22 first slice). Remaining false positives mostly come from bare comma-separated lists with 3+-word items (`as long as`, `as soon as`) and non-Oxford or "plus"-closed lists; these are tracked as **[F22](../roadmap.md)** in the [roadmap](../roadmap.md) for a v0.3 slice.
 
 ## Suppression
 

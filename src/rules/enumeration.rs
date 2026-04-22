@@ -113,6 +113,75 @@ pub fn enumeration_comma_count(sentence: &str, language: Language) -> u32 {
         .sum()
 }
 
+/// Count commas inside `(A, B, C, …)` parenthesised token lists.
+///
+/// Recognises three or more short comma-separated segments inside a
+/// balanced pair of parentheses. Language-agnostic: parens behave the
+/// same in EN and FR, and no connector word is required.
+///
+/// Used by `excessive-commas` as a second discount source alongside
+/// [`enumeration_comma_count`], to suppress the dominant FP driver on
+/// doc prose (F22): backticked identifier lists, example enumerations,
+/// and other "aside" lists that the Oxford-only detector never sees.
+///
+/// Only the outermost parenthesised run is considered — nested parens
+/// disqualify the containing span to keep the heuristic conservative.
+#[must_use]
+pub fn parenthesised_list_comma_count(sentence: &str) -> u32 {
+    let bytes = sentence.as_bytes();
+    let mut total: u32 = 0;
+    let mut i = 0;
+    while i < bytes.len() {
+        if bytes[i] != b'(' {
+            i += 1;
+            continue;
+        }
+        let start = i + 1;
+        let mut depth = 1usize;
+        let mut j = start;
+        while j < bytes.len() {
+            match bytes[j] {
+                b'(' => depth += 1,
+                b')' => {
+                    depth -= 1;
+                    if depth == 0 {
+                        break;
+                    }
+                },
+                _ => {},
+            }
+            j += 1;
+        }
+        if depth != 0 {
+            // Unbalanced parenthesis: give up on the rest of the sentence.
+            break;
+        }
+        let inner = &sentence[start..j];
+        if !inner.contains('(') {
+            total = total.saturating_add(parenthesised_run_comma_count(inner));
+        }
+        i = j + 1;
+    }
+    total
+}
+
+fn parenthesised_run_comma_count(inner: &str) -> u32 {
+    let segments: Vec<&str> = inner.split(',').collect();
+    if segments.len() < MIN_ITEMS_FOR_DETECTION as usize {
+        return 0;
+    }
+    // Empty segments are accepted: the markdown parser strips inline
+    // code contents, so `(`a`, `b`, `c`)` reaches us as `(, , )`. A
+    // surviving non-empty segment would still need to be short.
+    if !segments
+        .iter()
+        .all(|s| s.split_whitespace().count() <= MAX_SEGMENT_WORDS)
+    {
+        return 0;
+    }
+    u32::try_from(segments.len() - 1).unwrap_or(u32::MAX)
+}
+
 struct Segment {
     range: std::ops::Range<usize>,
 }
@@ -239,6 +308,60 @@ mod tests {
     fn unknown_language_disables_detection() {
         let s = "red, green, blue, and yellow";
         assert!(detect_enumerations(s, Language::Unknown).is_empty());
+    }
+
+    #[test]
+    fn parenthesised_list_counts_inner_commas() {
+        let s = "Pick a colour (red, green, blue, yellow) for the frame.";
+        assert_eq!(parenthesised_list_comma_count(s), 3);
+    }
+
+    #[test]
+    fn parenthesised_list_needs_three_segments() {
+        // Two-item parens are asides, not lists.
+        let s = "The pair (foo, bar) matters.";
+        assert_eq!(parenthesised_list_comma_count(s), 0);
+    }
+
+    #[test]
+    fn parenthesised_list_rejects_long_segments() {
+        // One segment has > MAX_SEGMENT_WORDS words.
+        let s = "See (red, a very long qualifying clause here, blue, yellow).";
+        assert_eq!(parenthesised_list_comma_count(s), 0);
+    }
+
+    #[test]
+    fn parenthesised_list_ignores_nested_parens() {
+        // Nested parens disqualify the containing span.
+        let s = "See (red, green (emerald), blue, yellow) here.";
+        assert_eq!(parenthesised_list_comma_count(s), 0);
+    }
+
+    #[test]
+    fn parenthesised_list_ignores_unbalanced_parens() {
+        let s = "See (red, green, blue here.";
+        assert_eq!(parenthesised_list_comma_count(s), 0);
+    }
+
+    #[test]
+    fn parenthesised_list_handles_multiple_runs() {
+        let s = "Digits (`1`, `2`, `3`) and spellings (`one`, `two`, `three`) differ.";
+        assert_eq!(parenthesised_list_comma_count(s), 4);
+    }
+
+    #[test]
+    fn parenthesised_list_counts_empty_segments_from_stripped_code() {
+        // The markdown parser drops inline code contents, so
+        // `(`a`, `b`, `c`, `d`)` reaches rules as `(, , , )`.
+        let s = "The tokens (, , , ) are listed.";
+        assert_eq!(parenthesised_list_comma_count(s), 3);
+    }
+
+    #[test]
+    fn parenthesised_list_is_language_agnostic() {
+        // Same sentence shape, no connector word — both languages see it.
+        let s = "Voyelles (`a`, `e`, `i`, `o`, `u`) courantes.";
+        assert_eq!(parenthesised_list_comma_count(s), 4);
     }
 
     #[test]

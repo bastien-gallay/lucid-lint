@@ -296,6 +296,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **TTY output** appends one colorized `score:` line after the existing
   summary, followed by all five per-category scores in fixed order.
 
+### Fixed
+
+- **`excessive-commas` parenthesised-list discount (F22 first
+  slice)** — the rule now discounts commas inside `(A, B, C, …)`
+  parenthesised token lists in addition to Oxford enumerations. A
+  new sibling helper `parenthesised_list_comma_count` in
+  `src/rules/enumeration.rs` recognises any balanced paren span
+  holding three or more short comma-separated segments, accepting
+  empty segments too so that markdown inline code (stripped by the
+  parser) stays recognisable as `(, , , )`. Language-agnostic, no
+  config change, no threshold change. Drops this repo's own dogfood
+  `excessive-commas` hit count from 25 to 15 (about 40% FP
+  reduction). Non-parenthesised bare lists with 3+-word items
+  (`as long as`, `as soon as`) and other surfaces stay flagged —
+  they are explicitly deferred to v0.3 per
+  `.personal/research/F22.md`.
+
 ### Still in flight (v0.2)
 
 - **SARIF v2.1.0 output** for GitHub Code Scanning (F32).
