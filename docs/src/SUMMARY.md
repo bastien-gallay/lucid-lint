@@ -52,4 +52,10 @@
 - [Roadmap](./roadmap.md)
 - [Accessibility](./accessibility.md)
 - [Contributing](./contributing.md)
-- [Version française](./fr/index.md)
+
+# Version française
+
+- [Introduction](./fr/index.md)
+- [Référence des règles](./fr/rules-index.md)
+- [Feuille de route](./fr/roadmap.md)
+- [Accessibilité](./fr/accessibility.md)

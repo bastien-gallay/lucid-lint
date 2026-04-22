@@ -201,7 +201,7 @@ grounding).
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F25 | French mirror of the mdBook docs (`/fr/` tree) — until then, the header EN/FR switch links to a "French version — coming in v0.2" stub | 🔴 Next | v0.1 docs `/shape` session, bilingual-equality prime directive |
+| F25 | French mirror of the mdBook docs (`/fr/` tree). First slice shipped 2026-04-22: translated `introduction` + `rules-index`, short FR `accessibility` and `roadmap` pages pointing at EN, SUMMARY sidebar entry. Per-rule FR pages still pending. | 🟡 In progress | v0.1 docs `/shape` session, bilingual-equality prime directive |
 
 ### Docs site — content
 

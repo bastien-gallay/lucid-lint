@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **French docs mirror — skeleton + home (F25 first slice)** — the
+  `docs/src/fr/` tree now carries a translated `introduction` (the
+  prior stub is gone) plus a translated `rules-index` that mirrors
+  the EN rules overview. Short `accessibility.md` and `roadmap.md`
+  FR pages point readers to the full EN versions for now. A new
+  "Version française" section in `SUMMARY.md` surfaces the FR pages
+  in the sidebar. The `fr/` tree stays depth-2 to satisfy the
+  `docs_links_stay_inside_docs` coverage rule. Per-rule FR pages
+  stay in F25 for later slices.
 - **`weasel-words` false-positive cleanup (F23 completion)** —
   hits inside straight `"..."` or paired curly `"..."` quotes are
   now skipped, joining the inline-code-span and directional-pair
