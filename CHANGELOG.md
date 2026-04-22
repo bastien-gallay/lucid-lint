@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`--fail-on-warning` is now toggleable, plus a `--no-fail-on-warning`
+  mirror (F80).** The flag used to be a bare switch with
+  `default_value_t = true`, which meant there was no CLI path to
+  turn it off — `--fail-on-warning=false` raised a usage error and
+  `--no-fail-on-warning` was unrecognised. It now accepts an
+  optional boolean value (`--fail-on-warning`,
+  `--fail-on-warning=true`, `--fail-on-warning=false`) and a hidden
+  `--no-fail-on-warning` mirror shortcut. If both forms are passed
+  on the same invocation, `--no-fail-on-warning` wins. This unblocks
+  CI callers who want their gate to depend purely on `--min-score`
+  — set the score floor, let the warning count inform the review,
+  don't fail the build on warnings alone.
 - **Server-rendered skip link and language switch (F35a)** — the
   mdBook theme now forks upstream `index.hbs` (minimal-diff against
   mdBook v0.5.2) and emits the WCAG 2.4.1 "skip to content" anchor

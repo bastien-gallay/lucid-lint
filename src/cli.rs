@@ -130,9 +130,30 @@ pub(crate) struct CheckArgs {
     #[arg(long, value_enum, default_value = "auto")]
     pub(crate) banner: CliBannerPolicy,
 
-    /// Exit with code 1 if any warnings are found.
-    #[arg(long, default_value_t = true)]
+    /// Exit with code 1 if any warnings are found (default: `true`).
+    ///
+    /// Accepts `--fail-on-warning`, `--fail-on-warning=true`, or
+    /// `--fail-on-warning=false`. The mirror `--no-fail-on-warning`
+    /// is equivalent to `--fail-on-warning=false`. Disabling is
+    /// useful when the CI gate should depend purely on `--min-score`
+    /// — set the score floor, let the warning count inform the
+    /// review, don't fail the build on warnings alone (F80). If both
+    /// forms are passed on the same invocation, `--no-fail-on-warning`
+    /// wins.
+    #[arg(
+        long,
+        default_value_t = true,
+        num_args = 0..=1,
+        require_equals = true,
+        default_missing_value = "true",
+        value_parser = clap::builder::BoolishValueParser::new(),
+    )]
     pub(crate) fail_on_warning: bool,
+
+    /// Disable-side mirror of `--fail-on-warning` (F80). Hidden from
+    /// `--help` because it is documented on the main flag.
+    #[arg(long = "no-fail-on-warning", hide = true)]
+    pub(crate) no_fail_on_warning: bool,
 
     /// Fail (exit 1) if the aggregate document score is below this threshold.
     ///
@@ -368,6 +389,31 @@ mod tests {
             ),
             Command::Explain(_) => unreachable!("expected Check, got Explain"),
         }
+    }
+
+    #[test]
+    fn fail_on_warning_flag_forms_round_trip() {
+        // Bare flag: defaults to true.
+        let a = Cli::try_parse_from(["lucid-lint", "check", "file.md"])
+            .unwrap()
+            .command;
+        let Command::Check(a) = a else { unreachable!() };
+        assert!(a.fail_on_warning);
+        assert!(!a.no_fail_on_warning);
+
+        // `--fail-on-warning=false` disables via the main flag (F80).
+        let a = Cli::try_parse_from(["lucid-lint", "check", "--fail-on-warning=false", "file.md"])
+            .unwrap()
+            .command;
+        let Command::Check(a) = a else { unreachable!() };
+        assert!(!a.fail_on_warning);
+
+        // `--no-fail-on-warning` disables via the mirror flag (F80).
+        let a = Cli::try_parse_from(["lucid-lint", "check", "--no-fail-on-warning", "file.md"])
+            .unwrap()
+            .command;
+        let Command::Check(a) = a else { unreachable!() };
+        assert!(a.no_fail_on_warning);
     }
 
     #[test]

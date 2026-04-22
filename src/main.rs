@@ -157,7 +157,11 @@ fn run_check(args: CheckArgs) -> Result<ExitCode> {
         .iter()
         .any(|d| matches!(d.severity, Severity::Warning | Severity::Error));
 
-    let severity_fail = args.fail_on_warning && has_warning_or_above;
+    // F80: `--no-fail-on-warning` forces the gate off regardless of
+    // whether `--fail-on-warning[=true]` is also present. Both forms
+    // on the same invocation → disable wins, per the flag docs.
+    let fail_on_warning = args.fail_on_warning && !args.no_fail_on_warning;
+    let severity_fail = fail_on_warning && has_warning_or_above;
     let score_fail = args
         .min_score
         .is_some_and(|min| scorecard.global.value < min);

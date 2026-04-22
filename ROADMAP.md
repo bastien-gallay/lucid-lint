@@ -101,6 +101,14 @@ precisely to absorb per-rule polish and per-surface slices.
   server-rendered. WCAG 2.4.1 Bypass Blocks passes with JS disabled.
 - **F35d** ✅ shipped 2026-04-22 — accessibility statement page
   landed with the F29-slim commit.
+- **F80** ✅ shipped 2026-04-22 — `--fail-on-warning` now accepts
+  an optional boolean value (`--fail-on-warning=true|false`, with
+  `default_value_t = true` and `default_missing_value = "true"` so
+  the bare flag keeps the historical "enable" meaning) and a hidden
+  mirror `--no-fail-on-warning` is available as the disable-side
+  shortcut. If both forms are passed on the same invocation,
+  `--no-fail-on-warning` wins. `--min-score` can now be tested in
+  isolation on documents that produce warnings.
 
 **0.2.x (patch cycle, post-release):**
 
