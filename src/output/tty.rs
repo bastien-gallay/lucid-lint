@@ -166,7 +166,11 @@ fn render_diagnostics_block(diagnostics: &[Diagnostic], options: TtyOptions) -> 
             let _ = writeln!(out, "{}", summary(diagnostics, options.color_mode));
         }
         if options.explain_hint {
-            let _ = writeln!(out, "{}", explain_hint_line(options.color_mode));
+            let _ = writeln!(
+                out,
+                "{}",
+                explain_hint_line(diagnostics, options.color_mode)
+            );
         }
     }
     out
@@ -220,14 +224,30 @@ fn format_cluster(
 ) {
     let severity = members[0].severity;
     let count = members.len();
-    let severity_word = plural_severity(severity, count);
+    let coloured_count = severity_colour(severity, &count.to_string(), color_mode);
+
+    // Hoist a section shared by every row to the header.
+    let shared_section = shared_section(members);
+    let header_section = shared_section
+        .as_deref()
+        .map(|s| format!(" {}", dim(&format!("[section: {s}]"), color_mode)))
+        .unwrap_or_default();
+
     let header = format!(
-        "{} · {count} {severity_word} in {} · {}",
+        "{} {} · {} · {}{}",
         severity_label(severity, color_mode),
         bold(file, color_mode),
+        coloured_count,
         dim(&format!("[{rule_id}]"), color_mode),
+        header_section,
     );
     let _ = writeln!(out, "{header}");
+
+    // Hoist a message shared by every row to a dim line under the header.
+    let shared_message = shared_message(members);
+    if let Some(msg) = shared_message.as_deref() {
+        let _ = writeln!(out, "        {}", dim(msg, color_mode));
+    }
 
     let max_loc = members
         .iter()
@@ -244,18 +264,58 @@ fn format_cluster(
         // Measure padding on the plain string; colour escapes would
         // otherwise count toward width and short-pad coloured runs.
         let pad = " ".repeat(max_loc - loc.chars().count());
-        let section_suffix = diag
-            .section
-            .as_deref()
-            .map(|s| format!(" [section: {s}]"))
-            .unwrap_or_default();
-        let _ = writeln!(
-            out,
-            "  {}{pad}  {}{}",
-            bold(&loc, color_mode),
-            diag.message,
-            dim(&section_suffix, color_mode),
-        );
+
+        let per_row_section = if shared_section.is_some() {
+            None
+        } else {
+            diag.section
+                .as_deref()
+                .map(|s| dim(&format!("[section: {s}]"), color_mode))
+        };
+
+        let body = if shared_message.is_some() {
+            // Message is hoisted: the row carries only the location (+ section
+            // when it varies). Use a 2-space gap before the section so the
+            // row rhythm matches the message-present case.
+            per_row_section
+                .map(|s| format!("  {s}"))
+                .unwrap_or_default()
+        } else {
+            // Message stays on the row. Section, when varied, trails behind
+            // with a single-space gap, as in the flat diagnostic line.
+            let section_suffix = per_row_section.map(|s| format!(" {s}")).unwrap_or_default();
+            format!("  {}{}", diag.message, section_suffix)
+        };
+
+        let _ = writeln!(out, "  {}{pad}{}", bold(&loc, color_mode), body);
+    }
+}
+
+/// Return the message string shared by every row, or `None` if they differ.
+fn shared_message(members: &[&Diagnostic]) -> Option<String> {
+    let first = members.first()?;
+    if members.iter().all(|m| m.message == first.message) {
+        Some(first.message.clone())
+    } else {
+        None
+    }
+}
+
+/// Return the section shared by every row, or `None` if absent or mixed.
+fn shared_section(members: &[&Diagnostic]) -> Option<String> {
+    let first = members.first()?.section.as_deref()?;
+    if members.iter().all(|m| m.section.as_deref() == Some(first)) {
+        Some(first.to_string())
+    } else {
+        None
+    }
+}
+
+fn severity_colour(severity: Severity, text: &str, color_mode: ColorMode) -> String {
+    match severity {
+        Severity::Error => red(text, color_mode),
+        Severity::Warning => yellow(text, color_mode),
+        Severity::Info => dim(text, color_mode),
     }
 }
 
@@ -342,13 +402,43 @@ fn summary(diagnostics: &[Diagnostic], color_mode: ColorMode) -> String {
     }
 }
 
-fn explain_hint_line(color_mode: ColorMode) -> String {
-    let text = format!("→ run 'lucid-lint explain <rule-id>' or see {DOCS_BASE}/rules/<rule-id>",);
+fn explain_hint_line(diagnostics: &[Diagnostic], color_mode: ColorMode) -> String {
+    let mut seen: Vec<&str> = Vec::new();
+    for diag in diagnostics {
+        if !seen.iter().any(|id| *id == diag.rule_id) {
+            seen.push(diag.rule_id.as_str());
+        }
+    }
+    let text = if seen.len() == 1 {
+        let id = seen[0];
+        format!("→ run 'lucid-lint explain {id}' or see {DOCS_BASE}/rules/{id}")
+    } else if seen.len() <= 3 {
+        let ids = seen.join(", ");
+        format!("→ run 'lucid-lint explain <rule-id>' — seen here: {ids}")
+    } else {
+        let ids = seen.iter().take(3).copied().collect::<Vec<_>>().join(", ");
+        let extra = seen.len() - 3;
+        format!("→ run 'lucid-lint explain <rule-id>' — seen here: {ids} + {extra} more")
+    };
     dim(&text, color_mode)
 }
 
-/// Number of blocks in each per-category sparkline bar.
-const BAR_BUCKETS: u32 = 5;
+/// Number of cells in each per-category sparkline bar.
+const BAR_CELLS: u32 = 5;
+
+/// Fill steps inside each bar cell. Combined with [`BAR_CELLS`] this
+/// gives 5 × 8 = 40 discrete bar states. A perfect score fills every
+/// cell with a full block; mid-range scores show a partial eighth-block
+/// at the transition so 10/20 (`██▌░░`) reads differently from 12/20
+/// (`███░░`).
+const BAR_STEPS_PER_CELL: u32 = 8;
+
+/// Glyph at each eighth-fill level from empty to full.
+const EIGHTHS: [char; 9] = [' ', '▏', '▎', '▍', '▌', '▋', '▊', '▉', '█'];
+
+/// Glyph used for an empty cell. Rendered dim so the filled cells read
+/// as the signal and the empty tail reads as the background.
+const EMPTY_CELL: char = '░';
 
 fn score_lines(scorecard: &Scorecard, color_mode: ColorMode) -> Vec<String> {
     let mut lines = vec![format!(
@@ -406,14 +496,26 @@ fn score_fragment_bold(score: Score, color_mode: ColorMode) -> String {
 
 fn bar(score: Score, color_mode: ColorMode) -> String {
     let ratio = ratio_of(score);
-    // `ratio` is clamped to `[0, 1]` by `ratio_of`, and `BAR_BUCKETS` is a
+    let total = BAR_CELLS * BAR_STEPS_PER_CELL;
+    // `ratio` is clamped to `[0, 1]` by `ratio_of`, and `total` is a
     // small positive constant, so the product after rounding is safely
     // representable as `u32`.
     #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
-    let filled = (ratio * f64::from(BAR_BUCKETS)).round() as u32;
-    let filled = filled.min(BAR_BUCKETS);
-    let filled_str: String = (0..filled).map(|_| '▇').collect();
-    let empty_str: String = (filled..BAR_BUCKETS).map(|_| '░').collect();
+    let filled_steps = (ratio * f64::from(total)).round() as u32;
+    let filled_steps = filled_steps.min(total);
+
+    let mut filled_str = String::new();
+    let mut empty_str = String::new();
+    let mut remaining = filled_steps;
+    for _ in 0..BAR_CELLS {
+        let take = remaining.min(BAR_STEPS_PER_CELL);
+        if take == 0 {
+            empty_str.push(EMPTY_CELL);
+        } else {
+            filled_str.push(EIGHTHS[take as usize]);
+        }
+        remaining = remaining.saturating_sub(take);
+    }
     format!(
         "{}{}",
         band_apply(ratio, &filled_str, color_mode),
@@ -570,8 +672,11 @@ mod tests {
             &card(std::slice::from_ref(&diag)),
             TtyOptions::new(ColorMode::Never),
         );
-        assert!(out.contains("lucid-lint explain <rule-id>"));
-        assert!(out.contains("https://bastien-gallay.github.io/lucid-lint/rules/<rule-id>"));
+        // Single-rule runs resolve the placeholder to the actual rule id.
+        assert!(out.contains("lucid-lint explain structure.sentence-too-long"));
+        assert!(out.contains(
+            "https://bastien-gallay.github.io/lucid-lint/rules/structure.sentence-too-long"
+        ));
     }
 
     #[test]
@@ -584,7 +689,7 @@ mod tests {
             &card(std::slice::from_ref(&diag)),
             opts,
         );
-        assert!(!out.contains("lucid-lint explain <rule-id>"));
+        assert!(!out.contains("lucid-lint explain"));
     }
 
     #[test]
@@ -626,7 +731,7 @@ mod tests {
     fn render_emits_sparkline_bars() {
         let out = render(&[], &card(&[]), TtyOptions::new(ColorMode::Never));
         assert!(
-            out.contains('▇') || out.contains('░'),
+            out.contains('█') || out.contains('░'),
             "expected at least one block glyph in output: {out}"
         );
     }
@@ -636,14 +741,14 @@ mod tests {
         let s = Score { value: 20, max: 20 };
         let rendered = bar(s, ColorMode::Never);
         assert_eq!(
-            rendered.matches('▇').count(),
+            rendered.matches('█').count(),
             5,
-            "expected 5 filled blocks, got: {rendered}"
+            "expected 5 full-block cells, got: {rendered}"
         );
         assert_eq!(
             rendered.matches('░').count(),
             0,
-            "expected 0 empty blocks, got: {rendered}"
+            "expected 0 empty cells, got: {rendered}"
         );
     }
 
@@ -652,14 +757,26 @@ mod tests {
         let s = Score { value: 0, max: 20 };
         let rendered = bar(s, ColorMode::Never);
         assert_eq!(
-            rendered.matches('▇').count(),
+            rendered.matches('█').count(),
             0,
-            "expected 0 filled blocks on zero, got: {rendered}"
+            "expected 0 full-block cells on zero, got: {rendered}"
         );
         assert_eq!(
             rendered.matches('░').count(),
             5,
-            "expected 5 empty blocks on zero, got: {rendered}"
+            "expected 5 empty cells on zero, got: {rendered}"
+        );
+    }
+
+    #[test]
+    fn bar_distinguishes_mid_range_scores_via_partial_cell() {
+        // 10/20 (50%) and 12/20 (60%) used to collapse to the same 5-bucket bar.
+        // With 8-step cells they must differ.
+        let a = bar(Score { value: 10, max: 20 }, ColorMode::Never);
+        let b = bar(Score { value: 12, max: 20 }, ColorMode::Never);
+        assert_ne!(
+            a, b,
+            "10/20 and 12/20 must render distinct bars: {a} vs {b}"
         );
     }
 
@@ -789,29 +906,81 @@ mod tests {
     fn cluster_rows_align_on_varying_location_widths() {
         use crate::types::{Location, SourceFile};
         let path = std::path::PathBuf::from("readme.md");
-        let make = |line: u32, col: u32| {
+        let make = |line: u32, col: u32, msg: &str| {
             Diagnostic::new(
                 "structure.line-length-wide",
                 Severity::Warning,
                 Location::new(SourceFile::Path(path.clone()), line, col, 0),
-                "Line is too wide.",
+                msg,
             )
         };
-        let diags = vec![make(3, 1), make(15, 120), make(333, 1)];
+        // Use varied messages so the cluster keeps them on the rows —
+        // shared messages are hoisted to the header and would short-circuit
+        // this alignment check.
+        let diags = vec![
+            make(3, 1, "Line at 3 is too wide."),
+            make(15, 120, "Line at 15 is too wide."),
+            make(333, 1, "Line at 333 is too wide."),
+        ];
         let out = render(&diags, &card(&diags), TtyOptions::new(ColorMode::Never));
 
-        // Every cluster row ends the location column at the same column
-        // before the `  ` double-space + message prefix.
+        // Every cluster row must place its message at the same column —
+        // the padded location + 2-space gutter guarantees alignment.
         let msg_offsets: Vec<usize> = out
             .lines()
-            .filter(|l| l.contains("Line is too wide"))
-            .map(|l| l.find("Line is too wide").unwrap())
+            .filter(|l| l.contains("is too wide"))
+            .map(|l| l.find("Line at").unwrap())
             .collect();
         assert_eq!(msg_offsets.len(), 3, "expected 3 cluster rows");
         let first = msg_offsets[0];
         assert!(
             msg_offsets.iter().all(|o| *o == first),
             "cluster message column misaligned: {msg_offsets:?}"
+        );
+    }
+
+    #[test]
+    fn cluster_hoists_shared_message_to_header() {
+        use crate::types::{Location, SourceFile};
+        let path = std::path::PathBuf::from("readme.md");
+        let make = |line: u32| {
+            Diagnostic::new(
+                "structure.line-length-wide",
+                Severity::Warning,
+                Location::new(SourceFile::Path(path.clone()), line, 1, 0),
+                "Line is too wide.",
+            )
+        };
+        let diags = vec![make(3), make(15), make(333)];
+        let out = render(&diags, &card(&diags), TtyOptions::new(ColorMode::Never));
+        // Shared message must appear exactly once — hoisted to the header.
+        assert_eq!(
+            out.matches("Line is too wide.").count(),
+            1,
+            "shared message must be hoisted, not repeated per row:\n{out}"
+        );
+    }
+
+    #[test]
+    fn cluster_hoists_shared_section_to_header() {
+        use crate::types::{Location, SourceFile};
+        let path = std::path::PathBuf::from("readme.md");
+        let make = |line: u32| {
+            Diagnostic::new(
+                "structure.line-length-wide",
+                Severity::Warning,
+                Location::new(SourceFile::Path(path.clone()), line, 1, 0),
+                format!("Line at {line} is too wide."),
+            )
+            .with_section("Introduction")
+        };
+        let diags = vec![make(3), make(15)];
+        let out = render(&diags, &card(&diags), TtyOptions::new(ColorMode::Never));
+        // Shared section must appear exactly once — hoisted to the header.
+        assert_eq!(
+            out.matches("[section: Introduction]").count(),
+            1,
+            "shared section must be hoisted, not repeated per row:\n{out}"
         );
     }
 
