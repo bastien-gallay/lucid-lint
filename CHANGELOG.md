@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Server-rendered skip link and language switch (F35a)** — the
+  mdBook theme now forks upstream `index.hbs` (minimal-diff against
+  mdBook v0.5.2) and emits the WCAG 2.4.1 "skip to content" anchor
+  and the EN / FR switch inside the server-rendered HTML, not via
+  post-paint JS injection. Both language variants are emitted; CSS
+  in `lucid-layout.css` hides the wrong-locale copy based on
+  `html[lang]`, which `theme/head.hbs` sets synchronously before
+  first paint on `/fr/` pages. The skip link and lang switch now
+  work with JavaScript disabled, closing the P1 findings from the
+  2026-04-22 accessibility audit. A progressive-enhancement
+  smooth-scroll handler remains in `lucid-navigation.js`; the
+  previous `skipLink()` and `langSwitch()` IIFEs are gone. Unblocks
+  F26 (stock theme labels can now be collapsed at the markup
+  level).
 - **Accessibility statement page fleshed out (F35d)** — the EN
   `docs/src/accessibility.md` now carries the first AAA audit
   pass (2026-04-22, 17/20) and a "Known limitations" section

@@ -96,11 +96,11 @@ precisely to absorb per-rule polish and per-surface slices.
   `Category::for_rule` derives from the id prefix. Hard break;
   downstream callers update suppression directives, `[rules.<id>]`
   TOML keys, and JSON/SARIF `ruleId` fields to the new form.
-- **F35a** — P1 `theme/index.hbs` override (server-render skip link
-  and language switch). Without it the stated WCAG AAA bar is not
-  actually met, which undercuts the release's accessibility claim.
-- **F35d commit** — accessibility statement page content is on disk
-  (uncommitted as of 2026-04-22); just needs to land.
+- **F35a** ✅ shipped 2026-04-22 — `theme/index.hbs` forked from
+  upstream mdBook, skip link and EN / FR language switch are now
+  server-rendered. WCAG 2.4.1 Bypass Blocks passes with JS disabled.
+- **F35d** ✅ shipped 2026-04-22 — accessibility statement page
+  landed with the F29-slim commit.
 
 **0.2.x (patch cycle, post-release):**
 
@@ -262,7 +262,7 @@ grounding).
 | F33 | Full reading-preferences popover UI — cog button in the header opens a popover with font radio (Atkinson / Standard / OpenDyslexic), line-spacing slider (1.4–2.0, 0.05 step) and text-size slider (90–130 %, 5 % step). v0.1 ships only the Introduction-page demonstrator; the CSS-variable plumbing (`--reading-scale`, `--reading-line-height`, `[data-font]`) is already in place, so this is UI work only. | 🟡 Later | v0.1 docs `/shape` + `/typeset` sessions |
 | F34 | Responsive / mobile adaptation — right-rail page TOC and header controls collapse gracefully below 700 px; touch targets verified ≥ 44 × 44 px; sidebar drawer behaviour polished. | 🔴 Next | v0.1 docs `/layout` session, deferred to `/adapt` |
 | F35 | Accessibility audit sweep — full AAA pass on both themes (contrast, focus order, `prefers-reduced-motion` coverage, keyboard-only walk-through, skip-link), plus a published accessibility statement page. First audit pass ran 2026-04-22 (17/20, 0 P0, 2 P1, 3 P2); findings filed as F35a–F35d below. F35 stays open until the statement page ships and P1s are cleared. | 🟡 In progress | v0.1 docs `/audit` plan |
-| F35a | **Server-render skip link + language switch in `theme/index.hbs`** (P1 × 2 from F35 audit). Today both live in `lucid-navigation.js` and only appear post-paint; `.impeccable.md` AAA bar requires the lang switch in the header markup, and WCAG 2.4.1 Bypass Blocks needs the skip link available without JS. Overriding `index.hbs` also unblocks the final part of F26 (collapse stock theme labels at the markup level rather than via DOM hide). | 🔴 Next | F35 audit 2026-04-22 |
+| F35a | ✅ Shipped 2026-04-22 — `theme/index.hbs` is now forked from mdBook v0.5.2's upstream template (minimal-diff approach, documented so future mdBook upgrades stay a mechanical re-sync). The skip link and EN / FR language switch are emitted as server-rendered HTML inside `<body>` and inside `.right-buttons`; both language variants are rendered and CSS in `lucid-layout.css` hides the wrong-locale copy based on `html[lang]` (which `head.hbs` sets synchronously before first paint on `/fr/` pages). The previous `skipLink()` and `langSwitch()` IIFEs in `lucid-navigation.js` are gone; the only remaining JS on the skip-link path is a progressive-enhancement smooth-scroll handler. WCAG 2.4.1 Bypass Blocks now passes with JS disabled. Unblocks F26 (stock theme labels can be collapsed at the markup level). | — | F35 audit 2026-04-22 |
 | F35b | **Drop `role="radiogroup"`/`role="radio"` on reading-demo chips** (P2 from F35 audit). Current markup declares radiogroup semantics but the JS only binds `click` — arrow-key traversal is missing, so the ARIA contract is broken. Simpler fix is to switch to plain buttons with `aria-pressed` (the chips are preset toggles, not radios) rather than add a keyboard handler. | 🟡 Later | F35 audit 2026-04-22 |
 | F35c | **`.lucid-stance__idea` reduced-motion rule strips the colour tint entirely** (P2 from F35 audit). `prefers-reduced-motion` users lose the pair-comparison idea-highlight feature, not just its animation. Move any transition/animation properties into the reduced-motion block and keep the static `background-color` in the base rule. Same pattern probably worth scanning across the other seven reduced-motion blocks. | 🟡 Later | F35 audit 2026-04-22 |
 | F35d | **Publish an accessibility statement page** (`docs/src/accessibility.md`, FR counterpart at `docs/src/fr/accessibility.md`). EN page carries the stated bar (WCAG 2.2 AAA), first audit pass result (2026-04-22, 17/20), a "Known limitations" block listing F35a/b/c pending, report route, and audit cadence. FR stub mirrors the limitations block. Shipped 2026-04-22. | 🟢 Shipped | F35 audit 2026-04-22 |

@@ -4,8 +4,9 @@
  * Runs after the mdBook body renders (additional-js loads at
  * end-of-body). Adds:
  *
- *   1. Skip-to-content link — AAA requirement; first focusable
- *      element; visible only on focus.
+ *   1. Smooth-scroll handler for the server-rendered skip link
+ *      (F35a — the anchor itself lives in `theme/index.hbs` so
+ *      WCAG 2.4.1 Bypass Blocks is satisfied without JS).
  *   2. Breadcrumbs — derived from the sidebar's part-title /
  *      active-chapter structure; inserted above the page H1.
  *   3. Page TOC — right-rail sticky nav of the page's H2/H3
@@ -13,11 +14,12 @@
  *      (~1100px+); hidden on narrower screens (responsive pass
  *      in /adapt will polish the mobile treatment).
  *   4. Brand mark — lens SVG next to the sidebar title.
- *   5. Language switch — EN | FR in the header; FR links to
- *      /fr/ stub page (real French content is F25 in v0.2).
- *   6. Reading demonstrator — wires the "Use this" buttons on
+ *   5. Reading demonstrator — wires the "Use this" buttons on
  *      the Introduction page to the font preset and persists
  *      the choice.
+ *
+ * The EN / FR language switch is server-rendered in
+ * `theme/index.hbs` (F35a) and no longer injected here.
  *
  * Smooth-scroll on anchor click is gated on prefers-reduced-
  * motion: users who asked for less motion get the browser's
@@ -96,14 +98,15 @@ const LUCID_COPY = {
   // paint) so assistive tech reads it on first parse rather than
   // after a post-body mutation. No override needed here.
 
-  // ---- 1. Skip to content ----------------------------------
-  (function skipLink() {
-    const a = d.createElement('a');
-    a.href = '#mdbook-content';
-    a.className = 'lucid-skip';
-    a.textContent = t.skip;
-    body.insertBefore(a, body.firstChild);
-
+  // ---- 1. Skip to content (enhancement only) ---------------
+  // The anchor itself is server-rendered in `theme/index.hbs`
+  // (F35a). This handler adds the smooth-scroll + focus-move
+  // polish; if the script fails to load, the browser still
+  // follows the anchor, so WCAG 2.4.1 Bypass Blocks is
+  // unaffected. One listener per variant (EN / FR) — CSS
+  // removes the wrong-lang copy from layout, but the node
+  // still exists in the DOM.
+  d.querySelectorAll('.lucid-skip').forEach((a) => {
     a.addEventListener('click', (e) => {
       e.preventDefault();
       content.setAttribute('tabindex', '-1');
@@ -111,7 +114,7 @@ const LUCID_COPY = {
       if (!reduceMotion) content.scrollIntoView({ behavior: 'smooth', block: 'start' });
       else content.scrollIntoView();
     });
-  })();
+  });
 
   // ---- 2. Breadcrumbs --------------------------------------
   (function breadcrumbs() {
@@ -292,40 +295,8 @@ const LUCID_COPY = {
   })();
 
   // ---- 5. Language switch ----------------------------------
-  (function langSwitch() {
-    const bar = d.querySelector('.right-buttons, .menu-bar .right-buttons, .menu-bar');
-    if (!bar) return;
-    const wrap = d.createElement('div');
-    wrap.className = 'lucid-lang';
-    wrap.setAttribute('role', 'group');
-    wrap.setAttribute('aria-label', t.langLabel);
-
-    const probe = d.querySelector('.sidebar .chapter a');
-    const href = probe ? probe.getAttribute('href') : '';
-    const toRoot = href && href.startsWith('..') ? href.replace(/[^/]+$/, '') : '';
-
-    const makeLink = (code, label, target, active) => {
-      const a = d.createElement('a');
-      a.className = 'lucid-lang__link' + (active ? ' is-active' : '');
-      a.href = target;
-      a.hreflang = code;
-      a.textContent = label;
-      if (active) a.setAttribute('aria-current', 'true');
-      return a;
-    };
-
-    const enHref = isFr ? '../introduction.html' : '#';
-    const frHref = isFr ? '#' : (toRoot || './') + 'fr/index.html';
-    wrap.appendChild(makeLink('en', t.langEn, enHref, !isFr));
-    const sep = d.createElement('span');
-    sep.className = 'lucid-lang__sep';
-    sep.setAttribute('aria-hidden', 'true');
-    sep.textContent = '|';
-    wrap.appendChild(sep);
-    wrap.appendChild(makeLink('fr', t.langFr, frHref, isFr));
-
-    bar.appendChild(wrap);
-  })();
+  // Server-rendered in `theme/index.hbs` (F35a). No JS
+  // injection.
 
   // ---- 6. Reading demonstrator -----------------------------
   // Two markups supported:

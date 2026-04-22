@@ -33,10 +33,22 @@
 
 /* ---------- Skip link ----------
  * Absolutely positioned off-screen; slides in on focus. Must be
- * the first interactive element in the tab order (lucid-navigation.js
- * inserts it as body.firstChild). Uses the palette tokens so it
- * works in both Lucid light and Lucid dark.
+ * the first interactive element in the tab order — server-rendered
+ * as the first two elements inside <body> in `theme/index.hbs`
+ * (F35a). Uses the palette tokens so it works in both Lucid light
+ * and Lucid dark.
+ *
+ * Two variants are rendered (EN + FR) and gated by `html[lang]`,
+ * which `theme/head.hbs` sets synchronously before first paint on
+ * `/fr/` pages. The wrong-language skip link is removed from the
+ * accessibility tree entirely, not merely hidden, so screen readers
+ * announce only one bypass-blocks target.
  * -------------------------------- */
+
+html:not([lang="fr"]) [data-lucid-lang="fr"],
+html[lang="fr"]      [data-lucid-lang="en"] {
+  display: none !important;
+}
 
 .lucid-skip {
   position: fixed;
