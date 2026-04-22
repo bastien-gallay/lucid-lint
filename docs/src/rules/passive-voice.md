@@ -1,5 +1,13 @@
 # `passive-voice`
 
+## What it flags
+
+Passive-voice constructions. Passive hides the agent and lengthens the sentence without adding information. Legitimate exceptions exist (unknown agent, scientific style, intentional focus on the action) — the rule flags, the author decides.
+
+**References.** US Plain Language; Strunk & White; FALC.
+
+## At a glance
+
 | | |
 |---|---|
 | **Category** | `syntax` |
@@ -7,12 +15,6 @@
 | **Default weight** | `2` |
 | **Languages** | EN · FR (separate heuristics) |
 | **Source** | [`src/rules/passive_voice.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/passive_voice.rs) |
-
-## What it flags
-
-Passive-voice constructions. Passive hides the agent and lengthens the sentence without adding information. Legitimate exceptions exist (unknown agent, scientific style, intentional focus on the action) — the rule flags, the author decides.
-
-**References.** US Plain Language; Strunk & White; FALC.
 
 ## Detection (v0.1 heuristic)
 

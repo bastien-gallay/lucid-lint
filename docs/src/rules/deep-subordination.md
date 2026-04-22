@@ -1,5 +1,11 @@
 # `deep-subordination`
 
+## What it flags
+
+Cascading subordinate clauses: multiple relative pronouns or subordinating conjunctions chained without a strong-punctuation break. Each open referent has to sit in working memory until it closes — Gibson's *Dependency Locality Theory* (1998) ties processing cost directly to that distance.
+
+## At a glance
+
 | | |
 |---|---|
 | **Category** | `structure` |
@@ -7,10 +13,6 @@
 | **Default weight** | `2` |
 | **Languages** | EN · FR (separate lists) |
 | **Source** | [`src/rules/deep_subordination.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/deep_subordination.rs) |
-
-## What it flags
-
-Cascading subordinate clauses: multiple relative pronouns or subordinating conjunctions chained without a strong-punctuation break. Each open referent has to sit in working memory until it closes — Gibson's *Dependency Locality Theory* (1998) ties processing cost directly to that distance.
 
 ## Detection
 

@@ -1,5 +1,11 @@
 # `conditional-stacking`
 
+## What it flags
+
+Sentences that chain multiple conditional clauses. Each `if` / `when` / `unless` / `quand` / `si` opens a branch the reader must keep on a mental stack until the outer clause resolves; two or three of them stacked in one sentence is a known load multiplier for readers with aphasia, ADHD, and anyone reading under cognitive pressure. Plain-language guidelines (FALC, plainlanguage.gov) recommend splitting conditional chains into separate sentences or a bullet list.
+
+## At a glance
+
 | | |
 |---|---|
 | **Category** | `syntax` |
@@ -8,10 +14,6 @@
 | **Condition tags** | `aphasia`, `adhd`, `general` |
 | **Languages** | EN · FR (language-specific lists) |
 | **Source** | [`src/rules/conditional_stacking.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/conditional_stacking.rs) |
-
-## What it flags
-
-Sentences that chain multiple conditional clauses. Each `if` / `when` / `unless` / `quand` / `si` opens a branch the reader must keep on a mental stack until the outer clause resolves; two or three of them stacked in one sentence is a known load multiplier for readers with aphasia, ADHD, and anyone reading under cognitive pressure. Plain-language guidelines (FALC, plainlanguage.gov) recommend splitting conditional chains into separate sentences or a bullet list.
 
 ## Detection
 

@@ -1,5 +1,11 @@
 # `all-caps-shouting`
 
+## What it flags
+
+Runs of consecutive ALL-CAPS words. ALL-CAPS prose strips the shape cues (ascenders, descenders, x-height contrast) that dyslexic readers rely on to disambiguate words, and it triggers many screen readers to spell out the run letter by letter unless the surrounding markup says otherwise. WCAG 3.1.5 and the BDA Dyslexia Style Guide both recommend lowercase or sentence case for emphasis.
+
+## At a glance
+
 | | |
 |---|---|
 | **Category** | `lexicon` |
@@ -8,10 +14,6 @@
 | **Condition tags** | `a11y-markup`, `dyslexia`, `general` |
 | **Languages** | EN · FR (script-only detection — language-agnostic) |
 | **Source** | [`src/rules/all_caps_shouting.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/all_caps_shouting.rs) |
-
-## What it flags
-
-Runs of consecutive ALL-CAPS words. ALL-CAPS prose strips the shape cues (ascenders, descenders, x-height contrast) that dyslexic readers rely on to disambiguate words, and it triggers many screen readers to spell out the run letter by letter unless the surrounding markup says otherwise. WCAG 3.1.5 and the BDA Dyslexia Style Guide both recommend lowercase or sentence case for emphasis.
 
 ## Detection
 

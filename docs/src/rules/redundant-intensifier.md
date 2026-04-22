@@ -1,5 +1,13 @@
 # `redundant-intensifier`
 
+## What it flags
+
+Intensifiers — adverbs that try to *upgrade* the confidence of a statement without adding information. `very important` reduces to `important`, or better, to a quantified claim. plainlanguage.gov (Chapter 4) and the CDC Clear Communication Index flag intensifiers as a plain-language anti-pattern.
+
+The rule is a deliberate sibling of [`weasel-words`](./weasel-words.md): weasel words *downgrade* confidence (hedges, qualifiers); redundant intensifiers *upgrade* it. The two lists are disjoint by construction.
+
+## At a glance
+
 | | |
 |---|---|
 | **Category** | `lexicon` |
@@ -8,12 +16,6 @@
 | **Condition tags** | `general` |
 | **Languages** | EN · FR |
 | **Source** | [`src/rules/redundant_intensifier.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/redundant_intensifier.rs) |
-
-## What it flags
-
-Intensifiers — adverbs that try to *upgrade* the confidence of a statement without adding information. `very important` reduces to `important`, or better, to a quantified claim. plainlanguage.gov (Chapter 4) and the CDC Clear Communication Index flag intensifiers as a plain-language anti-pattern.
-
-The rule is a deliberate sibling of [`weasel-words`](./weasel-words.md): weasel words *downgrade* confidence (hedges, qualifiers); redundant intensifiers *upgrade* it. The two lists are disjoint by construction.
 
 ## Detection
 

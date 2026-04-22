@@ -1,5 +1,11 @@
 # `long-enumeration`
 
+## What it flags
+
+Inline prose enumerations that would be clearer as a bulleted list — 5+ comma-separated items closed by a coordinator (`and`, `or`, `et`, `ou`).
+
+## At a glance
+
 | | |
 |---|---|
 | **Category** | `structure` |
@@ -7,10 +13,6 @@
 | **Default weight** | `1` |
 | **Languages** | EN · FR (identical detection) |
 | **Source** | [`src/rules/long_enumeration.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/long_enumeration.rs), shared helper [`src/rules/enumeration.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/enumeration.rs) |
-
-## What it flags
-
-Inline prose enumerations that would be clearer as a bulleted list — 5+ comma-separated items closed by a coordinator (`and`, `or`, `et`, `ou`).
 
 ## Detection
 

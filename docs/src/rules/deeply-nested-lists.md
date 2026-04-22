@@ -1,5 +1,11 @@
 # `deeply-nested-lists`
 
+## What it flags
+
+Bulleted list items nested beyond a reasonable depth. A deeply nested list forces the reader to reconstruct a complex mental hierarchy — horizontal indentation stops being a positional cue and becomes noise. Four levels of indent are too many for readers with attentional difficulties to track.
+
+## At a glance
+
 | | |
 |---|---|
 | **Category** | `structure` |
@@ -7,10 +13,6 @@
 | **Default weight** | `1` |
 | **Languages** | language-agnostic |
 | **Source** | [`src/rules/deeply_nested_lists.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/deeply_nested_lists.rs) |
-
-## What it flags
-
-Bulleted list items nested beyond a reasonable depth. A deeply nested list forces the reader to reconstruct a complex mental hierarchy — horizontal indentation stops being a positional cue and becomes noise. Four levels of indent are too many for readers with attentional difficulties to track.
 
 ## Detection
 

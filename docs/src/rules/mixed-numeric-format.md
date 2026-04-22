@@ -1,5 +1,11 @@
 # `mixed-numeric-format`
 
+## What it flags
+
+Sentences that mix digit numerals (`42`, `3.14`, `1,000`, `1 000`) with spelled-out numerals (`two`, `trois`, `twenty`, `cent`) within the same sentence. Presenting numbers inconsistently forces the reader to switch surface forms mid-clause and re-anchor the referent — a known load for readers with dyscalculia and a plain-language anti-pattern.
+
+## At a glance
+
 | | |
 |---|---|
 | **Category** | `structure` |
@@ -8,10 +14,6 @@
 | **Condition tags** | `dyscalculia`, `general` |
 | **Languages** | EN · FR |
 | **Source** | [`src/rules/mixed_numeric_format.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/mixed_numeric_format.rs) |
-
-## What it flags
-
-Sentences that mix digit numerals (`42`, `3.14`, `1,000`, `1 000`) with spelled-out numerals (`two`, `trois`, `twenty`, `cent`) within the same sentence. Presenting numbers inconsistently forces the reader to switch surface forms mid-clause and re-anchor the referent — a known load for readers with dyscalculia and a plain-language anti-pattern.
 
 ## Detection
 

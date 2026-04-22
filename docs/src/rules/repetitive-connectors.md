@@ -1,5 +1,11 @@
 # `repetitive-connectors`
 
+## What it flags
+
+Overuse of a single logical connector inside a short window of sentences. Connectors (opposition, cause, consequence, sequence, illustration, addition) are attentional anchors; repeated, they flatten the sense of progression. Sanders & Noordman (2000), *Connectives as processing signals*; Graesser et al. (2004), local cohesion.
+
+## At a glance
+
 | | |
 |---|---|
 | **Category** | `rhythm` |
@@ -7,10 +13,6 @@
 | **Default weight** | `1` |
 | **Languages** | EN · FR (separate lists) |
 | **Source** | [`src/rules/repetitive_connectors.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/repetitive_connectors.rs) |
-
-## What it flags
-
-Overuse of a single logical connector inside a short window of sentences. Connectors (opposition, cause, consequence, sequence, illustration, addition) are attentional anchors; repeated, they flatten the sense of progression. Sanders & Noordman (2000), *Connectives as processing signals*; Graesser et al. (2004), local cohesion.
 
 ## Detection
 

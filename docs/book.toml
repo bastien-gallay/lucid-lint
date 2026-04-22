@@ -39,3 +39,9 @@ editable = false
 copyable = true
 copy-js = true
 line-numbers = true
+
+# URL parallelism with the EN page. mdBook emits the FR stub at
+# /fr/index.html; the EN-equivalent slug is /introduction.html, so
+# any link or bookmark to /fr/introduction.html should resolve.
+[output.html.redirect]
+"/fr/introduction.html" = "/fr/index.html"

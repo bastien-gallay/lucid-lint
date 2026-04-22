@@ -1,5 +1,11 @@
 # `excessive-commas`
 
+## What it flags
+
+Sentences whose comma count exceeds a per-profile ceiling. The comma is the most frequent marker of syntactic complexity; rather than disentangle the cause (subordination, apposition, enumeration, parenthetical), the rule uses density as a leading indicator of overload.
+
+## At a glance
+
 | | |
 |---|---|
 | **Category** | `structure` |
@@ -7,10 +13,6 @@
 | **Default weight** | `1` |
 | **Languages** | EN · FR (identical detection) |
 | **Source** | [`src/rules/excessive_commas.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/excessive_commas.rs) |
-
-## What it flags
-
-Sentences whose comma count exceeds a per-profile ceiling. The comma is the most frequent marker of syntactic complexity; rather than disentangle the cause (subordination, apposition, enumeration, parenthetical), the rule uses density as a leading indicator of overload.
 
 ## Detection
 

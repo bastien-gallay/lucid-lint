@@ -1,5 +1,13 @@
 # `jargon-undefined`
 
+## What it flags
+
+Domain-specific terms used without definition. Jargon is contextual: acceptable among specialists, exclusionary otherwise. Like acronyms, jargon creates reading interruptions for the non-specialist; unlike acronyms, these are content words, not uppercase sequences.
+
+**References.** US Plain Language, FALC, WCAG 2.1 SC 3.1.3 (Unusual Words).
+
+## At a glance
+
 | | |
 |---|---|
 | **Category** | `lexicon` |
@@ -7,12 +15,6 @@
 | **Default weight** | `1` |
 | **Languages** | EN · FR (separate lists per language and domain) |
 | **Source** | [`src/rules/jargon_undefined.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/jargon_undefined.rs) |
-
-## What it flags
-
-Domain-specific terms used without definition. Jargon is contextual: acceptable among specialists, exclusionary otherwise. Like acronyms, jargon creates reading interruptions for the non-specialist; unlike acronyms, these are content words, not uppercase sequences.
-
-**References.** US Plain Language, FALC, WCAG 2.1 SC 3.1.3 (Unusual Words).
 
 ## Detection (v0.1 simplified)
 

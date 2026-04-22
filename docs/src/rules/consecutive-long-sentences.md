@@ -1,5 +1,11 @@
 # `consecutive-long-sentences`
 
+## What it flags
+
+Streaks of long sentences within the same paragraph. An isolated long sentence is manageable; several in a row fatigue attention even when each individual sentence is under the [`sentence-too-long`](./sentence-too-long.md) ceiling. This rule catches the *rhythm*.
+
+## At a glance
+
 | | |
 |---|---|
 | **Category** | `rhythm` |
@@ -7,10 +13,6 @@
 | **Default weight** | `1` |
 | **Languages** | EN · FR (identical detection) |
 | **Source** | [`src/rules/consecutive_long_sentences.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/consecutive_long_sentences.rs) |
-
-## What it flags
-
-Streaks of long sentences within the same paragraph. An isolated long sentence is manageable; several in a row fatigue attention even when each individual sentence is under the [`sentence-too-long`](./sentence-too-long.md) ceiling. This rule catches the *rhythm*.
 
 ## Detection
 

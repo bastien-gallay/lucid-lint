@@ -1,5 +1,11 @@
 # `weasel-words`
 
+## What it flags
+
+Vague qualifiers that weaken a statement. A weasel word adds an invisible cognitive load: the reader has to decide whether the claim matters, is true, or measurable. References: Wikipedia style guide (*Avoid weasel words*), Strunk & White, FALC.
+
+## At a glance
+
 | | |
 |---|---|
 | **Category** | `lexicon` |
@@ -7,10 +13,6 @@
 | **Default weight** | `1` |
 | **Languages** | EN · FR (separate lists) |
 | **Source** | [`src/rules/weasel_words.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/weasel_words.rs) |
-
-## What it flags
-
-Vague qualifiers that weaken a statement. A weasel word adds an invisible cognitive load: the reader has to decide whether the claim matters, is true, or measurable. References: Wikipedia style guide (*Avoid weasel words*), Strunk & White, FALC.
 
 ## Detection
 

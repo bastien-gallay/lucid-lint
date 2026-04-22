@@ -1,5 +1,11 @@
 # `paragraph-too-long`
 
+## What it flags
+
+Paragraphs that overrun either a sentence-count or a word-count threshold. A paragraph is a visual reprise unit: long paragraphs dilute the reprise point for readers who interrupt often. Both metrics are checked so that a short-but-dense paragraph (one 80-word sentence) is still caught — [`sentence-too-long`](./sentence-too-long.md) covers the complementary case.
+
+## At a glance
+
 | | |
 |---|---|
 | **Category** | `structure` |
@@ -7,10 +13,6 @@
 | **Default weight** | `2` |
 | **Languages** | EN · FR (identical detection) |
 | **Source** | [`src/rules/paragraph_too_long.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/paragraph_too_long.rs) |
-
-## What it flags
-
-Paragraphs that overrun either a sentence-count or a word-count threshold. A paragraph is a visual reprise unit: long paragraphs dilute the reprise point for readers who interrupt often. Both metrics are checked so that a short-but-dense paragraph (one 80-word sentence) is still caught — [`sentence-too-long`](./sentence-too-long.md) covers the complementary case.
 
 ## Detection
 

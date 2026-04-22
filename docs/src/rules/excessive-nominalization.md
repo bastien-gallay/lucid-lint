@@ -1,5 +1,11 @@
 # `excessive-nominalization`
 
+## What it flags
+
+Sentences densely packed with nominalizations — verbs turned into abstract nouns. Two problems compound: nominalized text is more abstract (costlier to process) and hides the agent ("who does what" is obscured). FALC and the US Plain Writing Act both recommend strong verbs over nominalizations.
+
+## At a glance
+
 | | |
 |---|---|
 | **Category** | `lexicon` |
@@ -7,10 +13,6 @@
 | **Default weight** | `1` |
 | **Languages** | EN · FR (overlapping suffix lists) |
 | **Source** | [`src/rules/excessive_nominalization.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/excessive_nominalization.rs) |
-
-## What it flags
-
-Sentences densely packed with nominalizations — verbs turned into abstract nouns. Two problems compound: nominalized text is more abstract (costlier to process) and hides the agent ("who does what" is obscured). FALC and the US Plain Writing Act both recommend strong verbs over nominalizations.
 
 ## Detection
 

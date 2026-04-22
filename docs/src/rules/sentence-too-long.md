@@ -1,5 +1,11 @@
 # `sentence-too-long`
 
+## What it flags
+
+Sentences whose length exceeds a per-profile ceiling. The intrinsic cognitive load of a sentence grows non-linearly with its word count (Graesser et al. 2004, *Coh-Metrix*); FALC caps at 15 words, Plain English at 20. Long sentences increase the probability of a reader under attentional load losing the thread mid-read.
+
+## At a glance
+
 | | |
 |---|---|
 | **Category** | `structure` |
@@ -7,10 +13,6 @@
 | **Default weight** | `2` |
 | **Languages** | EN · FR (identical detection) |
 | **Source** | [`src/rules/sentence_too_long.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/sentence_too_long.rs) |
-
-## What it flags
-
-Sentences whose length exceeds a per-profile ceiling. The intrinsic cognitive load of a sentence grows non-linearly with its word count (Graesser et al. 2004, *Coh-Metrix*); FALC caps at 15 words, Plain English at 20. Long sentences increase the probability of a reader under attentional load losing the thread mid-read.
 
 ## Detection
 

@@ -1,5 +1,11 @@
 # `line-length-wide`
 
+## What it flags
+
+Source lines wider than the per-profile ceiling. WCAG 1.4.8 (AAA) caps rendered text at roughly 80 characters per line because longer lines force the eye to track further between saccades and increase re-reading on return sweep — a known difficulty for dyslexic readers (BDA Dyslexia Style Guide).
+
+## At a glance
+
 | | |
 |---|---|
 | **Category** | `structure` |
@@ -8,10 +14,6 @@
 | **Condition tags** | `dyslexia`, `general` |
 | **Languages** | EN · FR (script-agnostic) |
 | **Source** | [`src/rules/line_length_wide.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/line_length_wide.rs) |
-
-## What it flags
-
-Source lines wider than the per-profile ceiling. WCAG 1.4.8 (AAA) caps rendered text at roughly 80 characters per line because longer lines force the eye to track further between saccades and increase re-reading on return sweep — a known difficulty for dyslexic readers (BDA Dyslexia Style Guide).
 
 ## Detection
 

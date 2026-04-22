@@ -1,5 +1,13 @@
 # `unclear-antecedent`
 
+## What it flags
+
+Pronouns whose antecedent is not obvious in the immediate context. Ambiguous pronominal reference is one of the costliest comprehension breaks for readers with attentional difficulties: each ambiguity forces a conscious return-and-search.
+
+**References.** Strunk & White; FALC ("prefer name repetition over pronouns"); Graesser et al. *Coh-Metrix* (referential cohesion).
+
+## At a glance
+
 | | |
 |---|---|
 | **Category** | `syntax` |
@@ -7,12 +15,6 @@
 | **Default weight** | `2` |
 | **Languages** | EN · FR (separate pronoun lists) |
 | **Source** | [`src/rules/unclear_antecedent.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/unclear_antecedent.rs) |
-
-## What it flags
-
-Pronouns whose antecedent is not obvious in the immediate context. Ambiguous pronominal reference is one of the costliest comprehension breaks for readers with attentional difficulties: each ambiguity forces a conscious return-and-search.
-
-**References.** Strunk & White; FALC ("prefer name repetition over pronouns"); Graesser et al. *Coh-Metrix* (referential cohesion).
 
 ## Detection (v0.1 heuristic)
 

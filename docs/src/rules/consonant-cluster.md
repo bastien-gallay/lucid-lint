@@ -1,5 +1,13 @@
 # `consonant-cluster`
 
+## What it flags
+
+Words whose longest run of consecutive consonants meets or exceeds a per-profile threshold. Dense consonant clusters are a known decoding barrier for dyslexic readers (BDA Dyslexia Style Guide): the reader must hold more phonemes in working memory before the next vowel "releases" the syllable.
+
+Typical English offenders at the `public` threshold of 5 include `strengths` (n-g-t-h-s), `twelfths` (l-f-t-h-s), `sixths` (x-t-h-s in a 4-run plus context). Typical French offenders at the `falc` threshold of 4 include `constructions` (n-s-t-r).
+
+## At a glance
+
 | | |
 |---|---|
 | **Category** | `lexicon` |
@@ -8,12 +16,6 @@
 | **Condition tags** | `dyslexia`, `general` |
 | **Languages** | EN · FR |
 | **Source** | [`src/rules/consonant_cluster.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/consonant_cluster.rs) |
-
-## What it flags
-
-Words whose longest run of consecutive consonants meets or exceeds a per-profile threshold. Dense consonant clusters are a known decoding barrier for dyslexic readers (BDA Dyslexia Style Guide): the reader must hold more phonemes in working memory before the next vowel "releases" the syllable.
-
-Typical English offenders at the `public` threshold of 5 include `strengths` (n-g-t-h-s), `twelfths` (l-f-t-h-s), `sixths` (x-t-h-s in a 4-run plus context). Typical French offenders at the `falc` threshold of 4 include `constructions` (n-s-t-r).
 
 ## Detection
 

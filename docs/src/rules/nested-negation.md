@@ -1,5 +1,11 @@
 # `nested-negation`
 
+## What it flags
+
+Sentences that stack multiple negations. Two or more negations in the same sentence force the reader to mentally toggle truth values — a known burden for readers with aphasia and attention-fragile readers (ADHD), and a load multiplier for everyone reading under cognitive pressure. Plain-language guidelines (FALC, CDC Clear Communication Index, plainlanguage.gov) recommend rewriting double negatives as positives.
+
+## At a glance
+
 | | |
 |---|---|
 | **Category** | `syntax` |
@@ -8,10 +14,6 @@
 | **Condition tags** | `aphasia`, `adhd`, `general` |
 | **Languages** | EN · FR (language-specific counting) |
 | **Source** | [`src/rules/nested_negation.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/nested_negation.rs) |
-
-## What it flags
-
-Sentences that stack multiple negations. Two or more negations in the same sentence force the reader to mentally toggle truth values — a known burden for readers with aphasia and attention-fragile readers (ADHD), and a load multiplier for everyone reading under cognitive pressure. Plain-language guidelines (FALC, CDC Clear Communication Index, plainlanguage.gov) recommend rewriting double negatives as positives.
 
 ## Detection
 
