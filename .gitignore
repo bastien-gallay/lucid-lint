@@ -28,6 +28,10 @@ Cargo.lock.bak
 .agent/scratch/
 .agent/local.md
 
+# Local-only example texts (see examples/local/README.md)
+/examples/local/*
+!/examples/local/README.md
+
 # macOS
 .DS_Store
 

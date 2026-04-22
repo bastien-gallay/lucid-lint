@@ -1,0 +1,977 @@
+# Referential of example texts for lucid-lint
+#
+# Purpose: a curated index of publicly-accessible text sources usable as
+# examples in docs, as fixtures for tests, or as corpora for benchmarks.
+#
+# Distinct from examples/REFERENCES.md (which lists *academic* references
+# behind the rules). This file lists *text sources* the rules can be run on.
+#
+# Schema — each entry under `sources:` has:
+#   url                 source URL
+#   title               short title
+#   description         one-sentence summary
+#   type                research_paper | standard | style_guide | corpus |
+#                       tool_fixtures | gov_guide | blog | dataset |
+#                       textbook | sample_collection
+#   polarity            good_example | bad_example | before_after |
+#                       mixed_unaligned | neutral
+#                         - before_after: aligned good/bad pairs with commentary
+#                         - mixed_unaligned: both polarities but not paired
+#   rules_relevant      list of lucid-lint rule IDs it most maps to
+#   conditions          subset of [a11y-markup, dyslexia, dyscalculia,
+#                       aphasia, adhd, non-native, general]
+#   languages           subset of [en, fr]
+#   bilingual_parallel  true if the source provides *aligned* EN/FR content
+#   interest            high | medium | low  — usefulness for our example set
+#   confidence          high | medium | low  — weighted by
+#                         (a) institutional weight: research > gov/standard >
+#                             association > blog > forum
+#                         (b) claims explained vs asserted
+#                         (c) consistency with other sources
+#   use_case            subset of [example, benchmark, corpus, documentation]
+#   has_explanations    true if the source explains *why* text is good/bad
+#   license_or_access   open | restricted | unknown
+#   redistribution      public_ok | link_only | restricted | check_license
+#                         - public_ok: open/compatible licence; extracts may
+#                           be bundled into the public git repo with attribution
+#                         - link_only: copyrighted but publicly reachable; link
+#                           to the source, do NOT commit extracts
+#                         - restricted: paywalled, research-request gated, or
+#                           explicit no-redistribution; not usable as a public
+#                           asset at all
+#                         - check_license: licence exists but carries
+#                           constraints (NC, SA, per-item variance) — review
+#                           before bundling
+#   license_details     one-liner on the actual licence (when known)
+#   notes               optional one-liner
+
+redistribution_legend:
+  public_ok:
+    meaning: >
+      Open or compatible licence. Extracts can be committed to the public
+      git repo with attribution. Check each licence's attribution / share-
+      alike requirements before copying.
+  link_only:
+    meaning: >
+      Content is copyrighted and reachable publicly, but the licence does
+      not grant redistribution rights (or grants them only for non-
+      commercial / non-derivative use). Link to the URL from docs and
+      tests; do not commit extracts beyond short fair-use quotations.
+  restricted:
+    meaning: >
+      Access itself is gated (paywall, research-request, click-through
+      agreement) or the licence explicitly forbids redistribution. Not
+      usable as a public asset. For internal-only use after accepting
+      the access terms.
+  check_license:
+    meaning: >
+      The licence is permissive in principle but carries constraints —
+      typically NC (no commercial), SA (share-alike / copyleft), or
+      per-item variance within a repo. Verify per use before bundling.
+
+sources:
+  # ── Plain-language / government style guides ────────────────────────────
+  - url: https://www.plainlanguage.gov/examples/before-and-after/
+    title: plainlanguage.gov before-and-after
+    description: US federal curated rewrites of dense bureaucratic prose into plain English.
+    type: gov_guide
+    polarity: before_after
+    rules_relevant: [structure.sentence-too-long, structure.paragraph-too-long, syntax.passive-voice, syntax.nested-negation, lexicon.excessive-nominalization, lexicon.jargon-undefined, readability.score]
+    conditions: [general, non-native]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [example, documentation]
+    has_explanations: true
+    license_or_access: open
+    redistribution: public_ok
+    license_details: US federal government work — public domain in the US (17 U.S.C. § 105).
+    notes: Gold-standard before/after pairs with per-fix annotations.
+
+  - url: https://www.plainlanguage.gov/guidelines/
+    title: Federal Plain Language Guidelines
+    description: Official US guidelines with rule-linked rewrite examples.
+    type: gov_guide
+    polarity: before_after
+    rules_relevant: [syntax.passive-voice, lexicon.excessive-nominalization, structure.sentence-too-long, lexicon.weasel-words, syntax.nested-negation]
+    conditions: [general, non-native]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [example, documentation]
+    has_explanations: true
+    license_or_access: open
+    redistribution: public_ok
+    license_details: US federal government work — public domain in the US.
+
+  - url: https://www.gov.uk/guidance/style-guide/a-to-z-of-gov-uk-style
+    title: GOV.UK style guide (A–Z)
+    description: British government word-level style rulings with rewrite examples.
+    type: style_guide
+    polarity: mixed_unaligned
+    rules_relevant: [lexicon.jargon-undefined, lexicon.unexplained-abbreviation, structure.mixed-numeric-format, lexicon.weasel-words]
+    conditions: [general, non-native]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [example, documentation]
+    has_explanations: true
+    license_or_access: open
+    redistribution: public_ok
+    license_details: Open Government Licence v3.0 (OGL) — redistribute freely with attribution.
+
+  - url: https://www.gov.uk/guidance/content-design/writing-for-gov-uk
+    title: GOV.UK — writing for GOV.UK
+    description: Companion style guide covering sentence length, reading age, plain-word lists.
+    type: gov_guide
+    polarity: good_example
+    rules_relevant: [structure.sentence-too-long, readability.score, lexicon.jargon-undefined]
+    conditions: [general, dyslexia, non-native]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [documentation, example]
+    has_explanations: true
+    license_or_access: open
+    redistribution: public_ok
+    license_details: Open Government Licence v3.0 (OGL).
+
+  - url: https://op.europa.eu/en/publication-detail/-/publication/725b7eb0-d92e-11e5-8fea-01aa75ed71a1
+    title: How to write clearly (European Commission)
+    description: EU booklet with 10 hints and bad/good examples drawn from Commission drafts.
+    type: gov_guide
+    polarity: before_after
+    rules_relevant: [structure.sentence-too-long, syntax.passive-voice, lexicon.excessive-nominalization, lexicon.jargon-undefined, structure.excessive-commas]
+    conditions: [general, non-native]
+    languages: [en, fr]
+    bilingual_parallel: true
+    interest: high
+    confidence: high
+    use_case: [example, documentation]
+    has_explanations: true
+    license_or_access: open
+    redistribution: public_ok
+    license_details: Commission Decision 2011/833/EU — EU documents reusable for commercial/non-commercial purposes with attribution.
+    notes: Available in all EU languages — rare true EN/FR parallel resource.
+
+  - url: https://design.canada.ca/writing-style/
+    title: Canada.ca content style guide
+    description: Detailed bilingual writing rules with examples on length, numbers, headings.
+    type: style_guide
+    polarity: before_after
+    rules_relevant: [structure.sentence-too-long, structure.mixed-numeric-format, structure.heading-jump, lexicon.unexplained-abbreviation]
+    conditions: [general, non-native]
+    languages: [en, fr]
+    bilingual_parallel: true
+    interest: high
+    confidence: high
+    use_case: [documentation, example]
+    has_explanations: true
+    license_or_access: open
+    redistribution: check_license
+    license_details: Crown Copyright. Non-commercial reproduction permitted with attribution; commercial use needs permission.
+
+  - url: https://www.canada.ca/en/revenue-agency/services/about-canada-revenue-agency-cra/plain-language.html
+    title: Canada.ca plain-language guidance
+    description: Canadian federal plain-language policy with EN and FR rewrite examples.
+    type: gov_guide
+    polarity: before_after
+    rules_relevant: [structure.sentence-too-long, lexicon.jargon-undefined, syntax.passive-voice]
+    conditions: [general, non-native]
+    languages: [en, fr]
+    bilingual_parallel: true
+    interest: high
+    confidence: high
+    use_case: [documentation, example]
+    has_explanations: true
+    license_or_access: open
+    redistribution: check_license
+    license_details: Crown Copyright; non-commercial reproduction permitted with attribution.
+
+  - url: https://readabilityguidelines.co.uk/
+    title: Content Design London Readability Guidelines
+    description: Community-built plain-language guide with evidence links and examples.
+    type: style_guide
+    polarity: before_after
+    rules_relevant: [readability.score, structure.sentence-too-long, lexicon.jargon-undefined, lexicon.unexplained-abbreviation]
+    conditions: [dyslexia, non-native, general]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [documentation, example]
+    has_explanations: true
+    license_or_access: open
+    redistribution: public_ok
+    license_details: CC-BY-SA 4.0 — share-alike, requires attribution.
+
+  - url: https://centerforplainlanguage.org/learning-training/before-after-comparisons/
+    title: Center for Plain Language — before/after
+    description: Curated rewrite pairs from US government and healthcare documents.
+    type: sample_collection
+    polarity: before_after
+    rules_relevant: [structure.sentence-too-long, lexicon.excessive-nominalization, syntax.passive-voice, lexicon.jargon-undefined]
+    conditions: [general, non-native]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [example, documentation]
+    has_explanations: true
+    license_or_access: open
+    redistribution: link_only
+    license_details: © Center for Plain Language; no explicit reuse licence — link only.
+
+  # ── Accessibility standards ─────────────────────────────────────────────
+  - url: https://www.w3.org/WAI/WCAG21/Understanding/reading-level.html
+    title: WCAG 2.1 Understanding — Reading Level (3.1.5)
+    description: W3C AAA reading-level criterion with hard/simplified passage examples.
+    type: standard
+    polarity: before_after
+    rules_relevant: [readability.score, lexicon.jargon-undefined, structure.sentence-too-long]
+    conditions: [general, non-native, aphasia]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [documentation, example]
+    has_explanations: true
+    license_or_access: open
+    redistribution: public_ok
+    license_details: W3C Document Licence — copying permitted with notice preservation; derivative work subject to conditions.
+
+  - url: https://www.w3.org/WAI/WCAG21/Understanding/unusual-words.html
+    title: WCAG 2.1 Understanding — Unusual Words (3.1.3)
+    description: W3C guidance on jargon/idioms with illustrative phrases.
+    type: standard
+    polarity: mixed_unaligned
+    rules_relevant: [lexicon.jargon-undefined, lexicon.weasel-words]
+    conditions: [aphasia, non-native, general]
+    languages: [en]
+    bilingual_parallel: false
+    interest: medium
+    confidence: high
+    use_case: [documentation, example]
+    has_explanations: true
+    license_or_access: open
+    redistribution: public_ok
+    license_details: W3C Document Licence.
+
+  - url: https://www.w3.org/WAI/WCAG21/Understanding/abbreviations.html
+    title: WCAG 2.1 Understanding — Abbreviations (3.1.4)
+    description: W3C guidance on expanding abbreviations with small examples.
+    type: standard
+    polarity: mixed_unaligned
+    rules_relevant: [lexicon.unexplained-abbreviation]
+    conditions: [aphasia, non-native, general]
+    languages: [en]
+    bilingual_parallel: false
+    interest: medium
+    confidence: high
+    use_case: [documentation]
+    has_explanations: true
+    license_or_access: open
+    redistribution: public_ok
+    license_details: W3C Document Licence.
+
+  - url: https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/
+    title: RGAA 4.1 — critères et tests
+    description: French accessibility reference (DINUM) with accessible-content examples.
+    type: standard
+    polarity: good_example
+    rules_relevant: [structure.heading-jump, lexicon.unexplained-abbreviation, lexicon.jargon-undefined]
+    conditions: [a11y-markup, dyslexia, general]
+    languages: [fr]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [documentation]
+    has_explanations: true
+    license_or_access: open
+    redistribution: public_ok
+    license_details: Licence Ouverte / Open Licence 2.0 (Etalab) — reuse with attribution.
+
+  # ── Easy-read / FALC / aphasia / dyslexia ───────────────────────────────
+  - url: https://www.inclusion-europe.eu/easy-to-read-standards-guidelines/
+    title: Inclusion Europe — Information for All
+    description: European easy-to-read standards with side-by-side complex/accessible examples.
+    type: standard
+    polarity: before_after
+    rules_relevant: [structure.sentence-too-long, lexicon.jargon-undefined, lexicon.unexplained-abbreviation, structure.paragraph-too-long]
+    conditions: [aphasia, non-native, general]
+    languages: [en, fr]
+    bilingual_parallel: true
+    interest: high
+    confidence: high
+    use_case: [example, documentation]
+    has_explanations: true
+    license_or_access: open
+    redistribution: link_only
+    license_details: © Inclusion Europe; reuse typically requires permission — link only.
+    notes: Canonical FALC/Easy-Read reference.
+
+  - url: https://www.unapei.org/publication/guide-pratique-ecrire-facile-a-lire-et-a-comprendre/
+    title: Unapei — Guide FALC
+    description: French FALC official practical guide with bad/good rewrite pairs.
+    type: style_guide
+    polarity: before_after
+    rules_relevant: [structure.sentence-too-long, lexicon.jargon-undefined, structure.paragraph-too-long, lexicon.unexplained-abbreviation]
+    conditions: [aphasia, non-native, general]
+    languages: [fr]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [example, documentation]
+    has_explanations: true
+    license_or_access: open
+    redistribution: link_only
+    license_details: © Unapei; French association copyright — link only.
+
+  - url: https://www.ifla.org/publications/guidelines-for-easy-to-read-materials/
+    title: IFLA Guidelines for Easy-to-Read Materials
+    description: International library federation easy-to-read publication guidelines.
+    type: standard
+    polarity: mixed_unaligned
+    rules_relevant: [structure.sentence-too-long, lexicon.jargon-undefined, structure.paragraph-too-long]
+    conditions: [aphasia, non-native, general]
+    languages: [en, fr]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [documentation, example]
+    has_explanations: true
+    license_or_access: open
+    redistribution: link_only
+    license_details: © IFLA; no explicit reuse licence — link only.
+
+  - url: https://www.bdadyslexia.org.uk/advice/employers/creating-a-dyslexia-friendly-workplace/dyslexia-friendly-style-guide
+    title: BDA Dyslexia Style Guide
+    description: British Dyslexia Association guidance on fonts, line length, phrasing.
+    type: style_guide
+    polarity: good_example
+    rules_relevant: [structure.line-length-wide, structure.sentence-too-long, lexicon.all-caps-shouting, lexicon.jargon-undefined]
+    conditions: [dyslexia]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [documentation]
+    has_explanations: true
+    license_or_access: open
+    redistribution: link_only
+    license_details: © British Dyslexia Association — link only.
+
+  - url: https://www.stroke.org.uk/sites/default/files/accessible_information_guidelines.pdf
+    title: Stroke Association — Accessible Information Guidelines
+    description: UK aphasia-friendly writing rules with before/after samples.
+    type: style_guide
+    polarity: before_after
+    rules_relevant: [structure.sentence-too-long, lexicon.jargon-undefined, structure.paragraph-too-long, syntax.nested-negation]
+    conditions: [aphasia]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [example, documentation]
+    has_explanations: true
+    license_or_access: open
+    redistribution: link_only
+    license_details: © Stroke Association (UK charity) — link only.
+
+  - url: https://adhdfoundation.org.uk/information/neurodiversity/
+    title: ADHD Foundation — Neurodiversity hub
+    description: Writing recommendations for ADHD readers (chunking, bullets, bold cues).
+    type: style_guide
+    polarity: good_example
+    rules_relevant: [structure.paragraph-too-long, rhythm.consecutive-long-sentences, structure.line-length-wide]
+    conditions: [adhd]
+    languages: [en]
+    bilingual_parallel: false
+    interest: medium
+    confidence: medium
+    use_case: [documentation]
+    has_explanations: true
+    license_or_access: open
+    redistribution: link_only
+    license_details: © ADHD Foundation — link only.
+
+  # ── Health literacy ─────────────────────────────────────────────────────
+  - url: https://www.cdc.gov/ccindex/pdf/clear-communication-user-guide.pdf
+    title: CDC Clear Communication Index user guide
+    description: US CDC scorecard for public-health materials with worked examples.
+    type: standard
+    polarity: before_after
+    rules_relevant: [readability.score, structure.sentence-too-long, lexicon.jargon-undefined, structure.paragraph-too-long]
+    conditions: [general, aphasia, non-native]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [documentation, example]
+    has_explanations: true
+    license_or_access: open
+    redistribution: public_ok
+    license_details: US federal government work — public domain in the US.
+
+  - url: https://www.has-sante.fr/jcms/c_1724101/fr/litteratie-et-sante
+    title: HAS — Littératie et santé
+    description: French Haute Autorité de Santé health-literacy guide with simplification examples.
+    type: gov_guide
+    polarity: before_after
+    rules_relevant: [lexicon.jargon-undefined, readability.score, structure.sentence-too-long]
+    conditions: [aphasia, non-native, general]
+    languages: [fr]
+    bilingual_parallel: false
+    interest: medium
+    confidence: high
+    use_case: [documentation, example]
+    has_explanations: true
+    license_or_access: open
+    redistribution: check_license
+    license_details: French public body; reuse typically under Licence Ouverte but HAS pages sometimes specify © HAS — verify per-document.
+
+  - url: https://www.santepubliquefrance.fr/docs/communiquer-pour-tous-guide-pour-une-information-accessible
+    title: Santé publique France — Communiquer pour tous
+    description: French accessible-information guide with littératie focus and rewrite examples.
+    type: gov_guide
+    polarity: before_after
+    rules_relevant: [lexicon.jargon-undefined, structure.sentence-too-long, readability.score]
+    conditions: [aphasia, non-native, general]
+    languages: [fr]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [documentation, example]
+    has_explanations: true
+    license_or_access: open
+    redistribution: check_license
+    license_details: French public health agency; typically reusable with attribution under Licence Ouverte but mentions "© Santé publique France" — verify.
+
+  - url: https://www.bmj.com/content/360/bmj.k1383
+    title: BMJ — Gobbledygook in medicine
+    description: Peer-reviewed features with before/after medical-prose simplifications.
+    type: research_paper
+    polarity: before_after
+    rules_relevant: [lexicon.jargon-undefined, lexicon.excessive-nominalization, readability.score]
+    conditions: [aphasia, non-native, general]
+    languages: [en]
+    bilingual_parallel: false
+    interest: medium
+    confidence: high
+    use_case: [example, documentation]
+    has_explanations: true
+    license_or_access: restricted
+    redistribution: restricted
+    license_details: © BMJ Publishing Group; subscription article — short fair-use quote only.
+
+  # ── Bad-example corpora (dense legal / admin prose) ─────────────────────
+  - url: https://eur-lex.europa.eu/
+    title: EUR-Lex legal corpus
+    description: EU legal texts — dense, heavily subordinated prose ideal as bad-example stress test.
+    type: corpus
+    polarity: bad_example
+    rules_relevant: [structure.sentence-too-long, structure.deep-subordination, syntax.nested-negation, syntax.conditional-stacking, syntax.passive-voice, lexicon.excessive-nominalization, structure.excessive-commas]
+    conditions: [general, non-native]
+    languages: [en, fr]
+    bilingual_parallel: true
+    interest: high
+    confidence: high
+    use_case: [benchmark, example]
+    has_explanations: false
+    license_or_access: open
+    redistribution: public_ok
+    license_details: Commission Decision 2011/833/EU — reusable with attribution (notice the EUR-Lex legal-notice page).
+    notes: Every act exists in EN and FR with legally equivalent wording.
+
+  - url: https://www.legifrance.gouv.fr/
+    title: Légifrance
+    description: French government legal portal with archetypal dense administrative/legal French.
+    type: corpus
+    polarity: bad_example
+    rules_relevant: [structure.sentence-too-long, structure.deep-subordination, syntax.nested-negation, lexicon.excessive-nominalization, syntax.passive-voice]
+    conditions: [general, non-native]
+    languages: [fr]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [benchmark, example]
+    has_explanations: false
+    license_or_access: open
+    redistribution: public_ok
+    license_details: Licence Ouverte 2.0 (Etalab) — reuse with attribution.
+
+  - url: https://www.tosdr.org/
+    title: Terms of Service; Didn't Read
+    description: Catalog of EULA/ToS passages with plain-language annotations.
+    type: sample_collection
+    polarity: before_after
+    rules_relevant: [structure.sentence-too-long, syntax.conditional-stacking, lexicon.jargon-undefined, syntax.nested-negation]
+    conditions: [general, non-native]
+    languages: [en, fr]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [example, benchmark]
+    has_explanations: true
+    license_or_access: open
+    redistribution: check_license
+    license_details: ToSDR annotations are CC-BY-SA; the original ToS/EULA excerpts remain © their respective companies (short-quote / fair-use territory).
+
+  # ── Simplification / readability corpora ────────────────────────────────
+  - url: https://simple.wikipedia.org/wiki/Main_Page
+    title: Simple English Wikipedia
+    description: Parallel-to-Wikipedia corpus in controlled simple vocabulary and short sentences.
+    type: corpus
+    polarity: good_example
+    rules_relevant: [readability.score, structure.sentence-too-long, lexicon.jargon-undefined]
+    conditions: [non-native, general]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [benchmark, corpus]
+    has_explanations: false
+    license_or_access: open
+    redistribution: public_ok
+    license_details: CC-BY-SA 4.0 (text) + GFDL — share-alike applies to derivative bundles.
+
+  - url: https://fr.vikidia.org/wiki/Accueil
+    title: Vikidia (French simple encyclopedia)
+    description: French analog of Simple Wikipedia aimed at 8–13-year-olds.
+    type: corpus
+    polarity: good_example
+    rules_relevant: [readability.score, structure.sentence-too-long, lexicon.jargon-undefined]
+    conditions: [non-native, general]
+    languages: [fr]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [benchmark, corpus]
+    has_explanations: false
+    license_or_access: open
+    redistribution: public_ok
+    license_details: CC-BY-SA 3.0 — share-alike applies.
+
+  - url: https://github.com/nishkalavallabhi/OneStopEnglishCorpus
+    title: OneStopEnglish corpus
+    description: Parallel elementary/intermediate/advanced versions of the same news articles.
+    type: corpus
+    polarity: before_after
+    rules_relevant: [readability.score, structure.sentence-too-long, lexicon.jargon-undefined, rhythm.consecutive-long-sentences]
+    conditions: [non-native, general]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [benchmark, corpus]
+    has_explanations: false
+    license_or_access: open
+    redistribution: public_ok
+    license_details: CC-BY-SA-4.0.
+    notes: Ideal for reading-level benchmarking.
+
+  - url: https://newsela.com/data/
+    title: Newsela corpus
+    description: News articles rewritten at multiple grade levels by professional editors.
+    type: corpus
+    polarity: before_after
+    rules_relevant: [readability.score, structure.sentence-too-long, lexicon.jargon-undefined]
+    conditions: [non-native, general]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [benchmark, corpus]
+    has_explanations: false
+    license_or_access: restricted
+    redistribution: restricted
+    license_details: Research-access only; explicit "no redistribution" in the data-use agreement. Internal use after signing; must not be committed to a public repo.
+
+  - url: https://zenodo.org/record/1219041
+    title: WeeBit corpus
+    description: BBC Bitesize + Weekly Reader texts labeled by reading age.
+    type: corpus
+    polarity: mixed_unaligned
+    rules_relevant: [readability.score, structure.sentence-too-long]
+    conditions: [non-native, general]
+    languages: [en]
+    bilingual_parallel: false
+    interest: medium
+    confidence: high
+    use_case: [benchmark, corpus]
+    has_explanations: false
+    license_or_access: restricted
+    redistribution: restricted
+    license_details: Underlying BBC / Weekly Reader texts are © their publishers; access-request gated. Internal use only.
+
+  - url: https://github.com/scrosseye/CLEAR-Corpus
+    title: CLEAR corpus (CommonLit)
+    description: 5000 excerpts with crowd-sourced pairwise readability ratings.
+    type: corpus
+    polarity: mixed_unaligned
+    rules_relevant: [readability.score]
+    conditions: [general, non-native]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [benchmark, corpus]
+    has_explanations: false
+    license_or_access: open
+    redistribution: check_license
+    license_details: CommonLit licence; excerpts drawn from older public-domain and open-source passages, but per-item licence varies — verify before bundling.
+
+  - url: https://corpusalector.huma-num.fr/
+    title: Alector corpus
+    description: French corpus of original and simplified texts for dyslexic readers.
+    type: corpus
+    polarity: before_after
+    rules_relevant: [readability.score, structure.sentence-too-long, lexicon.jargon-undefined]
+    conditions: [dyslexia, non-native]
+    languages: [fr]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [benchmark, corpus]
+    has_explanations: true
+    license_or_access: open
+    redistribution: check_license
+    license_details: Academic corpus on Huma-Num; typically research-use with citation, verify the exact CC variant (often CC-BY-NC-SA) before bundling.
+
+  - url: https://aclanthology.org/2020.lrec-1.530/
+    title: CLEAR — French simplification corpus (Grabar & Cardon)
+    description: Aligned complex/simple French medical-text pairs.
+    type: corpus
+    polarity: before_after
+    rules_relevant: [readability.score, lexicon.jargon-undefined, structure.sentence-too-long]
+    conditions: [general, non-native, aphasia]
+    languages: [fr]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [benchmark, corpus]
+    has_explanations: true
+    license_or_access: open
+    redistribution: check_license
+    license_details: Research corpus; verify the author-stated licence (typical academic CC-BY or CC-BY-NC) before redistributing.
+
+  - url: https://github.com/feralvam/easse
+    title: EASSE simplification evaluation
+    description: Toolkit with TurkCorpus, ASSET, HSplit reference simplifications.
+    type: corpus
+    polarity: before_after
+    rules_relevant: [readability.score, structure.sentence-too-long, structure.deep-subordination]
+    conditions: [general, non-native]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [benchmark, corpus]
+    has_explanations: false
+    license_or_access: open
+    redistribution: check_license
+    license_details: Code is GPL-3.0; bundled datasets (TurkCorpus, ASSET, HSplit) carry their own per-item licences — verify each.
+
+  - url: https://github.com/facebookresearch/asset
+    title: ASSET simplification dataset
+    description: 2359 English sentences with 10 crowdsourced simplifications each, annotated.
+    type: dataset
+    polarity: before_after
+    rules_relevant: [structure.sentence-too-long, structure.deep-subordination, lexicon.jargon-undefined]
+    conditions: [general, non-native]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [benchmark, corpus]
+    has_explanations: true
+    license_or_access: open
+    redistribution: public_ok
+    license_details: CC-BY-SA-4.0.
+
+  - url: https://huggingface.co/datasets/wiki_auto
+    title: WikiAuto parallel simplification
+    description: Automatically aligned Wikipedia/Simple-Wikipedia sentence pairs.
+    type: dataset
+    polarity: before_after
+    rules_relevant: [structure.sentence-too-long, lexicon.jargon-undefined, readability.score]
+    conditions: [general, non-native]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [benchmark, corpus]
+    has_explanations: false
+    license_or_access: open
+    redistribution: public_ok
+    license_details: CC-BY-SA — derives from Wikipedia content.
+
+  - url: https://www.gutenberg.org/
+    title: Project Gutenberg
+    description: Public-domain literature corpus for neutral baselines and period-prose.
+    type: corpus
+    polarity: neutral
+    rules_relevant: [structure.sentence-too-long, structure.deep-subordination, readability.score]
+    conditions: [general]
+    languages: [en, fr]
+    bilingual_parallel: false
+    interest: medium
+    confidence: high
+    use_case: [benchmark, corpus]
+    has_explanations: false
+    license_or_access: open
+    redistribution: public_ok
+    license_details: Underlying texts are public domain (US). Project Gutenberg header/footer is under the PG licence — strip them if not hosting on a PG-compatible site, or use plain-text excerpts.
+
+  # ── Tool fixtures (labeled bad-example banks) ───────────────────────────
+  - url: https://github.com/amperser/proselint
+    title: proselint test fixtures
+    description: Open-source prose linter with thousands of labeled bad-phrasing fixtures.
+    type: tool_fixtures
+    polarity: bad_example
+    rules_relevant: [lexicon.weasel-words, lexicon.redundant-intensifier, syntax.passive-voice, lexicon.jargon-undefined]
+    conditions: [general]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [example, benchmark]
+    has_explanations: true
+    license_or_access: open
+    redistribution: public_ok
+    license_details: BSD-3-Clause.
+
+  - url: https://github.com/errata-ai/vale
+    title: Vale styles
+    description: Prose linter with Microsoft/Google/Red Hat/Proselint community packs.
+    type: tool_fixtures
+    polarity: bad_example
+    rules_relevant: [lexicon.weasel-words, lexicon.jargon-undefined, lexicon.redundant-intensifier, syntax.passive-voice]
+    conditions: [general]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [example, benchmark]
+    has_explanations: true
+    license_or_access: open
+    redistribution: check_license
+    license_details: Vale engine is MIT; individual style packs carry their own licences (e.g. Microsoft/Google/Red Hat) — verify per pack.
+
+  - url: https://github.com/btford/write-good
+    title: write-good
+    description: Naive English prose linter with regex fixtures for weasels, passives, wordy phrases.
+    type: tool_fixtures
+    polarity: bad_example
+    rules_relevant: [lexicon.weasel-words, syntax.passive-voice, lexicon.redundant-intensifier]
+    conditions: [general]
+    languages: [en]
+    bilingual_parallel: false
+    interest: medium
+    confidence: high
+    use_case: [example]
+    has_explanations: true
+    license_or_access: open
+    redistribution: public_ok
+    license_details: MIT licence.
+
+  - url: https://github.com/get-alex/alex
+    title: alex.js
+    description: Linter catching insensitive/inconsiderate writing; partial lexicon overlap.
+    type: tool_fixtures
+    polarity: bad_example
+    rules_relevant: [lexicon.weasel-words]
+    conditions: [general]
+    languages: [en]
+    bilingual_parallel: false
+    interest: low
+    confidence: high
+    use_case: [example]
+    has_explanations: true
+    license_or_access: open
+    redistribution: public_ok
+    license_details: MIT licence.
+
+  - url: https://github.com/textlint-rule
+    title: textlint-rule org
+    description: Large collection of JS prose-lint rules with fixture-driven tests.
+    type: tool_fixtures
+    polarity: bad_example
+    rules_relevant: [structure.sentence-too-long, lexicon.weasel-words, structure.excessive-commas]
+    conditions: [general]
+    languages: [en]
+    bilingual_parallel: false
+    interest: medium
+    confidence: high
+    use_case: [example]
+    has_explanations: true
+    license_or_access: open
+    redistribution: check_license
+    license_details: Most rule repos are MIT but each repo carries its own licence — verify per rule.
+
+  - url: https://github.com/retextjs/retext
+    title: retext plugins
+    description: JS NL ecosystem plugins for passives, intensifiers, readability, repeats.
+    type: tool_fixtures
+    polarity: bad_example
+    rules_relevant: [syntax.passive-voice, lexicon.redundant-intensifier, readability.score, rhythm.repetitive-connectors]
+    conditions: [general]
+    languages: [en]
+    bilingual_parallel: false
+    interest: medium
+    confidence: high
+    use_case: [example]
+    has_explanations: true
+    license_or_access: open
+    redistribution: public_ok
+    license_details: MIT licence across core retext plugins.
+
+  - url: https://languagetool.org/
+    title: LanguageTool rules
+    description: Open-source grammar/style engine with EN and FR rule files.
+    type: tool_fixtures
+    polarity: bad_example
+    rules_relevant: [lexicon.weasel-words, lexicon.redundant-intensifier, syntax.passive-voice, structure.excessive-commas]
+    conditions: [general]
+    languages: [en, fr]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [example, benchmark]
+    has_explanations: true
+    license_or_access: open
+    redistribution: check_license
+    license_details: Core is LGPL-2.1; rule-set files inherit LGPL — a copyleft obligation applies if bundled directly.
+    notes: Rare bilingual rule source with explanations.
+
+  - url: https://www.hemingwayapp.com/
+    title: Hemingway Editor
+    description: Web tool flagging hard sentences, passives, adverbs with live demos.
+    type: tool_fixtures
+    polarity: bad_example
+    rules_relevant: [structure.sentence-too-long, syntax.passive-voice, lexicon.redundant-intensifier, readability.score]
+    conditions: [general, non-native]
+    languages: [en]
+    bilingual_parallel: false
+    interest: medium
+    confidence: medium
+    use_case: [example]
+    has_explanations: true
+    license_or_access: open
+    redistribution: link_only
+    license_details: Proprietary web tool; no open licence — link only.
+
+  # ── Research / documentation ────────────────────────────────────────────
+  - url: https://www.tandfonline.com/doi/full/10.1080/01638539809545028
+    title: Coh-Metrix / McNamara readability research
+    description: Foundational paper behind Coh-Metrix cohesion metrics.
+    type: research_paper
+    polarity: neutral
+    rules_relevant: [readability.score, rhythm.repetitive-connectors, structure.deep-subordination, syntax.unclear-antecedent]
+    conditions: [general, non-native]
+    languages: [en]
+    bilingual_parallel: false
+    interest: medium
+    confidence: high
+    use_case: [documentation, benchmark]
+    has_explanations: true
+    license_or_access: restricted
+    redistribution: restricted
+    license_details: © Taylor & Francis; paywalled. Cite only; do not redistribute the PDF.
+
+  - url: https://www.nngroup.com/articles/plain-language-experts/
+    title: Nielsen Norman — Plain Language usability studies
+    description: NN/g studies comparing dense vs plain prose.
+    type: blog
+    polarity: before_after
+    rules_relevant: [readability.score, structure.sentence-too-long, lexicon.jargon-undefined]
+    conditions: [general, non-native]
+    languages: [en]
+    bilingual_parallel: false
+    interest: medium
+    confidence: medium
+    use_case: [documentation]
+    has_explanations: true
+    license_or_access: open
+    redistribution: link_only
+    license_details: © Nielsen Norman Group — link only, commercial content.
+
+  - url: https://18f.gsa.gov/2016/05/24/an-open-source-tool-for-plainer-writing/
+    title: 18F plain-writing posts
+    description: US 18F blog posts showcasing government plain-writing.
+    type: blog
+    polarity: mixed_unaligned
+    rules_relevant: [structure.sentence-too-long, syntax.passive-voice, lexicon.jargon-undefined]
+    conditions: [general]
+    languages: [en]
+    bilingual_parallel: false
+    interest: low
+    confidence: medium
+    use_case: [documentation]
+    has_explanations: true
+    license_or_access: open
+    redistribution: public_ok
+    license_details: 18F content is generally CC0 / US government public domain.
+
+  - url: https://www.orthodidacte.com/blog/
+    title: Orthodidacte blog
+    description: French writing-quality blog with concrete rewrite examples.
+    type: blog
+    polarity: before_after
+    rules_relevant: [lexicon.excessive-nominalization, syntax.passive-voice, structure.sentence-too-long]
+    conditions: [general, non-native]
+    languages: [fr]
+    bilingual_parallel: false
+    interest: low
+    confidence: medium
+    use_case: [example]
+    has_explanations: true
+    license_or_access: open
+    redistribution: link_only
+    license_details: © Orthodidacte (commercial) — link only.
+
+  - url: https://readable.com/blog/
+    title: Readable.com blog
+    description: Commercial readability-tool explainers on Flesch, passive, etc.
+    type: blog
+    polarity: mixed_unaligned
+    rules_relevant: [readability.score, syntax.passive-voice, structure.sentence-too-long]
+    conditions: [general]
+    languages: [en]
+    bilingual_parallel: false
+    interest: low
+    confidence: medium
+    use_case: [documentation]
+    has_explanations: true
+    license_or_access: open
+    redistribution: link_only
+    license_details: © Readable.com (commercial) — link only.
+
+# ── Redistribution roll-up / summary counts ───────────────────────────────
+redistribution_summary:
+  public_ok:
+    count: 23
+    examples: [plainlanguage.gov, Federal Plain Language, GOV.UK A–Z, GOV.UK writing, EC How to write clearly, CDL Readability, WCAG 2.1 (×3), RGAA 4.1, CDC Clear Comm Index, EUR-Lex, Légifrance, Simple English Wikipedia, Vikidia, OneStopEnglish, ASSET, WikiAuto, Project Gutenberg, proselint, write-good, alex.js, retext, 18F]
+  check_license:
+    count: 11
+    examples: [Canada.ca style guide, Canada.ca plain-language, HAS, Santé publique France, ToSDR, CLEAR (CommonLit), Alector, CLEAR-FR (Grabar & Cardon), EASSE, Vale styles, textlint-rule, LanguageTool]
+    note: Licence is open but carries NC/SA/per-item constraints — verify before committing extracts.
+  link_only:
+    count: 10
+    examples: [Center for Plain Language, Inclusion Europe, Unapei, IFLA, BDA Dyslexia, Stroke Association, ADHD Foundation, Hemingway, NN/g, Orthodidacte, Readable.com]
+    note: Copyrighted with no open licence — link from docs, do not commit extracts beyond short fair-use quotes.
+  restricted:
+    count: 4
+    examples: [BMJ Gobbledygook article, Newsela, WeeBit, Coh-Metrix / Tandfonline]
+    note: Access itself is gated or explicitly forbids redistribution — internal use only after accepting terms.
+
+# ── Known gaps ────────────────────────────────────────────────────────────
+gaps:
+  - No solid dyscalculia-specific corpus found; only `structure.mixed-numeric-format`-adjacent WCAG notes.
+  - Aphasia-specific French samples beyond SPF/HAS are thin.
+  - No ADHD-specific before/after prose pairs; evidence base is mostly layout.
+  - No open legal/EULA dataset with expert plain-language annotations at scale (ToSDR has uneven coverage).
