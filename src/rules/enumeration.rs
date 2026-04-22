@@ -2,11 +2,11 @@
 //!
 //! Used by two rules with different thresholds:
 //!
-//! - [`crate::rules::long_enumeration`] flags enumerations of 5+ items as
-//!   "convert to a bulleted list" suggestions.
-//! - [`crate::rules::excessive_commas`] discounts commas inside detected
-//!   enumerations so that sentences like "red, green, blue, and yellow"
-//!   don't trip the comma-density threshold.
+//! - [`crate::rules::structure::long_enumeration`] flags enumerations
+//!   of 5+ items as "convert to a bulleted list" suggestions.
+//! - [`crate::rules::structure::excessive_commas`] discounts commas
+//!   inside detected enumerations so that sentences like "red, green,
+//!   blue, and yellow" don't trip the comma-density threshold.
 //!
 //! Detection recognizes the Oxford-comma pattern documented in
 //! `RULES.md` for `long-enumeration`: a run of comma-separated short

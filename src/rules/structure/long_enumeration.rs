@@ -4,7 +4,7 @@
 //! lists. A prose list of five-plus items is harder to scan than a
 //! proper list structure.
 //!
-//! Shares detection logic with [`crate::rules::excessive_commas`] via
+//! Shares detection logic with [`crate::rules::structure::excessive_commas`] via
 //! [`crate::rules::enumeration::detect_enumerations`] so that both rules
 //! agree on what counts as an enumeration.
 //!

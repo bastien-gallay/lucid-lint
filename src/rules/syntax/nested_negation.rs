@@ -10,7 +10,7 @@
 //! Counting strategy:
 //!
 //! - **English** — sum of word-boundary matches against the language's
-//!   [`NEGATIONS`] list plus occurrences of the contracted `n't` suffix
+//!   `NEGATIONS` list plus occurrences of the contracted `n't` suffix
 //!   (`don't`, `won't`, `isn't`, `doesn't`, …).
 //! - **French** — bipartite negation: each `ne` / `n'` clitic counts as
 //!   one negation, plus standalone negators (`sans`, `non`). Counting the

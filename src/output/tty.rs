@@ -84,7 +84,7 @@ const DIVIDER_WIDTH: usize = 60;
 pub fn render(diagnostics: &[Diagnostic], scorecard: &Scorecard, options: TtyOptions) -> String {
     let diagnostics_block = render_diagnostics_block(diagnostics, options);
     let score_block = render_score_block(scorecard, options.color_mode);
-    let divider = format!("{}\n", dim(&"─".repeat(DIVIDER_WIDTH), options.color_mode),);
+    let divider = format!("{}\n", dim(&"─".repeat(DIVIDER_WIDTH), options.color_mode));
 
     let banner = if banner_fires(options.banner, options.color_mode) {
         render_banner(options.color_mode)

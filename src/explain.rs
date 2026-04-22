@@ -236,7 +236,7 @@ fn rewrite_target(target: &str) -> String {
     // Rewrite the on-disk `.md` extension to the served `.html`.
     let served = joined
         .strip_suffix(".md")
-        .map_or(joined.clone(), |stem| format!("{stem}.html"));
+        .map_or_else(|| joined.clone(), |stem| format!("{stem}.html"));
 
     format!("{DOCS_BASE}/{served}{anchor}")
 }
