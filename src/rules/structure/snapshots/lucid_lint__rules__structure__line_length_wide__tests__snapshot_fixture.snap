@@ -10,5 +10,5 @@ expression: diags
     column: 1
     length: 110
   section: ~
-  message: Line is 110 characters wide (maximum 100). Hard-wrap prose near 100 to keep the return sweep short — WCAG 1.4.8 (AAA) recommends ≤ 80.
+  message: Line is 110 characters wide (maximum 100).
   weight: 1

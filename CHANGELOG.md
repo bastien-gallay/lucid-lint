@@ -306,6 +306,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Shorter diagnostic messages for `lexicon.unexplained-abbreviation`
+  and `structure.line-length-wide`.** Both rules used to inline their
+  full repair guidance in the diagnostic line (TOML snippet, WCAG
+  citation, recommended line width). Now the diagnostic states the
+  fact only — `Acronym "X" is not defined on first use.` /
+  `Line is N characters wide (maximum M).` — and the `explain`
+  subcommand (or the mdBook page linked from the summary hint) is the
+  canonical place for the fix recipe. Keeps the terminal output
+  scannable when a cluster fires on many lines.
+- **Clustered TTY headers hoist shared section and shared message.**
+  When every member of a `(file, rule_id)` cluster shares the same
+  `section:` label, it moves to the header rather than repeating on
+  every row. Same treatment for a shared message: it is dimmed under
+  the header and each row below carries only its location. Reduces
+  visual repetition on long clusters without losing per-row locations.
 - **Breaking — rule IDs now use `category.rule-name` form (F29-slim).**
   Every rule ID has been renamed from flat kebab-case to a
   category-prefixed form: `sentence-too-long` →

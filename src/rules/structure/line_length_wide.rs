@@ -96,11 +96,8 @@ impl Rule for LineLengthWide {
                         .saturating_add(u32::try_from(line_offset).unwrap_or(u32::MAX));
                     let location =
                         Location::new(document.source.clone(), line_number, 1, grapheme_count);
-                    let message = format!(
-                        "Line is {grapheme_count} characters wide (maximum {max}). Hard-wrap \
-                         prose near {max} to keep the return sweep short — WCAG 1.4.8 (AAA) \
-                         recommends ≤ 80."
-                    );
+                    let message =
+                        format!("Line is {grapheme_count} characters wide (maximum {max}).");
                     let mut diag = Diagnostic::new(Self::ID, Severity::Warning, location, message);
                     if let Some(title) = section_title {
                         diag = diag.with_section(title);

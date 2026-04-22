@@ -420,12 +420,7 @@ fn build_diagnostic(
 ) -> Diagnostic {
     let length = u32::try_from(token.chars().count()).unwrap_or(u32::MAX);
     let location = Location::new(source.clone(), line, column, length);
-    let message = format!(
-        "Acronym \"{token}\" is not defined and not whitelisted. Define it on first use \
-         — e.g. \"Full Expansion ({token})\" or \"{token} (Full Expansion)\" — or add it \
-         to `[rules.unexplained-abbreviation].whitelist` in `lucid-lint.toml` for \
-         project-wide terms."
-    );
+    let message = format!("Acronym \"{token}\" is not defined on first use.");
     let diag = Diagnostic::new(
         UnexplainedAbbreviation::ID,
         Severity::Warning,

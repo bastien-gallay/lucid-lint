@@ -10,7 +10,7 @@ expression: diags
     column: 7
     length: 3
   section: ~
-  message: "Acronym \"ZQX\" is not defined and not whitelisted. Define it on first use — e.g. \"Full Expansion (ZQX)\" or \"ZQX (Full Expansion)\" — or add it to `[rules.unexplained-abbreviation].whitelist` in `lucid-lint.toml` for project-wide terms."
+  message: "Acronym \"ZQX\" is not defined on first use."
   weight: 1
 - rule_id: lexicon.unexplained-abbreviation
   severity: warning
@@ -20,7 +20,7 @@ expression: diags
     column: 23
     length: 4
   section: ~
-  message: "Acronym \"HTTP\" is not defined and not whitelisted. Define it on first use — e.g. \"Full Expansion (HTTP)\" or \"HTTP (Full Expansion)\" — or add it to `[rules.unexplained-abbreviation].whitelist` in `lucid-lint.toml` for project-wide terms."
+  message: "Acronym \"HTTP\" is not defined on first use."
   weight: 1
 - rule_id: lexicon.unexplained-abbreviation
   severity: warning
@@ -30,5 +30,5 @@ expression: diags
     column: 32
     length: 3
   section: ~
-  message: "Acronym \"API\" is not defined and not whitelisted. Define it on first use — e.g. \"Full Expansion (API)\" or \"API (Full Expansion)\" — or add it to `[rules.unexplained-abbreviation].whitelist` in `lucid-lint.toml` for project-wide terms."
+  message: "Acronym \"API\" is not defined on first use."
   weight: 1
