@@ -199,6 +199,24 @@ Prose is Unicode. Use `unicode-segmentation` for graphemes and words. Never inde
 - Ask a maintainer before adding a dependency.
 - Prefer small PRs over sweeping ones.
 
+## Prose style in agent answers
+
+Agents should write their own prose — chat replies, commit messages, PR
+descriptions, docs contributions — to pass the `dev-doc` profile as
+much as reasonably possible. We dogfood the tool on ourselves.
+
+Concretely, avoid what our own rules flag: overlong sentences, deep
+subordination, passive voice, weasel words, redundant intensifiers,
+excessive commas, nominalization piles, all-caps shouting, repetitive
+connectors, long enumerations, and dense punctuation bursts. See
+[RULES.md](RULES.md) for the full list and
+[`docs/src/guide/profiles.md`](docs/src/guide/profiles.md) for the
+`dev-doc` thresholds.
+
+This is a soft target, not a lint gate: code examples, quoted output,
+and technical identifiers are exempt. When a rule would force an
+unclear phrasing, clarity wins.
+
 ## Design context
 
 <!-- lucid-lint disable-next-line long-enumeration -->
