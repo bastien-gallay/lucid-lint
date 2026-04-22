@@ -1,4 +1,4 @@
-# `unclear-antecedent`
+# `syntax.unclear-antecedent`
 
 ## What it flags
 

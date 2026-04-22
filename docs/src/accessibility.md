@@ -13,7 +13,7 @@ WCAG (Web Content Accessibility Guidelines) is the international
 standard for web accessibility. It defines three conformance levels;
 **AAA (the strictest)** is the ceiling, not the floor.
 
-<!-- lucid-lint disable-next-line unexplained-abbreviation -->
+<!-- lucid-lint disable-next-line lexicon.unexplained-abbreviation -->
 
 The stated bar for this site is WCAG 2.2 Level AAA. In practice:
 
@@ -26,28 +26,52 @@ The stated bar for this site is WCAG 2.2 Level AAA. In practice:
   decorative animation, no parallax, no auto-playing content.
 - Keyboard navigation reaches every interactive surface in a logical order.
 
-<!-- lucid-lint disable-next-line unexplained-abbreviation -->
+<!-- lucid-lint disable-next-line lexicon.unexplained-abbreviation -->
 
 Both themes (**Lucid light** and **Lucid dark**) clear AAA for body
 text (14:1 and above) and inline links (7.4:1 and above).
 
-<!-- lucid-lint disable-next-line unexplained-abbreviation -->
+<!-- lucid-lint disable-next-line lexicon.unexplained-abbreviation -->
 
 Where AAA is impractical — for example contrast on a third-party
 embed — the exception is documented in
 [`.impeccable.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/.impeccable.md).
 
-<!-- lucid-lint disable-next-line unexplained-abbreviation -->
+<!-- lucid-lint disable-next-line lexicon.unexplained-abbreviation -->
 
 ### Known limitations
 
-- The French page renders under `<html lang="en">` at build time
-  because mdBook supports a single book-wide language. A small
-  script corrects `lang="fr"` on load; screen readers that
+The first audit pass (2026-04-22) scored **17 / 20** against the
+AAA bar: 0 blockers, 2 P1 items, 3 P2, 2 P3. Each open item below
+has a roadmap ticket; fixes land in subsequent v0.2.x slices.
+
+- **Skip link and language switch are JS-rendered.** Both the
+  "Skip to main content" link and the EN / FR header switch are
+  injected by `lucid-navigation.js` at end-of-body. Users with JS
+  disabled, or readers on the pre-paint frame, do not see them.
+  WCAG 2.4.1 (*Bypass Blocks*) asks for the skip link without
+  JS. A `theme/index.hbs` override that server-renders both is
+  tracked as [F35a](./roadmap.md).
+- **Reading-demo chips declare radiogroup semantics without
+  keyboard arrow-key traversal.** The chips behave as toggle
+  buttons; arrow keys do not move focus between them. The fix is
+  to drop `role="radiogroup"` / `role="radio"` and use plain
+  buttons with `aria-pressed`. Tracked as
+  [F35b](./roadmap.md).
+- **`prefers-reduced-motion` over-reaches on the pair-comparison
+  idea-highlight.** The reduced-motion rule currently strips the
+  colour tint as well as the animation. Readers who opt out of
+  motion lose the pedagogical highlight itself. The rule will be
+  split so only transitions go under the media query. Tracked as
+  [F35c](./roadmap.md).
+- **The French page renders under `<html lang="en">` at build
+  time** because mdBook supports a single book-wide language. A
+  small script corrects `lang="fr"` on load; screen readers that
   respect dynamic changes pick it up. Proper per-locale builds
-  land with the full French mirror in v0.2.
-- mdBook's built-in theme picker still lists Light / Rust / Coal /
-  Navy / Ayu as menu items. Each of them resolves to either
+  land with the full French mirror in
+  [F25](./roadmap.md).
+- **mdBook's built-in theme picker still lists Light / Rust /
+  Coal / Navy / Ayu as menu items.** Each resolves to either
   **Lucid light** or **Lucid dark** via the theme CSS, but the
   picker labels themselves are a mdBook concern. Brand-owned
   labels are tracked as [F26](./roadmap.md) in the roadmap.
@@ -95,7 +119,7 @@ The site inherits mdBook's keyboard map:
 
 Every font on the site is self-hosted under
 [`docs/src/_fonts/`](https://github.com/bastien-gallay/lucid-lint/tree/main/docs/src/_fonts).
-<!-- lucid-lint disable-next-line unexplained-abbreviation -->
+<!-- lucid-lint disable-next-line lexicon.unexplained-abbreviation -->
 
 All four ship under the **SIL Open Font License 1.1**, issued by the
 Summer Institute of Linguistics.
@@ -118,8 +142,14 @@ tool sets for its users without the build failing.
 
 ## Reporting an accessibility issue
 
-If something on this site is harder to use than it should be, open an
-issue on
-[GitHub](https://github.com/bastien-gallay/lucid-lint/issues/new) with
-the `accessibility` label. Reports are triaged against the v0.2
-milestone unless they block a release.
+If something on this site is harder to use than it should be, open
+an issue on
+[GitHub](https://github.com/bastien-gallay/lucid-lint/issues/new)
+with the `accessibility` label. Reports are triaged against the
+v0.2 milestone unless they block a release. If an email route suits
+you better, write to the maintainer listed in
+[`CONTRIBUTING.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/CONTRIBUTING.md).
+
+Audit cadence: a full AAA sweep runs at least once per minor
+release (v0.1, v0.2, …). The last pass was 2026-04-22. Findings
+and their status live in the roadmap under the F35 family.

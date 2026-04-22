@@ -1,0 +1,14 @@
+---
+source: src/rules/rhythm/repetitive_connectors.rs
+expression: diags
+---
+- rule_id: rhythm.repetitive-connectors
+  severity: warning
+  location:
+    file: "<input>"
+    line: 1
+    column: 1
+    length: 24
+  section: ~
+  message: "Connector \"then\" appears 4 times within 5 consecutive sentences (max 3). Vary the connector or restructure the passage."
+  weight: 1

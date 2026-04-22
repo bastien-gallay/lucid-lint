@@ -1,0 +1,14 @@
+---
+source: src/rules/structure/sentence_too_long.rs
+expression: diags
+---
+- rule_id: structure.sentence-too-long
+  severity: warning
+  location:
+    file: "<input>"
+    line: 1
+    column: 1
+    length: 139
+  section: ~
+  message: Sentence is 24 words long (maximum 22). Consider splitting it into shorter sentences.
+  weight: 2

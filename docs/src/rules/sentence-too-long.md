@@ -1,4 +1,4 @@
-# `sentence-too-long`
+# `structure.sentence-too-long`
 
 ## What it flags
 
@@ -49,5 +49,5 @@ See [Suppressing diagnostics](../guide/suppression.md) for the inline and block 
 
 ## See also
 
-- [`consecutive-long-sentences`](./consecutive-long-sentences.md) — catches rhythm; its threshold must stay lower than `max_words` here.
-- [Scoring model](../guide/scoring.md) — `sentence-too-long` carries weight `2` because the cognitive cost compounds with length.
+- [`rhythm.consecutive-long-sentences`](./consecutive-long-sentences.md) — catches rhythm; its threshold must stay lower than `max_words` here.
+- [Scoring model](../guide/scoring.md) — `structure.sentence-too-long` carries weight `2` because the cognitive cost compounds with length.

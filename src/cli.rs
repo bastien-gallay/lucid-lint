@@ -13,8 +13,9 @@ use clap::{Parser, Subcommand, ValueEnum};
 
 use lucid_lint::condition::ConditionTag;
 use lucid_lint::config::Profile as ProfileConfig;
+use lucid_lint::output::tty::BannerPolicy as TtyBannerPolicy;
 use lucid_lint::output::Format as FormatConfig;
-use lucid_lint::rules::readability_score::FormulaChoice;
+use lucid_lint::rules::readability::score::FormulaChoice;
 
 /// Top-level CLI.
 #[derive(Debug, Parser)]
@@ -35,10 +36,44 @@ pub(crate) struct Cli {
 pub(crate) enum Command {
     /// Check one or more files (or stdin with `-`).
     Check(CheckArgs),
+    /// Print the bundled documentation for one or more rule ids.
+    Explain(ExplainArgs),
+}
+
+/// Arguments for the `explain` subcommand.
+#[derive(Debug, Parser)]
+pub(crate) struct ExplainArgs {
+    /// One or more rule ids (e.g. `sentence-too-long weasel-words`).
+    ///
+    /// When omitted, pair with `--list` or `--list-verbose` to print the
+    /// known ids instead.
+    pub(crate) rule_ids: Vec<String>,
+
+    /// Print the list of known rule ids, one per line, and exit.
+    ///
+    /// Grep-friendly. Mutually exclusive with `--list-verbose`.
+    #[arg(long, default_value_t = false, conflicts_with = "list_verbose")]
+    pub(crate) list: bool,
+
+    /// Print each known rule id with a one-line description and exit.
+    ///
+    /// Descriptions are extracted from the `## What it flags` section of
+    /// each bundled rule page.
+    #[arg(long, default_value_t = false)]
+    pub(crate) list_verbose: bool,
+
+    /// Keep relative markdown links as-is instead of rewriting them to
+    /// absolute mdBook URLs.
+    ///
+    /// Useful when copy-pasting the output into another mdBook or into
+    /// an AI agent's local rule inventory.
+    #[arg(long, default_value_t = false)]
+    pub(crate) keep_relative: bool,
 }
 
 /// Arguments for the `check` subcommand.
 #[derive(Debug, Parser)]
+#[allow(clippy::struct_excessive_bools)] // CLI flag record — one bool per user-facing flag is idiomatic here.
 pub(crate) struct CheckArgs {
     /// Paths to files or directories to lint. Use `-` for stdin.
     ///
@@ -64,6 +99,36 @@ pub(crate) struct CheckArgs {
     /// Output format.
     #[arg(long, value_enum, default_value = "tty")]
     pub(crate) format: CliFormat,
+
+    /// Disable per-rule grouping in the `tty` format.
+    ///
+    /// By default, when the same rule fires two or more times on the same
+    /// file, hits are clustered under a single rule header. `--no-group`
+    /// keeps every diagnostic on its own line. No effect on `json` / `sarif`.
+    #[arg(long, default_value_t = false)]
+    pub(crate) no_group: bool,
+
+    /// Suppress the one-line `explain` hint that follows the summary.
+    ///
+    /// Useful for CI log hygiene. No effect on `json` / `sarif`.
+    #[arg(long, default_value_t = false)]
+    pub(crate) no_explain_hint: bool,
+
+    /// Emit the score block before the diagnostics in the `tty` format.
+    ///
+    /// Default places the score at the end (clippy / ruff family
+    /// convention). `--score-first` is for CI logs and agents that want
+    /// the headline up top. No effect on `json` / `sarif`.
+    #[arg(long, default_value_t = false)]
+    pub(crate) score_first: bool,
+
+    /// When to print the wordmark banner in the `tty` format.
+    ///
+    /// `auto` (default) prints it when stdout is a TTY — interactive
+    /// runs only, silent under CI / pipes / redirects. `always` and
+    /// `never` override. No effect on `json` / `sarif`.
+    #[arg(long, value_enum, default_value = "auto")]
+    pub(crate) banner: CliBannerPolicy,
 
     /// Exit with code 1 if any warnings are found.
     #[arg(long, default_value_t = true)]
@@ -105,6 +170,27 @@ pub(crate) struct CheckArgs {
     /// to `auto`.
     #[arg(long, value_enum)]
     pub(crate) readability_formula: Option<CliFormulaChoice>,
+}
+
+/// Banner policy values accepted on the command line.
+#[derive(Debug, Clone, Copy, ValueEnum)]
+pub(crate) enum CliBannerPolicy {
+    /// Print the banner only when the run has no diagnostics.
+    Auto,
+    /// Print the banner on every run.
+    Always,
+    /// Never print the banner.
+    Never,
+}
+
+impl From<CliBannerPolicy> for TtyBannerPolicy {
+    fn from(value: CliBannerPolicy) -> Self {
+        match value {
+            CliBannerPolicy::Auto => Self::Auto,
+            CliBannerPolicy::Always => Self::Always,
+            CliBannerPolicy::Never => Self::Never,
+        }
+    }
 }
 
 /// Formula choice values accepted on the command line.
@@ -235,6 +321,7 @@ mod tests {
                 assert!(a.readability_formula.is_none());
                 assert!(matches!(a.format, CliFormat::Tty));
             },
+            Command::Explain(_) => unreachable!("expected Check, got Explain"),
         }
     }
 
@@ -244,6 +331,7 @@ mod tests {
             Cli::try_parse_from(["lucid-lint", "check", "--profile", "falc", "file.md"]).unwrap();
         match args.command {
             Command::Check(a) => assert!(matches!(a.profile, Some(CliProfile::Falc))),
+            Command::Explain(_) => unreachable!("expected Check, got Explain"),
         }
     }
 
@@ -253,6 +341,7 @@ mod tests {
             Cli::try_parse_from(["lucid-lint", "check", "--format", "json", "file.md"]).unwrap();
         match args.command {
             Command::Check(a) => assert!(matches!(a.format, CliFormat::Json)),
+            Command::Explain(_) => unreachable!("expected Check, got Explain"),
         }
     }
 
@@ -277,7 +366,63 @@ mod tests {
                     "tests/fixtures/**".to_string(),
                 ]
             ),
+            Command::Explain(_) => unreachable!("expected Check, got Explain"),
         }
+    }
+
+    #[test]
+    fn explain_args_parse_ids() {
+        let args = Cli::try_parse_from([
+            "lucid-lint",
+            "explain",
+            "structure.sentence-too-long",
+            "lexicon.weasel-words",
+        ])
+        .unwrap();
+        match args.command {
+            Command::Explain(a) => {
+                assert_eq!(
+                    a.rule_ids,
+                    vec!["structure.sentence-too-long", "lexicon.weasel-words"]
+                );
+                assert!(!a.list);
+            },
+            Command::Check(_) => unreachable!("expected Explain, got Check"),
+        }
+    }
+
+    #[test]
+    fn explain_args_allow_list_without_ids() {
+        let args = Cli::try_parse_from(["lucid-lint", "explain", "--list"]).unwrap();
+        match args.command {
+            Command::Explain(a) => {
+                assert!(a.list);
+                assert!(a.rule_ids.is_empty());
+            },
+            Command::Check(_) => unreachable!("expected Explain, got Check"),
+        }
+    }
+
+    #[test]
+    fn explain_args_parse_without_ids_or_flags() {
+        // Bare `explain` parses successfully; main.rs is responsible for
+        // printing a friendly hint and exiting non-zero.
+        let args = Cli::try_parse_from(["lucid-lint", "explain"]).unwrap();
+        match args.command {
+            Command::Explain(a) => {
+                assert!(a.rule_ids.is_empty());
+                assert!(!a.list);
+                assert!(!a.list_verbose);
+            },
+            Command::Check(_) => unreachable!("expected Explain"),
+        }
+    }
+
+    #[test]
+    fn explain_args_list_flags_are_mutually_exclusive() {
+        assert!(
+            Cli::try_parse_from(["lucid-lint", "explain", "--list", "--list-verbose"]).is_err()
+        );
     }
 
     #[test]

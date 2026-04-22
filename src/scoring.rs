@@ -110,31 +110,31 @@ pub const fn severity_multiplier(severity: Severity) -> u32 {
 /// to assert that every shipped rule has been considered for weighting,
 /// rather than silently inheriting the uniform fallback.
 pub const WEIGHTED_RULE_IDS: &[&str] = &[
-    "readability-score",
-    "sentence-too-long",
-    "paragraph-too-long",
-    "deep-subordination",
-    "passive-voice",
-    "unclear-antecedent",
-    "heading-jump",
-    "deeply-nested-lists",
-    "excessive-commas",
-    "long-enumeration",
-    "consecutive-long-sentences",
-    "repetitive-connectors",
-    "low-lexical-diversity",
-    "excessive-nominalization",
-    "unexplained-abbreviation",
-    "weasel-words",
-    "jargon-undefined",
-    "nested-negation",
-    "conditional-stacking",
-    "all-caps-shouting",
-    "line-length-wide",
-    "mixed-numeric-format",
-    "redundant-intensifier",
-    "dense-punctuation-burst",
-    "consonant-cluster",
+    "readability.score",
+    "structure.sentence-too-long",
+    "structure.paragraph-too-long",
+    "structure.deep-subordination",
+    "syntax.passive-voice",
+    "syntax.unclear-antecedent",
+    "structure.heading-jump",
+    "structure.deeply-nested-lists",
+    "structure.excessive-commas",
+    "structure.long-enumeration",
+    "rhythm.consecutive-long-sentences",
+    "rhythm.repetitive-connectors",
+    "lexicon.low-lexical-diversity",
+    "lexicon.excessive-nominalization",
+    "lexicon.unexplained-abbreviation",
+    "lexicon.weasel-words",
+    "lexicon.jargon-undefined",
+    "syntax.nested-negation",
+    "syntax.conditional-stacking",
+    "lexicon.all-caps-shouting",
+    "structure.line-length-wide",
+    "structure.mixed-numeric-format",
+    "lexicon.redundant-intensifier",
+    "syntax.dense-punctuation-burst",
+    "lexicon.consonant-cluster",
 ];
 
 /// Default weight for a rule, keyed by `rule_id`.
@@ -148,14 +148,14 @@ pub const WEIGHTED_RULE_IDS: &[&str] = &[
 #[must_use]
 pub fn default_weight_for(rule_id: &str) -> u32 {
     match rule_id {
-        "readability-score" => 5,
-        "sentence-too-long"
-        | "paragraph-too-long"
-        | "deep-subordination"
-        | "passive-voice"
-        | "unclear-antecedent"
-        | "nested-negation"
-        | "conditional-stacking" => 2,
+        "readability.score" => 5,
+        "structure.sentence-too-long"
+        | "structure.paragraph-too-long"
+        | "structure.deep-subordination"
+        | "syntax.passive-voice"
+        | "syntax.unclear-antecedent"
+        | "syntax.nested-negation"
+        | "syntax.conditional-stacking" => 2,
         _ => 1,
     }
 }
@@ -265,7 +265,7 @@ mod tests {
         // 1000 words → density divisor 1.0 → per_cat_cost = 6
         // Structure score = 20 - 6 = 14
         let config = ScoringConfig::default();
-        let diags = [diag("sentence-too-long", Severity::Warning)];
+        let diags = [diag("structure.sentence-too-long", Severity::Warning)];
         let card = compute(&diags, 1000, &config);
         let structure = card
             .per_category
@@ -288,7 +288,7 @@ mod tests {
         // Structure score = 20 - 15 = 5 regardless of further hits.
         let config = ScoringConfig::default();
         let diags: Vec<_> = (0..20)
-            .map(|_| diag("sentence-too-long", Severity::Warning))
+            .map(|_| diag("structure.sentence-too-long", Severity::Warning))
             .collect();
         let card = compute(&diags, 1000, &config);
         let structure = card
@@ -307,7 +307,7 @@ mod tests {
         // A 10-word doc with one warning still divides by 200/1000 = 0.2,
         // not 10/1000 = 0.01 (which would massively inflate cost).
         let config = ScoringConfig::default();
-        let diags = [diag("weasel-words", Severity::Warning)];
+        let diags = [diag("lexicon.weasel-words", Severity::Warning)];
         let card = compute(&diags, 10, &config);
         // weasel-words: weight 1 × severity 3 = 3; divided by 0.2 = 15; capped at 15.
         // Lexicon = 20 - 15 = 5.
@@ -322,8 +322,10 @@ mod tests {
     #[test]
     fn weight_override_takes_effect() {
         let mut config = ScoringConfig::default();
-        config.weight_overrides.insert("weasel-words".into(), 10);
-        let diags = [diag("weasel-words", Severity::Info)];
+        config
+            .weight_overrides
+            .insert("lexicon.weasel-words".into(), 10);
+        let diags = [diag("lexicon.weasel-words", Severity::Info)];
         // 10 × 1 (info) = 10 at 1000 words → Lexicon = 20 - 10 = 10.
         let card = compute(&diags, 1000, &config);
         let lex = card
@@ -336,9 +338,9 @@ mod tests {
 
     #[test]
     fn default_weight_for_prioritises_costly_rules() {
-        assert_eq!(default_weight_for("readability-score"), 5);
-        assert_eq!(default_weight_for("sentence-too-long"), 2);
-        assert_eq!(default_weight_for("weasel-words"), 1);
+        assert_eq!(default_weight_for("readability.score"), 5);
+        assert_eq!(default_weight_for("structure.sentence-too-long"), 2);
+        assert_eq!(default_weight_for("lexicon.weasel-words"), 1);
         assert_eq!(default_weight_for("unknown"), 1);
     }
 

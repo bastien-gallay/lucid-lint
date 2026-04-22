@@ -1,10 +1,10 @@
-# `dense-punctuation-burst`
+# `syntax.dense-punctuation-burst`
 
 ## What it flags
 
 *Local* bursts of punctuation: a sliding window of grapheme clusters that contains too many qualifying marks (`,`, `;`, `:`, `—`, `–`). Tight clusters of marks signal layered subordination, parenthetical interjections, or list-within-list constructions that are hard to parse for readers with cognitive or attentional difficulties (IFLA easy-to-read guidelines).
 
-Distinct from [`excessive-commas`](./excessive-commas.md), which counts commas across an entire sentence. A sentence with 8 commas spread evenly across 200 characters does not trigger here, while a sentence with 3 commas inside a 30-character span does.
+Distinct from [`structure.excessive-commas`](./excessive-commas.md), which counts commas across an entire sentence. A sentence with 8 commas spread evenly across 200 characters does not trigger here, while a sentence with 3 commas inside a 30-character span does.
 
 ## At a glance
 
@@ -43,6 +43,6 @@ See [Suppressing diagnostics](../guide/suppression.md).
 
 ## See also
 
-- [`excessive-commas`](./excessive-commas.md)
-- [`sentence-too-long`](./sentence-too-long.md)
+- [`structure.excessive-commas`](./excessive-commas.md)
+- [`structure.sentence-too-long`](./sentence-too-long.md)
 - [Conditions](../guide/conditions.md)

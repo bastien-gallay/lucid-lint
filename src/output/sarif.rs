@@ -190,7 +190,9 @@ fn rule_descriptor(rule_id: &str) -> RuleDescriptor {
 
 fn default_severity_for(rule_id: &str) -> Severity {
     match rule_id {
-        "low-lexical-diversity" | "unclear-antecedent" | "readability-score" => Severity::Info,
+        "lexicon.low-lexical-diversity" | "syntax.unclear-antecedent" | "readability.score" => {
+            Severity::Info
+        },
         _ => Severity::Warning,
     }
 }
@@ -265,7 +267,7 @@ mod tests {
 
     fn sample_diag() -> Diagnostic {
         Diagnostic::new(
-            "sentence-too-long",
+            "structure.sentence-too-long",
             Severity::Warning,
             Loc::new(SourceFile::Path(PathBuf::from("docs/foo.md")), 3, 1, 42),
             "Sentence is too long.",
@@ -302,13 +304,13 @@ mod tests {
         let diags = vec![
             sample_diag(),
             Diagnostic::new(
-                "weasel-words",
+                "lexicon.weasel-words",
                 Severity::Warning,
                 Loc::new(SourceFile::Path(PathBuf::from("a.md")), 1, 1, 5),
                 "m",
             ),
             Diagnostic::new(
-                "weasel-words",
+                "lexicon.weasel-words",
                 Severity::Warning,
                 Loc::new(SourceFile::Path(PathBuf::from("a.md")), 2, 1, 5),
                 "m",
@@ -328,7 +330,7 @@ mod tests {
         let diags = vec![
             sample_diag(),
             Diagnostic::new(
-                "weasel-words",
+                "lexicon.weasel-words",
                 Severity::Info,
                 Loc::new(SourceFile::Path(PathBuf::from("a.md")), 2, 3, 4),
                 "m",

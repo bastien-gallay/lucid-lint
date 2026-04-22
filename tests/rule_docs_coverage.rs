@@ -26,6 +26,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
+use lucid_lint::explain;
 use lucid_lint::rules::default_rules;
 use lucid_lint::scoring::{default_weight_for, WEIGHTED_RULE_IDS};
 use lucid_lint::{Category, Profile};
@@ -42,9 +43,13 @@ fn rule_ids() -> Vec<String> {
 }
 
 fn read_rule_page(rule_id: &str) -> Option<(PathBuf, String)> {
+    // Rule ids use the `category.rule-name` form (F29-slim); doc filenames
+    // currently still use the flat kebab slug. The mapping lives in
+    // `explain::docs_slug`.
+    let slug = explain::docs_slug(rule_id)?;
     let path = workspace_root()
         .join("docs/src/rules")
-        .join(format!("{rule_id}.md"));
+        .join(format!("{slug}.md"));
     let body = fs::read_to_string(&path).ok()?;
     Some((path, body))
 }
@@ -97,11 +102,11 @@ fn every_rule_is_categorized() {
         if matches!(code_category, Category::Syntax)
             && !matches!(
                 id.as_str(),
-                "passive-voice"
-                    | "unclear-antecedent"
-                    | "nested-negation"
-                    | "conditional-stacking"
-                    | "dense-punctuation-burst"
+                "syntax.passive-voice"
+                    | "syntax.unclear-antecedent"
+                    | "syntax.nested-negation"
+                    | "syntax.conditional-stacking"
+                    | "syntax.dense-punctuation-burst"
             )
         {
             unmapped.push(id.clone());
@@ -159,6 +164,23 @@ fn every_rule_has_a_default_weight_registered() {
         missing.is_empty(),
         "rules missing from scoring::WEIGHTED_RULE_IDS: {missing:?}\n\
          Fix: append the id to the const in src/scoring.rs (even if the intended weight is the uniform 1)."
+    );
+}
+
+/// Every shipped rule has a bundled doc page reachable from `lucid-lint explain`.
+#[test]
+fn every_rule_has_a_bundled_doc() {
+    let bundled: BTreeSet<&str> = explain::known_ids().into_iter().collect();
+    let mut missing = Vec::new();
+    for id in rule_ids() {
+        if !bundled.contains(id.as_str()) {
+            missing.push(id);
+        }
+    }
+    assert!(
+        missing.is_empty(),
+        "rules missing from src/explain.rs RULE_DOCS: {missing:?}\n\
+         Fix: append a `doc!(\"<rule-id>\")` line in kebab-sorted order in src/explain.rs."
     );
 }
 

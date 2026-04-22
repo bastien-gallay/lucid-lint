@@ -39,7 +39,7 @@ cd lucid-lint
 just setup
 ```
 
-<!-- lucid-lint disable-next-line excessive-commas -->
+<!-- lucid-lint disable-next-line structure.excessive-commas -->
 
 `just setup` installs required Cargo components (`rustfmt`, `clippy`, `cargo-insta`, `cargo-llvm-cov`), installs pre-commit hooks, and runs a sanity check.
 
@@ -111,12 +111,12 @@ Before writing code:
 
 Every rule lands on five surfaces. CI (`tests/rule_docs_coverage.rs`) enforces the first four; the fifth is manual.
 
-1. **Source** — `src/rules/<rule-id>.rs`. Use [`sentence_too_long.rs`](src/rules/sentence_too_long.rs) as the template. The rule ID must match the filename (kebab-case).
+1. **Source** — `src/rules/<category>/<rule-name>.rs`. Rule IDs use the `category.rule-name` form (F29-slim): the category prefix matches the parent subdirectory, and the rule-name part matches the filename (kebab-case in the ID, snake_case on disk). Use [`src/rules/structure/sentence_too_long.rs`](src/rules/structure/sentence_too_long.rs) as the template.
 2. **Wiring** — register the rule in three places, and keep them in sync:
-   - `rules::default_rules` in [`src/rules/mod.rs`](src/rules/mod.rs)
-   - `Category::for_rule` in [`src/types.rs`](src/types.rs)
-   - `scoring::WEIGHTED_RULE_IDS` (and `default_weight_for` if non-default) in [`src/scoring.rs`](src/scoring.rs)
-3. **Docs page** — `docs/src/rules/<rule-id>.md`. Copy the template from an existing rule ([`sentence-too-long.md`](docs/src/rules/sentence-too-long.md) is canonical). The H1 must be `` `<rule-id>` `` and the page must declare `| **Category** | `` `<category>` `` |` matching `Category::for_rule`. Add an entry to [`docs/src/SUMMARY.md`](docs/src/SUMMARY.md).
+   - `rules::default_rules` in [`src/rules/mod.rs`](src/rules/mod.rs), plus the `pub mod` line in the matching [`src/rules/<category>/mod.rs`](src/rules/)
+   - `Category::for_rule` in [`src/types.rs`](src/types.rs) derives the category from the id prefix, so no match arm needed — but the id must use a known category prefix (`structure.`, `rhythm.`, `lexicon.`, `syntax.`, `readability.`).
+   - `scoring::WEIGHTED_RULE_IDS` (and `default_weight_for` if non-default) in [`src/scoring.rs`](src/scoring.rs), plus a matching `doc!()` line in [`src/explain.rs`](src/explain.rs) mapping the id to its docs slug.
+3. **Docs page** — `docs/src/rules/<slug>.md` (kebab slug today; docs tree rearchitecture into category subdirs is a later slice). The H1 must be `` `<rule-id>` `` with the full `category.rule-name` form, and the page must declare `| **Category** | `` `<category>` `` |` matching the id prefix. Add an entry to [`docs/src/SUMMARY.md`](docs/src/SUMMARY.md).
 4. **Tests** — unit tests inside the rule file, one `insta` snapshot, and a corpus fixture under `tests/corpus/{en,fr}/` (both if the rule is language-dependent).
 5. **Changelog** — add a line to the `## [Unreleased]` section of [`CHANGELOG.md`](CHANGELOG.md) mentioning the rule ID. CI diffs rule files against `origin/main` and fails the build if the rule ID is missing from Unreleased.
 
@@ -135,7 +135,7 @@ Absolute `https://github.com/…` URLs remain acceptable for deliberate "see the
 
 ## Language word lists
 
-Lists for `weasel-words`, `repetitive-connectors`, `jargon-undefined`, and stoplists live in `src/language/`. PRs are very welcome to:
+Lists for `lexicon.weasel-words`, `rhythm.repetitive-connectors`, `lexicon.jargon-undefined`, and stoplists live in `src/language/`. PRs are very welcome to:
 
 - Add missing items
 - Refine existing entries

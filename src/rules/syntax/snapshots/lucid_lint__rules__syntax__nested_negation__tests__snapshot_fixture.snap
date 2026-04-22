@@ -1,0 +1,14 @@
+---
+source: src/rules/syntax/nested_negation.rs
+expression: diags
+---
+- rule_id: syntax.nested-negation
+  severity: warning
+  location:
+    file: "<input>"
+    line: 1
+    column: 1
+    length: 40
+  section: ~
+  message: Sentence stacks 3 negations (maximum 2). Rewrite as a positive statement or split the negations across separate sentences.
+  weight: 2

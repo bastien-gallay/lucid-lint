@@ -5,19 +5,19 @@
 ## Line form
 
 ```markdown
-<!-- lucid-lint disable-next-line sentence-too-long -->
+<!-- lucid-lint disable-next-line structure.sentence-too-long -->
 
 A long sentence that is intentional and should not be flagged.
 ```
 
 - **Syntax.** HTML comment, one rule id per directive. Multiple line directives may precede the same target line.
 - **Scope.** The next non-blank line in the source.
-- **Optional reason.** `<!-- lucid-lint disable-next-line weasel-words reason="quoting the style guide" -->` — surfaced in JSON output; will be *required* via config in a future release (tracked as [F20](../roadmap.md) in the [roadmap](../roadmap.md)).
+- **Optional reason.** `<!-- lucid-lint disable-next-line lexicon.weasel-words reason="quoting the style guide" -->` — surfaced in JSON output; will be *required* via config in a future release (tracked as [F20](../roadmap.md) in the [roadmap](../roadmap.md)).
 
 ## Block form (v0.2, F18)
 
 ```markdown
-<!-- lucid-lint-disable sentence-too-long -->
+<!-- lucid-lint-disable structure.sentence-too-long -->
 
 A long sentence.
 

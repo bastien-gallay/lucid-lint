@@ -9,8 +9,8 @@ use crate::condition::ConditionTag;
 use crate::config::Profile;
 use crate::language::{default_language, detect_language};
 use crate::parser::{parse_markdown, parse_plain, word_count};
-use crate::rules::readability_score::{self, FormulaChoice, ReadabilityScore};
-use crate::rules::unexplained_abbreviation::{self, UnexplainedAbbreviation};
+use crate::rules::lexicon::unexplained_abbreviation::{self, UnexplainedAbbreviation};
+use crate::rules::readability::score::{self, FormulaChoice, ReadabilityScore};
 use crate::rules::{default_rules, filter_by_conditions, Rule};
 use crate::scoring::{self, Scorecard, ScoringConfig};
 use crate::types::{Diagnostic, Language, SourceFile};
@@ -92,8 +92,7 @@ impl Engine {
     pub fn with_readability_formula(mut self, formula: FormulaChoice) -> Self {
         for rule in &mut self.rules {
             if rule.id() == ReadabilityScore::ID {
-                let config =
-                    readability_score::Config::for_profile(self.profile).with_formula(formula);
+                let config = score::Config::for_profile(self.profile).with_formula(formula);
                 *rule = Box::new(ReadabilityScore::new(config));
                 break;
             }
@@ -242,9 +241,17 @@ mod tests {
         // 25 words: triggers Public (22) but not DevDoc (30) for sentence-too-long.
         let text = "This is a long sentence that keeps adding more and more words until it \
                     exceeds the public profile threshold by a comfortable margin of safety.";
-        assert!(diags_for_rule(&public.lint_str(text).diagnostics, "sentence-too-long") > 0);
+        assert!(
+            diags_for_rule(
+                &public.lint_str(text).diagnostics,
+                "structure.sentence-too-long"
+            ) > 0
+        );
         assert_eq!(
-            diags_for_rule(&dev.lint_str(text).diagnostics, "sentence-too-long"),
+            diags_for_rule(
+                &dev.lint_str(text).diagnostics,
+                "structure.sentence-too-long"
+            ),
             0
         );
     }
@@ -253,12 +260,12 @@ mod tests {
     fn inline_disable_suppresses_matching_diagnostic() {
         let engine = Engine::with_profile(Profile::Public);
         let text = "Intro paragraph.\n\n\
-                    <!-- lucid-lint disable-next-line sentence-too-long -->\n\
+                    <!-- lucid-lint disable-next-line structure.sentence-too-long -->\n\
                     This is a long sentence that keeps adding more and more words until it \
                     exceeds the public profile threshold by a comfortable margin of safety.\n";
         let report = engine.lint_str(text);
         assert_eq!(
-            diags_for_rule(&report.diagnostics, "sentence-too-long"),
+            diags_for_rule(&report.diagnostics, "structure.sentence-too-long"),
             0,
             "expected directive to suppress sentence-too-long, got: {:?}",
             report.diagnostics
@@ -273,7 +280,10 @@ mod tests {
                     This is a long sentence that keeps adding more and more words until it \
                     exceeds the public profile threshold by a comfortable margin of safety.\n";
         let report = engine.lint_str(text);
-        assert_eq!(diags_for_rule(&report.diagnostics, "sentence-too-long"), 1);
+        assert_eq!(
+            diags_for_rule(&report.diagnostics, "structure.sentence-too-long"),
+            1
+        );
     }
 
     #[test]
@@ -284,7 +294,7 @@ mod tests {
                              margin of safety.";
         let text = format!(
             "Intro.\n\n\
-             <!-- lucid-lint-disable sentence-too-long -->\n\n\
+             <!-- lucid-lint-disable structure.sentence-too-long -->\n\n\
              {long_sentence}\n\n\
              {long_sentence}\n\n\
              <!-- lucid-lint-enable -->\n\n\
@@ -294,7 +304,7 @@ mod tests {
         // The two long sentences inside the block are suppressed; the one
         // after the enable comment still triggers.
         assert_eq!(
-            diags_for_rule(&report.diagnostics, "sentence-too-long"),
+            diags_for_rule(&report.diagnostics, "structure.sentence-too-long"),
             1,
             "expected block directive to suppress 2 of 3 diagnostics, got: {:?}",
             report.diagnostics,

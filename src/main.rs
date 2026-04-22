@@ -10,14 +10,15 @@ use globset::{Glob, GlobSet, GlobSetBuilder};
 
 use lucid_lint::condition::ConditionTag;
 use lucid_lint::config::{Config as FileConfig, Profile};
-use lucid_lint::output::Format;
-use lucid_lint::rules::readability_score::FormulaChoice;
+use lucid_lint::explain;
+use lucid_lint::output::{tty, Format};
+use lucid_lint::rules::readability::score::FormulaChoice;
 use lucid_lint::scoring::{self, ScoringConfig};
 use lucid_lint::{Diagnostic, Engine, Severity};
 
 mod cli;
 
-use cli::{CheckArgs, Cli, Command};
+use cli::{CheckArgs, Cli, Command, ExplainArgs};
 
 fn main() -> ExitCode {
     let cli = Cli::parse();
@@ -30,6 +31,51 @@ fn main() -> ExitCode {
                 ExitCode::from(2)
             },
         },
+        Command::Explain(args) => run_explain(args),
+    }
+}
+
+fn run_explain(args: ExplainArgs) -> ExitCode {
+    let stdout = io::stdout();
+    let mut handle = stdout.lock();
+
+    if args.list {
+        for id in explain::known_ids() {
+            let _ = writeln!(handle, "{id}");
+        }
+        return ExitCode::SUCCESS;
+    }
+
+    if args.list_verbose {
+        let entries = explain::known_ids_with_descriptions(90);
+        let width = entries.iter().map(|(id, _)| id.len()).max().unwrap_or(0);
+        for (id, desc) in entries {
+            let _ = writeln!(handle, "  {id:<width$}  {desc}");
+        }
+        return ExitCode::SUCCESS;
+    }
+
+    if args.rule_ids.is_empty() {
+        eprintln!(
+            "error: pass one or more rule ids, or use --list / --list-verbose.\n\
+             \n\
+             Examples:\n  \
+             lucid-lint explain sentence-too-long\n  \
+             lucid-lint explain sentence-too-long weasel-words\n  \
+             lucid-lint explain --list\n  \
+             lucid-lint explain --list-verbose"
+        );
+        return ExitCode::from(2);
+    }
+
+    let (rendered, all_found) = explain::render_many(&args.rule_ids, args.keep_relative);
+    if handle.write_all(rendered.as_bytes()).is_err() {
+        return ExitCode::from(2);
+    }
+    if all_found {
+        ExitCode::SUCCESS
+    } else {
+        ExitCode::from(1)
     }
 }
 
@@ -92,7 +138,17 @@ fn run_check(args: CheckArgs) -> Result<ExitCode> {
     // Per-file and project-level roll-ups are tracked as F15 (ROADMAP).
     let scorecard = scoring::compute(&all_diagnostics, total_words, &scoring_config);
 
-    let rendered = format.render(&all_diagnostics, &scorecard);
+    let rendered = match format {
+        Format::Tty => {
+            let mut tty_options = tty::TtyOptions::new(tty::ColorMode::Auto);
+            tty_options.group = !args.no_group;
+            tty_options.explain_hint = !args.no_explain_hint;
+            tty_options.score_first = args.score_first;
+            tty_options.banner = args.banner.into();
+            tty::render(&all_diagnostics, &scorecard, tty_options)
+        },
+        _ => format.render(&all_diagnostics, &scorecard),
+    };
     io::stdout()
         .write_all(rendered.as_bytes())
         .context("failed to write output")?;

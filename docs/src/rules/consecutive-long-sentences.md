@@ -1,8 +1,8 @@
-# `consecutive-long-sentences`
+# `rhythm.consecutive-long-sentences`
 
 ## What it flags
 
-Streaks of long sentences within the same paragraph. An isolated long sentence is manageable; several in a row fatigue attention even when each individual sentence is under the [`sentence-too-long`](./sentence-too-long.md) ceiling. This rule catches the *rhythm*.
+Streaks of long sentences within the same paragraph. An isolated long sentence is manageable; several in a row fatigue attention even when each individual sentence is under the [`structure.sentence-too-long`](./sentence-too-long.md) ceiling. This rule catches the *rhythm*.
 
 ## At a glance
 
@@ -33,4 +33,4 @@ See [Suppressing diagnostics](../guide/suppression.md).
 
 ## See also
 
-- [`sentence-too-long`](./sentence-too-long.md)
+- [`structure.sentence-too-long`](./sentence-too-long.md)

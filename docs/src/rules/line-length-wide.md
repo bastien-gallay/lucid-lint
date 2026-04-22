@@ -1,4 +1,4 @@
-# `line-length-wide`
+# `structure.line-length-wide`
 
 ## What it flags
 
@@ -37,6 +37,6 @@ See [Suppressing diagnostics](../guide/suppression.md).
 
 ## See also
 
-- [`paragraph-too-long`](./paragraph-too-long.md)
-- [`sentence-too-long`](./sentence-too-long.md)
+- [`structure.paragraph-too-long`](./paragraph-too-long.md)
+- [`structure.sentence-too-long`](./sentence-too-long.md)
 - [Conditions](../guide/conditions.md)

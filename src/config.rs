@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 use crate::condition::ConditionTag;
-use crate::rules::readability_score::FormulaChoice;
+use crate::rules::readability::score::FormulaChoice;
 
 /// Canonical filename the loader looks for when walking up from the
 /// current working directory.
@@ -91,10 +91,10 @@ pub struct Config {
     ///
     /// ```toml
     /// [[ignore]]
-    /// rule_id = "unexplained-abbreviation"
+    /// rule_id = "lexicon.unexplained-abbreviation"
     ///
     /// [[ignore]]
-    /// rule_id = "weasel-words"
+    /// rule_id = "lexicon.weasel-words"
     /// ```
     #[serde(default, rename = "ignore")]
     pub ignores: Vec<IgnoreSpec>,
@@ -152,7 +152,7 @@ impl Config {
         }
     }
 
-    /// Extract the `[rules.unexplained-abbreviation].whitelist` field
+    /// Extract the `[rules."lexicon.unexplained-abbreviation"].whitelist` field
     /// when present. Returns an empty list if the sub-table or field is
     /// missing, and an error if the field exists but is not an array
     /// of strings (typo-guarding).
@@ -162,7 +162,7 @@ impl Config {
     /// Returns [`ConfigError::Parse`] if `whitelist` is present but not
     /// an array of strings.
     pub fn unexplained_abbreviation_whitelist(&self) -> Result<Vec<String>, ConfigError> {
-        let Some(sub) = self.rules.entries.get("unexplained-abbreviation") else {
+        let Some(sub) = self.rules.entries.get("lexicon.unexplained-abbreviation") else {
             return Ok(Vec::new());
         };
         let Some(value) = sub.get("whitelist") else {
@@ -170,7 +170,7 @@ impl Config {
         };
         let Some(array) = value.as_array() else {
             return Err(ConfigError::Parse(format!(
-                "[rules.unexplained-abbreviation].whitelist must be an array of strings, got {}",
+                "[rules.\"lexicon.unexplained-abbreviation\"].whitelist must be an array of strings, got {}",
                 value.type_str()
             )));
         };
@@ -178,7 +178,7 @@ impl Config {
         for (idx, entry) in array.iter().enumerate() {
             let Some(s) = entry.as_str() else {
                 return Err(ConfigError::Parse(format!(
-                    "[rules.unexplained-abbreviation].whitelist[{idx}] must be a string, got {}",
+                    "[rules.\"lexicon.unexplained-abbreviation\"].whitelist[{idx}] must be a string, got {}",
                     entry.type_str()
                 )));
             };
@@ -187,7 +187,7 @@ impl Config {
         Ok(out)
     }
 
-    /// Extract the `[rules.readability-score].formula` field when
+    /// Extract the `[rules."readability.score"].formula` field when
     /// present. Returns `None` if the sub-table or field is missing,
     /// and an error if the field exists but is not a recognised string
     /// value (typo-guarding).
@@ -197,7 +197,7 @@ impl Config {
     /// Returns [`ConfigError::Parse`] if `formula` is present but not
     /// a recognised value.
     pub fn readability_formula(&self) -> Result<Option<FormulaChoice>, ConfigError> {
-        let Some(sub) = self.rules.entries.get("readability-score") else {
+        let Some(sub) = self.rules.entries.get("readability.score") else {
             return Ok(None);
         };
         let Some(value) = sub.get("formula") else {
@@ -205,13 +205,13 @@ impl Config {
         };
         let Some(raw) = value.as_str() else {
             return Err(ConfigError::Parse(format!(
-                "[rules.readability-score].formula must be a string, got {}",
+                "[rules.\"readability.score\"].formula must be a string, got {}",
                 value.type_str()
             )));
         };
         FormulaChoice::from_cli(raw).map(Some).map_err(|bad| {
             ConfigError::Parse(format!(
-                "[rules.readability-score].formula = {bad:?} is not a recognised value \
+                "[rules.\"readability.score\"].formula = {bad:?} is not a recognised value \
                  (expected one of: auto, flesch-kincaid, kandel-moles)"
             ))
         })
@@ -267,7 +267,7 @@ impl Default for DefaultConfig {
 /// as `[scoring.weights]`.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct IgnoreSpec {
-    /// Rule id to silence (e.g. `"sentence-too-long"`).
+    /// Rule id to silence (e.g. `"structure.sentence-too-long"`).
     pub rule_id: String,
 }
 
@@ -275,7 +275,7 @@ pub struct IgnoreSpec {
 ///
 /// Example:
 /// ```toml
-/// [rules.sentence-too-long]
+/// [rules."structure.sentence-too-long"]
 /// max_words = 25
 /// ```
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
@@ -298,8 +298,8 @@ pub struct RulesConfig {
 /// category_cap = 20
 ///
 /// [scoring.weights]
-/// sentence-too-long = 3
-/// weasel-words = 2
+/// "structure.sentence-too-long" = 3
+/// "lexicon.weasel-words" = 2
 /// ```
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct ScoringFileConfig {
@@ -415,16 +415,16 @@ conditions = ["autism"]
         let config = Config::from_toml_str(
             r#"
 [[ignore]]
-rule_id = "sentence-too-long"
+rule_id = "structure.sentence-too-long"
 
 [[ignore]]
-rule_id = "weasel-words"
+rule_id = "lexicon.weasel-words"
 "#,
         )
         .unwrap();
         assert_eq!(config.ignores.len(), 2);
-        assert_eq!(config.ignores[0].rule_id, "sentence-too-long");
-        assert_eq!(config.ignores[1].rule_id, "weasel-words");
+        assert_eq!(config.ignores[0].rule_id, "structure.sentence-too-long");
+        assert_eq!(config.ignores[1].rule_id, "lexicon.weasel-words");
     }
 
     #[test]
@@ -475,13 +475,16 @@ profile = "falc"
     #[test]
     fn config_parses_rule_overrides() {
         let config = Config::from_toml_str(
-            r"
-[rules.sentence-too-long]
+            r#"
+[rules."structure.sentence-too-long"]
 max_words = 25
-",
+"#,
         )
         .unwrap();
-        assert!(config.rules.entries.contains_key("sentence-too-long"));
+        assert!(config
+            .rules
+            .entries
+            .contains_key("structure.sentence-too-long"));
     }
 
     #[test]
@@ -501,20 +504,26 @@ category_max = 25
 category_cap = 18
 
 [scoring.weights]
-sentence-too-long = 4
-weasel-words = 2
+"structure.sentence-too-long" = 4
+"lexicon.weasel-words" = 2
 "#,
         )
         .unwrap();
         assert_eq!(config.scoring.category_max, Some(25));
         assert_eq!(config.scoring.category_cap, Some(18));
-        assert_eq!(config.scoring.weights.get("sentence-too-long"), Some(&4));
-        assert_eq!(config.scoring.weights.get("weasel-words"), Some(&2));
+        assert_eq!(
+            config.scoring.weights.get("structure.sentence-too-long"),
+            Some(&4)
+        );
+        assert_eq!(config.scoring.weights.get("lexicon.weasel-words"), Some(&2));
 
         let runtime = config.scoring.into_scoring_config();
         assert_eq!(runtime.category_max, 25);
         assert_eq!(runtime.category_cap, 18);
-        assert_eq!(runtime.weight_overrides.get("sentence-too-long"), Some(&4));
+        assert_eq!(
+            runtime.weight_overrides.get("structure.sentence-too-long"),
+            Some(&4)
+        );
     }
 
     #[test]
@@ -539,7 +548,7 @@ weasel-words = 2
     fn unexplained_whitelist_parses_array_of_strings() {
         let config = Config::from_toml_str(
             r#"
-[rules.unexplained-abbreviation]
+[rules."lexicon.unexplained-abbreviation"]
 whitelist = ["WCAG", "ARIA", "ADHD"]
 "#,
         )
@@ -552,7 +561,7 @@ whitelist = ["WCAG", "ARIA", "ADHD"]
     fn unexplained_whitelist_rejects_non_array() {
         let config = Config::from_toml_str(
             r#"
-[rules.unexplained-abbreviation]
+[rules."lexicon.unexplained-abbreviation"]
 whitelist = "WCAG"
 "#,
         )
@@ -567,7 +576,7 @@ whitelist = "WCAG"
     fn unexplained_whitelist_rejects_non_string_entry() {
         let config = Config::from_toml_str(
             r#"
-[rules.unexplained-abbreviation]
+[rules."lexicon.unexplained-abbreviation"]
 whitelist = ["WCAG", 42]
 "#,
         )
@@ -588,7 +597,7 @@ whitelist = ["WCAG", 42]
     fn readability_formula_reads_from_rule_table() {
         let config = Config::from_toml_str(
             r#"
-[rules.readability-score]
+[rules."readability.score"]
 formula = "kandel-moles"
 "#,
         )
@@ -603,7 +612,7 @@ formula = "kandel-moles"
     fn readability_formula_rejects_unknown_value() {
         let config = Config::from_toml_str(
             r#"
-[rules.readability-score]
+[rules."readability.score"]
 formula = "gunning-fog"
 "#,
         )
@@ -618,7 +627,7 @@ formula = "gunning-fog"
     fn readability_formula_rejects_non_string() {
         let config = Config::from_toml_str(
             r#"
-[rules.readability-score]
+[rules."readability.score"]
 formula = 42
 "#,
         )

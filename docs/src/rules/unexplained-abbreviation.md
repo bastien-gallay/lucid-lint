@@ -1,4 +1,4 @@
-# `unexplained-abbreviation`
+# `lexicon.unexplained-abbreviation`
 
 ## What it flags
 
@@ -57,4 +57,4 @@ See [Suppressing diagnostics](../guide/suppression.md).
 
 ## See also
 
-- [`jargon-undefined`](./jargon-undefined.md) — the content-word equivalent.
+- [`lexicon.jargon-undefined`](./jargon-undefined.md) — the content-word equivalent.

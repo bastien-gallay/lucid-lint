@@ -1,4 +1,4 @@
-# `all-caps-shouting`
+# `lexicon.all-caps-shouting`
 
 ## What it flags
 
@@ -19,7 +19,7 @@ Runs of consecutive ALL-CAPS words. ALL-CAPS prose strips the shape cues (ascend
 
 Per paragraph, scan for runs of consecutive ALL-CAPS words. Minor connectors (`,`, `;`, `:`, `-`, whitespace) keep a run alive; a lowercase word, a period, or paragraph break ends it.
 
-A word is ALL-CAPS when it is at least 2 letters long and contains no lowercase letter. Single ALL-CAPS tokens are treated as abbreviations and are the responsibility of [`unexplained-abbreviation`](./unexplained-abbreviation.md).
+A word is ALL-CAPS when it is at least 2 letters long and contains no lowercase letter. Single ALL-CAPS tokens are treated as abbreviations and are the responsibility of [`lexicon.unexplained-abbreviation`](./unexplained-abbreviation.md).
 
 Code blocks are excluded by the Markdown parser before the rule runs.
 
@@ -49,5 +49,5 @@ See [Suppressing diagnostics](../guide/suppression.md).
 
 ## See also
 
-- [`unexplained-abbreviation`](./unexplained-abbreviation.md)
+- [`lexicon.unexplained-abbreviation`](./unexplained-abbreviation.md)
 - [Conditions](../guide/conditions.md)

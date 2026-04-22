@@ -1,0 +1,24 @@
+---
+source: src/rules/lexicon/redundant_intensifier.rs
+expression: diags
+---
+- rule_id: lexicon.redundant-intensifier
+  severity: warning
+  location:
+    file: "<input>"
+    line: 1
+    column: 16
+    length: 4
+  section: ~
+  message: "Intensifier \"very\" adds no information — it tries to upgrade confidence without quantifying it. Remove it or replace with a specific measure."
+  weight: 1
+- rule_id: lexicon.redundant-intensifier
+  severity: warning
+  location:
+    file: "<input>"
+    line: 1
+    column: 35
+    length: 6
+  section: ~
+  message: "Intensifier \"really\" adds no information — it tries to upgrade confidence without quantifying it. Remove it or replace with a specific measure."
+  weight: 1

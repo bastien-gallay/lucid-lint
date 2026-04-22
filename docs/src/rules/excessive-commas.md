@@ -1,4 +1,4 @@
-# `excessive-commas`
+# `structure.excessive-commas`
 
 ## What it flags
 
@@ -18,7 +18,7 @@ Sentences whose comma count exceeds a per-profile ceiling. The comma is the most
 
 Count commas per sentence, report those above `max_commas`.
 
-**Interaction.** When [`long-enumeration`](./long-enumeration.md) fires on the same sentence, this rule is suppressed for that sentence to avoid double-reporting. The shared enumeration detector also discounts Oxford-style enumeration commas (3+ short items) and commas inside `(A, B, C, …)` parenthesised token lists (3+ short comma-separated segments inside balanced parens) — both discounts are language-agnostic.
+**Interaction.** When [`structure.long-enumeration`](./long-enumeration.md) fires on the same sentence, this rule is suppressed for that sentence to avoid double-reporting. The shared enumeration detector also discounts Oxford-style enumeration commas (3+ short items) and commas inside `(A, B, C, …)` parenthesised token lists (3+ short comma-separated segments inside balanced parens) — both discounts are language-agnostic.
 
 ## Parameters
 
@@ -36,5 +36,5 @@ See [Suppressing diagnostics](../guide/suppression.md).
 
 ## See also
 
-- [`long-enumeration`](./long-enumeration.md)
-- [`deep-subordination`](./deep-subordination.md)
+- [`structure.long-enumeration`](./long-enumeration.md)
+- [`structure.deep-subordination`](./deep-subordination.md)

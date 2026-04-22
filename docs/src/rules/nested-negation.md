@@ -1,4 +1,4 @@
-# `nested-negation`
+# `syntax.nested-negation`
 
 ## What it flags
 
@@ -54,6 +54,6 @@ See [Suppressing diagnostics](../guide/suppression.md).
 
 ## See also
 
-- [`passive-voice`](./passive-voice.md)
-- [`deep-subordination`](./deep-subordination.md)
+- [`syntax.passive-voice`](./passive-voice.md)
+- [`structure.deep-subordination`](./deep-subordination.md)
 - [Conditions](../guide/conditions.md)

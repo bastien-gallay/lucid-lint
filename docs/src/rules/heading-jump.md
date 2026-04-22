@@ -1,4 +1,4 @@
-# `heading-jump`
+# `structure.heading-jump`
 
 ## What it flags
 
@@ -52,4 +52,4 @@ See [Suppressing diagnostics](../guide/suppression.md).
 
 ## See also
 
-- [`deeply-nested-lists`](./deeply-nested-lists.md) — the list-level equivalent signal.
+- [`structure.deeply-nested-lists`](./deeply-nested-lists.md) — the list-level equivalent signal.

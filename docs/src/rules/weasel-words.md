@@ -1,4 +1,4 @@
-# `weasel-words`
+# `lexicon.weasel-words`
 
 ## What it flags
 
@@ -42,4 +42,4 @@ Two patterns still fire in v0.2: straight-quoted terms (`"many X"` without backt
 
 ## Suppression
 
-Use `<!-- lucid-lint disable-next-line weasel-words -->` when the weasel is intentional (quotation, legitimate subset reference, meta-discussion). See [Suppressing diagnostics](../guide/suppression.md).
+Use `<!-- lucid-lint disable-next-line lexicon.weasel-words -->` when the weasel is intentional (quotation, legitimate subset reference, meta-discussion). See [Suppressing diagnostics](../guide/suppression.md).

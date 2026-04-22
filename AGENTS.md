@@ -131,13 +131,13 @@ any `](../../…)` pattern in a `docs/src/**/*.md` file.
 
 ### Naming
 
-- Rule IDs: `kebab-case` (`sentence-too-long`). Match the filename.
-- Rule struct: `PascalCase` matching rule ID (`struct SentenceTooLong`).
-- Rust files: `snake_case` (`sentence_too_long.rs`).
+- Rule IDs: `category.rule-name` in kebab-case (`structure.sentence-too-long`, `lexicon.weasel-words`, `readability.score`). The prefix matches the category subdirectory under `src/rules/`; the rule-name part matches the filename.
+- Rule struct: `PascalCase` matching the rule-name half of the ID (`struct SentenceTooLong`).
+- Rust files: `snake_case` under the category subdir (`src/rules/structure/sentence_too_long.rs`).
 
 ### Rule structure
 
-Every rule implements a common `Rule` trait, exposes a default config, and lives in its own file under `src/rules/`. See `src/rules/sentence_too_long.rs` as the canonical example.
+Every rule implements a common `Rule` trait, exposes a default config, and lives in its own file inside its category subdirectory under `src/rules/`. See `src/rules/structure/sentence_too_long.rs` as the canonical example.
 
 ### Configuration
 
@@ -177,7 +177,7 @@ Use the project's `Tokenizer` in `src/parser/tokenizer.rs`. Do NOT split on `.` 
 
 ### Language detection
 
-<!-- lucid-lint disable-next-line weasel-words -->
+<!-- lucid-lint disable-next-line lexicon.weasel-words -->
 
 Heuristic based on stop-words ratio. See `src/language/detect.rs`. Returns `Language::Unknown` if confidence is low — respect that and skip language-specific rules rather than guessing.
 
@@ -219,7 +219,7 @@ unclear phrasing, clarity wins.
 
 ## Design context
 
-<!-- lucid-lint disable-next-line long-enumeration -->
+<!-- lucid-lint disable-next-line structure.long-enumeration -->
 
 Brand voice, palette, typography shortlist, audience, and the WCAG AAA accessibility bar live in [.impeccable.md](.impeccable.md). Read it before any frontend, mdBook, branding, or marketing-surface work. The `/impeccable` skill also reads it automatically.
 

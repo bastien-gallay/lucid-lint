@@ -10,11 +10,11 @@ Every rule belongs to exactly one of five fixed buckets. The taxonomy is authori
 
 | Category | Rules |
 |---|---|
-| **`structure`** | [`sentence-too-long`](./sentence-too-long.md) · [`paragraph-too-long`](./paragraph-too-long.md) · [`heading-jump`](./heading-jump.md) · [`deeply-nested-lists`](./deeply-nested-lists.md) · [`excessive-commas`](./excessive-commas.md) · [`long-enumeration`](./long-enumeration.md) · [`deep-subordination`](./deep-subordination.md) · [`line-length-wide`](./line-length-wide.md) · [`mixed-numeric-format`](./mixed-numeric-format.md) |
-| **`rhythm`** | [`consecutive-long-sentences`](./consecutive-long-sentences.md) · [`repetitive-connectors`](./repetitive-connectors.md) |
-| **`lexicon`** | [`low-lexical-diversity`](./low-lexical-diversity.md) · [`excessive-nominalization`](./excessive-nominalization.md) · [`unexplained-abbreviation`](./unexplained-abbreviation.md) · [`weasel-words`](./weasel-words.md) · [`jargon-undefined`](./jargon-undefined.md) · [`all-caps-shouting`](./all-caps-shouting.md) · [`redundant-intensifier`](./redundant-intensifier.md) · [`consonant-cluster`](./consonant-cluster.md) |
-| **`syntax`** | [`passive-voice`](./passive-voice.md) · [`unclear-antecedent`](./unclear-antecedent.md) · [`nested-negation`](./nested-negation.md) · [`conditional-stacking`](./conditional-stacking.md) · [`dense-punctuation-burst`](./dense-punctuation-burst.md) |
-| **`readability`** | [`readability-score`](./readability-score.md) |
+| **`structure`** | [`structure.sentence-too-long`](./sentence-too-long.md) · [`structure.paragraph-too-long`](./paragraph-too-long.md) · [`structure.heading-jump`](./heading-jump.md) · [`structure.deeply-nested-lists`](./deeply-nested-lists.md) · [`structure.excessive-commas`](./excessive-commas.md) · [`structure.long-enumeration`](./long-enumeration.md) · [`structure.deep-subordination`](./deep-subordination.md) · [`structure.line-length-wide`](./line-length-wide.md) · [`structure.mixed-numeric-format`](./mixed-numeric-format.md) |
+| **`rhythm`** | [`rhythm.consecutive-long-sentences`](./consecutive-long-sentences.md) · [`rhythm.repetitive-connectors`](./repetitive-connectors.md) |
+| **`lexicon`** | [`lexicon.low-lexical-diversity`](./low-lexical-diversity.md) · [`lexicon.excessive-nominalization`](./excessive-nominalization.md) · [`lexicon.unexplained-abbreviation`](./unexplained-abbreviation.md) · [`lexicon.weasel-words`](./weasel-words.md) · [`lexicon.jargon-undefined`](./jargon-undefined.md) · [`lexicon.all-caps-shouting`](./all-caps-shouting.md) · [`lexicon.redundant-intensifier`](./redundant-intensifier.md) · [`lexicon.consonant-cluster`](./consonant-cluster.md) |
+| **`syntax`** | [`syntax.passive-voice`](./passive-voice.md) · [`syntax.unclear-antecedent`](./unclear-antecedent.md) · [`syntax.nested-negation`](./nested-negation.md) · [`syntax.conditional-stacking`](./conditional-stacking.md) · [`syntax.dense-punctuation-burst`](./dense-punctuation-burst.md) |
+| **`readability`** | [`readability.score`](./readability-score.md) |
 
 > **Authoritative source.** The category of each rule is determined by `Category::for_rule` in `src/types.rs`. The mapping above mirrors that function. A coverage test (`tests/rule_docs_coverage.rs`) keeps the per-rule pages, the category helper, and the scoring weights in lock-step.
 

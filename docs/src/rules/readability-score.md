@@ -1,4 +1,4 @@
-# `readability-score`
+# `readability.score`
 
 ## What it flags
 

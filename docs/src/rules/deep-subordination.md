@@ -1,4 +1,4 @@
-# `deep-subordination`
+# `structure.deep-subordination`
 
 ## What it flags
 
@@ -35,8 +35,8 @@ Walk the sentence between strong-punctuation breaks; count consecutive subordina
 
 Flagged (FR):
 
-<!-- lucid-lint disable-next-line deep-subordination -->
-<!-- lucid-lint disable-next-line passive-voice -->
+<!-- lucid-lint disable-next-line structure.deep-subordination -->
+<!-- lucid-lint disable-next-line syntax.passive-voice -->
 
 > Le document qui a été rédigé par l'équipe que nous avons constituée et qui couvre les points que nous avions discutés…
 

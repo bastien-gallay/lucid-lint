@@ -14,7 +14,7 @@
 
 `lucid-lint` reads your Markdown, plain-text, or piped prose and reports issues that increase **cognitive load** — the mental effort a reader spends to understand you.
 
-<!-- lucid-lint disable-next-line excessive-commas -->
+<!-- lucid-lint disable-next-line structure.excessive-commas -->
 
 Most prose linters measure style (`write-good`), grammar (`Antidote`), or surface readability (Flesch score). `lucid-lint` focuses on one thing: **how hard is this text to read for someone whose attention is already stretched**. Stretched attention could mean ADHD, fatigue, a second language, a noisy environment, or an accessibility-sensitive context (EAA, RGAA, FALC).
 
@@ -90,7 +90,7 @@ Full documentation in the user guide:
 - Plain text (`.txt`)
 - stdin
 
-<!-- lucid-lint disable-next-line excessive-commas -->
+<!-- lucid-lint disable-next-line structure.excessive-commas -->
 
 For other formats (AsciiDoc, reStructuredText, HTML, docx, PDF), convert first with [Pandoc](https://pandoc.org):
 
@@ -112,8 +112,8 @@ See [RULES.md](RULES.md) for per-rule thresholds.
 
 ## Rules
 
-<!-- lucid-lint disable-next-line excessive-commas -->
-<!-- lucid-lint disable-next-line long-enumeration -->
+<!-- lucid-lint disable-next-line structure.excessive-commas -->
+<!-- lucid-lint disable-next-line structure.long-enumeration -->
 
 17 rules grouped into 5 scoring categories — **Structure · Rhythm · Lexicon · Syntax · Readability**. Full reference in [RULES.md](RULES.md).
 
@@ -173,6 +173,6 @@ at your option.
 
 ### Contribution
 
-<!-- lucid-lint disable-next-line sentence-too-long -->
+<!-- lucid-lint disable-next-line structure.sentence-too-long -->
 
 Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you, as defined in the Apache-2.0 license, shall be dual licensed as above, without any additional terms or conditions.

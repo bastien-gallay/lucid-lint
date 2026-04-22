@@ -28,8 +28,8 @@ fn check_reports_long_sentence_in_english_sample() {
         .arg(fixture)
         .assert()
         .code(1) // warnings present
-        .stdout(predicate::str::contains("sentence-too-long"))
-        .stdout(predicate::str::contains("Summary:"));
+        .stdout(predicate::str::contains("structure.sentence-too-long"))
+        .stdout(predicate::str::contains("summary:"));
 }
 
 #[test]
@@ -43,7 +43,7 @@ fn check_reports_long_sentence_in_french_sample() {
         .arg(fixture)
         .assert()
         .code(1)
-        .stdout(predicate::str::contains("sentence-too-long"));
+        .stdout(predicate::str::contains("structure.sentence-too-long"));
 }
 
 #[test]
@@ -142,7 +142,7 @@ fn check_accepts_conditions_flag() {
         .arg(fixture)
         .assert()
         .code(1)
-        .stdout(predicate::str::contains("sentence-too-long"));
+        .stdout(predicate::str::contains("structure.sentence-too-long"));
 }
 
 #[test]
@@ -186,7 +186,7 @@ fn check_accepts_stdin() {
         .write_stdin(input)
         .assert()
         .code(1)
-        .stdout(predicate::str::contains("sentence-too-long"));
+        .stdout(predicate::str::contains("structure.sentence-too-long"));
 }
 
 #[test]
@@ -202,7 +202,7 @@ fn check_clean_text_returns_zero() {
         .write_stdin(input)
         .assert()
         .success()
-        .stdout(predicate::str::contains("Summary: 1 info"));
+        .stdout(predicate::str::contains("summary: 1 info"));
 }
 
 #[test]
@@ -236,7 +236,7 @@ fn check_config_ignore_silences_rule_on_stdin() {
     fs::write(
         &config,
         r#"[[ignore]]
-rule_id = "sentence-too-long"
+rule_id = "structure.sentence-too-long"
 "#,
     )
     .unwrap();
@@ -252,7 +252,7 @@ rule_id = "sentence-too-long"
         .arg("-")
         .write_stdin(input)
         .assert()
-        .stdout(predicate::str::contains("sentence-too-long").not());
+        .stdout(predicate::str::contains("structure.sentence-too-long").not());
 }
 
 /// F19 — `[[ignore]]` also applies to Markdown files, giving users a
@@ -273,7 +273,7 @@ fn check_config_ignore_silences_rule_in_markdown() {
     fs::write(
         &config,
         r#"[[ignore]]
-rule_id = "sentence-too-long"
+rule_id = "structure.sentence-too-long"
 "#,
     )
     .unwrap();
@@ -285,7 +285,7 @@ rule_id = "sentence-too-long"
         .arg(&config)
         .arg(&doc)
         .assert()
-        .stdout(predicate::str::contains("sentence-too-long").not());
+        .stdout(predicate::str::contains("structure.sentence-too-long").not());
 }
 
 /// F19 — unknown rule ids in the config are tolerated silently

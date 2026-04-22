@@ -14,12 +14,12 @@ expression: normalized
           "informationUri": "https://github.com/bastien-gallay/lucid-lint",
           "rules": [
             {
-              "id": "sentence-too-long",
-              "name": "sentence-too-long",
+              "id": "structure.sentence-too-long",
+              "name": "structure.sentence-too-long",
               "shortDescription": {
-                "text": "sentence-too-long — cognitive accessibility check (category: structure)."
+                "text": "structure.sentence-too-long — cognitive accessibility check (category: structure)."
               },
-              "helpUri": "https://bastien-gallay.github.io/lucid-lint/rules/sentence-too-long.html",
+              "helpUri": "https://bastien-gallay.github.io/lucid-lint/rules/structure.sentence-too-long.html",
               "properties": {
                 "category": "structure",
                 "default-severity": "warning",
@@ -36,7 +36,7 @@ expression: normalized
       },
       "results": [
         {
-          "ruleId": "sentence-too-long",
+          "ruleId": "structure.sentence-too-long",
           "level": "warning",
           "message": {
             "text": "Sentence is too long."

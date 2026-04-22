@@ -134,6 +134,6 @@ lucid-lint check --min-score=85 docs/
 
 ## License
 
-<!-- lucid-lint disable-next-line unexplained-abbreviation -->
+<!-- lucid-lint disable-next-line lexicon.unexplained-abbreviation -->
 
 Dual-licensed under MIT or Apache-2.0, at your option.

@@ -299,8 +299,9 @@ fn parse_single_directive(html: &str) -> Option<ParsedDirective> {
 }
 
 fn is_valid_rule_id(s: &str) -> bool {
+    // Rule ids use the `category.rule-name` convention (F29-slim).
     s.chars()
-        .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-')
+        .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-' || c == '.')
 }
 
 fn finish_paragraph(
@@ -429,11 +430,11 @@ mod tests {
 
     #[test]
     fn extracts_disable_next_line_directive() {
-        let md = "Intro.\n\n<!-- lucid-lint disable-next-line sentence-too-long -->\n\
+        let md = "Intro.\n\n<!-- lucid-lint disable-next-line structure.sentence-too-long -->\n\
                   A long sentence that will be suppressed.\n";
         let doc = parse_markdown(md, SourceFile::Anonymous);
         assert_eq!(doc.directives.len(), 1);
-        assert_eq!(doc.directives[0].rule_id, "sentence-too-long");
+        assert_eq!(doc.directives[0].rule_id, "structure.sentence-too-long");
         // Directive is on line 3, next non-blank line is 4.
         assert_eq!(doc.directives[0].start_line, 4);
         assert_eq!(doc.directives[0].end_line, 4);
@@ -455,7 +456,7 @@ mod tests {
 
     #[test]
     fn directive_without_following_content_is_dropped() {
-        let md = "Body.\n\n<!-- lucid-lint disable-next-line sentence-too-long -->\n";
+        let md = "Body.\n\n<!-- lucid-lint disable-next-line structure.sentence-too-long -->\n";
         let doc = parse_markdown(md, SourceFile::Anonymous);
         assert!(doc.directives.is_empty());
     }
@@ -463,7 +464,7 @@ mod tests {
     #[test]
     fn extracts_block_disable_and_enable_directive() {
         let md = "Intro.\n\n\
-                  <!-- lucid-lint-disable sentence-too-long -->\n\n\
+                  <!-- lucid-lint-disable structure.sentence-too-long -->\n\n\
                   Inside block.\n\n\
                   More inside.\n\n\
                   <!-- lucid-lint-enable -->\n\n\
@@ -471,7 +472,7 @@ mod tests {
         let doc = parse_markdown(md, SourceFile::Anonymous);
         assert_eq!(doc.directives.len(), 1);
         let d = &doc.directives[0];
-        assert_eq!(d.rule_id, "sentence-too-long");
+        assert_eq!(d.rule_id, "structure.sentence-too-long");
         assert_eq!(d.start_line, 3);
         assert_eq!(d.end_line, 9);
         assert!(d.covers(5));
@@ -481,10 +482,10 @@ mod tests {
 
     #[test]
     fn block_enable_with_rule_id_closes_matching_scope_only() {
-        let md = "<!-- lucid-lint-disable sentence-too-long -->\n\n\
-                  <!-- lucid-lint-disable weasel-words -->\n\n\
+        let md = "<!-- lucid-lint-disable structure.sentence-too-long -->\n\n\
+                  <!-- lucid-lint-disable lexicon.weasel-words -->\n\n\
                   Between.\n\n\
-                  <!-- lucid-lint-enable sentence-too-long -->\n\n\
+                  <!-- lucid-lint-enable structure.sentence-too-long -->\n\n\
                   After.\n\n\
                   <!-- lucid-lint-enable -->\n";
         let doc = parse_markdown(md, SourceFile::Anonymous);
@@ -492,12 +493,12 @@ mod tests {
         let sentence = doc
             .directives
             .iter()
-            .find(|d| d.rule_id == "sentence-too-long")
+            .find(|d| d.rule_id == "structure.sentence-too-long")
             .expect("sentence-too-long directive");
         let weasel = doc
             .directives
             .iter()
-            .find(|d| d.rule_id == "weasel-words")
+            .find(|d| d.rule_id == "lexicon.weasel-words")
             .expect("weasel-words directive");
         assert!(sentence.end_line < weasel.end_line);
     }
@@ -505,19 +506,19 @@ mod tests {
     #[test]
     fn unterminated_block_disable_extends_to_end_of_document() {
         let md = "Intro.\n\n\
-                  <!-- lucid-lint-disable sentence-too-long -->\n\n\
+                  <!-- lucid-lint-disable structure.sentence-too-long -->\n\n\
                   Body.\n";
         let doc = parse_markdown(md, SourceFile::Anonymous);
         assert_eq!(doc.directives.len(), 1);
         let d = &doc.directives[0];
-        assert_eq!(d.rule_id, "sentence-too-long");
+        assert_eq!(d.rule_id, "structure.sentence-too-long");
         assert!(d.end_line >= d.start_line);
         assert!(d.covers(5));
     }
 
     #[test]
     fn enable_with_no_matching_open_scope_is_ignored() {
-        let md = "<!-- lucid-lint-enable sentence-too-long -->\n\nText.\n";
+        let md = "<!-- lucid-lint-enable structure.sentence-too-long -->\n\nText.\n";
         let doc = parse_markdown(md, SourceFile::Anonymous);
         assert!(doc.directives.is_empty());
     }

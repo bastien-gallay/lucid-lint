@@ -73,18 +73,18 @@ score is their weighted sum.
 
 | Category | Rules |
 |---|---|
-| `structure` | `sentence-too-long`, `paragraph-too-long`, `deeply-nested-lists`, `heading-jump`, `excessive-commas`, `long-enumeration`, `deep-subordination`, `line-length-wide`, `mixed-numeric-format` |
-| `lexicon` | `low-lexical-diversity`, `excessive-nominalization`, `unexplained-abbreviation`, `weasel-words`, `jargon-undefined`, `all-caps-shouting`, `redundant-intensifier`, `consonant-cluster` |
-| `syntax` | `passive-voice`, `unclear-antecedent`, `nested-negation`, `conditional-stacking`, `dense-punctuation-burst` |
-| `rhythm` | `consecutive-long-sentences`, `repetitive-connectors` |
-| `readability` | `readability-score` |
+| `structure` | `structure.sentence-too-long`, `structure.paragraph-too-long`, `structure.deeply-nested-lists`, `structure.heading-jump`, `structure.excessive-commas`, `structure.long-enumeration`, `structure.deep-subordination`, `structure.line-length-wide`, `structure.mixed-numeric-format` |
+| `lexicon` | `lexicon.low-lexical-diversity`, `lexicon.excessive-nominalization`, `lexicon.unexplained-abbreviation`, `lexicon.weasel-words`, `lexicon.jargon-undefined`, `lexicon.all-caps-shouting`, `lexicon.redundant-intensifier`, `lexicon.consonant-cluster` |
+| `syntax` | `syntax.passive-voice`, `syntax.unclear-antecedent`, `syntax.nested-negation`, `syntax.conditional-stacking`, `syntax.dense-punctuation-burst` |
+| `rhythm` | `rhythm.consecutive-long-sentences`, `rhythm.repetitive-connectors` |
+| `readability` | `readability.score` |
 
 > v0.2 remapped the v0.1 taxonomy: `length` merged into `structure`;
-> `lexical` became `lexicon`; `repetitive-connectors` moved from
+> `lexical` became `lexicon`; `rhythm.repetitive-connectors` moved from
 > `style` to `rhythm`; `global` became `readability`. Punctuation and
-> clause-level rules (`excessive-commas`, `deep-subordination`) stay in
-> `structure` as skeleton-level signals; `unclear-antecedent` stays in
-> `syntax` alongside `passive-voice` as sentence-internal clarity.
+> clause-level rules (`structure.excessive-commas`, `structure.deep-subordination`) stay in
+> `structure` as skeleton-level signals; `syntax.unclear-antecedent` stays in
+> `syntax` alongside `syntax.passive-voice` as sentence-internal clarity.
 
 ---
 
@@ -105,8 +105,8 @@ Default weights (from `scoring::default_weight_for`):
 
 | Weight | Rules |
 |---|---|
-| `5` | `readability-score` |
-| `2` | `sentence-too-long`, `paragraph-too-long`, `deep-subordination`, `passive-voice`, `unclear-antecedent`, `nested-negation`, `conditional-stacking` |
+| `5` | `readability.score` |
+| `2` | `structure.sentence-too-long`, `structure.paragraph-too-long`, `structure.deep-subordination`, `syntax.passive-voice`, `syntax.unclear-antecedent`, `syntax.nested-negation`, `syntax.conditional-stacking` |
 | `1` | every other rule |
 
 Severity multiplier: `info = 1`, `warning = 3`, `error = 5` (reserved).
@@ -124,7 +124,7 @@ suppression and scoring are consistent.
 
 ---
 
-#### `sentence-too-long`
+#### `structure.sentence-too-long`
 
 **Category** : `structure`
 **Severity** : `warning`
@@ -159,7 +159,7 @@ Contractions (`don't`) and elisions (`l'accessibilité`) are counted as one word
 
 ---
 
-#### `paragraph-too-long`
+#### `structure.paragraph-too-long`
 
 **Category** : `structure`
 **Severity** : `warning`
@@ -169,11 +169,11 @@ Contractions (`don't`) and elisions (`l'accessibilité`) are counted as one word
 
 **Rationale**
 
-<!-- lucid-lint disable-next-line weasel-words -->
+<!-- lucid-lint disable-next-line lexicon.weasel-words -->
 
 A paragraph is a mental chunk. A reader with attentional load interrupts often and must find their place again. Short paragraphs create clear reprise points; long ones dilute them.
 
-The rule uses both a sentence count and a word count so that a short-but-dense paragraph (one 80-word sentence) is still flagged. Rule 1 `sentence-too-long` catches the complementary case.
+The rule uses both a sentence count and a word count so that a short-but-dense paragraph (one 80-word sentence) is still flagged. Rule 1 `structure.sentence-too-long` catches the complementary case.
 
 **Detection**
 
@@ -200,19 +200,19 @@ Split text on blank lines (Markdown paragraph convention). Count sentences and w
 
 ---
 
-#### `excessive-commas`
+#### `structure.excessive-commas`
 
 **Category** : `structure`
 **Severity** : `warning`
 **Bilingual** : yes, identical FR/EN
 
-<!-- lucid-lint disable-next-line weasel-words -->
+<!-- lucid-lint disable-next-line lexicon.weasel-words -->
 
 **Intent** : detect sentences with too many commas. A high comma count is almost always a sign of overload, regardless of cause (subordination, apposition, enumeration, inline parenthetical).
 
 **Rationale**
 
-<!-- lucid-lint disable-next-line weasel-words -->
+<!-- lucid-lint disable-next-line lexicon.weasel-words -->
 
 The comma is the most frequent marker of syntactic complexity. Rather than trying to disentangle the exact cause, this rule flags density as a leading indicator.
 
@@ -236,11 +236,11 @@ Count commas per sentence. Report sentences exceeding the threshold.
 
 **Interaction with other rules**
 
-When `long-enumeration` is also active, it disables `excessive-commas` on the specific sentence it flags. This avoids double-reporting.
+When `structure.long-enumeration` is also active, it disables `structure.excessive-commas` on the specific sentence it flags. This avoids double-reporting.
 
 ---
 
-#### `long-enumeration`
+#### `structure.long-enumeration`
 
 **Category** : `structure`
 **Severity** : `warning`
@@ -268,13 +268,13 @@ Sequence of 4+ short comma-separated segments ending with `, et` / `, or` / `, o
 
 ---
 
-#### `deep-subordination`
+#### `structure.deep-subordination`
 
 **Category** : `structure`
 **Severity** : `warning`
 **Bilingual** : yes, FR/EN lists differ
 
-<!-- lucid-lint disable-next-line weasel-words -->
+<!-- lucid-lint disable-next-line lexicon.weasel-words -->
 
 **Intent** : detect cascading subordinate clauses. Multiple nested relative pronouns or subordinating conjunctions force the reader to hold many open referents in working memory.
 
@@ -319,7 +319,7 @@ The comma-separated enumeration of pronouns does not trigger the rule, because t
 
 ---
 
-#### `deeply-nested-lists`
+#### `structure.deeply-nested-lists`
 
 **Category** : `structure`
 **Severity** : `warning`
@@ -336,8 +336,8 @@ A list helps scanning. A deeply nested list forces the reader to reconstruct a c
 - Level 3: acceptable, detailed outline.
 - Level 4+: mental hierarchy lost.
 
-<!-- lucid-lint disable-next-line weasel-words -->
-<!-- lucid-lint disable-next-line excessive-nominalization -->
+<!-- lucid-lint disable-next-line lexicon.weasel-words -->
+<!-- lucid-lint disable-next-line lexicon.excessive-nominalization -->
 
 For readers with attentional difficulties, horizontal indentation becomes a crucial positional cue. Four levels of indent are too many to track.
 
@@ -367,7 +367,7 @@ Fully deterministic. No false positives.
 
 ---
 
-#### `line-length-wide`
+#### `structure.line-length-wide`
 
 **Category** : `structure`
 **Severity** : `warning`
@@ -399,7 +399,7 @@ Per paragraph, count grapheme clusters on each line and report lines above `max_
 
 ---
 
-#### `mixed-numeric-format`
+#### `structure.mixed-numeric-format`
 
 **Category** : `structure`
 **Severity** : `warning`
@@ -421,7 +421,7 @@ None. The rule has no configurable threshold — a single co-occurrence of the t
 
 ---
 
-#### `heading-jump`
+#### `structure.heading-jump`
 
 **Category** : `structure`
 **Severity** : `warning`
@@ -460,7 +460,7 @@ Fully deterministic. No false positives.
 
 ---
 
-#### `consecutive-long-sentences`
+#### `rhythm.consecutive-long-sentences`
 
 **Category** : `rhythm`
 **Severity** : `warning`
@@ -470,7 +470,7 @@ Fully deterministic. No false positives.
 
 **Rationale**
 
-An isolated long sentence is manageable. Three long sentences in a row is almost guaranteed to lose an attention-fragile reader. This rule catches the *rhythm*, complementing `sentence-too-long` which catches individual cases.
+An isolated long sentence is manageable. Three long sentences in a row is almost guaranteed to lose an attention-fragile reader. This rule catches the *rhythm*, complementing `structure.sentence-too-long` which catches individual cases.
 
 **Detection**
 
@@ -491,7 +491,7 @@ Walk sentences sequentially. Count consecutive sentences exceeding a length thre
 | `public` | 15 | 2 |
 | `falc` | 10 | 2 |
 
-**Important** : `word_threshold` must be lower than `sentence-too-long`'s `max_words` for the same profile. Otherwise both rules trigger on the same sentences.
+**Important** : `word_threshold` must be lower than `structure.sentence-too-long`'s `max_words` for the same profile. Otherwise both rules trigger on the same sentences.
 
 ---
 
@@ -499,13 +499,13 @@ Walk sentences sequentially. Count consecutive sentences exceeding a length thre
 
 ---
 
-#### `low-lexical-diversity`
+#### `lexicon.low-lexical-diversity`
 
 **Category** : `lexicon`
 **Severity** : `info`
 **Bilingual** : yes, FR/EN stoplists differ
 
-<!-- lucid-lint disable-next-line weasel-words -->
+<!-- lucid-lint disable-next-line lexicon.weasel-words -->
 
 **Intent** : detect passages with excessive repetition of content words. A monotonous text loses attention and often signals unstructured thinking.
 
@@ -513,7 +513,7 @@ Walk sentences sequentially. Count consecutive sentences exceeding a length thre
 
 Lexical diversity is a measure of writing quality. The rule is NOT an anti-jargon detector: technical terms (`API`, `request`, `cache`) are expected to repeat. It targets non-technical content words that recur without reason.
 
-<!-- lucid-lint disable-next-line unexplained-abbreviation -->
+<!-- lucid-lint disable-next-line lexicon.unexplained-abbreviation -->
 
 Reference: *type-token ratio* (TTR), classical metric in corpus linguistics (Herdan, 1960).
 
@@ -541,13 +541,13 @@ Words inside code blocks are excluded.
 
 ---
 
-#### `excessive-nominalization`
+#### `lexicon.excessive-nominalization`
 
 **Category** : `lexicon`
 **Severity** : `warning`
 **Bilingual** : yes, FR/EN suffixes overlap significantly
 
-<!-- lucid-lint disable-next-line weasel-words -->
+<!-- lucid-lint disable-next-line lexicon.weasel-words -->
 
 **Intent** : detect sentences with too many nominalizations (action verbs turned into abstract nouns). Nominalization makes text abstract and heavy.
 
@@ -595,13 +595,13 @@ Walk words. Detect typical nominalization suffixes. Count density per sentence.
 
 **Known limitation**
 
-<!-- lucid-lint disable-next-line weasel-words -->
+<!-- lucid-lint disable-next-line lexicon.weasel-words -->
 
 Technical vocabulary (`function`, `implementation`, `configuration`) contains many technical nominalizations. The profile `dev-doc` accommodates this with a looser threshold. The rule targets *density*, not isolated occurrences.
 
 ---
 
-#### `unexplained-abbreviation`
+#### `lexicon.unexplained-abbreviation`
 
 **Category** : `lexicon`
 **Severity** : `warning`
@@ -649,7 +649,7 @@ Common FR/EN : `PDF, SMS, GPS, ID, OK, FAQ`
 
 ---
 
-#### `weasel-words`
+#### `lexicon.weasel-words`
 
 **Category** : `lexicon`
 **Severity** : `warning`
@@ -692,11 +692,11 @@ Trivial implementation. HashSet lookup.
 - *sort of*, *kind of*, *a bit*, *rather*, *quite*
 - *fairly*, *relatively*, *mostly*, *generally*
 
-**All profiles** : active. Use `<!-- lucid-lint disable-next-line weasel-words -->` to opt out when usage is intentional (legitimate subset reference, quotation, etc.). See [Suppressing diagnostics](#suppressing-diagnostics).
+**All profiles** : active. Use `<!-- lucid-lint disable-next-line lexicon.weasel-words -->` to opt out when usage is intentional (legitimate subset reference, quotation, etc.). See [Suppressing diagnostics](#suppressing-diagnostics).
 
 ---
 
-#### `jargon-undefined`
+#### `lexicon.jargon-undefined`
 
 **Category** : `lexicon`
 **Severity** : `warning`
@@ -750,7 +750,7 @@ Like acronyms, jargon creates reading interruptions for the non-specialist reade
 
 ---
 
-#### `all-caps-shouting`
+#### `lexicon.all-caps-shouting`
 
 **Category** : `lexicon`
 **Severity** : `warning`
@@ -768,7 +768,7 @@ WCAG 3.1.5 and the BDA Dyslexia Style Guide both recommend lowercase or sentence
 
 **Detection**
 
-Per paragraph, scan for runs of consecutive ALL-CAPS words. Minor connectors (`,`, `;`, `:`, `-`, whitespace) keep a run alive; a lowercase word, a period, or paragraph break ends it. A word is ALL-CAPS when it is at least 2 letters long and contains no lowercase letter. Single ALL-CAPS tokens are treated as abbreviations and are the responsibility of `unexplained-abbreviation`. Code blocks are excluded by the Markdown parser.
+Per paragraph, scan for runs of consecutive ALL-CAPS words. Minor connectors (`,`, `;`, `:`, `-`, whitespace) keep a run alive; a lowercase word, a period, or paragraph break ends it. A word is ALL-CAPS when it is at least 2 letters long and contains no lowercase letter. Single ALL-CAPS tokens are treated as abbreviations and are the responsibility of `lexicon.unexplained-abbreviation`. Code blocks are excluded by the Markdown parser.
 
 **Parameters**
 
@@ -788,7 +788,7 @@ Per paragraph, scan for runs of consecutive ALL-CAPS words. Minor connectors (`,
 
 ---
 
-#### `redundant-intensifier`
+#### `lexicon.redundant-intensifier`
 
 **Category** : `lexicon`
 **Severity** : `warning`
@@ -796,7 +796,7 @@ Per paragraph, scan for runs of consecutive ALL-CAPS words. Minor connectors (`,
 **Condition tags** : `general`
 **Bilingual** : yes, EN + FR
 
-**Intent** : flag intensifiers — adverbs that try to upgrade the confidence of a statement without adding information (`very important` → `important` or a quantified claim). Deliberate sibling of [`weasel-words`](#weasel-words): weasel words downgrade confidence, redundant intensifiers upgrade it. Lists are disjoint by construction.
+**Intent** : flag intensifiers — adverbs that try to upgrade the confidence of a statement without adding information (`very important` → `important` or a quantified claim). Deliberate sibling of [`lexicon.weasel-words`](#lexiconweasel-words): weasel words downgrade confidence, redundant intensifiers upgrade it. Lists are disjoint by construction.
 
 **References** : plainlanguage.gov Chapter 4, CDC Clear Communication Index.
 
@@ -816,7 +816,7 @@ Per paragraph, lowercase the text and look for each intensifier phrase using the
 
 ---
 
-#### `consonant-cluster`
+#### `lexicon.consonant-cluster`
 
 **Category** : `lexicon`
 **Severity** : `warning`
@@ -854,7 +854,7 @@ Per source line, walk the grapheme stream once. A word is a maximal run of alpha
 
 ---
 
-#### `passive-voice`
+#### `syntax.passive-voice`
 
 **Category** : `syntax`
 **Severity** : `warning`
@@ -902,7 +902,7 @@ Expect ~70-80% precision in v0.1. False positives handled via inline disable com
 
 ---
 
-#### `nested-negation`
+#### `syntax.nested-negation`
 
 **Category** : `syntax`
 **Severity** : `warning`
@@ -942,7 +942,7 @@ Per sentence, count the negations and report counts above `max_negations`.
 
 ---
 
-#### `conditional-stacking`
+#### `syntax.conditional-stacking`
 
 **Category** : `syntax`
 **Severity** : `warning`
@@ -982,7 +982,7 @@ Per sentence, sum word-bounded matches against the language's conditional connec
 
 ---
 
-#### `repetitive-connectors`
+#### `rhythm.repetitive-connectors`
 
 **Category** : `rhythm`
 **Severity** : `warning`
@@ -992,8 +992,8 @@ Per sentence, sum word-bounded matches against the language's conditional connec
 
 **Rationale**
 
-<!-- lucid-lint disable-next-line excessive-commas -->
-<!-- lucid-lint disable-next-line excessive-nominalization -->
+<!-- lucid-lint disable-next-line structure.excessive-commas -->
+<!-- lucid-lint disable-next-line lexicon.excessive-nominalization -->
 
 Logical connectors guide the reader: opposition, cause, consequence, sequence, illustration, addition. Used well, they are attentional anchors. Repeated, they become noise.
 
@@ -1048,7 +1048,7 @@ Sliding window of N sentences. Count occurrences per connector in the window. Fl
 
 ---
 
-#### `unclear-antecedent`
+#### `syntax.unclear-antecedent`
 
 **Category** : `syntax`
 **Severity** : `info`
@@ -1095,7 +1095,7 @@ Exact detection requires anaphora resolution, which is advanced NLP. v0.1 catche
 
 ---
 
-#### `dense-punctuation-burst`
+#### `syntax.dense-punctuation-burst`
 
 **Category** : `syntax`
 **Severity** : `warning`
@@ -1103,7 +1103,7 @@ Exact detection requires anaphora resolution, which is advanced NLP. v0.1 catche
 **Condition tags** : `general`
 **Bilingual** : yes, script-agnostic
 
-**Intent** : flag *local* bursts of punctuation — windows where ≥ N qualifying marks (`,`, `;`, `:`, `—`, `–`) cluster within W grapheme clusters. Tight clusters signal layered subordination, parenthetical interjections, or list-within-list constructions that are hard to parse for readers with cognitive or attentional difficulties. Distinct from [`excessive-commas`](#excessive-commas), which counts commas across an entire sentence rather than over a sliding window.
+**Intent** : flag *local* bursts of punctuation — windows where ≥ N qualifying marks (`,`, `;`, `:`, `—`, `–`) cluster within W grapheme clusters. Tight clusters signal layered subordination, parenthetical interjections, or list-within-list constructions that are hard to parse for readers with cognitive or attentional difficulties. Distinct from [`structure.excessive-commas`](#structureexcessive-commas), which counts commas across an entire sentence rather than over a sliding window.
 
 **References** : IFLA easy-to-read guidelines.
 
@@ -1134,7 +1134,7 @@ Per source line, walk the grapheme stream once and collect the column of every q
 
 ---
 
-#### `readability-score`
+#### `readability.score`
 
 **Category** : `readability`
 **Severity** : `info` when below threshold, `warning` when above
@@ -1210,7 +1210,7 @@ Two inline-disable directives are supported for Markdown inputs.
 ### Line form
 
 ```markdown
-<!-- lucid-lint disable-next-line sentence-too-long -->
+<!-- lucid-lint disable-next-line structure.sentence-too-long -->
 
 A long sentence that is intentional and should not be flagged.
 ```
@@ -1221,7 +1221,7 @@ A long sentence that is intentional and should not be flagged.
 ### Block form (v0.2, F18)
 
 ```markdown
-<!-- lucid-lint-disable sentence-too-long -->
+<!-- lucid-lint-disable structure.sentence-too-long -->
 
 A long sentence.
 
@@ -1245,14 +1245,14 @@ File-level directives, multi-rule lists, and an optional `reason=` field are tra
 
 ## Rule interactions
 
-- `long-enumeration` disables `excessive-commas` on sentences it flags.
-- `consecutive-long-sentences` has a lower threshold than `sentence-too-long` within the same profile to avoid double-reporting.
+- `structure.long-enumeration` disables `structure.excessive-commas` on sentences it flags.
+- `rhythm.consecutive-long-sentences` has a lower threshold than `structure.sentence-too-long` within the same profile to avoid double-reporting.
 
 ---
 
 ## Known limitations of v0.1
 
-1. **No anaphora resolution** : `unclear-antecedent` uses pattern heuristics only. A full NLP implementation is scheduled for v0.2.
+1. **No anaphora resolution** : `syntax.unclear-antecedent` uses pattern heuristics only. A full NLP implementation is scheduled for v0.2.
 2. **Single readability formula** : Flesch-Kincaid is used for all languages. Language-specific formulas (Kandel-Moles for French, etc.) are scheduled for v0.2.
 3. **Heuristic passive voice detection** : expected precision ~70-80%. A POS-parser-based detector is planned for v0.2.
 4. **Acronym and jargon detection without definition-awareness** : v0.1 flags all non-whitelisted occurrences. A two-pass definition-aware version is planned for v0.2.

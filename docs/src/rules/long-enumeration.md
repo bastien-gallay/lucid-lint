@@ -1,4 +1,4 @@
-# `long-enumeration`
+# `structure.long-enumeration`
 
 ## What it flags
 
@@ -16,7 +16,7 @@ Inline prose enumerations that would be clearer as a bulleted list — 5+ comma-
 
 ## Detection
 
-Sequence of `min_items` or more short comma-separated segments ending with `, et` / `, ou` / `, and` / `, or` (Oxford comma optional). Shared detector also informs [`excessive-commas`](./excessive-commas.md).
+Sequence of `min_items` or more short comma-separated segments ending with `, et` / `, ou` / `, and` / `, or` (Oxford comma optional). Shared detector also informs [`structure.excessive-commas`](./excessive-commas.md).
 
 ## Parameters
 

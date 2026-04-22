@@ -1,4 +1,4 @@
-# `mixed-numeric-format`
+# `structure.mixed-numeric-format`
 
 ## What it flags
 
@@ -41,5 +41,5 @@ See [Suppressing diagnostics](../guide/suppression.md).
 
 ## See also
 
-- [`readability-score`](./readability-score.md)
+- [`readability.score`](./readability-score.md)
 - [Conditions](../guide/conditions.md)

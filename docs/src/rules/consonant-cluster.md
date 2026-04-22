@@ -1,4 +1,4 @@
-# `consonant-cluster`
+# `lexicon.consonant-cluster`
 
 ## What it flags
 
@@ -42,6 +42,6 @@ See [Suppressing diagnostics](../guide/suppression.md).
 
 ## See also
 
-- [`all-caps-shouting`](./all-caps-shouting.md)
-- [`readability-score`](./readability-score.md)
+- [`lexicon.all-caps-shouting`](./all-caps-shouting.md)
+- [`readability.score`](./readability-score.md)
 - [Conditions](../guide/conditions.md)

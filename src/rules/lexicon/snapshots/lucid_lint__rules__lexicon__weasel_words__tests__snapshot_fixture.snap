@@ -1,0 +1,34 @@
+---
+source: src/rules/lexicon/weasel_words.rs
+expression: diags
+---
+- rule_id: lexicon.weasel-words
+  severity: warning
+  location:
+    file: "<input>"
+    line: 1
+    column: 1
+    length: 7
+  section: ~
+  message: "Weasel phrase \"clearly\" weakens the statement. Replace with concrete language or remove it."
+  weight: 1
+- rule_id: lexicon.weasel-words
+  severity: warning
+  location:
+    file: "<input>"
+    line: 1
+    column: 23
+    length: 9
+  section: ~
+  message: "Weasel phrase \"basically\" weakens the statement. Replace with concrete language or remove it."
+  weight: 1
+- rule_id: lexicon.weasel-words
+  severity: warning
+  location:
+    file: "<input>"
+    line: 1
+    column: 53
+    length: 4
+  section: ~
+  message: "Weasel phrase \"some\" weakens the statement. Replace with concrete language or remove it."
+  weight: 1

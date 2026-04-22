@@ -1,4 +1,4 @@
-# `deeply-nested-lists`
+# `structure.deeply-nested-lists`
 
 ## What it flags
 

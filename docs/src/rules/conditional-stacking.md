@@ -1,4 +1,4 @@
-# `conditional-stacking`
+# `syntax.conditional-stacking`
 
 ## What it flags
 
@@ -52,6 +52,6 @@ See [Suppressing diagnostics](../guide/suppression.md).
 
 ## See also
 
-- [`nested-negation`](./nested-negation.md)
-- [`deep-subordination`](./deep-subordination.md)
+- [`syntax.nested-negation`](./nested-negation.md)
+- [`structure.deep-subordination`](./deep-subordination.md)
 - [Conditions](../guide/conditions.md)

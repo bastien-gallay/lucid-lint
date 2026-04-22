@@ -1,4 +1,4 @@
-# `passive-voice`
+# `syntax.passive-voice`
 
 ## What it flags
 

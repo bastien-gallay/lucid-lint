@@ -1,6 +1,0 @@
----
-source: src/rules/excessive_commas.rs
-assertion_line: 221
-expression: diags
----
-[]

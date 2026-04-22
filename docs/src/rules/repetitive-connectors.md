@@ -1,4 +1,4 @@
-# `repetitive-connectors`
+# `rhythm.repetitive-connectors`
 
 ## What it flags
 
@@ -43,7 +43,7 @@ Sliding window of `window_size` sentences. Per connector, count occurrences in t
 
 ## Example
 
-<!-- lucid-lint-disable repetitive-connectors -->
+<!-- lucid-lint-disable rhythm.repetitive-connectors -->
 
 > We analysed the data. Then we built the model. Then we validated the results. Then we published the report.
 

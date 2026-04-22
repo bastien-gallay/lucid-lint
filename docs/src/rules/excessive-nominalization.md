@@ -1,4 +1,4 @@
-# `excessive-nominalization`
+# `lexicon.excessive-nominalization`
 
 ## What it flags
 
@@ -36,7 +36,7 @@ Technical vocabulary (`function`, `implementation`, `configuration`) contains ma
 
 Before (heavy):
 
-<!-- lucid-lint disable-next-line excessive-nominalization -->
+<!-- lucid-lint disable-next-line lexicon.excessive-nominalization -->
 
 > La réalisation de l'analyse de la conformité permettra l'identification des axes d'amélioration.
 

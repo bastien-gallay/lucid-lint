@@ -33,7 +33,11 @@ impl Format {
     #[must_use]
     pub fn render(self, diagnostics: &[Diagnostic], scorecard: &Scorecard) -> String {
         match self {
-            Self::Tty => tty::render(diagnostics, scorecard, tty::ColorMode::Auto),
+            Self::Tty => tty::render(
+                diagnostics,
+                scorecard,
+                tty::TtyOptions::new(tty::ColorMode::Auto),
+            ),
             Self::Json => json::render(diagnostics, scorecard),
             Self::Sarif => sarif::render(diagnostics, scorecard),
         }

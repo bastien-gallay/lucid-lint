@@ -31,6 +31,7 @@
 
 pub mod condition;
 pub mod config;
+pub mod explain;
 pub mod language;
 pub mod output;
 pub mod parser;

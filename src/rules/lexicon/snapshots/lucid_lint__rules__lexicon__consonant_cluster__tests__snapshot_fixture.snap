@@ -1,0 +1,24 @@
+---
+source: src/rules/lexicon/consonant_cluster.rs
+expression: diags
+---
+- rule_id: lexicon.consonant-cluster
+  severity: warning
+  location:
+    file: "<input>"
+    line: 1
+    column: 5
+    length: 9
+  section: ~
+  message: "Word \"strengths\" contains a run of 5 consecutive consonants. Dense consonant clusters are a decoding barrier for dyslexic readers (BDA Dyslexia Style Guide). Consider a shorter or more common synonym."
+  weight: 1
+- rule_id: lexicon.consonant-cluster
+  severity: warning
+  location:
+    file: "<input>"
+    line: 1
+    column: 19
+    length: 8
+  section: ~
+  message: "Word \"twelfths\" contains a run of 5 consecutive consonants. Dense consonant clusters are a decoding barrier for dyslexic readers (BDA Dyslexia Style Guide). Consider a shorter or more common synonym."
+  weight: 1

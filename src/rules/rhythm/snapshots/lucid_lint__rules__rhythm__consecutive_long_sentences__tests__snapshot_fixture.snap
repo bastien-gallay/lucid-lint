@@ -1,0 +1,14 @@
+---
+source: src/rules/rhythm/consecutive_long_sentences.rs
+expression: diags
+---
+- rule_id: rhythm.consecutive-long-sentences
+  severity: warning
+  location:
+    file: "<input>"
+    line: 1
+    column: 1
+    length: 116
+  section: ~
+  message: "3 consecutive sentences each exceed 15 words (max run allowed: 2). Break the rhythm with a shorter sentence."
+  weight: 1

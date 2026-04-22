@@ -122,7 +122,7 @@ mod tests {
 
     fn sample_diag() -> Diagnostic {
         Diagnostic::new(
-            "sentence-too-long",
+            "structure.sentence-too-long",
             Severity::Warning,
             Location::new(SourceFile::Anonymous, 3, 1, 42),
             "Sentence is too long.",

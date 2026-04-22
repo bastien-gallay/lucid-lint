@@ -1,0 +1,14 @@
+---
+source: src/rules/syntax/dense_punctuation_burst.rs
+expression: diags
+---
+- rule_id: syntax.dense-punctuation-burst
+  severity: warning
+  location:
+    file: "<input>"
+    line: 1
+    column: 6
+    length: 15
+  section: ~
+  message: "3 punctuation marks within 15 characters create a dense burst that is hard to parse. Split the clause, drop the parenthetical, or rewrite as a list (IFLA easy-to-read guidelines)."
+  weight: 1

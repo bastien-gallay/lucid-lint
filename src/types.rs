@@ -147,34 +147,17 @@ impl Category {
 
     /// Map a rule id to its category.
     ///
-    /// Unknown rule ids fall back to [`Category::Syntax`].
+    /// Rule ids follow the `category.rule-name` convention (F29-slim), so
+    /// the category is simply the prefix before the first `.`. Unknown or
+    /// malformed ids fall back to [`Category::Syntax`].
     #[must_use]
     pub fn for_rule(rule_id: &str) -> Self {
-        match rule_id {
-            "sentence-too-long"
-            | "paragraph-too-long"
-            | "deeply-nested-lists"
-            | "heading-jump"
-            | "excessive-commas"
-            | "long-enumeration"
-            | "deep-subordination"
-            | "line-length-wide"
-            | "mixed-numeric-format" => Self::Structure,
-            "consecutive-long-sentences" | "repetitive-connectors" => Self::Rhythm,
-            "low-lexical-diversity"
-            | "excessive-nominalization"
-            | "unexplained-abbreviation"
-            | "weasel-words"
-            | "jargon-undefined"
-            | "all-caps-shouting"
-            | "redundant-intensifier"
-            | "consonant-cluster" => Self::Lexicon,
-            "passive-voice"
-            | "unclear-antecedent"
-            | "nested-negation"
-            | "conditional-stacking"
-            | "dense-punctuation-burst" => Self::Syntax,
-            "readability-score" => Self::Readability,
+        match rule_id.split_once('.').map(|(cat, _)| cat) {
+            Some("structure") => Self::Structure,
+            Some("rhythm") => Self::Rhythm,
+            Some("lexicon") => Self::Lexicon,
+            Some("syntax") => Self::Syntax,
+            Some("readability") => Self::Readability,
             _ => Self::Syntax,
         }
     }
@@ -280,20 +263,29 @@ mod tests {
 
     #[test]
     fn category_for_rule_maps_known_ids() {
-        assert_eq!(Category::for_rule("sentence-too-long"), Category::Structure);
-        assert_eq!(Category::for_rule("excessive-commas"), Category::Structure);
         assert_eq!(
-            Category::for_rule("consecutive-long-sentences"),
+            Category::for_rule("structure.sentence-too-long"),
+            Category::Structure
+        );
+        assert_eq!(
+            Category::for_rule("structure.excessive-commas"),
+            Category::Structure
+        );
+        assert_eq!(
+            Category::for_rule("rhythm.consecutive-long-sentences"),
             Category::Rhythm
         );
         assert_eq!(
-            Category::for_rule("repetitive-connectors"),
+            Category::for_rule("rhythm.repetitive-connectors"),
             Category::Rhythm
         );
-        assert_eq!(Category::for_rule("weasel-words"), Category::Lexicon);
-        assert_eq!(Category::for_rule("passive-voice"), Category::Syntax);
         assert_eq!(
-            Category::for_rule("readability-score"),
+            Category::for_rule("lexicon.weasel-words"),
+            Category::Lexicon
+        );
+        assert_eq!(Category::for_rule("syntax.passive-voice"), Category::Syntax);
+        assert_eq!(
+            Category::for_rule("readability.score"),
             Category::Readability
         );
     }
@@ -320,15 +312,25 @@ mod tests {
     #[test]
     fn diagnostic_category_is_derived_from_rule_id() {
         let location = Location::new(SourceFile::Anonymous, 1, 1, 5);
-        let diag = Diagnostic::new("sentence-too-long", Severity::Warning, location, "Too long");
+        let diag = Diagnostic::new(
+            "structure.sentence-too-long",
+            Severity::Warning,
+            location,
+            "Too long",
+        );
         assert_eq!(diag.category(), Category::Structure);
     }
 
     #[test]
     fn diagnostic_with_section_sets_section() {
         let location = Location::new(SourceFile::Anonymous, 1, 1, 5);
-        let diag = Diagnostic::new("sentence-too-long", Severity::Warning, location, "Too long")
-            .with_section("Introduction");
+        let diag = Diagnostic::new(
+            "structure.sentence-too-long",
+            Severity::Warning,
+            location,
+            "Too long",
+        )
+        .with_section("Introduction");
         assert_eq!(diag.section.as_deref(), Some("Introduction"));
     }
 }

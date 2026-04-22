@@ -1,0 +1,14 @@
+---
+source: src/rules/syntax/passive_voice.rs
+expression: diags
+---
+- rule_id: syntax.passive-voice
+  severity: warning
+  location:
+    file: "<input>"
+    line: 1
+    column: 1
+    length: 66
+  section: ~
+  message: "Paragraph has 2 passive-voice constructions (max 1). Prefer active voice, or suppress with an inline directive if the passive is intentional."
+  weight: 2

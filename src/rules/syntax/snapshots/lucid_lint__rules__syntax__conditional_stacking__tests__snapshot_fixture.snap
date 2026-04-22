@@ -1,0 +1,14 @@
+---
+source: src/rules/syntax/conditional_stacking.rs
+expression: diags
+---
+- rule_id: syntax.conditional-stacking
+  severity: warning
+  location:
+    file: "<input>"
+    line: 1
+    column: 1
+    length: 68
+  section: ~
+  message: Sentence stacks 3 conditional clauses (maximum 2). Split the conditions across separate sentences or convert them to a bullet list.
+  weight: 2

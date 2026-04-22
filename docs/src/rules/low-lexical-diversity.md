@@ -1,4 +1,4 @@
-# `low-lexical-diversity`
+# `lexicon.low-lexical-diversity`
 
 ## What it flags
 

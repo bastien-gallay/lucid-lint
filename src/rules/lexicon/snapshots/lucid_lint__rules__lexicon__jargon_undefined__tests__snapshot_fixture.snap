@@ -1,0 +1,34 @@
+---
+source: src/rules/lexicon/jargon_undefined.rs
+expression: diags
+---
+- rule_id: lexicon.jargon-undefined
+  severity: warning
+  location:
+    file: "<input>"
+    line: 1
+    column: 16
+    length: 10
+  section: ~
+  message: "Jargon term \"idempotent\" may be unfamiliar to non-specialists. Define it on first use or replace with a simpler phrase."
+  weight: 1
+- rule_id: lexicon.jargon-undefined
+  severity: warning
+  location:
+    file: "<input>"
+    line: 1
+    column: 39
+    length: 11
+  section: ~
+  message: "Jargon term \"thread-safe\" may be unfamiliar to non-specialists. Define it on first use or replace with a simpler phrase."
+  weight: 1
+- rule_id: lexicon.jargon-undefined
+  severity: warning
+  location:
+    file: "<input>"
+    line: 1
+    column: 51
+    length: 13
+  section: ~
+  message: "Jargon term \"serialization\" may be unfamiliar to non-specialists. Define it on first use or replace with a simpler phrase."
+  weight: 1

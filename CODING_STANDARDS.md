@@ -22,7 +22,7 @@ Do one thing well.
 
 - One binary, one job: lint prose for cognitive accessibility.
 - Reads files, stdin (`-`), writes stdout, non-zero exit on findings. Pipe-friendly by design.
-- One file, one rule, one signal. If a rule grows a second detection strategy, split it (see the v0.1 decomposition of rule 3 into `excessive-commas`, `long-enumeration`, `deep-subordination`).
+- One file, one rule, one signal. If a rule grows a second detection strategy, split it (see the v0.1 decomposition of rule 3 into `structure.excessive-commas`, `structure.long-enumeration`, `structure.deep-subordination`).
 
 **Watch for**: rules that "while we're here" emit an unrelated diagnostic. File the second signal as a new rule.
 
@@ -106,7 +106,7 @@ src/
 - Types: `PascalCase`
 - Functions and variables: `snake_case`
 - Constants: `SCREAMING_SNAKE_CASE`
-- Rule IDs: `kebab-case` (`sentence-too-long`)
+- Rule IDs: `kebab-case` (`structure.sentence-too-long`)
 - Files: `snake_case.rs`
 
 ### Error handling
