@@ -21,25 +21,27 @@ short list and gets out of the way.
     <div class="lucid-stance__side" data-stance-side="before">
       <p class="lucid-stance__label">Before</p>
       <p class="lucid-stance__prose">
-        The caching subsystem, which was introduced in an earlier milestone,
-        turned out to interact poorly with the new request pipeline under
-        sustained load, and the investigation that followed required multiple
-        rounds of profiling.
+        <span class="lucid-stance__idea" data-idea="1">The caching subsystem, which was introduced in an earlier milestone,</span>
+        <span class="lucid-stance__idea" data-idea="2">turned out to interact poorly with the new request pipeline under sustained load,</span>
+        and
+        <span class="lucid-stance__idea" data-idea="3">the investigation that followed required multiple rounds of profiling.</span>
       </p>
     </div>
     <div class="lucid-stance__side" data-stance-side="after">
       <p class="lucid-stance__label">After</p>
       <p class="lucid-stance__prose">
-        The caching subsystem was introduced earlier. It interacts poorly with
-        the new request pipeline under sustained load. The investigation
-        required several rounds of profiling.
+        <span class="lucid-stance__idea" data-idea="1">The caching subsystem was introduced earlier.</span>
+        <span class="lucid-stance__idea" data-idea="2">It interacts poorly with the new request pipeline under sustained load.</span>
+        <span class="lucid-stance__idea" data-idea="3">The investigation required several rounds of profiling.</span>
       </p>
     </div>
   </div>
   <figcaption class="lucid-stance__caption">
-    <code>lucid-lint</code> flagged <code>sentence-too-long</code>
-    (43 words) and <code>consecutive-long-sentences</code>. It did not
-    propose the rewrite — that's yours.
+    Three ideas, colour-matched left to right — the rewrite shortens the
+    sentences without losing any of them. <code>lucid-lint</code> flagged
+    <code>sentence-too-long</code> (43 words) and
+    <code>consecutive-long-sentences</code>. It did not propose the
+    rewrite — that's yours.
   </figcaption>
 </figure>
 
