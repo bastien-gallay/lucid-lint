@@ -26,14 +26,14 @@ Top-level defaults applied to the whole run.
 | Field | Type | Default | Description |
 |---|---|---|---|
 | `profile` | string | `"public"` | One of `dev-doc`, `public`, `falc` |
-| `conditions` | array of strings | `[]` | Active condition tags (v0.2+). See [Conditions](./conditions.md). |
-| `exclude` | array of glob strings | `[]` | Paths to skip during directory recursion (v0.2+). See [Excluding paths](#excluding-paths-v02). |
+| `conditions` | array of strings | `[]` | Active condition tags. See [Conditions](./conditions.md). |
+| `exclude` | array of glob strings | `[]` | Paths to skip during directory recursion. See [Excluding paths](#excluding-paths). |
 
 ### `[rules.<rule-id>]`
 
 Per-rule configuration. The fields available depend on the rule. See the rule pages in [Rules reference](../rules/index.md).
 
-### `[scoring]` (v0.2+)
+### `[scoring]`
 
 Tunables for the [hybrid scoring model](./scoring.md). All fields are
 optional; missing fields fall back to the shipped defaults
@@ -67,7 +67,7 @@ An unset CLI flag defers to the TOML value; an unset TOML field defers to the pr
 
 `lucid-lint` walks up from the current working directory to the first `lucid-lint.toml` it finds, stopping at the nearest `.git` repo boundary. Passing `--config <path>` skips auto-discovery and loads the given file directly; a missing explicit path is an error, but a missing auto-discovered file is not.
 
-## Excluding paths (v0.2+)
+## Excluding paths
 
 Large documentation repositories routinely contain generated output,
 vendored text, and snapshots that would drown the linter in noise. Use
@@ -103,7 +103,7 @@ Notes:
   overridden. Comma-separate multiple patterns in a single flag, or
   repeat `--exclude`.
 
-## Silencing rules globally (v0.2+)
+## Silencing rules globally
 
 Markdown documents support
 [inline-disable directives](./suppression.md) for local silencing, but
@@ -136,7 +136,7 @@ Notes:
   tracked as F20 — when it lands it will be surfaced in reports and
   optionally required via config.
 
-## Per-rule overrides (v0.2+)
+## Per-rule overrides
 
 TOML-driven config is wired rule-by-rule as each `Config` gains a dedicated accessor. Two rules honour it today:
 

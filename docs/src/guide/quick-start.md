@@ -11,14 +11,20 @@ lucid-lint check README.md
 Output:
 
 ```text
-warning <path>/README.md:14:1 Sentence is 27 words long (maximum 22). Consider splitting it into shorter sentences.
-  rule: sentence-too-long
+warning <path>/README.md:14:1 Sentence is 27 words long (maximum 22). Consider splitting it into shorter sentences. [structure.sentence-too-long]
 
-Summary: 1 warnings.
-score: 88/100 · structure 8/20 · rhythm 20/20 · lexicon 20/20 · syntax 20/20 · readability 20/20
+summary: 1 warnings.
+→ run 'lucid-lint explain <rule-id>' — seen here: structure.sentence-too-long
+────────────────────────────────────────────────────────────
+score: 88/100
+       structure    ██▏░░  8/20
+       rhythm       █████  20/20
+       lexicon      █████  20/20
+       syntax       █████  20/20
+       readability  █████  20/20
 ```
 
-The last line is the v0.2 [scoring](./scoring.md) summary — a global
+The trailing block is the [scoring](./scoring.md) summary — a global
 `X / 100` score followed by the full per-category breakdown.
 
 ## Lint several files

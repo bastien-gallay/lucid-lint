@@ -112,7 +112,7 @@ This always returns 0 except on runtime error.
 
 ## Gating on score
 
-As of v0.2 you can also gate the build on the aggregate
+You can also gate the build on the aggregate
 [scoring model](./scoring.md). The run exits `1` if the global score is
 below the threshold, independently of the severity gate.
 
@@ -132,7 +132,7 @@ that fits your adoption curve:
 
 | Goal | Flags |
 |---|---|
-| Catch newly introduced warnings (v0.1 behaviour) | default |
+| Catch newly introduced warnings (default behaviour) | default |
 | Tolerate individual warnings but fail on drift | `--fail-on-warning=false --min-score=85` |
 | Fail on both spikes and drift | default + `--min-score=85` |
 

@@ -2,10 +2,10 @@
 
 > A cognitive accessibility linter for prose. Built on cognitive load research. Bilingual EN/FR with equal care. Plugin-first, CI-native.
 
-This document describes the 17 rules included in `lucid-lint`. The rule
-set landed in v0.1; v0.2 adds the [scoring model](#scoring), renames
-the category taxonomy to 5 fixed buckets, and introduces the `weight`
-field on diagnostics.
+This document describes the 25 rules included in `lucid-lint` as of v0.2
+(17 shipped in v0.1, 8 added during the v0.2 cycle). v0.2 also adds the
+[scoring model](#scoring), renames the category taxonomy to 5 fixed
+buckets, and introduces the `weight` field on diagnostics.
 
 Each rule is atomic, documented, and configurable via a per-profile threshold.
 

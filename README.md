@@ -6,7 +6,7 @@
 [![Crates.io](https://img.shields.io/crates/v/lucid-lint.svg)](https://crates.io/crates/lucid-lint)
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
 
-**Status:** 🚧 v0.1 under active development. Not ready for production use. Current backlog and rule-by-rule progress: [ROADMAP.md — v0.1 — In progress](ROADMAP.md#v01--in-progress).
+**Status:** v0.2.0 shipped 2026-04-22. 25 deterministic rules, bilingual EN / FR, hybrid scoring. Pre-1.0 — breaking changes remain possible between minor versions. Current backlog: [ROADMAP.md — v0.2](ROADMAP.md#v02--first-major-iteration).
 
 ![lucid-lint linting its own demo file — five diagnostics clustered by rule, followed by a score block with five sparkline bars and an `explain` hint line](docs/src/assets/tty/hero.gif)
 
@@ -65,18 +65,24 @@ lucid-lint check --format=json docs/
 lucid-lint check --min-score=85 docs/
 ```
 
-## Scoring (v0.2)
+## Scoring
 
-Every run now emits a global `X / max` score plus five per-category
+Every run emits a global `X / 100` score plus five per-category
 sub-scores (Structure · Rhythm · Lexicon · Syntax · Readability), in
-addition to the existing diagnostics list.
+addition to the diagnostics list.
 
 ```text
-warning /tmp/draft.md:12:1 Sentence is 27 words long (maximum 22).
-  rule: sentence-too-long
+warning /tmp/draft.md:12:1 Sentence is 27 words long (maximum 22). [structure.sentence-too-long]
 
-Summary: 1 warnings.
-score: 88/100 · structure 8/20 · rhythm 20/20 · lexicon 20/20 · syntax 20/20 · readability 20/20
+summary: 1 warnings.
+→ run 'lucid-lint explain <rule-id>' — seen here: structure.sentence-too-long
+────────────────────────────────────────────────────────────
+score: 88/100
+       structure    ██▏░░  8/20
+       rhythm       █████  20/20
+       lexicon      █████  20/20
+       syntax       █████  20/20
+       readability  █████  20/20
 ```
 
 Use `--min-score=N` to gate CI on the aggregate score (the gate stacks
@@ -117,7 +123,7 @@ See [RULES.md](RULES.md) for per-rule thresholds.
 <!-- lucid-lint disable-next-line structure.excessive-commas -->
 <!-- lucid-lint disable-next-line structure.long-enumeration -->
 
-17 rules grouped into 5 scoring categories — **Structure · Rhythm · Lexicon · Syntax · Readability**. Full reference in [RULES.md](RULES.md).
+25 rules grouped into 5 scoring categories — **Structure · Rhythm · Lexicon · Syntax · Readability**. Full reference in [RULES.md](RULES.md).
 
 ## Configuration
 
@@ -127,11 +133,11 @@ Create a `lucid-lint.toml` in your project root:
 [default]
 profile = "public"
 
-[rules.sentence-too-long]
-max_words = 20
+[rules."structure.excessive-commas"]
+max_commas = 2
 
-[rules.passive-voice]
-enabled = false
+[rules.unexplained-abbreviation]
+whitelist = ["WCAG", "ARIA", "RGAA"]
 
 [scoring]
 category_max = 20
@@ -143,7 +149,7 @@ sentence-too-long = 3
 
 ## Editor integration
 
-Planned for v0.2:
+On the roadmap (v0.3+):
 
 - VS Code extension
 - Neovim LSP support

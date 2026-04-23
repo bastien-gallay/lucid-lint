@@ -42,7 +42,7 @@ A single definition anywhere in the document silences every occurrence of the sa
 
 **Default whitelist (v0.2, narrowed by F31):** the infrastructure stack — `URL, HTML, CSS, JSON, XML, HTTP, HTTPS, UTF, IO, API, CLI, GUI, OS, CPU, RAM, SSD, USB, IDE, SDK, CI, CD` — plus common FR/EN acronyms and RFC 2119 emphasis keywords (`PDF, SMS, GPS, ID, OK, FAQ`, `MUST, SHALL, SHOULD, …`).
 
-**What changed in v0.2:** accessibility standards (`WCAG`, `ARIA`, `RGAA`, …), AI/language-tech initialisms (`LLM`, `NLP`), and engineering-practice acronyms (`YAGNI`, `DRY`, `TDD`, …) are no longer in the shipped baseline. Projects that use these should add them to `[rules.unexplained-abbreviation].whitelist` in `lucid-lint.toml` — see the [configuration guide](../guide/configuration.md#silencing-rules-globally-v02).
+**What changed in v0.2:** accessibility standards (`WCAG`, `ARIA`, `RGAA`, …), AI/language-tech initialisms (`LLM`, `NLP`), and engineering-practice acronyms (`YAGNI`, `DRY`, `TDD`, …) are no longer in the shipped baseline. Projects that use these should add them to `[rules.unexplained-abbreviation].whitelist` in `lucid-lint.toml` — see the [configuration guide](../guide/configuration.md#per-rule-overrides).
 
 ```toml
 [rules.unexplained-abbreviation]

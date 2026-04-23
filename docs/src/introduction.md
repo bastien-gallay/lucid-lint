@@ -63,12 +63,14 @@ and [Coh-Metrix](http://cohmetrix.com) single out.
 
 ## Project status
 
-`lucid-lint` is in v0.2. All 17 rules listed in
+`lucid-lint` is at v0.2 (released 2026-04-22). All 25 rules listed in
 [`RULES.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/RULES.md)
-shipped in v0.1. v0.2 adds the [hybrid scoring model](./guide/scoring.md) —
+are shipped (17 from v0.1, 8 added during the v0.2 cycle), alongside
+the [hybrid scoring model](./guide/scoring.md) —
 a global `X / max` score plus five per-category sub-scores, computed on
-top of the existing diagnostics. See the [roadmap](./roadmap.md) for
-what comes next.
+top of the diagnostics. Pre-1.0: breaking changes remain possible
+between minor versions. See the [roadmap](./roadmap.md) for what
+comes next.
 
 ## Quick taste
 
@@ -78,7 +80,7 @@ peak-end moment of a passing lint run:
 ![Terminal capture: a clean lucid-lint run showing the three-part wordmark banner, the message "No issues found.", and a score block reading 100/100 with every category bar full](./assets/tty/score-clean.gif)
 
 ```text
-~~~~~ ⟨ • ⟩ ─────  lucid-lint  v0.1.1
+~~~~~ ⟨ • ⟩ ─────  lucid-lint  v0.2.0
                    cognitive accessibility linter · prose · EN / FR
                    ────────────────────────────────────────────────
 
@@ -108,7 +110,7 @@ echo "This is a test sentence." | lucid-lint check -
 # JSON for CI
 lucid-lint check --format=json docs/
 
-# Fail the build if the aggregate score drops below 85/100 (v0.2+)
+# Fail the build if the aggregate score drops below 85/100
 lucid-lint check --min-score=85 docs/
 ```
 
@@ -117,7 +119,7 @@ lucid-lint check --min-score=85 docs/
 - [Installation](./guide/installation.md) — how to install it.
 - [Quick start](./guide/quick-start.md) — a five-minute walkthrough.
 - [Profiles](./guide/profiles.md) — pick the one that fits.
-- [Rules reference](./rules/index.md) — all seventeen rules explained.
+- [Rules reference](./rules/index.md) — all twenty-five rules explained.
 - [Accessibility](./accessibility.md) — the WCAG AAA bar and how the site
   itself dogfoods the project.
 

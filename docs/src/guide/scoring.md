@@ -121,7 +121,7 @@ The JSON schema is at `version = 2` in v0.2. New fields:
   "version": 2,
   "diagnostics": [
     {
-      "rule_id": "sentence-too-long",
+      "rule_id": "structure.sentence-too-long",
       "severity": "warning",
       "location": { "file": { "kind": "path", "path": "draft.md" }, "line": 12, "column": 1, "length": 42 },
       "section": "Introduction",
