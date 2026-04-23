@@ -26,6 +26,8 @@ benchmarks. Three composable stages plus shared helpers:
 | `texts_fetch.py` | Download raw source into `<slug>/raw.<ext>` (HTTP) or `<slug>/raw/` (shallow `git clone`). Writes `source.yaml` sidecar. |
 | `texts_clean.py` | Produce `clean.<ext>` next to each `raw.*` — `trafilatura` for HTML, `pypdf` for PDF, copy for plain formats. |
 | `texts_convert.py` | Emit `content.md` or `before.md`+`after.md`. Appends a row per file to `examples/{public,local}/SOURCES.md`. |
+| `texts_coverage.py` | Regenerate the coverage table in `examples/texts.md` (shape × lang, condition × lang, type × lang, plus a load-bearing local-only list). Run via `just texts-coverage`; CI-style drift check via `just texts-coverage-check`. |
+| `test_texts_coverage.py` | Stdlib `unittest` suite for `texts_coverage.py` (26 tests: axis slotting, public-vs-total counting, load-bearing detection, cell formatters, splice idempotence, "no local-only leak" render contract). Run via `just texts-coverage-test`. |
 
 ### Running
 
@@ -40,6 +42,8 @@ just texts-fetch      # download raw.<ext>
 just texts-clean      # produce clean.<ext>
 just texts-convert    # emit content.md / before.md + after.md
 just texts            # all three in order
+just texts-coverage   # regenerate the coverage table in texts.md
+just texts-coverage-test   # unit tests for the coverage generator
 ```
 
 For a single source:

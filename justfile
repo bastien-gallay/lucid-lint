@@ -98,6 +98,18 @@ texts-convert:
 texts-plan:
     uv run scripts/texts_fetch.py --dry-run
 
+# Regenerate the coverage table in examples/texts.md from texts.yaml
+texts-coverage:
+    uv run scripts/texts_coverage.py
+
+# Fail if examples/texts.md drifts from texts.yaml
+texts-coverage-check:
+    uv run scripts/texts_coverage.py --check
+
+# Unit tests for the coverage generator
+texts-coverage-test:
+    uv run scripts/test_texts_coverage.py
+
 # Build the mdBook documentation
 docs-build: sync-roadmap
     cd docs && mdbook build
