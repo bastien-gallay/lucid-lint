@@ -127,6 +127,45 @@ Absolute `https://github.com/...` URLs remain acceptable for explicit
 `docs_links_stay_inside_docs` in `tests/rule_docs_coverage.rs` fails on
 any `](../../…)` pattern in a `docs/src/**/*.md` file.
 
+### 10. `examples/local/` is opaque to public surfaces
+
+`examples/local/` is a local-only scratch space (gitignored under
+`/examples/local/*` with only its `README.md` tracked). Treat its
+contents with the same discretion as `.env` or any other secret: tools
+may **read and parse** files there (scrapers, benchmarks, coverage
+scripts), but public / tracked surfaces must **never reveal** what
+lives inside.
+
+Concretely, in anything committed to git — source, docs, `CHANGELOG.md`,
+`ROADMAP.md`, `examples/texts.md`, commit messages, PR descriptions,
+generated reports:
+
+- No file names, folder names, or slugs from under `examples/local/`.
+- No titles, URLs, or identifying snippets of the sources they hold.
+- No aggregate counts that reveal how many local-only sources exist
+  for a given axis (e.g. `4 / 7` publishes "3 local-only" by
+  subtraction — publish the `public_ok` count alone).
+- No "we also have X under local" phrasings in prose.
+
+When a tool needs to surface local-only information (a target list, a
+gap map, an audit), emit that output to a file under `examples/local/`
+so the gitignore keeps it off GitHub. The `texts` pipeline is the
+reference pattern:
+
+- `examples/texts.yaml` (tracked) holds only `public_ok` entries.
+- `examples/local/texts.yaml` (gitignored) holds the
+  `check_license` / `link_only` / `restricted` entries.
+- `examples/texts.md` (tracked) lists only the public subset.
+- `examples/local/texts.md` and `examples/local/COVERAGE.md`
+  (gitignored) carry the full referential + coverage map.
+- `scripts/texts_common.py::load_sources()` merges both YAML halves
+  when the local one exists, so the fetch / clean / convert / coverage
+  tools see every entry while public surfaces never do.
+
+The `redistribution` field is the unambiguous tripwire: `public_ok`
+entries live in the tracked files and are safe to name; anything else
+stays under `examples/local/` and is invisible to anything published.
+
 ## Project-specific conventions
 
 ### Naming

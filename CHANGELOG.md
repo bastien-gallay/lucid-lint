@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **`examples/texts.yaml` + `examples/texts.md` split by redistribution tier.**
+  The tracked referential now lists only `public_ok` entries (25 of 55
+  sources); the 30 `check_license` / `link_only` / `restricted` entries
+  moved to the gitignored `examples/local/texts.yaml` +
+  `examples/local/texts.md` companions. `scripts/texts_common.py`'s
+  `load_sources()` merges both halves when the local one exists, so
+  `just texts-{plan,fetch,clean,convert}` keep working transparently.
+  Rationale: local-only sources get `.env`-style discretion — parsed
+  by tooling, never named in published surfaces. Codified as AGENTS.md
+  prime directive #10. Dropped the static `redistribution_summary` and
+  `markdownable_summary` blocks from `texts.yaml` (redundant with the
+  auto-generated coverage snapshot).
+- **Auto-generated coverage tables for the texts referential (F84, part 1).**
+  `scripts/texts_coverage.py` compiles `examples/texts.yaml` into two
+  artefacts with two audiences: the committed `examples/texts.md`
+  carries a public-facing matrix of **`public_ok` counts only** (shape
+  × lang, condition × lang, type × lang) spliced between
+  `<!-- coverage:begin -->` / `<!-- coverage:end -->` markers — no
+  totals, no names, no signal that non-redistributable sources exist.
+  The gitignored `examples/local/COVERAGE.md` carries the full map
+  (`public / total` cells plus the load-bearing local-only list — the
+  F84 part 2 hunting target). New `just texts-coverage` regenerates
+  both; `just texts-coverage-check` fails on drift. A 26-test stdlib
+  `unittest` suite (`scripts/test_texts_coverage.py`, run via
+  `just texts-coverage-test`) pins the leak contract — the public
+  render must not surface `link_only` / `check_license` titles or
+  totals — alongside axis slotting, counting, splice idempotence, and
+  a smoke test against the real YAML.
+
 ## [0.2.1] — 2026-04-23
 
 ### Added
