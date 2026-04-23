@@ -32,6 +32,7 @@ from slugify import slugify
 
 ROOT = Path(__file__).resolve().parent.parent
 TEXTS_YAML = ROOT / "examples" / "texts.yaml"
+LOCAL_TEXTS_YAML = ROOT / "examples" / "local" / "texts.yaml"
 PUBLIC_ROOT = ROOT / "examples" / "public"
 LOCAL_ROOT = ROOT / "examples" / "local"
 
@@ -94,21 +95,35 @@ class Source:
         return POLARITY_DIRS.get(self.polarity, "neutral")
 
 
-def load_sources(path: Path = TEXTS_YAML) -> list[Source]:
-    """Parse `texts.yaml` and return all entries as `Source` objects."""
-    data = yaml.safe_load(path.read_text(encoding="utf-8"))
-    raw_sources = data.get("sources", [])
-    sources: list[Source] = []
-    for row in raw_sources:
-        allowed = {
-            "url", "title", "description", "type", "polarity",
-            "languages", "redistribution", "markdownable",
-            "license_details", "rules_relevant", "conditions",
-            "use_case", "has_explanations", "bilingual_parallel",
-            "license_or_access", "interest", "confidence", "notes",
-        }
-        kwargs = {k: v for k, v in row.items() if k in allowed}
-        sources.append(Source(**kwargs))
+def load_sources(
+    path: Path = TEXTS_YAML,
+    local_path: Path | None = None,
+) -> list[Source]:
+    """Parse `texts.yaml` (public) + `examples/local/texts.yaml` (if present).
+
+    The public file holds only `public_ok` entries; everything else lives
+    in the gitignored local mirror. Tooling gets the merged view, public
+    surfaces read the public file directly (see AGENTS.md #10).
+    """
+    allowed = {
+        "url", "title", "description", "type", "polarity",
+        "languages", "redistribution", "markdownable",
+        "license_details", "rules_relevant", "conditions",
+        "use_case", "has_explanations", "bilingual_parallel",
+        "license_or_access", "interest", "confidence", "notes",
+    }
+
+    def _load(p: Path) -> list[Source]:
+        data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+        return [
+            Source(**{k: v for k, v in row.items() if k in allowed})
+            for row in data.get("sources", [])
+        ]
+
+    sources = _load(path)
+    lp = LOCAL_TEXTS_YAML if local_path is None else local_path
+    if lp.exists():
+        sources.extend(_load(lp))
     return sources
 
 

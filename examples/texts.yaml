@@ -111,6 +111,7 @@ sources:
     markdownable: 4
     notes: Gold-standard before/after pairs with per-fix annotations.
 
+
   - url: https://www.plainlanguage.gov/guidelines/
     title: Federal Plain Language Guidelines
     description: Official US guidelines with rule-linked rewrite examples.
@@ -128,6 +129,7 @@ sources:
     redistribution: public_ok
     license_details: US federal government work — public domain in the US.
     markdownable: 4
+
 
   - url: https://www.gov.uk/guidance/style-guide/a-to-z-of-gov-uk-style
     title: GOV.UK style guide (A–Z)
@@ -147,6 +149,7 @@ sources:
     license_details: Open Government Licence v3.0 (OGL) — redistribute freely with attribution.
     markdownable: 4
 
+
   - url: https://www.gov.uk/guidance/content-design/writing-for-gov-uk
     title: GOV.UK — writing for GOV.UK
     description: Companion style guide covering sentence length, reading age, plain-word lists.
@@ -164,6 +167,7 @@ sources:
     redistribution: public_ok
     license_details: Open Government Licence v3.0 (OGL).
     markdownable: 4
+
 
   - url: https://op.europa.eu/en/publication-detail/-/publication/725b7eb0-d92e-11e5-8fea-01aa75ed71a1
     title: How to write clearly (European Commission)
@@ -184,60 +188,6 @@ sources:
     markdownable: 2
     notes: PDF booklet; available in all EU languages — rare true EN/FR parallel resource.
 
-  - url: https://design.canada.ca/writing-style/
-    title: Canada.ca content style guide
-    description: Detailed bilingual writing rules with examples on length, numbers, headings.
-    type: style_guide
-    polarity: before_after
-    rules_relevant: [structure.sentence-too-long, structure.mixed-numeric-format, structure.heading-jump, lexicon.unexplained-abbreviation]
-    conditions: [general, non-native]
-    languages: [en, fr]
-    bilingual_parallel: true
-    interest: high
-    confidence: high
-    use_case: [documentation, example]
-    has_explanations: true
-    license_or_access: open
-    redistribution: check_license
-    license_details: Crown Copyright. Non-commercial reproduction permitted with attribution; commercial use needs permission.
-    markdownable: 4
-
-  - url: https://www.canada.ca/en/revenue-agency/services/about-canada-revenue-agency-cra/plain-language.html
-    title: Canada.ca plain-language guidance
-    description: Canadian federal plain-language policy with EN and FR rewrite examples.
-    type: gov_guide
-    polarity: before_after
-    rules_relevant: [structure.sentence-too-long, lexicon.jargon-undefined, syntax.passive-voice]
-    conditions: [general, non-native]
-    languages: [en, fr]
-    bilingual_parallel: true
-    interest: high
-    confidence: high
-    use_case: [documentation, example]
-    has_explanations: true
-    license_or_access: open
-    redistribution: check_license
-    license_details: Crown Copyright; non-commercial reproduction permitted with attribution.
-    markdownable: 4
-
-  - url: https://www.ccohs.ca/products/posters/longdesc/spell-it-out.html
-    title: CCOHS — Spell It Out (plain-language poster long description)
-    description: Canadian Centre for Occupational Health and Safety poster with plain-language tips for workplace communication (active voice, short sentences, jargon, acronyms, lists).
-    type: gov_guide
-    polarity: mixed_unaligned
-    rules_relevant: [structure.sentence-too-long, syntax.passive-voice, lexicon.jargon-undefined, lexicon.unexplained-abbreviation, readability.score, structure.long-enumeration, structure.paragraph-too-long]
-    conditions: [general, non-native]
-    languages: [en]
-    bilingual_parallel: false
-    interest: medium
-    confidence: medium
-    use_case: [documentation, example]
-    has_explanations: true
-    license_or_access: open
-    redistribution: check_license
-    license_details: CCOHS is a Canadian Crown corporation — Crown Copyright; reuse typically allowed with attribution, but verify the specific page's terms before bundling.
-    markdownable: 4
-    notes: Prescriptive tips with one inline active/passive comparison. CCOHS site is bilingual by mandate; a French counterpart likely exists at ccohs.ca/fr/ but no FR URL is linked from this page.
 
   - url: https://readabilityguidelines.co.uk/
     title: Content Design London Readability Guidelines
@@ -257,24 +207,6 @@ sources:
     license_details: CC-BY-SA 4.0 — share-alike, requires attribution.
     markdownable: 4
 
-  - url: https://centerforplainlanguage.org/learning-training/getting-started-with-plain-language/
-    title: Center for Plain Language — Getting started with plain language
-    description: Nonprofit's five-step plain-language process (audience, structure, language, design, testing) with prescriptive tips per step.
-    type: sample_collection
-    polarity: mixed_unaligned
-    rules_relevant: [structure.sentence-too-long, lexicon.excessive-nominalization, syntax.passive-voice, lexicon.jargon-undefined, readability.score]
-    conditions: [general, non-native]
-    languages: [en]
-    bilingual_parallel: false
-    interest: medium
-    confidence: medium
-    use_case: [documentation]
-    has_explanations: true
-    license_or_access: open
-    redistribution: link_only
-    license_details: © Center for Plain Language (nonprofit, "All Rights Reserved"); no explicit reuse licence — link only.
-    markdownable: 4
-    notes: Replaces the former `/before-after-comparisons/` URL (404 as of 2026-04-23). This page is prescriptive, not paired — the original before/after collection appears to have been removed.
 
   # ── Accessibility standards ─────────────────────────────────────────────
   - url: https://www.w3.org/WAI/WCAG21/Understanding/reading-level.html
@@ -295,6 +227,7 @@ sources:
     license_details: W3C Document Licence — copying permitted with notice preservation; derivative work subject to conditions.
     markdownable: 4
 
+
   - url: https://www.w3.org/WAI/WCAG21/Understanding/unusual-words.html
     title: WCAG 2.1 Understanding — Unusual Words (3.1.3)
     description: W3C guidance on jargon/idioms with illustrative phrases.
@@ -312,6 +245,7 @@ sources:
     redistribution: public_ok
     license_details: W3C Document Licence.
     markdownable: 4
+
 
   - url: https://www.w3.org/WAI/WCAG21/Understanding/abbreviations.html
     title: WCAG 2.1 Understanding — Abbreviations (3.1.4)
@@ -331,24 +265,6 @@ sources:
     license_details: W3C Document Licence.
     markdownable: 4
 
-  - url: https://accessible.canada.ca/creating-accessibility-standards/summary-standard-can-asc-312025-plain-language
-    title: CAN-ASC-3.1:2025 — Plain Language Standard (summary)
-    description: First-edition Canadian accessibility standard on plain language from Accessibility Standards Canada; bilingual EN/FR pages.
-    type: standard
-    polarity: neutral
-    rules_relevant: [structure.sentence-too-long, structure.paragraph-too-long, lexicon.jargon-undefined, lexicon.unexplained-abbreviation, lexicon.weasel-words, syntax.passive-voice, readability.score]
-    conditions: [general, aphasia, non-native]
-    languages: [en, fr]
-    bilingual_parallel: true
-    interest: high
-    confidence: high
-    use_case: [documentation]
-    has_explanations: true
-    license_or_access: restricted
-    redistribution: link_only
-    license_details: © His Majesty the King in Right of Canada (2025); explicit "no part of this publication may be reproduced in any form without the prior permission of the publisher" — link only.
-    markdownable: 4
-    notes: Prescriptive ("shall" / "should" / "may") rather than before/after. FR counterpart — https://accessibilite.canada.ca/elaboration-normes-accessibilite/resume-de-la-norme-can-asc-312025-langage-clair
 
   - url: https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/
     title: RGAA 4.1 — critères et tests
@@ -368,135 +284,6 @@ sources:
     license_details: Licence Ouverte / Open Licence 2.0 (Etalab) — reuse with attribution.
     markdownable: 4
 
-  # ── Easy-read / FALC / aphasia / dyslexia ───────────────────────────────
-  - url: https://www.inclusion-europe.eu/easy-to-read-standards-guidelines/
-    title: Inclusion Europe — Information for All
-    description: European easy-to-read standards with side-by-side complex/accessible examples.
-    type: standard
-    polarity: before_after
-    rules_relevant: [structure.sentence-too-long, lexicon.jargon-undefined, lexicon.unexplained-abbreviation, structure.paragraph-too-long]
-    conditions: [aphasia, non-native, general]
-    languages: [en, fr]
-    bilingual_parallel: true
-    interest: high
-    confidence: high
-    use_case: [example, documentation]
-    has_explanations: true
-    license_or_access: open
-    redistribution: link_only
-    license_details: © Inclusion Europe; reuse typically requires permission — link only.
-    markdownable: 2
-    notes: Canonical FALC/Easy-Read reference; distributed as PDF.
-
-  - url: https://www.unapei.org/publication/guide-pratique-ecrire-facile-a-lire-et-a-comprendre/
-    title: Unapei — Guide FALC
-    description: French FALC official practical guide with bad/good rewrite pairs.
-    type: style_guide
-    polarity: before_after
-    rules_relevant: [structure.sentence-too-long, lexicon.jargon-undefined, structure.paragraph-too-long, lexicon.unexplained-abbreviation]
-    conditions: [aphasia, non-native, general]
-    languages: [fr]
-    bilingual_parallel: false
-    interest: high
-    confidence: high
-    use_case: [example, documentation]
-    has_explanations: true
-    license_or_access: open
-    redistribution: link_only
-    license_details: © Unapei; French association copyright — link only.
-    markdownable: 2
-
-  - url: https://www.ifla.org/publications/guidelines-for-easy-to-read-materials/
-    title: IFLA Guidelines for Easy-to-Read Materials
-    description: International library federation easy-to-read publication guidelines.
-    type: standard
-    polarity: mixed_unaligned
-    rules_relevant: [structure.sentence-too-long, lexicon.jargon-undefined, structure.paragraph-too-long]
-    conditions: [aphasia, non-native, general]
-    languages: [en, fr]
-    bilingual_parallel: false
-    interest: high
-    confidence: high
-    use_case: [documentation, example]
-    has_explanations: true
-    license_or_access: open
-    redistribution: link_only
-    license_details: © IFLA; no explicit reuse licence — link only.
-    markdownable: 2
-
-  - url: https://www.bdadyslexia.org.uk/terms/assessment-considerate-marking-and-feedback-policy-for-disabled-students
-    title: BDA — Considerate marking & feedback policy for disabled students
-    description: British Dyslexia Association policy (Sept 2020) on fair assessment of coursework by students with specific learning difficulties (dyslexia, dyspraxia, ADHD, autism, dysgraphia, dyscalculia, DLD).
-    type: style_guide
-    polarity: neutral
-    rules_relevant: [structure.sentence-too-long, structure.paragraph-too-long, lexicon.jargon-undefined, syntax.passive-voice, structure.mixed-numeric-format]
-    conditions: [dyslexia, adhd, dyscalculia, general]
-    languages: [en]
-    bilingual_parallel: false
-    interest: medium
-    confidence: medium
-    use_case: [documentation]
-    has_explanations: true
-    license_or_access: open
-    redistribution: link_only
-    license_details: © British Dyslexia Association (UK charity); no explicit reuse licence — link only.
-    markdownable: 4
-    notes: Prescriptive marker guidance, not a prose style guide. Useful reference for how SpLDs manifest in writing — grounds the `dyslexia` / `adhd` / `dyscalculia` condition tags (F71).
-
-  - url: https://www.bdadyslexia.org.uk/advice/employers/creating-a-dyslexia-friendly-workplace/dyslexia-friendly-style-guide
-    title: BDA Dyslexia Style Guide
-    description: British Dyslexia Association guidance on fonts, line length, phrasing.
-    type: style_guide
-    polarity: good_example
-    rules_relevant: [structure.line-length-wide, structure.sentence-too-long, lexicon.all-caps-shouting, lexicon.jargon-undefined]
-    conditions: [dyslexia]
-    languages: [en]
-    bilingual_parallel: false
-    interest: high
-    confidence: high
-    use_case: [documentation]
-    has_explanations: true
-    license_or_access: open
-    redistribution: link_only
-    license_details: © British Dyslexia Association — link only.
-    markdownable: 4
-
-  - url: https://www.stroke.org.uk/sites/default/files/accessible_information_guidelines.pdf
-    title: Stroke Association — Accessible Information Guidelines
-    description: UK aphasia-friendly writing rules with before/after samples.
-    type: style_guide
-    polarity: before_after
-    rules_relevant: [structure.sentence-too-long, lexicon.jargon-undefined, structure.paragraph-too-long, syntax.nested-negation]
-    conditions: [aphasia]
-    languages: [en]
-    bilingual_parallel: false
-    interest: high
-    confidence: high
-    use_case: [example, documentation]
-    has_explanations: true
-    license_or_access: open
-    redistribution: link_only
-    license_details: © Stroke Association (UK charity) — link only.
-    markdownable: 1
-    notes: PDF with designed layout — extraction is painful.
-
-  - url: https://adhdfoundation.org.uk/information/neurodiversity/
-    title: ADHD Foundation — Neurodiversity hub
-    description: Writing recommendations for ADHD readers (chunking, bullets, bold cues).
-    type: style_guide
-    polarity: good_example
-    rules_relevant: [structure.paragraph-too-long, rhythm.consecutive-long-sentences, structure.line-length-wide]
-    conditions: [adhd]
-    languages: [en]
-    bilingual_parallel: false
-    interest: medium
-    confidence: medium
-    use_case: [documentation]
-    has_explanations: true
-    license_or_access: open
-    redistribution: link_only
-    license_details: © ADHD Foundation — link only.
-    markdownable: 3
 
   # ── Health literacy ─────────────────────────────────────────────────────
   - url: https://www.cdc.gov/ccindex/pdf/clear-communication-user-guide.pdf
@@ -518,60 +305,6 @@ sources:
     markdownable: 2
     notes: PDF; extraction is mostly flowing text.
 
-  - url: https://www.has-sante.fr/jcms/c_1724101/fr/litteratie-et-sante
-    title: HAS — Littératie et santé
-    description: French Haute Autorité de Santé health-literacy guide with simplification examples.
-    type: gov_guide
-    polarity: before_after
-    rules_relevant: [lexicon.jargon-undefined, readability.score, structure.sentence-too-long]
-    conditions: [aphasia, non-native, general]
-    languages: [fr]
-    bilingual_parallel: false
-    interest: medium
-    confidence: high
-    use_case: [documentation, example]
-    has_explanations: true
-    license_or_access: open
-    redistribution: check_license
-    license_details: French public body; reuse typically under Licence Ouverte but HAS pages sometimes specify © HAS — verify per-document.
-    markdownable: 3
-    notes: Mix of HTML landing + downstream PDFs.
-
-  - url: https://www.santepubliquefrance.fr/docs/communiquer-pour-tous-guide-pour-une-information-accessible
-    title: Santé publique France — Communiquer pour tous
-    description: French accessible-information guide with littératie focus and rewrite examples.
-    type: gov_guide
-    polarity: before_after
-    rules_relevant: [lexicon.jargon-undefined, structure.sentence-too-long, readability.score]
-    conditions: [aphasia, non-native, general]
-    languages: [fr]
-    bilingual_parallel: false
-    interest: high
-    confidence: high
-    use_case: [documentation, example]
-    has_explanations: true
-    license_or_access: open
-    redistribution: check_license
-    license_details: French public health agency; typically reusable with attribution under Licence Ouverte but mentions "© Santé publique France" — verify.
-    markdownable: 2
-
-  - url: https://www.bmj.com/content/360/bmj.k1383
-    title: BMJ — Gobbledygook in medicine
-    description: Peer-reviewed features with before/after medical-prose simplifications.
-    type: research_paper
-    polarity: before_after
-    rules_relevant: [lexicon.jargon-undefined, lexicon.excessive-nominalization, readability.score]
-    conditions: [aphasia, non-native, general]
-    languages: [en]
-    bilingual_parallel: false
-    interest: medium
-    confidence: high
-    use_case: [example, documentation]
-    has_explanations: true
-    license_or_access: restricted
-    redistribution: restricted
-    license_details: © BMJ Publishing Group; subscription article — short fair-use quote only.
-    markdownable: 3
 
   # ── Bad-example corpora (dense legal / admin prose) ─────────────────────
   - url: https://eur-lex.europa.eu/
@@ -593,6 +326,7 @@ sources:
     markdownable: 4
     notes: Also available as Formex XML — deterministic conversion possible for whole acts.
 
+
   - url: https://www.legifrance.gouv.fr/
     title: Légifrance
     description: French government legal portal with archetypal dense administrative/legal French.
@@ -612,24 +346,6 @@ sources:
     markdownable: 4
     notes: DILA bulk datasets also published on data.gouv.fr as XML.
 
-  - url: https://www.tosdr.org/
-    title: Terms of Service; Didn't Read
-    description: Catalog of EULA/ToS passages with plain-language annotations.
-    type: sample_collection
-    polarity: before_after
-    rules_relevant: [structure.sentence-too-long, syntax.conditional-stacking, lexicon.jargon-undefined, syntax.nested-negation]
-    conditions: [general, non-native]
-    languages: [en, fr]
-    bilingual_parallel: false
-    interest: high
-    confidence: high
-    use_case: [example, benchmark]
-    has_explanations: true
-    license_or_access: open
-    redistribution: check_license
-    license_details: ToSDR annotations are CC-BY-SA; the original ToS/EULA excerpts remain © their respective companies (short-quote / fair-use territory).
-    markdownable: 5
-    notes: Public JSON API returns each case as structured data.
 
   # ── Simplification / readability corpora ────────────────────────────────
   - url: https://simple.wikipedia.org/wiki/Main_Page
@@ -651,6 +367,7 @@ sources:
     markdownable: 5
     notes: Wikitext dumps → pandoc or mwparserfromhell to Markdown.
 
+
   - url: https://fr.vikidia.org/wiki/Accueil
     title: Vikidia (French simple encyclopedia)
     description: French analog of Simple Wikipedia aimed at 8–13-year-olds.
@@ -668,6 +385,7 @@ sources:
     redistribution: public_ok
     license_details: CC-BY-SA 3.0 — share-alike applies.
     markdownable: 5
+
 
   - url: https://github.com/nishkalavallabhi/OneStopEnglishCorpus
     title: OneStopEnglish corpus
@@ -688,115 +406,6 @@ sources:
     markdownable: 5
     notes: Ships as plain-text files — wrap in a Markdown heading per article.
 
-  - url: https://newsela.com/data/
-    title: Newsela corpus
-    description: News articles rewritten at multiple grade levels by professional editors.
-    type: corpus
-    polarity: before_after
-    rules_relevant: [readability.score, structure.sentence-too-long, lexicon.jargon-undefined]
-    conditions: [non-native, general]
-    languages: [en]
-    bilingual_parallel: false
-    interest: high
-    confidence: high
-    use_case: [benchmark, corpus]
-    has_explanations: false
-    license_or_access: restricted
-    redistribution: restricted
-    license_details: Research-access only; explicit "no redistribution" in the data-use agreement. Internal use after signing; must not be committed to a public repo.
-    markdownable: 5
-
-  - url: https://zenodo.org/record/1219041
-    title: WeeBit corpus
-    description: BBC Bitesize + Weekly Reader texts labeled by reading age.
-    type: corpus
-    polarity: mixed_unaligned
-    rules_relevant: [readability.score, structure.sentence-too-long]
-    conditions: [non-native, general]
-    languages: [en]
-    bilingual_parallel: false
-    interest: medium
-    confidence: high
-    use_case: [benchmark, corpus]
-    has_explanations: false
-    license_or_access: restricted
-    redistribution: restricted
-    license_details: Underlying BBC / Weekly Reader texts are © their publishers; access-request gated. Internal use only.
-    markdownable: 5
-
-  - url: https://github.com/scrosseye/CLEAR-Corpus
-    title: CLEAR corpus (CommonLit)
-    description: 5000 excerpts with crowd-sourced pairwise readability ratings.
-    type: corpus
-    polarity: mixed_unaligned
-    rules_relevant: [readability.score]
-    conditions: [general, non-native]
-    languages: [en]
-    bilingual_parallel: false
-    interest: high
-    confidence: high
-    use_case: [benchmark, corpus]
-    has_explanations: false
-    license_or_access: open
-    redistribution: check_license
-    license_details: CommonLit licence; excerpts drawn from older public-domain and open-source passages, but per-item licence varies — verify before bundling.
-    markdownable: 5
-    notes: Ships as CSV with excerpt column.
-
-  - url: https://corpusalector.huma-num.fr/
-    title: Alector corpus
-    description: French corpus of original and simplified texts for dyslexic readers.
-    type: corpus
-    polarity: before_after
-    rules_relevant: [readability.score, structure.sentence-too-long, lexicon.jargon-undefined]
-    conditions: [dyslexia, non-native]
-    languages: [fr]
-    bilingual_parallel: false
-    interest: high
-    confidence: high
-    use_case: [benchmark, corpus]
-    has_explanations: true
-    license_or_access: open
-    redistribution: check_license
-    license_details: Academic corpus on Huma-Num; typically research-use with citation, verify the exact CC variant (often CC-BY-NC-SA) before bundling.
-    markdownable: 5
-    notes: Text/XML corpus.
-
-  - url: https://aclanthology.org/2020.lrec-1.530/
-    title: CLEAR — French simplification corpus (Grabar & Cardon)
-    description: Aligned complex/simple French medical-text pairs.
-    type: corpus
-    polarity: before_after
-    rules_relevant: [readability.score, lexicon.jargon-undefined, structure.sentence-too-long]
-    conditions: [general, non-native, aphasia]
-    languages: [fr]
-    bilingual_parallel: false
-    interest: high
-    confidence: high
-    use_case: [benchmark, corpus]
-    has_explanations: true
-    license_or_access: open
-    redistribution: check_license
-    license_details: Research corpus; verify the author-stated licence (typical academic CC-BY or CC-BY-NC) before redistributing.
-    markdownable: 5
-
-  - url: https://github.com/feralvam/easse
-    title: EASSE simplification evaluation
-    description: Toolkit with TurkCorpus, ASSET, HSplit reference simplifications.
-    type: corpus
-    polarity: before_after
-    rules_relevant: [readability.score, structure.sentence-too-long, structure.deep-subordination]
-    conditions: [general, non-native]
-    languages: [en]
-    bilingual_parallel: false
-    interest: high
-    confidence: high
-    use_case: [benchmark, corpus]
-    has_explanations: false
-    license_or_access: open
-    redistribution: check_license
-    license_details: Code is GPL-3.0; bundled datasets (TurkCorpus, ASSET, HSplit) carry their own per-item licences — verify each.
-    markdownable: 5
 
   - url: https://github.com/facebookresearch/asset
     title: ASSET simplification dataset
@@ -816,6 +425,7 @@ sources:
     license_details: CC-BY-SA-4.0.
     markdownable: 5
 
+
   - url: https://huggingface.co/datasets/wiki_auto
     title: WikiAuto parallel simplification
     description: Automatically aligned Wikipedia/Simple-Wikipedia sentence pairs.
@@ -834,6 +444,7 @@ sources:
     license_details: CC-BY-SA — derives from Wikipedia content.
     markdownable: 5
 
+
   - url: https://www.gutenberg.org/
     title: Project Gutenberg
     description: Public-domain literature corpus for neutral baselines and period-prose.
@@ -851,6 +462,7 @@ sources:
     redistribution: public_ok
     license_details: Underlying texts are public domain (US). Project Gutenberg header/footer is under the PG licence — strip them if not hosting on a PG-compatible site, or use plain-text excerpts.
     markdownable: 5
+
 
   # ── Tool fixtures (labeled bad-example banks) ───────────────────────────
   - url: https://github.com/amperser/proselint
@@ -872,24 +484,6 @@ sources:
     markdownable: 5
     notes: Fixtures in-source; extract strings per check.
 
-  - url: https://github.com/errata-ai/vale
-    title: Vale styles
-    description: Prose linter with Microsoft/Google/Red Hat/Proselint community packs.
-    type: tool_fixtures
-    polarity: bad_example
-    rules_relevant: [lexicon.weasel-words, lexicon.jargon-undefined, lexicon.redundant-intensifier, syntax.passive-voice]
-    conditions: [general]
-    languages: [en]
-    bilingual_parallel: false
-    interest: high
-    confidence: high
-    use_case: [example, benchmark]
-    has_explanations: true
-    license_or_access: open
-    redistribution: check_license
-    license_details: Vale engine is MIT; individual style packs carry their own licences (e.g. Microsoft/Google/Red Hat) — verify per pack.
-    markdownable: 5
-    notes: YAML + text files.
 
   - url: https://github.com/btford/write-good
     title: write-good
@@ -909,6 +503,7 @@ sources:
     license_details: MIT licence.
     markdownable: 5
 
+
   - url: https://github.com/get-alex/alex
     title: alex.js
     description: Linter catching insensitive/inconsiderate writing; partial lexicon overlap.
@@ -927,23 +522,6 @@ sources:
     license_details: MIT licence.
     markdownable: 5
 
-  - url: https://github.com/textlint-rule
-    title: textlint-rule org
-    description: Large collection of JS prose-lint rules with fixture-driven tests.
-    type: tool_fixtures
-    polarity: bad_example
-    rules_relevant: [structure.sentence-too-long, lexicon.weasel-words, structure.excessive-commas]
-    conditions: [general]
-    languages: [en]
-    bilingual_parallel: false
-    interest: medium
-    confidence: high
-    use_case: [example]
-    has_explanations: true
-    license_or_access: open
-    redistribution: check_license
-    license_details: Most rule repos are MIT but each repo carries its own licence — verify per rule.
-    markdownable: 5
 
   - url: https://github.com/retextjs/retext
     title: retext plugins
@@ -963,43 +541,6 @@ sources:
     license_details: MIT licence across core retext plugins.
     markdownable: 5
 
-  - url: https://languagetool.org/
-    title: LanguageTool rules
-    description: Open-source grammar/style engine with EN and FR rule files.
-    type: tool_fixtures
-    polarity: bad_example
-    rules_relevant: [lexicon.weasel-words, lexicon.redundant-intensifier, syntax.passive-voice, structure.excessive-commas]
-    conditions: [general]
-    languages: [en, fr]
-    bilingual_parallel: false
-    interest: high
-    confidence: high
-    use_case: [example, benchmark]
-    has_explanations: true
-    license_or_access: open
-    redistribution: check_license
-    license_details: Core is LGPL-2.1; rule-set files inherit LGPL — a copyleft obligation applies if bundled directly.
-    markdownable: 5
-    notes: Rule examples in XML — rare bilingual source with explanations.
-
-  - url: https://www.hemingwayapp.com/
-    title: Hemingway Editor
-    description: Web tool flagging hard sentences, passives, adverbs with live demos.
-    type: tool_fixtures
-    polarity: bad_example
-    rules_relevant: [structure.sentence-too-long, syntax.passive-voice, lexicon.redundant-intensifier, readability.score]
-    conditions: [general, non-native]
-    languages: [en]
-    bilingual_parallel: false
-    interest: medium
-    confidence: medium
-    use_case: [example]
-    has_explanations: true
-    license_or_access: open
-    redistribution: link_only
-    license_details: Proprietary web tool; no open licence — link only.
-    markdownable: 1
-    notes: No source; only live-app behaviour observable.
 
   # ── Research / documentation ────────────────────────────────────────────
   - url: https://aclanthology.org/2024.determit-1.3.pdf
@@ -1021,41 +562,6 @@ sources:
     markdownable: 2
     notes: Doesn't ship a new corpus; useful as a document-level simplification reference, but not a substitute for the failed WikiAuto / EASSE dataset DLs.
 
-  - url: https://www.tandfonline.com/doi/full/10.1080/01638539809545028
-    title: Coh-Metrix / McNamara readability research
-    description: Foundational paper behind Coh-Metrix cohesion metrics.
-    type: research_paper
-    polarity: neutral
-    rules_relevant: [readability.score, rhythm.repetitive-connectors, structure.deep-subordination, syntax.unclear-antecedent]
-    conditions: [general, non-native]
-    languages: [en]
-    bilingual_parallel: false
-    interest: medium
-    confidence: high
-    use_case: [documentation, benchmark]
-    has_explanations: true
-    license_or_access: restricted
-    redistribution: restricted
-    license_details: © Taylor & Francis; paywalled. Cite only; do not redistribute the PDF.
-    markdownable: 2
-
-  - url: https://www.nngroup.com/articles/plain-language-experts/
-    title: Nielsen Norman — Plain Language usability studies
-    description: NN/g studies comparing dense vs plain prose.
-    type: blog
-    polarity: before_after
-    rules_relevant: [readability.score, structure.sentence-too-long, lexicon.jargon-undefined]
-    conditions: [general, non-native]
-    languages: [en]
-    bilingual_parallel: false
-    interest: medium
-    confidence: medium
-    use_case: [documentation]
-    has_explanations: true
-    license_or_access: open
-    redistribution: link_only
-    license_details: © Nielsen Norman Group — link only, commercial content.
-    markdownable: 4
 
   - url: https://18f.gsa.gov/2016/05/24/an-open-source-tool-for-plainer-writing/
     title: 18F plain-writing posts
@@ -1075,81 +581,9 @@ sources:
     license_details: 18F content is generally CC0 / US government public domain.
     markdownable: 4
 
-  - url: https://www.orthodidacte.com/blog/
-    title: Orthodidacte blog
-    description: French writing-quality blog with concrete rewrite examples.
-    type: blog
-    polarity: before_after
-    rules_relevant: [lexicon.excessive-nominalization, syntax.passive-voice, structure.sentence-too-long]
-    conditions: [general, non-native]
-    languages: [fr]
-    bilingual_parallel: false
-    interest: low
-    confidence: medium
-    use_case: [example]
-    has_explanations: true
-    license_or_access: open
-    redistribution: link_only
-    license_details: © Orthodidacte (commercial) — link only.
-    markdownable: 4
-
-  - url: https://readable.com/blog/
-    title: Readable.com blog
-    description: Commercial readability-tool explainers on Flesch, passive, etc.
-    type: blog
-    polarity: mixed_unaligned
-    rules_relevant: [readability.score, syntax.passive-voice, structure.sentence-too-long]
-    conditions: [general]
-    languages: [en]
-    bilingual_parallel: false
-    interest: low
-    confidence: medium
-    use_case: [documentation]
-    has_explanations: true
-    license_or_access: open
-    redistribution: link_only
-    license_details: © Readable.com (commercial) — link only.
-    markdownable: 4
-
-# ── Redistribution roll-up / summary counts ───────────────────────────────
-redistribution_summary:
-  public_ok:
-    count: 24
-    examples: [plainlanguage.gov, Federal Plain Language, GOV.UK A–Z, GOV.UK writing, EC How to write clearly, CDL Readability, WCAG 2.1 (×3), RGAA 4.1, CDC Clear Comm Index, EUR-Lex, Légifrance, Simple English Wikipedia, Vikidia, OneStopEnglish, ASSET, WikiAuto, Project Gutenberg, proselint, write-good, alex.js, retext, 18F, Bakker & Kamps (2024)]
-  check_license:
-    count: 12
-    examples: [Canada.ca style guide, Canada.ca plain-language, CCOHS Spell It Out, HAS, Santé publique France, ToSDR, CLEAR (CommonLit), Alector, CLEAR-FR (Grabar & Cardon), EASSE, Vale styles, textlint-rule, LanguageTool]
-    note: Licence is open but carries NC/SA/per-item constraints — verify before committing extracts.
-  link_only:
-    count: 12
-    examples: [Center for Plain Language, Inclusion Europe, Unapei, IFLA, BDA Dyslexia (×2), Stroke Association, ADHD Foundation, CAN-ASC-3.1:2025, Hemingway, NN/g, Orthodidacte, Readable.com]
-    note: Copyrighted with no open licence — cite and link, don't commit extracts beyond short fair-use quotes.
-  restricted:
-    count: 4
-    examples: [BMJ Gobbledygook article, Newsela, WeeBit, Coh-Metrix / Tandfonline]
-    note: Access is gated or redistribution forbidden — cite only, don't include in this repo.
-
-# ── Markdownable roll-up / summary counts ─────────────────────────────────
-markdownable_summary:
-  "5":
-    count: 25
-    note: Already Markdown / wikitext / plain text / deterministic conversion. Ideal for automated fixture generation.
-  "4":
-    count: 21
-    note: Clean HTML — single-shot conversion with pandoc or readability extractors.
-  "3":
-    count: 3
-    note: HTML with noise; scripted cleanup before conversion.
-  "2":
-    count: 7
-    note: PDFs of flowing text — extract + manual cleanup.
-  "1":
-    count: 2
-    note: Complex PDF layout or no accessible source — expect heavy manual work.
-  "0":
-    count: 0
 
 # ── Known gaps ────────────────────────────────────────────────────────────
+
 gaps:
   - No solid dyscalculia-specific corpus found; only `structure.mixed-numeric-format`-adjacent WCAG notes.
   - Aphasia-specific French samples beyond SPF/HAS are thin.
