@@ -12,11 +12,19 @@
 //! - **English** — sum of word-boundary matches against the language's
 //!   `NEGATIONS` list plus occurrences of the contracted `n't` suffix
 //!   (`don't`, `won't`, `isn't`, `doesn't`, …).
-//! - **French** — bipartite negation: each `ne` / `n'` clitic counts as
-//!   one negation, plus standalone negators (`sans`, `non`). Counting the
-//!   second-position particle (`pas`, `jamais`, `plus`, …) directly would
-//!   trigger false positives because many of those forms are ambiguous
-//!   outside the `ne ... X` construction.
+//! - **French** — pair-based bipartite counting. Each `ne` / `n'` clitic
+//!   contributes one negation and is paired with its nearest
+//!   second-position particle (`pas`, `rien`, `jamais`, `plus`,
+//!   `personne`, `aucun`, `aucune`, `guère`, `nulle part`) within a short
+//!   window; the pairing just consumes the particle to avoid
+//!   double-counting. Any second-position particle left unpaired in a
+//!   sentence that contains a `ne` clitic contributes an additional
+//!   negation — this catches forms like `rien` used as a nominal negative
+//!   subject (`… que rien n'est jamais possible`). Guards: `pas` and
+//!   `plus` never count when unpaired (too ambiguous outside the `ne …`
+//!   construction); `rien` preceded by `de` is treated as the idiom
+//!   `de rien` and skipped. Standalone negators (`sans`, `non`) always
+//!   count.
 //!
 //! See [`RULES.md`](../../RULES.md#nested-negation) for the threshold
 //! reference.
@@ -25,7 +33,7 @@ use std::num::NonZeroU32;
 
 use crate::condition::ConditionTag;
 use crate::config::Profile;
-use crate::language::{en, fr};
+use crate::language::en;
 use crate::parser::{split_sentences, Document};
 use crate::rules::Rule;
 use crate::types::{Diagnostic, Language, Location, Severity, SourceFile};
@@ -144,36 +152,140 @@ fn count_english(sentence: &str) -> u32 {
     count
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum FrKind {
+    NeClitic,
+    Particle,
+    Sans,
+    Non,
+    Other,
+}
+
+fn is_ne_clitic(token: &str) -> bool {
+    token == "ne" || token.starts_with("n'") || token.starts_with("n\u{2019}")
+}
+
+fn bare(token: &str) -> &str {
+    token.trim_matches(|c: char| !c.is_alphanumeric())
+}
+
+/// Pairing window for FR ne-clitic ↔ second-position particle.
+const FR_PAIRING_WINDOW: usize = 6;
+
 fn count_french(sentence: &str) -> u32 {
     let lowered = sentence.to_lowercase();
-    let mut count: u32 = 0;
-    // Word-boundary tokens (apostrophes attach to the preceding clitic, so
-    // strip them when checking the standalone negator list, but keep the
-    // raw token for the clitic check).
-    for token in lowered.split(|c: char| {
-        c.is_whitespace() || matches!(c, ',' | ';' | ':' | '.' | '!' | '?' | '(' | ')' | '"')
-    }) {
-        if token.is_empty() {
+    let raw: Vec<&str> = lowered
+        .split(|c: char| {
+            c.is_whitespace() || matches!(c, ',' | ';' | ':' | '.' | '!' | '?' | '(' | ')' | '"')
+        })
+        .filter(|t| !t.is_empty())
+        .collect();
+
+    let mut kinds: Vec<FrKind> = Vec::with_capacity(raw.len());
+    let mut skip_next = false;
+    for (i, tok) in raw.iter().enumerate() {
+        if skip_next {
+            skip_next = false;
+            kinds.push(FrKind::Other);
             continue;
         }
-        // `n'` clitic appears as `n'` glued to the next word: detect by
-        // suffix on the token preceding the apostrophe split.
-        if token == "ne" || token == "n'" || token.starts_with("n\u{2019}") {
-            count = count.saturating_add(1);
+        if is_ne_clitic(tok) {
+            kinds.push(FrKind::NeClitic);
             continue;
         }
-        // `n'autre`, `n'est`, etc.: the token starts with `n'` because we
-        // didn't split on apostrophe.
-        if token.starts_with("n'") && token.len() > 2 {
-            count = count.saturating_add(1);
+        let b = bare(tok);
+        if b == "sans" {
+            kinds.push(FrKind::Sans);
             continue;
         }
-        let bare = token.trim_matches(|c: char| !c.is_alphanumeric());
-        if fr::STANDALONE_NEGATIONS.contains(&bare) {
-            count = count.saturating_add(1);
+        if b == "non" {
+            kinds.push(FrKind::Non);
+            continue;
+        }
+        // Multi-word "nulle part": treat as one particle at position i.
+        if b == "nulle" && raw.get(i + 1).is_some_and(|n| bare(n) == "part") {
+            kinds.push(FrKind::Particle);
+            skip_next = true;
+            continue;
+        }
+        let is_particle = matches!(
+            b,
+            "pas" | "rien" | "jamais" | "plus" | "personne" | "aucun" | "aucune" | "guère"
+        );
+        if is_particle {
+            // `de rien` idiom guard.
+            if b == "rien" && i > 0 && bare(raw[i - 1]) == "de" {
+                kinds.push(FrKind::Other);
+            } else {
+                kinds.push(FrKind::Particle);
+            }
+            continue;
+        }
+        kinds.push(FrKind::Other);
+    }
+
+    // Pair each ne-clitic with the nearest unclaimed particle within a
+    // short window (forward preferred, then backward). Pairing consumes
+    // the particle so we don't double-count the `ne … X` construction;
+    // each ne-clitic still contributes 1 negation whether paired or not.
+    let n = kinds.len();
+    let mut claimed = vec![false; n];
+    let mut ne_count: u32 = 0;
+    let mut has_ne = false;
+    for i in 0..n {
+        if kinds[i] != FrKind::NeClitic {
+            continue;
+        }
+        has_ne = true;
+        ne_count = ne_count.saturating_add(1);
+        let mut paired: Option<usize> = None;
+        let fwd_end = (i + 1 + FR_PAIRING_WINDOW).min(n);
+        for j in (i + 1)..fwd_end {
+            if !claimed[j] && kinds[j] == FrKind::Particle {
+                paired = Some(j);
+                break;
+            }
+        }
+        if paired.is_none() {
+            let lo = i.saturating_sub(FR_PAIRING_WINDOW);
+            for j in (lo..i).rev() {
+                if !claimed[j] && kinds[j] == FrKind::Particle {
+                    paired = Some(j);
+                    break;
+                }
+            }
+        }
+        if let Some(j) = paired {
+            claimed[j] = true;
         }
     }
-    count
+
+    // Unpaired second-position particles in a ne-sentence contribute an
+    // extra negation, except `pas` and `plus` which are too ambiguous
+    // outside a direct `ne … X` pair.
+    let mut unpaired: u32 = 0;
+    if has_ne {
+        for (i, k) in kinds.iter().enumerate() {
+            if *k == FrKind::Particle && !claimed[i] {
+                let b = bare(raw[i]);
+                if !matches!(b, "pas" | "plus") {
+                    unpaired = unpaired.saturating_add(1);
+                }
+            }
+        }
+    }
+
+    // Standalone negators always count.
+    let standalones: u32 = kinds
+        .iter()
+        .filter(|k| matches!(**k, FrKind::Sans | FrKind::Non))
+        .count()
+        .try_into()
+        .unwrap_or(u32::MAX);
+
+    ne_count
+        .saturating_add(unpaired)
+        .saturating_add(standalones)
 }
 
 fn build_diagnostic(
@@ -307,6 +419,50 @@ mod tests {
     }
 
     #[test]
+    fn french_unpaired_rien_in_ne_sentence_counts() {
+        // F87 pedagogical target: ne…pas (1) + rien (1) + n'…jamais (1) = 3.
+        let text = "Nous ne disons pas que rien n'est jamais possible.";
+        let diags = lint(text, Profile::Public, Language::Fr);
+        assert_eq!(diags.len(), 1);
+        assert!(diags[0].message.contains("3 negations"));
+    }
+
+    #[test]
+    fn french_rien_ne_pairs_as_one() {
+        // `Rien ne marche` is ONE bipartite negation, not two.
+        assert!(lint("Rien ne marche.", Profile::Public, Language::Fr).is_empty());
+    }
+
+    #[test]
+    fn french_ne_plus_pairs_as_one() {
+        // `ne … plus` (no longer) pairs, so `plus` is consumed.
+        assert!(lint("Je ne veux plus parler.", Profile::Public, Language::Fr).is_empty());
+    }
+
+    #[test]
+    fn french_personne_ne_pairs_as_one() {
+        assert!(lint("Personne ne m'a parlé.", Profile::Public, Language::Fr).is_empty());
+    }
+
+    #[test]
+    fn french_de_rien_idiom_is_skipped() {
+        // `de rien` must not count; sentence has 1 bipartite `n'…rien`.
+        let text = "De rien — je n'ai rien entendu.";
+        assert!(lint(text, Profile::Public, Language::Fr).is_empty());
+    }
+
+    #[test]
+    fn french_nulle_part_counts_as_one_particle() {
+        // `ne … nulle part` pairs → one negation.
+        assert!(lint(
+            "Il ne trouve nulle part de solution.",
+            Profile::Public,
+            Language::Fr
+        )
+        .is_empty());
+    }
+
+    #[test]
     fn french_plus_alone_is_not_counted() {
         // `plus` outside `ne ... plus` means "more" — must not be flagged.
         let text = "Il faut plus de plus de plus de courage.";
@@ -318,6 +474,19 @@ mod tests {
         assert_eq!(Config::for_profile(Profile::DevDoc).max_negations.get(), 3);
         assert_eq!(Config::for_profile(Profile::Public).max_negations.get(), 2);
         assert_eq!(Config::for_profile(Profile::Falc).max_negations.get(), 1);
+    }
+
+    #[test]
+    fn french_corpus_fixture_triggers_only_on_expected_lines() {
+        // `tests/corpus/fr/nested-negation.md` mixes the F87 pedagogical
+        // target, the single-negation guards, and a triple-standalone
+        // case. Under `public`, exactly three lines should trip the rule:
+        // the two F87-style triples and `Sans plan, sans budget, sans
+        // équipe.` (three standalones).
+        let text = include_str!("../../../tests/corpus/fr/nested-negation.md");
+        let diags = lint(text, Profile::Public, Language::Fr);
+        let lines: Vec<u32> = diags.iter().map(|d| d.location.line).collect();
+        assert_eq!(lines, vec![9, 39, 43], "got diags: {diags:#?}");
     }
 
     #[test]

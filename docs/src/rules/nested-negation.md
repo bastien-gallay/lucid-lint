@@ -20,7 +20,7 @@ Sentences that stack multiple negations. Two or more negations in the same sente
 Count the negations per sentence; report sentences whose count exceeds `max_negations`.
 
 - **English** — sum of word-boundary matches against the language's negation list (`not`, `no`, `never`, `none`, `nothing`, `nobody`, `nowhere`, `neither`, `nor`, `cannot`, `without`) plus occurrences of the contracted `n't` suffix (`don't`, `won't`, `isn't`, `doesn't`, …).
-- **French** — bipartite negation: each `ne` / `n'` clitic counts as one negation, plus standalone negators (`sans`, `non`). Counting the second-position particle (`pas`, `jamais`, `plus`, …) directly would trigger false positives because many of those forms are ambiguous outside the `ne ... X` construction.
+- **French** — pair-based bipartite counting. Each `ne` / `n'` clitic contributes one negation and pairs with its nearest second-position particle (`pas`, `rien`, `jamais`, `plus`, `personne`, `aucun`, `aucune`, `guère`, `nulle part`) within a short window; the pairing just consumes the particle to avoid double-counting. Unpaired particles in a `ne`-sentence contribute one more — this catches forms like `rien` used as a nominal negative subject. Guards: `pas` / `plus` never count when unpaired (too ambiguous outside `ne …`); `rien` preceded by `de` is treated as the idiom `de rien` and skipped; particles in a sentence with no `ne` clitic are skipped too (`plus de courage`, `personne d'autre`). Standalones `sans` / `non` always count.
 
 ## Parameters
 
@@ -60,13 +60,17 @@ warning input.md:1:1 Sentence stacks 3 negations (maximum 2). Rewrite as a posit
 
 Bipartite `ne ... pas` counts as one negation.
 
-**Before** (the pedagogical target — see note below):
+**Before** (flagged):
 
 > Nous <span class="lucid-idea" data-idea="1">ne disons pas</span> que <span class="lucid-idea" data-idea="2">rien</span> <span class="lucid-idea" data-idea="3">n'est jamais possible</span>.
 
-Three negations (`ne…pas`, `rien`, `jamais`).
+Three negations: `ne…pas` (one bipartite), `rien` (unpaired), `n'…jamais` (one bipartite).
 
-> **Note — not yet flagged.** The current FR detector counts only `ne` / `n'` clitics (plus the standalones `sans` and `non`), so this sentence registers as 2 negations and stays below the `public` threshold. Extending FR detection to second-position negators (`rien`, `jamais`, `plus`, `personne`, `aucun`) is tracked as **[F87](../roadmap.md)** in the [roadmap](../roadmap.md).
+What `lucid-lint check --profile public` reports:
+
+```text
+warning input.md:1:1 Sentence stacks 3 negations (maximum 2). Rewrite as a positive statement or split the negations across separate sentences. [syntax.nested-negation]
+```
 
 **After** (your rewrite):
 

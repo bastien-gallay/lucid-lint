@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] — 2026-04-23
+
 ### Added
 
 - **FR parallel sidebar locale filter (1.A of the FR per-rule pages
@@ -68,6 +70,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`syntax.nested-negation` — FR counter extended to second-position
+  negators (F87).** The French detector now recognises `pas`, `rien`,
+  `jamais`, `plus`, `personne`, `aucun`, `aucune`, `guère`, and
+  `nulle part` alongside the `ne` / `n'` clitics, using pair-based
+  counting: each clitic contributes one negation and consumes its
+  nearest particle within a 6-token window; unpaired particles in a
+  `ne`-sentence count as one more — which catches the canonical
+  triple-negation shape `Nous ne disons pas que rien n'est jamais
+  possible` (now 3, previously 2). Guards: `pas` and `plus` never
+  count when unpaired (too ambiguous outside `ne …`); `rien` after
+  `de` is treated as the idiom `de rien` and skipped; particles in a
+  sentence without a `ne` clitic are skipped too (`plus de courage`,
+  `personne d'autre`). Standalones `sans` / `non` keep their previous
+  semantics. Fixture at `tests/corpus/fr/nested-negation.md` exercises
+  the F87 target, the RGAA 4.1 single-negation cases, the `de rien`
+  guard, and the multi-standalone `sans … sans …` shape.
 - **FR rules index moved from `fr/rules-index.md` to `fr/rules/index.md`**
   for parity with the EN tree (`rules/index.md`). SUMMARY.md entry
   updated; the intra-page relative links now use `../../rules/…` to
