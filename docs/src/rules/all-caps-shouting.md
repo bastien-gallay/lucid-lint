@@ -33,11 +33,27 @@ Code blocks are excluded by the Markdown parser before the rule runs.
 
 ## Examples
 
-**Triggers under `public`:**
+`lucid-lint` reports; the rewrite is always yours.
 
-> Please DO NOT touch this.
+### English
 
-`DO NOT` reads as shouting. Use bold or italics instead: *do not touch this*.
+One emphasis phrase, colour-matched across the rewrite — the shouting becomes typographic emphasis without losing the stress.
+
+**Before** (flagged):
+
+> Please <span class="lucid-idea" data-idea="1">DO NOT</span> touch this.
+
+`DO NOT` reads as shouting.
+
+What `lucid-lint check --profile public` reports:
+
+```text
+warning input.md:1:8 2 consecutive ALL-CAPS words read as shouting and degrade legibility for dyslexic readers. Use sentence case and rely on emphasis (italics, bold) or a callout instead. [lexicon.all-caps-shouting]
+```
+
+**After** (your rewrite):
+
+> Please <span class="lucid-idea" data-idea="1">*do not*</span> touch this.
 
 ## Known false positives
 

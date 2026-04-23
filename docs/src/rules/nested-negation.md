@@ -30,23 +30,47 @@ Count the negations per sentence; report sentences whose count exceeds `max_nega
 
 ## Examples
 
-**EN — triggers under `public`:**
+`lucid-lint` reports; the rewrite is always yours.
 
-> We do not say nothing is never possible.
+### English
 
-Three negations (`not`, `nothing`, `never`). Rewrite as: *We say everything is possible.*
+Three negations → three affirmatives, colour-matched across the rewrite. The `not` simply drops — the simplification shows.
 
-**FR — passes under `public`:**
+**Before** (flagged):
+
+> We do <span class="lucid-idea" data-idea="1">not say</span> <span class="lucid-idea" data-idea="2">nothing</span> is <span class="lucid-idea" data-idea="3">never possible</span>.
+
+Three negations (`not`, `nothing`, `never`).
+
+What `lucid-lint check --profile public` reports:
+
+```text
+warning input.md:1:1 Sentence stacks 3 negations (maximum 2). Rewrite as a positive statement or split the negations across separate sentences. [syntax.nested-negation]
+```
+
+**After** (your rewrite):
+
+> We <span class="lucid-idea" data-idea="1">say</span> <span class="lucid-idea" data-idea="2">everything</span> <span class="lucid-idea" data-idea="3">is possible</span>.
+
+### French
+
+**Passes under `public`:**
 
 > Nous ne sommes pas prêts.
 
 Bipartite `ne ... pas` counts as one negation.
 
-**FR — triggers under `public`:**
+**Before** (the pedagogical target — see note below):
 
-> Il ne dit rien, elle ne fait rien et nous ne savons pas.
+> Nous <span class="lucid-idea" data-idea="1">ne disons pas</span> que <span class="lucid-idea" data-idea="2">rien</span> <span class="lucid-idea" data-idea="3">n'est jamais possible</span>.
 
-Three independent `ne` clitics → three negations.
+Three negations (`ne…pas`, `rien`, `jamais`).
+
+> **Note — not yet flagged.** The current FR detector counts only `ne` / `n'` clitics (plus the standalones `sans` and `non`), so this sentence registers as 2 negations and stays below the `public` threshold. Extending FR detection to second-position negators (`rien`, `jamais`, `plus`, `personne`, `aucun`) is tracked as **[F87](../roadmap.md)** in the [roadmap](../roadmap.md).
+
+**After** (your rewrite):
+
+> Nous <span class="lucid-idea" data-idea="1">disons</span> que <span class="lucid-idea" data-idea="2">tout</span> <span class="lucid-idea" data-idea="3">est possible</span>.
 
 ## Suppression
 

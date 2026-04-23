@@ -28,22 +28,39 @@ Sequence of `min_items` or more short comma-separated segments ending with `, et
 
 Suggests converting the enumeration to a bulleted list.
 
-## Example
+## Examples
 
-Flagged:
+`lucid-lint` reports; the rewrite is always yours.
 
-> The library supports JSON, YAML, TOML, CSV, INI, and XML.
+### English
 
-Rewrite:
+Six items, colour-matched across the rewrite — each inline term lines up with its bullet.
 
-> The library supports the following formats:
+<!-- lucid-lint-disable structure.long-enumeration -->
+<!-- lucid-lint-disable syntax.dense-punctuation-burst -->
+
+**Before** (flagged):
+
+> The dish contains <span class="lucid-idea" data-idea="1">tomato</span>, <span class="lucid-idea" data-idea="2">onion</span>, <span class="lucid-idea" data-idea="3">garlic</span>, <span class="lucid-idea" data-idea="4">basil</span>, <span class="lucid-idea" data-idea="5">parsley</span>, and <span class="lucid-idea" data-idea="1">thyme</span>.
+
+<!-- lucid-lint-enable -->
+
+What `lucid-lint check --profile public` reports:
+
+```text
+warning input.md:1:1 Inline enumeration of 5 items. Consider converting it into a bulleted list so readers can scan the items. [structure.long-enumeration]
+```
+
+**After** (your rewrite):
+
+> The dish contains:
 >
-> - JSON
-> - YAML
-> - TOML
-> - CSV
-> - INI
-> - XML
+> - <span class="lucid-idea" data-idea="1">tomato</span>
+> - <span class="lucid-idea" data-idea="2">onion</span>
+> - <span class="lucid-idea" data-idea="3">garlic</span>
+> - <span class="lucid-idea" data-idea="4">basil</span>
+> - <span class="lucid-idea" data-idea="5">parsley</span>
+> - <span class="lucid-idea" data-idea="1">thyme</span>
 
 ## Suppression
 

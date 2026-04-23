@@ -30,17 +30,35 @@ Per sentence, count the conditional connectors and report counts above `max_cond
 
 ## Examples
 
-**EN — triggers under `public`:**
+Three conditionals, colour-matched across the rewrite — position already pairs them, the tint just confirms each branch carries through. `lucid-lint` reports; the rewrite is always yours.
 
-> If we ship, when the build passes, unless the gate fails, we deploy.
+### English
 
-Three conditional connectors. Rewrite as a sequence or a bullet list.
+**Before** (flagged):
 
-**FR — triggers under `public`:**
+> <span class="lucid-idea" data-idea="1">If we ship,</span> <span class="lucid-idea" data-idea="2">when the build passes,</span> <span class="lucid-idea" data-idea="3">unless the gate fails,</span> we deploy.
+
+What `lucid-lint check --profile public` reports:
+
+```text
+warning input.md:1:1 Sentence stacks 3 conditional clauses (maximum 2). Split the conditions across separate sentences or convert them to a bullet list. [syntax.conditional-stacking]
+```
+
+**After** (your rewrite):
+
+> We deploy when all three checks hold:
+>
+> - <span class="lucid-idea" data-idea="1">the ship command ran,</span>
+> - <span class="lucid-idea" data-idea="2">the build passes,</span>
+> - <span class="lucid-idea" data-idea="3">the gate does not fail.</span>
+
+### French
+
+**Before** (flagged):
 
 > Si nous expédions, quand le test passe, à moins que la barrière échoue, nous déployons.
 
-Three conditional connectors (`si`, `quand`, `à moins que`).
+Three conditional connectors (`si`, `quand`, `à moins que`). French rewrite to come with the FR translation pass.
 
 ## Known false positives
 

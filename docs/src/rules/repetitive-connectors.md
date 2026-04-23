@@ -41,15 +41,33 @@ Sliding window of `window_size` sentences. Per connector, count occurrences in t
 - 🇬🇧 Illustration: *for example, notably, in particular, such as*
 - 🇬🇧 Addition: *moreover, furthermore, also, additionally*
 
-## Example
+## Examples
+
+`lucid-lint` reports; the rewrite is always yours.
+
+### English
+
+Five actions, colour-matched across the rewrite — only the connectors change.
 
 <!-- lucid-lint-disable rhythm.repetitive-connectors -->
 
-> We analysed the data. Then we built the model. Then we validated the results. Then we published the report.
+**Before** (flagged):
+
+> <span class="lucid-idea" data-idea="1">We analysed the data.</span> Then <span class="lucid-idea" data-idea="2">we built the model.</span> Then <span class="lucid-idea" data-idea="3">we validated the results.</span> Then <span class="lucid-idea" data-idea="4">we published the report.</span> Then <span class="lucid-idea" data-idea="5">we archived the raw data.</span>
+
+Four *then* in five sentences — no progression felt.
+
+What `lucid-lint check --profile public` reports:
+
+```text
+warning input.md:1:1 Connector "then" appears 4 times within 5 consecutive sentences (max 3). Vary the connector or restructure the passage. [rhythm.repetitive-connectors]
+```
+
+**After** (your rewrite):
+
+> <span class="lucid-idea" data-idea="1">We analysed the data.</span> From it <span class="lucid-idea" data-idea="2">we built the model.</span> <span class="lucid-idea" data-idea="3">Validation followed,</span> and once the results held up <span class="lucid-idea" data-idea="4">we published the report.</span> <span class="lucid-idea" data-idea="5">The raw data was archived last.</span>
 
 <!-- lucid-lint-enable -->
-
-Four *then* — no progression felt.
 
 ## Suppression
 
