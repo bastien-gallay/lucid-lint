@@ -1,0 +1,19 @@
+url: https://github.com/retextjs/retext
+title: retext plugins
+type: tool_fixtures
+polarity: bad_example
+languages:
+- en
+redistribution: public_ok
+license_details: MIT licence across core retext plugins.
+markdownable: 5
+rules_relevant:
+- syntax.passive-voice
+- lexicon.redundant-intensifier
+- readability.score
+- rhythm.repetitive-connectors
+conditions:
+- general
+bilingual_parallel: false
+fetched_at: '2026-04-22T21:39:16+00:00'
+fetch_method: git_clone_depth1

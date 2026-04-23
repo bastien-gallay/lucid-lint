@@ -1,0 +1,31 @@
+url: https://www.plainlanguage.gov/examples/before-and-after/
+title: plainlanguage.gov before-and-after
+type: gov_guide
+polarity: before_after
+languages:
+- en
+redistribution: public_ok
+license_details: US federal government work — public domain in the US (17 U.S.C. §
+  105).
+markdownable: 4
+rules_relevant:
+- structure.sentence-too-long
+- structure.paragraph-too-long
+- syntax.passive-voice
+- syntax.nested-negation
+- lexicon.excessive-nominalization
+- lexicon.jargon-undefined
+- readability.score
+conditions:
+- general
+- non-native
+bilingual_parallel: false
+fetched_at: '2026-04-22T21:39:11+00:00'
+fetch_method: http_get
+raw_file: raw.html
+raw_sha256: 8516553044af7e3546f1c65e37a7827a4e41940b59b48cc3182e390d11c0c48a
+clean_file: clean.html
+clean_sha256: 9d708f4a69d29d2508cbe9a5cbb515aa7cf65a738ddc2ac8f9e23b45031efc6f
+md_content_sha256: 1c594e7132c635f7971491754f18cb94dcb32f9908e47c4cc65b8af707ff7796
+converted_at: '2026-04-22T21:40:51+00:00'
+md_backend: pandoc

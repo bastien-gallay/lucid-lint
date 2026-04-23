@@ -43,31 +43,52 @@
 #                           constraints (NC, SA, per-item variance) — review
 #                           before bundling
 #   license_details     one-liner on the actual licence (when known)
+#   markdownable        integer 0–5 — how easily the source can be turned
+#                       into Markdown fixtures for lucid-lint tests:
+#                         5 = already Markdown, wikitext, plain text, or
+#                             deterministic conversion (CSV/JSON/XML datasets,
+#                             MediaWiki dumps, GitHub repos with .md files)
+#                         4 = clean, well-structured HTML — easy pandoc/
+#                             readability-style conversion
+#                         3 = HTML with significant noise (ads, navigation,
+#                             rich layout); conversion needs cleanup
+#                         2 = PDF that is mostly flowing text — OCR/extract
+#                             plus manual cleanup
+#                         1 = PDF / HTML with complex layout, tables, images
+#                             interleaved — heavy manual work
+#                         0 = impossible (image-only, proprietary binary,
+#                             no accessible source)
 #   notes               optional one-liner
 
 redistribution_legend:
   public_ok:
     meaning: >
-      Open or compatible licence. Extracts can be committed to the public
-      git repo with attribution. Check each licence's attribution / share-
-      alike requirements before copying.
-  link_only:
-    meaning: >
-      Content is copyrighted and reachable publicly, but the licence does
-      not grant redistribution rights (or grants them only for non-
-      commercial / non-derivative use). Link to the URL from docs and
-      tests; do not commit extracts beyond short fair-use quotations.
-  restricted:
-    meaning: >
-      Access itself is gated (paywall, research-request, click-through
-      agreement) or the licence explicitly forbids redistribution. Not
-      usable as a public asset. For internal-only use after accepting
-      the access terms.
+      Open or compatible licence. Extracts can be committed to
+      examples/public/ with attribution. Check each licence's
+      attribution / share-alike requirements before copying.
   check_license:
     meaning: >
-      The licence is permissive in principle but carries constraints —
+      Licence is permissive in principle but carries constraints —
       typically NC (no commercial), SA (share-alike / copyleft), or
       per-item variance within a repo. Verify per use before bundling.
+  link_only:
+    meaning: >
+      Copyrighted and publicly reachable, but the licence does not grant
+      redistribution rights. Cite and link; don't copy extracts beyond a
+      short fair-use quotation with clear attribution.
+  restricted:
+    meaning: >
+      Access is gated (paywall, research-request, click-through
+      agreement) or the licence explicitly forbids redistribution. Cite
+      only; don't include in this repo.
+
+markdownable_legend:
+  "5": Already Markdown / wikitext / plain text / deterministic conversion.
+  "4": Clean HTML — easy automated conversion.
+  "3": HTML with noise; cleanup needed.
+  "2": PDF mostly flowing text; extract + manual cleanup.
+  "1": PDF/HTML with complex layout; heavy manual work.
+  "0": Impossible — no accessible source.
 
 sources:
   # ── Plain-language / government style guides ────────────────────────────
@@ -87,6 +108,7 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: US federal government work — public domain in the US (17 U.S.C. § 105).
+    markdownable: 4
     notes: Gold-standard before/after pairs with per-fix annotations.
 
   - url: https://www.plainlanguage.gov/guidelines/
@@ -105,6 +127,7 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: US federal government work — public domain in the US.
+    markdownable: 4
 
   - url: https://www.gov.uk/guidance/style-guide/a-to-z-of-gov-uk-style
     title: GOV.UK style guide (A–Z)
@@ -122,6 +145,7 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: Open Government Licence v3.0 (OGL) — redistribute freely with attribution.
+    markdownable: 4
 
   - url: https://www.gov.uk/guidance/content-design/writing-for-gov-uk
     title: GOV.UK — writing for GOV.UK
@@ -139,6 +163,7 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: Open Government Licence v3.0 (OGL).
+    markdownable: 4
 
   - url: https://op.europa.eu/en/publication-detail/-/publication/725b7eb0-d92e-11e5-8fea-01aa75ed71a1
     title: How to write clearly (European Commission)
@@ -156,7 +181,8 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: Commission Decision 2011/833/EU — EU documents reusable for commercial/non-commercial purposes with attribution.
-    notes: Available in all EU languages — rare true EN/FR parallel resource.
+    markdownable: 2
+    notes: PDF booklet; available in all EU languages — rare true EN/FR parallel resource.
 
   - url: https://design.canada.ca/writing-style/
     title: Canada.ca content style guide
@@ -174,6 +200,7 @@ sources:
     license_or_access: open
     redistribution: check_license
     license_details: Crown Copyright. Non-commercial reproduction permitted with attribution; commercial use needs permission.
+    markdownable: 4
 
   - url: https://www.canada.ca/en/revenue-agency/services/about-canada-revenue-agency-cra/plain-language.html
     title: Canada.ca plain-language guidance
@@ -191,6 +218,26 @@ sources:
     license_or_access: open
     redistribution: check_license
     license_details: Crown Copyright; non-commercial reproduction permitted with attribution.
+    markdownable: 4
+
+  - url: https://www.ccohs.ca/products/posters/longdesc/spell-it-out.html
+    title: CCOHS — Spell It Out (plain-language poster long description)
+    description: Canadian Centre for Occupational Health and Safety poster with plain-language tips for workplace communication (active voice, short sentences, jargon, acronyms, lists).
+    type: gov_guide
+    polarity: mixed_unaligned
+    rules_relevant: [structure.sentence-too-long, syntax.passive-voice, lexicon.jargon-undefined, lexicon.unexplained-abbreviation, readability.score, structure.long-enumeration, structure.paragraph-too-long]
+    conditions: [general, non-native]
+    languages: [en]
+    bilingual_parallel: false
+    interest: medium
+    confidence: medium
+    use_case: [documentation, example]
+    has_explanations: true
+    license_or_access: open
+    redistribution: check_license
+    license_details: CCOHS is a Canadian Crown corporation — Crown Copyright; reuse typically allowed with attribution, but verify the specific page's terms before bundling.
+    markdownable: 4
+    notes: Prescriptive tips with one inline active/passive comparison. CCOHS site is bilingual by mandate; a French counterpart likely exists at ccohs.ca/fr/ but no FR URL is linked from this page.
 
   - url: https://readabilityguidelines.co.uk/
     title: Content Design London Readability Guidelines
@@ -208,23 +255,26 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: CC-BY-SA 4.0 — share-alike, requires attribution.
+    markdownable: 4
 
-  - url: https://centerforplainlanguage.org/learning-training/before-after-comparisons/
-    title: Center for Plain Language — before/after
-    description: Curated rewrite pairs from US government and healthcare documents.
+  - url: https://centerforplainlanguage.org/learning-training/getting-started-with-plain-language/
+    title: Center for Plain Language — Getting started with plain language
+    description: Nonprofit's five-step plain-language process (audience, structure, language, design, testing) with prescriptive tips per step.
     type: sample_collection
-    polarity: before_after
-    rules_relevant: [structure.sentence-too-long, lexicon.excessive-nominalization, syntax.passive-voice, lexicon.jargon-undefined]
+    polarity: mixed_unaligned
+    rules_relevant: [structure.sentence-too-long, lexicon.excessive-nominalization, syntax.passive-voice, lexicon.jargon-undefined, readability.score]
     conditions: [general, non-native]
     languages: [en]
     bilingual_parallel: false
-    interest: high
-    confidence: high
-    use_case: [example, documentation]
+    interest: medium
+    confidence: medium
+    use_case: [documentation]
     has_explanations: true
     license_or_access: open
     redistribution: link_only
-    license_details: © Center for Plain Language; no explicit reuse licence — link only.
+    license_details: © Center for Plain Language (nonprofit, "All Rights Reserved"); no explicit reuse licence — link only.
+    markdownable: 4
+    notes: Replaces the former `/before-after-comparisons/` URL (404 as of 2026-04-23). This page is prescriptive, not paired — the original before/after collection appears to have been removed.
 
   # ── Accessibility standards ─────────────────────────────────────────────
   - url: https://www.w3.org/WAI/WCAG21/Understanding/reading-level.html
@@ -243,6 +293,7 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: W3C Document Licence — copying permitted with notice preservation; derivative work subject to conditions.
+    markdownable: 4
 
   - url: https://www.w3.org/WAI/WCAG21/Understanding/unusual-words.html
     title: WCAG 2.1 Understanding — Unusual Words (3.1.3)
@@ -260,6 +311,7 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: W3C Document Licence.
+    markdownable: 4
 
   - url: https://www.w3.org/WAI/WCAG21/Understanding/abbreviations.html
     title: WCAG 2.1 Understanding — Abbreviations (3.1.4)
@@ -277,6 +329,26 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: W3C Document Licence.
+    markdownable: 4
+
+  - url: https://accessible.canada.ca/creating-accessibility-standards/summary-standard-can-asc-312025-plain-language
+    title: CAN-ASC-3.1:2025 — Plain Language Standard (summary)
+    description: First-edition Canadian accessibility standard on plain language from Accessibility Standards Canada; bilingual EN/FR pages.
+    type: standard
+    polarity: neutral
+    rules_relevant: [structure.sentence-too-long, structure.paragraph-too-long, lexicon.jargon-undefined, lexicon.unexplained-abbreviation, lexicon.weasel-words, syntax.passive-voice, readability.score]
+    conditions: [general, aphasia, non-native]
+    languages: [en, fr]
+    bilingual_parallel: true
+    interest: high
+    confidence: high
+    use_case: [documentation]
+    has_explanations: true
+    license_or_access: restricted
+    redistribution: link_only
+    license_details: © His Majesty the King in Right of Canada (2025); explicit "no part of this publication may be reproduced in any form without the prior permission of the publisher" — link only.
+    markdownable: 4
+    notes: Prescriptive ("shall" / "should" / "may") rather than before/after. FR counterpart — https://accessibilite.canada.ca/elaboration-normes-accessibilite/resume-de-la-norme-can-asc-312025-langage-clair
 
   - url: https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/
     title: RGAA 4.1 — critères et tests
@@ -294,6 +366,7 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: Licence Ouverte / Open Licence 2.0 (Etalab) — reuse with attribution.
+    markdownable: 4
 
   # ── Easy-read / FALC / aphasia / dyslexia ───────────────────────────────
   - url: https://www.inclusion-europe.eu/easy-to-read-standards-guidelines/
@@ -312,7 +385,8 @@ sources:
     license_or_access: open
     redistribution: link_only
     license_details: © Inclusion Europe; reuse typically requires permission — link only.
-    notes: Canonical FALC/Easy-Read reference.
+    markdownable: 2
+    notes: Canonical FALC/Easy-Read reference; distributed as PDF.
 
   - url: https://www.unapei.org/publication/guide-pratique-ecrire-facile-a-lire-et-a-comprendre/
     title: Unapei — Guide FALC
@@ -330,6 +404,7 @@ sources:
     license_or_access: open
     redistribution: link_only
     license_details: © Unapei; French association copyright — link only.
+    markdownable: 2
 
   - url: https://www.ifla.org/publications/guidelines-for-easy-to-read-materials/
     title: IFLA Guidelines for Easy-to-Read Materials
@@ -347,6 +422,26 @@ sources:
     license_or_access: open
     redistribution: link_only
     license_details: © IFLA; no explicit reuse licence — link only.
+    markdownable: 2
+
+  - url: https://www.bdadyslexia.org.uk/terms/assessment-considerate-marking-and-feedback-policy-for-disabled-students
+    title: BDA — Considerate marking & feedback policy for disabled students
+    description: British Dyslexia Association policy (Sept 2020) on fair assessment of coursework by students with specific learning difficulties (dyslexia, dyspraxia, ADHD, autism, dysgraphia, dyscalculia, DLD).
+    type: style_guide
+    polarity: neutral
+    rules_relevant: [structure.sentence-too-long, structure.paragraph-too-long, lexicon.jargon-undefined, syntax.passive-voice, structure.mixed-numeric-format]
+    conditions: [dyslexia, adhd, dyscalculia, general]
+    languages: [en]
+    bilingual_parallel: false
+    interest: medium
+    confidence: medium
+    use_case: [documentation]
+    has_explanations: true
+    license_or_access: open
+    redistribution: link_only
+    license_details: © British Dyslexia Association (UK charity); no explicit reuse licence — link only.
+    markdownable: 4
+    notes: Prescriptive marker guidance, not a prose style guide. Useful reference for how SpLDs manifest in writing — grounds the `dyslexia` / `adhd` / `dyscalculia` condition tags (F71).
 
   - url: https://www.bdadyslexia.org.uk/advice/employers/creating-a-dyslexia-friendly-workplace/dyslexia-friendly-style-guide
     title: BDA Dyslexia Style Guide
@@ -364,6 +459,7 @@ sources:
     license_or_access: open
     redistribution: link_only
     license_details: © British Dyslexia Association — link only.
+    markdownable: 4
 
   - url: https://www.stroke.org.uk/sites/default/files/accessible_information_guidelines.pdf
     title: Stroke Association — Accessible Information Guidelines
@@ -381,6 +477,8 @@ sources:
     license_or_access: open
     redistribution: link_only
     license_details: © Stroke Association (UK charity) — link only.
+    markdownable: 1
+    notes: PDF with designed layout — extraction is painful.
 
   - url: https://adhdfoundation.org.uk/information/neurodiversity/
     title: ADHD Foundation — Neurodiversity hub
@@ -398,6 +496,7 @@ sources:
     license_or_access: open
     redistribution: link_only
     license_details: © ADHD Foundation — link only.
+    markdownable: 3
 
   # ── Health literacy ─────────────────────────────────────────────────────
   - url: https://www.cdc.gov/ccindex/pdf/clear-communication-user-guide.pdf
@@ -416,6 +515,8 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: US federal government work — public domain in the US.
+    markdownable: 2
+    notes: PDF; extraction is mostly flowing text.
 
   - url: https://www.has-sante.fr/jcms/c_1724101/fr/litteratie-et-sante
     title: HAS — Littératie et santé
@@ -433,6 +534,8 @@ sources:
     license_or_access: open
     redistribution: check_license
     license_details: French public body; reuse typically under Licence Ouverte but HAS pages sometimes specify © HAS — verify per-document.
+    markdownable: 3
+    notes: Mix of HTML landing + downstream PDFs.
 
   - url: https://www.santepubliquefrance.fr/docs/communiquer-pour-tous-guide-pour-une-information-accessible
     title: Santé publique France — Communiquer pour tous
@@ -450,6 +553,7 @@ sources:
     license_or_access: open
     redistribution: check_license
     license_details: French public health agency; typically reusable with attribution under Licence Ouverte but mentions "© Santé publique France" — verify.
+    markdownable: 2
 
   - url: https://www.bmj.com/content/360/bmj.k1383
     title: BMJ — Gobbledygook in medicine
@@ -467,6 +571,7 @@ sources:
     license_or_access: restricted
     redistribution: restricted
     license_details: © BMJ Publishing Group; subscription article — short fair-use quote only.
+    markdownable: 3
 
   # ── Bad-example corpora (dense legal / admin prose) ─────────────────────
   - url: https://eur-lex.europa.eu/
@@ -485,7 +590,8 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: Commission Decision 2011/833/EU — reusable with attribution (notice the EUR-Lex legal-notice page).
-    notes: Every act exists in EN and FR with legally equivalent wording.
+    markdownable: 4
+    notes: Also available as Formex XML — deterministic conversion possible for whole acts.
 
   - url: https://www.legifrance.gouv.fr/
     title: Légifrance
@@ -503,6 +609,8 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: Licence Ouverte 2.0 (Etalab) — reuse with attribution.
+    markdownable: 4
+    notes: DILA bulk datasets also published on data.gouv.fr as XML.
 
   - url: https://www.tosdr.org/
     title: Terms of Service; Didn't Read
@@ -520,6 +628,8 @@ sources:
     license_or_access: open
     redistribution: check_license
     license_details: ToSDR annotations are CC-BY-SA; the original ToS/EULA excerpts remain © their respective companies (short-quote / fair-use territory).
+    markdownable: 5
+    notes: Public JSON API returns each case as structured data.
 
   # ── Simplification / readability corpora ────────────────────────────────
   - url: https://simple.wikipedia.org/wiki/Main_Page
@@ -538,6 +648,8 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: CC-BY-SA 4.0 (text) + GFDL — share-alike applies to derivative bundles.
+    markdownable: 5
+    notes: Wikitext dumps → pandoc or mwparserfromhell to Markdown.
 
   - url: https://fr.vikidia.org/wiki/Accueil
     title: Vikidia (French simple encyclopedia)
@@ -555,6 +667,7 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: CC-BY-SA 3.0 — share-alike applies.
+    markdownable: 5
 
   - url: https://github.com/nishkalavallabhi/OneStopEnglishCorpus
     title: OneStopEnglish corpus
@@ -572,7 +685,8 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: CC-BY-SA-4.0.
-    notes: Ideal for reading-level benchmarking.
+    markdownable: 5
+    notes: Ships as plain-text files — wrap in a Markdown heading per article.
 
   - url: https://newsela.com/data/
     title: Newsela corpus
@@ -590,6 +704,7 @@ sources:
     license_or_access: restricted
     redistribution: restricted
     license_details: Research-access only; explicit "no redistribution" in the data-use agreement. Internal use after signing; must not be committed to a public repo.
+    markdownable: 5
 
   - url: https://zenodo.org/record/1219041
     title: WeeBit corpus
@@ -607,6 +722,7 @@ sources:
     license_or_access: restricted
     redistribution: restricted
     license_details: Underlying BBC / Weekly Reader texts are © their publishers; access-request gated. Internal use only.
+    markdownable: 5
 
   - url: https://github.com/scrosseye/CLEAR-Corpus
     title: CLEAR corpus (CommonLit)
@@ -624,6 +740,8 @@ sources:
     license_or_access: open
     redistribution: check_license
     license_details: CommonLit licence; excerpts drawn from older public-domain and open-source passages, but per-item licence varies — verify before bundling.
+    markdownable: 5
+    notes: Ships as CSV with excerpt column.
 
   - url: https://corpusalector.huma-num.fr/
     title: Alector corpus
@@ -641,6 +759,8 @@ sources:
     license_or_access: open
     redistribution: check_license
     license_details: Academic corpus on Huma-Num; typically research-use with citation, verify the exact CC variant (often CC-BY-NC-SA) before bundling.
+    markdownable: 5
+    notes: Text/XML corpus.
 
   - url: https://aclanthology.org/2020.lrec-1.530/
     title: CLEAR — French simplification corpus (Grabar & Cardon)
@@ -658,6 +778,7 @@ sources:
     license_or_access: open
     redistribution: check_license
     license_details: Research corpus; verify the author-stated licence (typical academic CC-BY or CC-BY-NC) before redistributing.
+    markdownable: 5
 
   - url: https://github.com/feralvam/easse
     title: EASSE simplification evaluation
@@ -675,6 +796,7 @@ sources:
     license_or_access: open
     redistribution: check_license
     license_details: Code is GPL-3.0; bundled datasets (TurkCorpus, ASSET, HSplit) carry their own per-item licences — verify each.
+    markdownable: 5
 
   - url: https://github.com/facebookresearch/asset
     title: ASSET simplification dataset
@@ -692,6 +814,7 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: CC-BY-SA-4.0.
+    markdownable: 5
 
   - url: https://huggingface.co/datasets/wiki_auto
     title: WikiAuto parallel simplification
@@ -709,6 +832,7 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: CC-BY-SA — derives from Wikipedia content.
+    markdownable: 5
 
   - url: https://www.gutenberg.org/
     title: Project Gutenberg
@@ -726,6 +850,7 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: Underlying texts are public domain (US). Project Gutenberg header/footer is under the PG licence — strip them if not hosting on a PG-compatible site, or use plain-text excerpts.
+    markdownable: 5
 
   # ── Tool fixtures (labeled bad-example banks) ───────────────────────────
   - url: https://github.com/amperser/proselint
@@ -744,6 +869,8 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: BSD-3-Clause.
+    markdownable: 5
+    notes: Fixtures in-source; extract strings per check.
 
   - url: https://github.com/errata-ai/vale
     title: Vale styles
@@ -761,6 +888,8 @@ sources:
     license_or_access: open
     redistribution: check_license
     license_details: Vale engine is MIT; individual style packs carry their own licences (e.g. Microsoft/Google/Red Hat) — verify per pack.
+    markdownable: 5
+    notes: YAML + text files.
 
   - url: https://github.com/btford/write-good
     title: write-good
@@ -778,6 +907,7 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: MIT licence.
+    markdownable: 5
 
   - url: https://github.com/get-alex/alex
     title: alex.js
@@ -795,6 +925,7 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: MIT licence.
+    markdownable: 5
 
   - url: https://github.com/textlint-rule
     title: textlint-rule org
@@ -812,6 +943,7 @@ sources:
     license_or_access: open
     redistribution: check_license
     license_details: Most rule repos are MIT but each repo carries its own licence — verify per rule.
+    markdownable: 5
 
   - url: https://github.com/retextjs/retext
     title: retext plugins
@@ -829,6 +961,7 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: MIT licence across core retext plugins.
+    markdownable: 5
 
   - url: https://languagetool.org/
     title: LanguageTool rules
@@ -846,7 +979,8 @@ sources:
     license_or_access: open
     redistribution: check_license
     license_details: Core is LGPL-2.1; rule-set files inherit LGPL — a copyleft obligation applies if bundled directly.
-    notes: Rare bilingual rule source with explanations.
+    markdownable: 5
+    notes: Rule examples in XML — rare bilingual source with explanations.
 
   - url: https://www.hemingwayapp.com/
     title: Hemingway Editor
@@ -864,8 +998,29 @@ sources:
     license_or_access: open
     redistribution: link_only
     license_details: Proprietary web tool; no open licence — link only.
+    markdownable: 1
+    notes: No source; only live-app behaviour observable.
 
   # ── Research / documentation ────────────────────────────────────────────
+  - url: https://aclanthology.org/2024.determit-1.3.pdf
+    title: Bakker & Kamps (2024) — Context-aware document simplification
+    description: Reproducibility study of document-level (context-aware) text simplification, published at the DeTermIt 2024 workshop (LREC-COLING).
+    type: research_paper
+    polarity: neutral
+    rules_relevant: [readability.score, structure.sentence-too-long, structure.deep-subordination, structure.paragraph-too-long, lexicon.jargon-undefined]
+    conditions: [general, non-native, aphasia]
+    languages: [en]
+    bilingual_parallel: false
+    interest: low
+    confidence: high
+    use_case: [documentation]
+    has_explanations: true
+    license_or_access: open
+    redistribution: public_ok
+    license_details: ACL Anthology — CC-BY 4.0 (author-retained, open-access).
+    markdownable: 2
+    notes: Doesn't ship a new corpus; useful as a document-level simplification reference, but not a substitute for the failed WikiAuto / EASSE dataset DLs.
+
   - url: https://www.tandfonline.com/doi/full/10.1080/01638539809545028
     title: Coh-Metrix / McNamara readability research
     description: Foundational paper behind Coh-Metrix cohesion metrics.
@@ -882,6 +1037,7 @@ sources:
     license_or_access: restricted
     redistribution: restricted
     license_details: © Taylor & Francis; paywalled. Cite only; do not redistribute the PDF.
+    markdownable: 2
 
   - url: https://www.nngroup.com/articles/plain-language-experts/
     title: Nielsen Norman — Plain Language usability studies
@@ -899,6 +1055,7 @@ sources:
     license_or_access: open
     redistribution: link_only
     license_details: © Nielsen Norman Group — link only, commercial content.
+    markdownable: 4
 
   - url: https://18f.gsa.gov/2016/05/24/an-open-source-tool-for-plainer-writing/
     title: 18F plain-writing posts
@@ -916,6 +1073,7 @@ sources:
     license_or_access: open
     redistribution: public_ok
     license_details: 18F content is generally CC0 / US government public domain.
+    markdownable: 4
 
   - url: https://www.orthodidacte.com/blog/
     title: Orthodidacte blog
@@ -933,6 +1091,7 @@ sources:
     license_or_access: open
     redistribution: link_only
     license_details: © Orthodidacte (commercial) — link only.
+    markdownable: 4
 
   - url: https://readable.com/blog/
     title: Readable.com blog
@@ -950,24 +1109,45 @@ sources:
     license_or_access: open
     redistribution: link_only
     license_details: © Readable.com (commercial) — link only.
+    markdownable: 4
 
 # ── Redistribution roll-up / summary counts ───────────────────────────────
 redistribution_summary:
   public_ok:
-    count: 23
-    examples: [plainlanguage.gov, Federal Plain Language, GOV.UK A–Z, GOV.UK writing, EC How to write clearly, CDL Readability, WCAG 2.1 (×3), RGAA 4.1, CDC Clear Comm Index, EUR-Lex, Légifrance, Simple English Wikipedia, Vikidia, OneStopEnglish, ASSET, WikiAuto, Project Gutenberg, proselint, write-good, alex.js, retext, 18F]
+    count: 24
+    examples: [plainlanguage.gov, Federal Plain Language, GOV.UK A–Z, GOV.UK writing, EC How to write clearly, CDL Readability, WCAG 2.1 (×3), RGAA 4.1, CDC Clear Comm Index, EUR-Lex, Légifrance, Simple English Wikipedia, Vikidia, OneStopEnglish, ASSET, WikiAuto, Project Gutenberg, proselint, write-good, alex.js, retext, 18F, Bakker & Kamps (2024)]
   check_license:
-    count: 11
-    examples: [Canada.ca style guide, Canada.ca plain-language, HAS, Santé publique France, ToSDR, CLEAR (CommonLit), Alector, CLEAR-FR (Grabar & Cardon), EASSE, Vale styles, textlint-rule, LanguageTool]
+    count: 12
+    examples: [Canada.ca style guide, Canada.ca plain-language, CCOHS Spell It Out, HAS, Santé publique France, ToSDR, CLEAR (CommonLit), Alector, CLEAR-FR (Grabar & Cardon), EASSE, Vale styles, textlint-rule, LanguageTool]
     note: Licence is open but carries NC/SA/per-item constraints — verify before committing extracts.
   link_only:
-    count: 10
-    examples: [Center for Plain Language, Inclusion Europe, Unapei, IFLA, BDA Dyslexia, Stroke Association, ADHD Foundation, Hemingway, NN/g, Orthodidacte, Readable.com]
-    note: Copyrighted with no open licence — link from docs, do not commit extracts beyond short fair-use quotes.
+    count: 12
+    examples: [Center for Plain Language, Inclusion Europe, Unapei, IFLA, BDA Dyslexia (×2), Stroke Association, ADHD Foundation, CAN-ASC-3.1:2025, Hemingway, NN/g, Orthodidacte, Readable.com]
+    note: Copyrighted with no open licence — cite and link, don't commit extracts beyond short fair-use quotes.
   restricted:
     count: 4
     examples: [BMJ Gobbledygook article, Newsela, WeeBit, Coh-Metrix / Tandfonline]
-    note: Access itself is gated or explicitly forbids redistribution — internal use only after accepting terms.
+    note: Access is gated or redistribution forbidden — cite only, don't include in this repo.
+
+# ── Markdownable roll-up / summary counts ─────────────────────────────────
+markdownable_summary:
+  "5":
+    count: 25
+    note: Already Markdown / wikitext / plain text / deterministic conversion. Ideal for automated fixture generation.
+  "4":
+    count: 21
+    note: Clean HTML — single-shot conversion with pandoc or readability extractors.
+  "3":
+    count: 3
+    note: HTML with noise; scripted cleanup before conversion.
+  "2":
+    count: 7
+    note: PDFs of flowing text — extract + manual cleanup.
+  "1":
+    count: 2
+    note: Complex PDF layout or no accessible source — expect heavy manual work.
+  "0":
+    count: 0
 
 # ── Known gaps ────────────────────────────────────────────────────────────
 gaps:

@@ -31,15 +31,30 @@ for building balanced example sets.
 | `license_or_access` | `open`, `restricted`, `unknown` | Reuse status |
 | `redistribution` | `public_ok`, `link_only`, `restricted`, `check_license` | Can extracts be bundled into the public git repo? (see below) |
 | `license_details` | free text | Actual licence name / constraints |
+| `markdownable` | `0`–`5` | Ease of turning the source into Markdown fixtures (see scale below) |
+
+### Markdownable scale
+
+How easily a source can be turned into Markdown fixtures for
+`lucid-lint`'s tests and benchmarks.
+
+| Score | Meaning | Typical example |
+|---|---|---|
+| `5` | Already Markdown, wikitext, plain text, or deterministic conversion (CSV/JSON/XML datasets, MediaWiki dumps, GitHub repos). | Simple English Wikipedia, ASSET, proselint fixtures |
+| `4` | Clean, well-structured HTML — single-shot pandoc/readability conversion. | GOV.UK pages, WCAG Understanding pages |
+| `3` | HTML with significant noise (ads, navigation, rich layout); cleanup needed. | Some magazine/blog layouts |
+| `2` | PDF that is mostly flowing text — extract + manual cleanup. | EC *How to write clearly*, CDC CCI |
+| `1` | PDF / HTML with complex layout, tables, images interleaved — heavy manual work. | Stroke Association brochure |
+| `0` | Impossible — image-only, proprietary binary, no accessible source. | — (none in this list) |
 
 ### Redistribution tiers
 
 | Tier | Meaning | Action in this repo |
 |---|---|---|
-| `public_ok` | Open or compatible licence (public domain, CC-BY, CC-BY-SA, MIT, BSD, OGL, Etalab, W3C Document Licence, EU Decision 2011/833/EU). | **OK to commit** extracts under `examples/` with attribution. Respect share-alike if applicable. |
-| `check_license` | Open in principle but constrained: NC (non-commercial), SA (copyleft), or per-item variance within a dataset/repo. | **Verify per use** before committing. Safer to link + extract only the items whose licence you've confirmed. |
-| `link_only` | Copyrighted, publicly reachable, no open licence. | **Link from docs**; do not commit extracts beyond short fair-use quotations (a sentence or two with clear attribution). |
-| `restricted` | Access gated (paywall, research-request, click-through agreement) or explicit no-redistribution in the licence. | **Internal use only** after accepting the terms. Must not be committed to a public repo. |
+| `public_ok` | Open or compatible licence (public domain, CC-BY, CC-BY-SA, MIT, BSD, OGL, Etalab, W3C Document Licence, EU Decision 2011/833/EU). | **OK to commit** extracts under `examples/public/` with attribution. Respect share-alike if applicable. |
+| `check_license` | Open in principle but constrained: NC (non-commercial), SA (copyleft), or per-item variance within a dataset/repo. | **Verify per use** before committing. Safer to link and only copy the items whose licence you've confirmed. |
+| `link_only` | Copyrighted, publicly reachable, no open licence. | **Link from docs**; don't commit extracts beyond short fair-use quotations (a sentence or two with clear attribution). |
+| `restricted` | Access gated (paywall, research-request, click-through agreement) or explicit no-redistribution in the licence. | **Cite only.** Don't include in this repo. |
 
 **Confidence heuristic.** High = peer-reviewed research, normative standards
 (WCAG, RGAA, ISO), or national government plain-language programs with
@@ -58,24 +73,23 @@ or sources asserting claims without explanation.
   `before_after` collection without commentary still has less teaching value
   than one with annotations.
 
-## 🚦 Redistribution summary — can it go in the public repo?
+## 🚦 Redistribution summary — what can go in the public repo?
 
-> Short answer: about half the list is safe to commit with attribution,
-> a quarter needs per-item verification, a quarter is link-only, and a
-> handful (Newsela, WeeBit, BMJ, Tandfonline) must stay internal.
+> Short answer: about half the list is safe to commit with attribution;
+> the rest should stay outside the repo and be cited rather than copied.
 
 | Tier | Count | Representative sources |
 |---|---|---|
 | ✅ `public_ok` | ~23 | plainlanguage.gov, GOV.UK (OGL), EC *How to write clearly* (EU reuse decision), RGAA (Etalab), EUR-Lex, Légifrance, CDC, WCAG pages (W3C Doc Licence), Simple English Wikipedia / Vikidia / OneStopEnglish / ASSET / WikiAuto (CC-BY-SA), Project Gutenberg (PD), CDL Readability (CC-BY-SA), proselint / write-good / alex / retext (MIT/BSD), 18F (CC0) |
 | ⚠️ `check_license` | ~11 | Canada.ca (Crown copyright, non-commercial OK), HAS, Santé publique France, ToSDR (CC-BY-SA annotations but ToS excerpts © companies), CLEAR corpus, Alector, CLEAR-FR, EASSE (mixed per-dataset), Vale styles (per-pack), textlint-rule (per-repo), LanguageTool (LGPL — copyleft) |
-| 🔗 `link_only` | ~10 | Center for Plain Language, Inclusion Europe, Unapei, IFLA, BDA Dyslexia, Stroke Association, ADHD Foundation, Hemingway, NN/g, Orthodidacte, Readable.com |
-| 🔒 `restricted` | ~4 | Newsela (explicit no-redistribution in DUA), WeeBit (BBC/Weekly Reader © + access-request), BMJ article (paywalled), Coh-Metrix / Tandfonline paper (paywalled) |
+| 🔗 `link_only` | ~12 | Center for Plain Language, Inclusion Europe, Unapei, IFLA, BDA Dyslexia (×2), Stroke Association, ADHD Foundation, CAN-ASC-3.1:2025, Hemingway, NN/g, Orthodidacte, Readable.com |
+| 🔒 `restricted` | ~4 | Newsela, WeeBit, BMJ article, Coh-Metrix / Tandfonline paper |
 
-**Practical recipe for the `examples/` directory**:
+**Practical recipe for the committed `examples/public/` set**:
 
 1. Prefer `public_ok` sources for anything committed as a fixture or doc example.
 2. For `check_license` sources, read the licence of the *specific* file you copy; note the licence in a neighbour `LICENSE.txt` or header comment when bundling.
-3. For `link_only` / `restricted`, quote at most a sentence or two with clear attribution, or just link. Keep large extracts of these sources in an untracked path (e.g. `examples/private/` in `.gitignore`) if needed for local experimentation.
+3. For `link_only` and `restricted`, cite the source and link to it; don't copy extracts beyond a short fair-use quotation with clear attribution.
 4. If a share-alike (SA) source is bundled, make sure the combined work's licence is compatible with SA downstream.
 
 ## 🗂️ Sources by category / Sources par catégorie
@@ -88,94 +102,98 @@ every source at a glance.
 
 ### 🏛️ Plain-language & government style guides
 
-| Source | Polarity | Lang | Interest | Confidence |
-|---|---|---|---|---|
-| [plainlanguage.gov before/after](https://www.plainlanguage.gov/examples/before-and-after/) | before_after | EN | high | high |
-| [Federal Plain Language Guidelines](https://www.plainlanguage.gov/guidelines/) | before_after | EN | high | high |
-| [GOV.UK style guide A–Z](https://www.gov.uk/guidance/style-guide/a-to-z-of-gov-uk-style) | mixed | EN | high | high |
-| [GOV.UK — writing for GOV.UK](https://www.gov.uk/guidance/content-design/writing-for-gov-uk) | good | EN | high | high |
-| [EC — How to write clearly](https://op.europa.eu/en/publication-detail/-/publication/725b7eb0-d92e-11e5-8fea-01aa75ed71a1) | before_after | **EN+FR** | high | high |
-| [Canada.ca content style guide](https://design.canada.ca/writing-style/) | before_after | **EN+FR** | high | high |
-| [Canada.ca plain-language](https://www.canada.ca/en/revenue-agency/services/about-canada-revenue-agency-cra/plain-language.html) | before_after | **EN+FR** | high | high |
-| [CDL Readability Guidelines](https://readabilityguidelines.co.uk/) | before_after | EN | high | high |
-| [Center for Plain Language](https://centerforplainlanguage.org/learning-training/before-after-comparisons/) | before_after | EN | high | high |
+| Source | Polarity | Lang | Interest | Confidence | MD |
+|---|---|---|---|---|---|
+| [plainlanguage.gov before/after](https://www.plainlanguage.gov/examples/before-and-after/) | before_after | EN | high | high | 4 |
+| [Federal Plain Language Guidelines](https://www.plainlanguage.gov/guidelines/) | before_after | EN | high | high | 4 |
+| [GOV.UK style guide A–Z](https://www.gov.uk/guidance/style-guide/a-to-z-of-gov-uk-style) | mixed | EN | high | high | 4 |
+| [GOV.UK — writing for GOV.UK](https://www.gov.uk/guidance/content-design/writing-for-gov-uk) | good | EN | high | high | 4 |
+| [EC — How to write clearly](https://op.europa.eu/en/publication-detail/-/publication/725b7eb0-d92e-11e5-8fea-01aa75ed71a1) | before_after | **EN+FR** | high | high | 2 |
+| [Canada.ca content style guide](https://design.canada.ca/writing-style/) | before_after | **EN+FR** | high | high | 4 |
+| [Canada.ca plain-language](https://www.canada.ca/en/revenue-agency/services/about-canada-revenue-agency-cra/plain-language.html) | before_after | **EN+FR** | high | high | 4 |
+| [CCOHS — Spell It Out](https://www.ccohs.ca/products/posters/longdesc/spell-it-out.html) | mixed | EN | med | med | 4 |
+| [CDL Readability Guidelines](https://readabilityguidelines.co.uk/) | before_after | EN | high | high | 4 |
+| [Center for Plain Language — Getting started](https://centerforplainlanguage.org/learning-training/getting-started-with-plain-language/) | mixed | EN | med | med | 4 |
 
 ### ♿ Accessibility standards
 
-| Source | Polarity | Lang | Interest | Confidence |
-|---|---|---|---|---|
-| [WCAG 2.1 — Reading Level (3.1.5)](https://www.w3.org/WAI/WCAG21/Understanding/reading-level.html) | before_after | EN | high | high |
-| [WCAG 2.1 — Unusual Words (3.1.3)](https://www.w3.org/WAI/WCAG21/Understanding/unusual-words.html) | mixed | EN | med | high |
-| [WCAG 2.1 — Abbreviations (3.1.4)](https://www.w3.org/WAI/WCAG21/Understanding/abbreviations.html) | mixed | EN | med | high |
-| [RGAA 4.1 — critères et tests](https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/) | good | FR | high | high |
+| Source | Polarity | Lang | Interest | Confidence | MD |
+|---|---|---|---|---|---|
+| [WCAG 2.1 — Reading Level (3.1.5)](https://www.w3.org/WAI/WCAG21/Understanding/reading-level.html) | before_after | EN | high | high | 4 |
+| [WCAG 2.1 — Unusual Words (3.1.3)](https://www.w3.org/WAI/WCAG21/Understanding/unusual-words.html) | mixed | EN | med | high | 4 |
+| [WCAG 2.1 — Abbreviations (3.1.4)](https://www.w3.org/WAI/WCAG21/Understanding/abbreviations.html) | mixed | EN | med | high | 4 |
+| [RGAA 4.1 — critères et tests](https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/) | good | FR | high | high | 4 |
+| [CAN-ASC-3.1:2025 — Plain Language](https://accessible.canada.ca/creating-accessibility-standards/summary-standard-can-asc-312025-plain-language) | neutral | **EN+FR** | high | high | 4 |
 
 ### 📖 Easy-read / FALC / dyslexia / aphasia / ADHD
 
-| Source | Polarity | Lang | Interest | Confidence |
-|---|---|---|---|---|
-| [Inclusion Europe — Information for All](https://www.inclusion-europe.eu/easy-to-read-standards-guidelines/) | before_after | **EN+FR** | high | high |
-| [Unapei — Guide FALC](https://www.unapei.org/publication/guide-pratique-ecrire-facile-a-lire-et-a-comprendre/) | before_after | FR | high | high |
-| [IFLA Easy-to-Read](https://www.ifla.org/publications/guidelines-for-easy-to-read-materials/) | mixed | EN+FR | high | high |
-| [BDA Dyslexia Style Guide](https://www.bdadyslexia.org.uk/advice/employers/creating-a-dyslexia-friendly-workplace/dyslexia-friendly-style-guide) | good | EN | high | high |
-| [Stroke Association — Accessible Information](https://www.stroke.org.uk/sites/default/files/accessible_information_guidelines.pdf) | before_after | EN | high | high |
-| [ADHD Foundation — Neurodiversity](https://adhdfoundation.org.uk/information/neurodiversity/) | good | EN | med | med |
+| Source | Polarity | Lang | Interest | Confidence | MD |
+|---|---|---|---|---|---|
+| [Inclusion Europe — Information for All](https://www.inclusion-europe.eu/easy-to-read-standards-guidelines/) | before_after | **EN+FR** | high | high | 2 |
+| [Unapei — Guide FALC](https://www.unapei.org/publication/guide-pratique-ecrire-facile-a-lire-et-a-comprendre/) | before_after | FR | high | high | 2 |
+| [IFLA Easy-to-Read](https://www.ifla.org/publications/guidelines-for-easy-to-read-materials/) | mixed | EN+FR | high | high | 2 |
+| [BDA Dyslexia Style Guide](https://www.bdadyslexia.org.uk/advice/employers/creating-a-dyslexia-friendly-workplace/dyslexia-friendly-style-guide) | good | EN | high | high | 4 |
+| [BDA — Considerate marking policy](https://www.bdadyslexia.org.uk/terms/assessment-considerate-marking-and-feedback-policy-for-disabled-students) | neutral | EN | med | med | 4 |
+| [Stroke Association — Accessible Information](https://www.stroke.org.uk/sites/default/files/accessible_information_guidelines.pdf) | before_after | EN | high | high | 1 |
+| [ADHD Foundation — Neurodiversity](https://adhdfoundation.org.uk/information/neurodiversity/) | good | EN | med | med | 3 |
 
 ### 🩺 Health literacy
 
-| Source | Polarity | Lang | Interest | Confidence |
-|---|---|---|---|---|
-| [CDC Clear Communication Index](https://www.cdc.gov/ccindex/pdf/clear-communication-user-guide.pdf) | before_after | EN | high | high |
-| [HAS — Littératie et santé](https://www.has-sante.fr/jcms/c_1724101/fr/litteratie-et-sante) | before_after | FR | med | high |
-| [SPF — Communiquer pour tous](https://www.santepubliquefrance.fr/docs/communiquer-pour-tous-guide-pour-une-information-accessible) | before_after | FR | high | high |
-| [BMJ — Gobbledygook in medicine](https://www.bmj.com/content/360/bmj.k1383) | before_after | EN | med | high |
+| Source | Polarity | Lang | Interest | Confidence | MD |
+|---|---|---|---|---|---|
+| [CDC Clear Communication Index](https://www.cdc.gov/ccindex/pdf/clear-communication-user-guide.pdf) | before_after | EN | high | high | 2 |
+| [HAS — Littératie et santé](https://www.has-sante.fr/jcms/c_1724101/fr/litteratie-et-sante) | before_after | FR | med | high | 3 |
+| [SPF — Communiquer pour tous](https://www.santepubliquefrance.fr/docs/communiquer-pour-tous-guide-pour-une-information-accessible) | before_after | FR | high | high | 2 |
+| [BMJ — Gobbledygook in medicine](https://www.bmj.com/content/360/bmj.k1383) | before_after | EN | med | high | 3 |
 
 ### ⚖️ Bad-example corpora (legal / admin)
 
-| Source | Polarity | Lang | Interest | Confidence |
-|---|---|---|---|---|
-| [EUR-Lex legal corpus](https://eur-lex.europa.eu/) | bad | **EN+FR** | high | high |
-| [Légifrance](https://www.legifrance.gouv.fr/) | bad | FR | high | high |
-| [Terms of Service; Didn't Read](https://www.tosdr.org/) | before_after | EN+FR | high | high |
+| Source | Polarity | Lang | Interest | Confidence | MD |
+|---|---|---|---|---|---|
+| [EUR-Lex legal corpus](https://eur-lex.europa.eu/) | bad | **EN+FR** | high | high | 4 |
+| [Légifrance](https://www.legifrance.gouv.fr/) | bad | FR | high | high | 4 |
+| [Terms of Service; Didn't Read](https://www.tosdr.org/) | before_after | EN+FR | high | high | 5 |
 
 ### 📊 Simplification & readability corpora
 
-| Source | Polarity | Lang | Interest | Confidence |
-|---|---|---|---|---|
-| [Simple English Wikipedia](https://simple.wikipedia.org/wiki/Main_Page) | good | EN | high | high |
-| [Vikidia (FR)](https://fr.vikidia.org/wiki/Accueil) | good | FR | high | high |
-| [OneStopEnglish corpus](https://github.com/nishkalavallabhi/OneStopEnglishCorpus) | before_after | EN | high | high |
-| [Newsela corpus](https://newsela.com/data/) | before_after | EN | high | high (restricted) |
-| [WeeBit corpus](https://zenodo.org/record/1219041) | mixed | EN | med | high (restricted) |
-| [CLEAR corpus (CommonLit)](https://github.com/scrosseye/CLEAR-Corpus) | mixed | EN | high | high |
-| [Alector corpus](https://corpusalector.huma-num.fr/) | before_after | FR | high | high |
-| [CLEAR — FR (Grabar & Cardon)](https://aclanthology.org/2020.lrec-1.530/) | before_after | FR | high | high |
-| [EASSE](https://github.com/feralvam/easse) | before_after | EN | high | high |
-| [ASSET](https://github.com/facebookresearch/asset) | before_after | EN | high | high |
-| [WikiAuto](https://huggingface.co/datasets/wiki_auto) | before_after | EN | high | high |
-| [Project Gutenberg](https://www.gutenberg.org/) | neutral | EN+FR | med | high |
+| Source | Polarity | Lang | Interest | Confidence | MD |
+|---|---|---|---|---|---|
+| [Simple English Wikipedia](https://simple.wikipedia.org/wiki/Main_Page) | good | EN | high | high | 5 |
+| [Vikidia (FR)](https://fr.vikidia.org/wiki/Accueil) | good | FR | high | high | 5 |
+| [OneStopEnglish corpus](https://github.com/nishkalavallabhi/OneStopEnglishCorpus) | before_after | EN | high | high | 5 |
+| [Newsela corpus](https://newsela.com/data/) | before_after | EN | high | high (restricted) | 5 |
+| [WeeBit corpus](https://zenodo.org/record/1219041) | mixed | EN | med | high (restricted) | 5 |
+| [CLEAR corpus (CommonLit)](https://github.com/scrosseye/CLEAR-Corpus) | mixed | EN | high | high | 5 |
+| [Alector corpus](https://corpusalector.huma-num.fr/) | before_after | FR | high | high | 5 |
+| [CLEAR — FR (Grabar & Cardon)](https://aclanthology.org/2020.lrec-1.530/) | before_after | FR | high | high | 5 |
+| [EASSE](https://github.com/feralvam/easse) | before_after | EN | high | high | 5 |
+| [ASSET](https://github.com/facebookresearch/asset) | before_after | EN | high | high | 5 |
+| [WikiAuto](https://huggingface.co/datasets/wiki_auto) | before_after | EN | high | high | 5 |
+| [Project Gutenberg](https://www.gutenberg.org/) | neutral | EN+FR | med | high | 5 |
 
 ### 🛠️ Tool fixtures (labeled bad-example banks)
 
-| Source | Polarity | Lang | Interest | Confidence |
-|---|---|---|---|---|
-| [proselint](https://github.com/amperser/proselint) | bad | EN | high | high |
-| [Vale styles](https://github.com/errata-ai/vale) | bad | EN | high | high |
-| [write-good](https://github.com/btford/write-good) | bad | EN | med | high |
-| [alex.js](https://github.com/get-alex/alex) | bad | EN | low | high |
-| [textlint-rule](https://github.com/textlint-rule) | bad | EN | med | high |
-| [retext plugins](https://github.com/retextjs/retext) | bad | EN | med | high |
-| [LanguageTool](https://languagetool.org/) | bad | **EN+FR** | high | high |
-| [Hemingway Editor](https://www.hemingwayapp.com/) | bad | EN | med | med |
+| Source | Polarity | Lang | Interest | Confidence | MD |
+|---|---|---|---|---|---|
+| [proselint](https://github.com/amperser/proselint) | bad | EN | high | high | 5 |
+| [Vale styles](https://github.com/errata-ai/vale) | bad | EN | high | high | 5 |
+| [write-good](https://github.com/btford/write-good) | bad | EN | med | high | 5 |
+| [alex.js](https://github.com/get-alex/alex) | bad | EN | low | high | 5 |
+| [textlint-rule](https://github.com/textlint-rule) | bad | EN | med | high | 5 |
+| [retext plugins](https://github.com/retextjs/retext) | bad | EN | med | high | 5 |
+| [LanguageTool](https://languagetool.org/) | bad | **EN+FR** | high | high | 5 |
+| [Hemingway Editor](https://www.hemingwayapp.com/) | bad | EN | med | med | 1 |
 
 ### 🔬 Research & documentation
 
-| Source | Polarity | Lang | Interest | Confidence |
-|---|---|---|---|---|
-| [Coh-Metrix / McNamara](https://www.tandfonline.com/doi/full/10.1080/01638539809545028) | neutral | EN | med | high (restricted) |
-| [NN/g — Plain Language](https://www.nngroup.com/articles/plain-language-experts/) | before_after | EN | med | med |
-| [18F plain-writing](https://18f.gsa.gov/2016/05/24/an-open-source-tool-for-plainer-writing/) | mixed | EN | low | med |
-| [Orthodidacte blog](https://www.orthodidacte.com/blog/) | before_after | FR | low | med |
-| [Readable.com blog](https://readable.com/blog/) | mixed | EN | low | med |
+| Source | Polarity | Lang | Interest | Confidence | MD |
+|---|---|---|---|---|---|
+| [Bakker & Kamps (2024) — Context-aware simplification](https://aclanthology.org/2024.determit-1.3.pdf) | neutral | EN | low | high | 2 |
+| [Coh-Metrix / McNamara](https://www.tandfonline.com/doi/full/10.1080/01638539809545028) | neutral | EN | med | high (restricted) | 2 |
+| [NN/g — Plain Language](https://www.nngroup.com/articles/plain-language-experts/) | before_after | EN | med | med | 4 |
+| [18F plain-writing](https://18f.gsa.gov/2016/05/24/an-open-source-tool-for-plainer-writing/) | mixed | EN | low | med | 4 |
+| [Orthodidacte blog](https://www.orthodidacte.com/blog/) | before_after | FR | low | med | 4 |
+| [Readable.com blog](https://readable.com/blog/) | mixed | EN | low | med | 4 |
 
 ## 🔍 Known gaps / Lacunes connues
 
@@ -187,12 +205,19 @@ every source at a glance.
 ## 📏 Coverage snapshot / Couverture
 
 - **Bilingual-parallel resources** (aligned EN/FR, valuable for our stance):
-  EC *How to write clearly*, Canada.ca (×2), Inclusion Europe, EUR-Lex.
+  EC *How to write clearly*, Canada.ca (×2), Inclusion Europe, EUR-Lex,
+  CAN-ASC-3.1:2025.
 - **FR-only** entries: RGAA, Unapei, Vikidia, Alector, CLEAR-FR, HAS, SPF,
   Légifrance, Orthodidacte.
 - **Before/after with explanations**: plainlanguage.gov, EC, Canada.ca,
-  CDL Readability, Center for Plain Language, Inclusion Europe, Unapei,
-  Stroke Association, CDC, HAS, SPF, ToSDR, NN/g.
+  CDL Readability, Inclusion Europe, Unapei, Stroke Association, CDC,
+  HAS, SPF, ToSDR, NN/g.
+- **Markdownable score distribution**: `5` → 25 (datasets, wikitext, repos);
+  `4` → 21 (clean HTML); `3` → 3; `2` → 7 (PDF booklets / papers);
+  `1` → 2 (complex-layout PDF, proprietary app); `0` → 0. The
+  highest-leverage fixtures come from the score-5 pool — ASSET,
+  WikiAuto, OneStopEnglish, Simple Wikipedia, Vikidia, proselint, retext,
+  ToSDR, Project Gutenberg.
 
 ## 🔧 Maintenance
 

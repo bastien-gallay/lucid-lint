@@ -1,0 +1,28 @@
+url: https://www.plainlanguage.gov/guidelines/
+title: Federal Plain Language Guidelines
+type: gov_guide
+polarity: before_after
+languages:
+- en
+redistribution: public_ok
+license_details: US federal government work — public domain in the US.
+markdownable: 4
+rules_relevant:
+- syntax.passive-voice
+- lexicon.excessive-nominalization
+- structure.sentence-too-long
+- lexicon.weasel-words
+- syntax.nested-negation
+conditions:
+- general
+- non-native
+bilingual_parallel: false
+fetched_at: '2026-04-22T21:39:10+00:00'
+fetch_method: http_get
+raw_file: raw.html
+raw_sha256: 8516553044af7e3546f1c65e37a7827a4e41940b59b48cc3182e390d11c0c48a
+clean_file: clean.html
+clean_sha256: 9d708f4a69d29d2508cbe9a5cbb515aa7cf65a738ddc2ac8f9e23b45031efc6f
+md_content_sha256: 9eb8ce2fb56d485a97aff435b852c2b6a7b0ad72bc1266b291ca856e7bbfa1df
+converted_at: '2026-04-22T21:40:51+00:00'
+md_backend: pandoc

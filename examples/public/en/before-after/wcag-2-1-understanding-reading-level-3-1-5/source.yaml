@@ -1,0 +1,28 @@
+url: https://www.w3.org/WAI/WCAG21/Understanding/reading-level.html
+title: WCAG 2.1 Understanding — Reading Level (3.1.5)
+type: standard
+polarity: before_after
+languages:
+- en
+redistribution: public_ok
+license_details: W3C Document Licence — copying permitted with notice preservation;
+  derivative work subject to conditions.
+markdownable: 4
+rules_relevant:
+- readability.score
+- lexicon.jargon-undefined
+- structure.sentence-too-long
+conditions:
+- general
+- non-native
+- aphasia
+bilingual_parallel: false
+fetched_at: '2026-04-22T21:39:10+00:00'
+fetch_method: http_get
+raw_file: raw.html
+raw_sha256: c810dc5f44d131c9284bdfc232c96c673d1223bcf68498927e12503891583efd
+clean_file: clean.html
+clean_sha256: e1b59a6ac98638388159948ccd2d300a9eb1d86be27dc0f44d0d0b3314646bb1
+md_content_sha256: e0b780086e75bb193544a4c249e7ecbe52c7b721415cd93fb62d4804f69db42b
+converted_at: '2026-04-22T21:40:51+00:00'
+md_backend: pandoc

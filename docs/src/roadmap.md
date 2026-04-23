@@ -234,6 +234,19 @@ grounding).
 | F7 | `.docx` support via Pandoc integration | 🟡 Later | FALC institutional target |
 | F8 | Companion script `pandoc → lucid-lint` | 🟡 Later | Documented in v0.1 README |
 
+### Example-text fixtures
+
+Scraper + cleaner + converter triplet under `scripts/texts_*.py`
+populates `examples/public/` (committable `public_ok` sources) from
+`examples/texts.yaml`. First batch landed 21 fixtures. The follow-ups
+below close the remaining rough edges.
+
+| ID | Item | Priority | Origin |
+|---|---|---|---|
+| F81 | Per-source adapters for git-cloned upstreams. The generic `clean` / `convert` path doesn't know how to extract text from shallow-cloned repos (proselint checks, Vale style packs, write-good / alex / retext / textlint-rule fixtures, ASSET / OneStopEnglish / EASSE / CLEAR-corpus datasets). Each needs a small extractor that walks the repo and emits one or more `.md` files per rule / excerpt. | 🟡 Later | First scraper batch, 2026-04-22 |
+| F82 | Refine `texts_convert._split_before_after`. The current heuristic looks for literal `## Before` / `## After` (EN/FR) headings; no upstream page in the current batch uses that shape, so every `before_after` source fell back to a single `content.md` with a warning. Replace with a per-source pair-extraction rule (plainlanguage.gov, EC *How to write clearly*, Canada.ca, OneStopEnglish, ASSET, Inclusion Europe) that emits `before.md` + `after.md`. | 🟡 Later | First scraper batch, 2026-04-22 |
+| F83 | Maintenance pass on `examples/texts.yaml` URLs. 12 sources failed on the first batch — 404s from moved landing pages (canada.ca × 2, BDA Dyslexia, Center for Plain Language, Newsela, HuggingFace wiki_auto), UA-/bot-blocking (Légifrance 403, Orthodidacte 403, ADHD Foundation 400), and a DNS error for the specific 18F post. Audit and update entries; for sources that genuinely require a browser-flavoured UA, add a per-source override in the fetcher. | 🟡 Later | First scraper batch, 2026-04-22 |
+
 ### Documentation rules plugin
 
 | ID | Item | Priority | Origin |

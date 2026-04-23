@@ -1,0 +1,26 @@
+url: https://fr.vikidia.org/wiki/Accueil
+title: Vikidia (French simple encyclopedia)
+type: corpus
+polarity: good_example
+languages:
+- fr
+redistribution: public_ok
+license_details: CC-BY-SA 3.0 — share-alike applies.
+markdownable: 5
+rules_relevant:
+- readability.score
+- structure.sentence-too-long
+- lexicon.jargon-undefined
+conditions:
+- non-native
+- general
+bilingual_parallel: false
+fetched_at: '2026-04-22T21:39:11+00:00'
+fetch_method: http_get
+raw_file: raw.html
+raw_sha256: 8b00332e3e4a60a693d04f7f4cc76081b336e96864142561c147af7696c48927
+clean_file: clean.html
+clean_sha256: 85c74612a1c61621807b4442c16e1adede901587cb3120f85332cafb3d9e91b3
+md_content_sha256: 9fd006613c648b8bf2072515cf861b9e59b6a27755661ae2212e37a95f1132aa
+converted_at: '2026-04-22T21:40:51+00:00'
+md_backend: pandoc

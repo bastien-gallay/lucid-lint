@@ -102,7 +102,14 @@ just test-one sentence_too_long    # Test one rule
 just snapshot                       # Review pending snapshots
 just dogfood                        # Lint lucid-lint's own docs
 just docs-serve                     # Preview mdBook with hot reload
+just texts-plan                     # Preview the texts.yaml → examples/ routing
+just texts                          # Fetch + clean + convert text fixtures
 ```
+
+The `texts*` recipes pull the sources listed in `examples/texts.yaml`
+(filtered to `markdownable >= 3`) into `examples/public/` (safe to
+commit) or `examples/local/` (gitignored). See
+[`scripts/README.md`](../scripts/README.md) for details.
 
 ## What NOT to do
 

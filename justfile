@@ -80,14 +80,37 @@ coverage-html:
 sync-roadmap:
     python3 scripts/sync-roadmap.py
 
+# Fetch, clean, and convert the examples/texts.yaml sources to Markdown
+# fixtures under examples/{public,local}/. Dev-only; not wired into
+# `just check`. See scripts/README.md for details.
+texts: texts-fetch texts-clean texts-convert
+
+texts-fetch:
+    uv run scripts/texts_fetch.py
+
+texts-clean:
+    uv run scripts/texts_clean.py
+
+texts-convert:
+    uv run scripts/texts_convert.py
+
+# Routing plan, no network I/O — useful for reviewing the YAML changes
+texts-plan:
+    uv run scripts/texts_fetch.py --dry-run
+
 # Build the mdBook documentation
 docs-build: sync-roadmap
     cd docs && mdbook build
     python3 scripts/sanitize-stock-css.py
 
-# Serve docs locally with hot reload
+# Serve docs locally with hot reload.
+#
+# Pinned to port 3010 instead of mdbook's default 3000 — the latter
+# collides with Node dev servers, Next.js, Rails, React toolchains,
+# and the VS Code Live Preview extension. 3010 is far enough away to
+# stay clear of the common dev-port band (3000-3001).
 docs-serve: sync-roadmap
-    cd docs && mdbook serve --open
+    cd docs && mdbook serve --open --port 3010
 
 # Pre-deploy gate: verify the built book doesn't ship banned stock fonts.
 # Not wired into `just check` (mdbook build is too slow for every dev loop);
@@ -133,3 +156,20 @@ publish:
 # Install the binary from source
 install:
     cargo install --path . --locked
+
+# Render every VHS tape under docs/tapes/ (requires `vhs` on PATH).
+# Skips shared.tape — it is a preset sourced by the other tapes.
+tapes:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if ! command -v vhs >/dev/null; then
+        echo "vhs not found — install via 'brew install vhs' or 'go install github.com/charmbracelet/vhs@latest'" >&2
+        exit 1
+    fi
+    mkdir -p docs/src/assets/tty
+    for tape in docs/tapes/*.tape; do
+        name=$(basename "$tape")
+        if [ "$name" = "shared.tape" ]; then continue; fi
+        echo "rendering $tape"
+        vhs "$tape"
+    done

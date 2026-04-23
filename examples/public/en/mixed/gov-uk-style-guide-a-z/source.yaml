@@ -1,0 +1,27 @@
+url: https://www.gov.uk/guidance/style-guide/a-to-z-of-gov-uk-style
+title: GOV.UK style guide (A–Z)
+type: style_guide
+polarity: mixed_unaligned
+languages:
+- en
+redistribution: public_ok
+license_details: Open Government Licence v3.0 (OGL) — redistribute freely with attribution.
+markdownable: 4
+rules_relevant:
+- lexicon.jargon-undefined
+- lexicon.unexplained-abbreviation
+- structure.mixed-numeric-format
+- lexicon.weasel-words
+conditions:
+- general
+- non-native
+bilingual_parallel: false
+fetched_at: '2026-04-22T21:39:09+00:00'
+fetch_method: http_get
+raw_file: raw.html
+raw_sha256: f35f3d747a26bccc6f07c684b1b8eb2597018aa3f0d26a5e31a729c61adf1ae2
+clean_file: clean.html
+clean_sha256: d9b66e0e4dfc49dfbdd03bcc46341a1d28bc8c2af556a3d84b188f5686fd18ff
+md_content_sha256: 5880e7bf804e0791a303d8e626f78360ac63a2502ddd1ddcf4dd03f83330c4cb
+converted_at: '2026-04-22T21:40:52+00:00'
+md_backend: pandoc

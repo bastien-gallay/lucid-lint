@@ -1,0 +1,28 @@
+url: https://www.gutenberg.org/
+title: Project Gutenberg
+type: corpus
+polarity: neutral
+languages:
+- en
+- fr
+redistribution: public_ok
+license_details: Underlying texts are public domain (US). Project Gutenberg header/footer
+  is under the PG licence — strip them if not hosting on a PG-compatible site, or
+  use plain-text excerpts.
+markdownable: 5
+rules_relevant:
+- structure.sentence-too-long
+- structure.deep-subordination
+- readability.score
+conditions:
+- general
+bilingual_parallel: false
+fetched_at: '2026-04-22T21:39:14+00:00'
+fetch_method: http_get
+raw_file: raw.html
+raw_sha256: 95940191e69d60c02796b49d258a85e348244f10fd3decabc8366c97c0d4921d
+clean_file: clean.html
+clean_sha256: c7b01d75cd7ca0cbcec553378fcff567c53b9588115234af568bec4131b6c402
+md_content_sha256: be3c0e4e469372a43ed66fdebc7dd5d88a85a9f6d989db4a2ce903101c990419
+converted_at: '2026-04-22T21:40:51+00:00'
+md_backend: pandoc

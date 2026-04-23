@@ -1,9 +1,21 @@
 # Attribution for files in `examples/public/`
 
-Every file committed under `examples/public/` must be recorded here with
-its upstream source and licence. Keep this file sorted alphabetically by
-path.
+Every file committed under `examples/public/` must be recorded here
+with its upstream source and licence. Rows are appended automatically
+by `scripts/texts_convert.py`. Keep sorted by path when editing by hand.
 
-| Path | Source URL | Upstream licence | Notes |
+| Path | Source URL | Upstream licence | Redistribution tier |
 |---|---|---|---|
-| _(empty — add rows as files are added)_ | | | |
+| `bi/bad/eur-lex-legal-corpus/content.md` | https://eur-lex.europa.eu/ | Commission Decision 2011/833/EU — reusable with attribution (notice the EUR-Lex legal-notice page). | public_ok |
+| `bi/neutral/project-gutenberg/content.md` | https://www.gutenberg.org/ | Underlying texts are public domain (US). Project Gutenberg header/footer is under the PG licence — strip them if not hosting on a PG-compatible site, or use plain-text excerpts. | public_ok |
+| `fr/good/rgaa-4-1-criteres-et-tests/content.md` | https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/ | Licence Ouverte / Open Licence 2.0 (Etalab) — reuse with attribution. | public_ok |
+| `fr/good/vikidia-french-simple-encyclopedia/content.md` | https://fr.vikidia.org/wiki/Accueil | CC-BY-SA 3.0 — share-alike applies. | public_ok |
+| `en/before-after/plainlanguage-gov-before-and-after/content.md` | https://www.plainlanguage.gov/examples/before-and-after/ | US federal government work — public domain in the US (17 U.S.C. § 105). | public_ok |
+| `en/before-after/content-design-london-readability-guidelines/content.md` | https://readabilityguidelines.co.uk/ | CC-BY-SA 4.0 — share-alike, requires attribution. | public_ok |
+| `en/before-after/federal-plain-language-guidelines/content.md` | https://www.plainlanguage.gov/guidelines/ | US federal government work — public domain in the US. | public_ok |
+| `en/before-after/wcag-2-1-understanding-reading-level-3-1-5/content.md` | https://www.w3.org/WAI/WCAG21/Understanding/reading-level.html | W3C Document Licence — copying permitted with notice preservation; derivative work subject to conditions. | public_ok |
+| `en/mixed/wcag-2-1-understanding-abbreviations-3-1-4/content.md` | https://www.w3.org/WAI/WCAG21/Understanding/abbreviations.html | W3C Document Licence. | public_ok |
+| `en/mixed/gov-uk-style-guide-a-z/content.md` | https://www.gov.uk/guidance/style-guide/a-to-z-of-gov-uk-style | Open Government Licence v3.0 (OGL) — redistribute freely with attribution. | public_ok |
+| `en/mixed/wcag-2-1-understanding-unusual-words-3-1-3/content.md` | https://www.w3.org/WAI/WCAG21/Understanding/unusual-words.html | W3C Document Licence. | public_ok |
+| `en/good/gov-uk-writing-for-gov-uk/content.md` | https://www.gov.uk/guidance/content-design/writing-for-gov-uk | Open Government Licence v3.0 (OGL). | public_ok |
+| `en/good/simple-english-wikipedia/content.md` | https://simple.wikipedia.org/wiki/Main_Page | CC-BY-SA 4.0 (text) + GFDL — share-alike applies to derivative bundles. | public_ok |

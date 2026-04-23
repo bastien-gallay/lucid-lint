@@ -1,0 +1,19 @@
+url: https://github.com/facebookresearch/asset
+title: ASSET simplification dataset
+type: dataset
+polarity: before_after
+languages:
+- en
+redistribution: public_ok
+license_details: CC-BY-SA-4.0.
+markdownable: 5
+rules_relevant:
+- structure.sentence-too-long
+- structure.deep-subordination
+- lexicon.jargon-undefined
+conditions:
+- general
+- non-native
+bilingual_parallel: false
+fetched_at: '2026-04-22T21:39:14+00:00'
+fetch_method: git_clone_depth1

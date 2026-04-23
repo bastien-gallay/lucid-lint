@@ -44,3 +44,8 @@ repos:
     hooks:
       - id: markdownlint-cli2
         args: ["--config", ".markdownlint.yaml"]
+        # Third-party scraped prose and reference manifests under
+        # `examples/` are lint input for lucid-lint itself, not
+        # output to be groomed by markdownlint. Also the large
+        # `docs/book/` build artefact.
+        exclude: '^(examples/|docs/book/)'

@@ -28,9 +28,28 @@ Cargo.lock.bak
 .agent/scratch/
 .agent/local.md
 
-# Local-only example texts (see examples/local/README.md)
+# Python (scripts/)
+__pycache__/
+*.pyc
+
+# Local-only scratch space (see examples/local/README.md)
 /examples/local/*
 !/examples/local/README.md
+
+# Raw git-cloned upstreams under examples/public/ — the fetcher
+# shallow-clones upstream repos into `raw/` subdirectories; the
+# committable material is the adjacent `source.yaml` plus any
+# per-source adapter output (F81). The raw clones themselves are
+# reproducible from the URLs in `source.yaml` and must not ship.
+/examples/public/**/raw/
+
+# Raw HTML dumps from the HTTP-fetch path — the committable triplet
+# is `source.yaml` + `clean.html` + `content.md` (metadata,
+# chrome-stripped HTML, and markdown derivative). `raw.html` is the
+# pre-clean reference used when debugging the cleaner; one FR source
+# (rgaa-4-1) is ~950 KB on its own, and the batch as a whole makes
+# git history noisy. Re-run `just texts-fetch` to regenerate locally.
+/examples/public/**/raw.html
 
 # macOS
 .DS_Store

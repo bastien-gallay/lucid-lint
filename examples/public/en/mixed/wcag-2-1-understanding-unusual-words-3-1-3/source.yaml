@@ -1,0 +1,26 @@
+url: https://www.w3.org/WAI/WCAG21/Understanding/unusual-words.html
+title: WCAG 2.1 Understanding — Unusual Words (3.1.3)
+type: standard
+polarity: mixed_unaligned
+languages:
+- en
+redistribution: public_ok
+license_details: W3C Document Licence.
+markdownable: 4
+rules_relevant:
+- lexicon.jargon-undefined
+- lexicon.weasel-words
+conditions:
+- aphasia
+- non-native
+- general
+bilingual_parallel: false
+fetched_at: '2026-04-22T21:39:11+00:00'
+fetch_method: http_get
+raw_file: raw.html
+raw_sha256: c000f7e655a26a0ba2e2ffc67d4c06bba98a66f5bf7d73ba556b6754a637ad70
+clean_file: clean.html
+clean_sha256: cbeb8aeb791a8ad90869a94dc2b5c291a3c1dde1f7b912713c758010a8909fc2
+md_content_sha256: a21d42e43b51ff1dbe7fe24c168af8f1a275248f1e549f9465f8ef15c12b93f1
+converted_at: '2026-04-22T21:40:52+00:00'
+md_backend: pandoc

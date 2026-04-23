@@ -43,6 +43,4 @@ parallel alignment stays obvious.
 
 ## What does *not* belong here
 
-Material without a clear reuse grant, or with access-gated licences,
-belongs under [`../local/`](../local/) instead — that path is excluded
-from version control.
+Anything without a clear reuse grant. When in doubt, don't commit it.

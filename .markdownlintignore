@@ -1,0 +1,19 @@
+# Third-party scraped prose fixtures under `examples/public/` and
+# local-only fixtures under `examples/local/` are verbatim copies of
+# upstream sources (RGAA, WCAG, plainlanguage.gov, …). Their heading
+# conventions follow the source's language and style — notably French
+# sources use "Critère 4.1 :" with a trailing colon which trips
+# MD026. We do not rewrite third-party content to satisfy our lint
+# config; these files are lint input for lucid-lint itself, not the
+# project's own prose.
+examples/public/**
+examples/local/**
+
+# mdBook generated output.
+docs/book/**
+
+# Rust build output.
+target/**
+
+# Node modules (defensive — we do not ship any today).
+node_modules/**

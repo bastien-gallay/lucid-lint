@@ -1,0 +1,25 @@
+url: https://www.w3.org/WAI/WCAG21/Understanding/abbreviations.html
+title: WCAG 2.1 Understanding — Abbreviations (3.1.4)
+type: standard
+polarity: mixed_unaligned
+languages:
+- en
+redistribution: public_ok
+license_details: W3C Document Licence.
+markdownable: 4
+rules_relevant:
+- lexicon.unexplained-abbreviation
+conditions:
+- aphasia
+- non-native
+- general
+bilingual_parallel: false
+fetched_at: '2026-04-22T21:39:12+00:00'
+fetch_method: http_get
+raw_file: raw.html
+raw_sha256: b36a0a85d9f1549b62dab1ef528b14ff7acbdaecd2426e860a48bae95131e773
+clean_file: clean.html
+clean_sha256: 588d72a2e9aaaeb3f1dd5ce4023765197d19f925d13025dbf1bd90d503a376c1
+md_content_sha256: 12e17e7bd9e1c5cf9aed576380816a3e5df9e9d07ef9314c7b0f69aaa9a85096
+converted_at: '2026-04-22T21:40:51+00:00'
+md_backend: pandoc

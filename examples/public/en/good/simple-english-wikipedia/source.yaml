@@ -1,0 +1,26 @@
+url: https://simple.wikipedia.org/wiki/Main_Page
+title: Simple English Wikipedia
+type: corpus
+polarity: good_example
+languages:
+- en
+redistribution: public_ok
+license_details: CC-BY-SA 4.0 (text) + GFDL — share-alike applies to derivative bundles.
+markdownable: 5
+rules_relevant:
+- readability.score
+- structure.sentence-too-long
+- lexicon.jargon-undefined
+conditions:
+- non-native
+- general
+bilingual_parallel: false
+fetched_at: '2026-04-22T21:39:11+00:00'
+fetch_method: http_get
+raw_file: raw.html
+raw_sha256: adcf0b68e1a413622375b6ebcf2dcb15f16d6159b07b3cc0bdd19354b1f0a96c
+clean_file: clean.html
+clean_sha256: 77ae931471251ea7d852fbb546fdb89af62564f2c5f4e4b3f052366922104fc5
+md_content_sha256: 172ff4aecd51f1bc3f822fe83bf95cb1ce2127b6a935d25842f6163b54510c9e
+converted_at: '2026-04-22T21:40:52+00:00'
+md_backend: pandoc
