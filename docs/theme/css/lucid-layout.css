@@ -50,6 +50,52 @@ html[lang="fr"]      [data-lucid-lang="en"] {
   display: none !important;
 }
 
+/* -------------------------------- *
+ * Sidebar locale filter
+ * -------------------------------- *
+ * The mdBook sidebar is a single flat <ol class="chapter"> emitted
+ * from SUMMARY.md, with EN entries then a "Version française"
+ * part-title and its FR entries. We want each locale to see only
+ * its own tree. F35a set the precedent for `html[lang]`-driven
+ * visibility; this extends it to the sidebar via :has() matching
+ * the href prefix of each entry's anchor.
+ *
+ * Pair-wise visibility matrix:
+ *   EN viewer (html[lang!="fr"]): hide all FR entries (href starts
+ *     with or contains "fr/") and the "Version française" part-title
+ *     that introduces them.
+ *   FR viewer (html[lang="fr"]):  hide all EN entries (chapter-items
+ *     whose anchor has neither "fr/" nor an external scheme) and
+ *     every part-title that is NOT the Version française one.
+ *
+ * This is 1.A of the FR parallel-version plan. Alternatives (split
+ * SUMMARY per locale, or a multi-book mdBook setup) are filed on
+ * the roadmap as F90 / F91. -------------------------------- */
+
+/* EN viewer: hide FR chapter-items. */
+html:not([lang="fr"]) .chapter li.chapter-item:has(> span > a[href^="fr/"]),
+html:not([lang="fr"]) .chapter li.chapter-item:has(> span > a[href*="/fr/"]) {
+  display: none;
+}
+/* EN viewer: hide the "Version française" part-title — it is the
+ * part-title whose next chapter-item sibling targets an FR page. */
+html:not([lang="fr"]) .chapter li.part-title:has(+ li.chapter-item span > a[href^="fr/"]),
+html:not([lang="fr"]) .chapter li.part-title:has(+ li.chapter-item span > a[href*="/fr/"]) {
+  display: none;
+}
+
+/* FR viewer: hide EN chapter-items. An EN item is a chapter-item
+ * whose anchor href is an internal, non-FR target. */
+html[lang="fr"] .chapter li.chapter-item:has(> span > a[href]):not(:has(> span > a[href^="fr/"])):not(:has(> span > a[href*="/fr/"])):not(:has(> span > a[href^="http"])):not(:has(> span > a[href^="#"])) {
+  display: none;
+}
+/* FR viewer: hide every part-title whose next chapter-item is an EN
+ * entry. The Version française part-title is the one that sits just
+ * before an FR entry and is therefore kept. */
+html[lang="fr"] .chapter li.part-title:not(:has(+ li.chapter-item span > a[href^="fr/"])):not(:has(+ li.chapter-item span > a[href*="/fr/"])) {
+  display: none;
+}
+
 .lucid-skip {
   position: fixed;
   top: var(--lucid-space-sm);

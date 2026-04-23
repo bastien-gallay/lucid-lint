@@ -56,6 +56,7 @@
 # Version française
 
 - [Introduction](./fr/index.md)
-- [Référence des règles](./fr/rules-index.md)
+- [Référence des règles](./fr/rules/index.md)
+  - [`structure.sentence-too-long`](./fr/rules/sentence-too-long.md)
 - [Feuille de route](./fr/roadmap.md)
 - [Accessibilité](./fr/accessibility.md)

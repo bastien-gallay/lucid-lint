@@ -251,15 +251,29 @@ fn changed_rules_appear_in_changelog_unreleased() {
 
 /// Every relative link inside `docs/src/` must resolve inside `docs/src/`.
 ///
-/// mdBook only serves pages under its `src/` tree; `](../../…)` escapes
-/// the tree (the directory layout is at most two levels deep:
-/// `docs/src/<section>/<page>.md`). For deliberate "see the repo file"
-/// references use an absolute `https://github.com/…` URL instead.
+/// mdBook only serves pages under its `src/` tree. A link escapes when
+/// its `../` chain pops above `docs/src/` — which depends on the
+/// source page's depth, not a fixed `../` count (the FR tree adds a
+/// third level at `docs/src/fr/<section>/<page>.md`). For deliberate
+/// "see the repo file" references use an absolute `https://github.com/…`
+/// URL instead.
 #[test]
 fn docs_links_stay_inside_docs() {
     let root = workspace_root().join("docs/src");
     let mut offenders = Vec::new();
     walk_markdown(&root, &mut |path, body| {
+        // Depth of the file's parent directory relative to docs/src/.
+        // `docs/src/introduction.md` → depth 0
+        // `docs/src/rules/sentence-too-long.md` → depth 1
+        // `docs/src/fr/rules/sentence-too-long.md` → depth 2
+        let Some(parent) = path.parent() else {
+            return;
+        };
+        let Ok(rel_parent) = parent.strip_prefix(&root) else {
+            return;
+        };
+        let depth = rel_parent.components().count();
+
         for (lineno, line) in body.lines().enumerate() {
             // Only inspect link targets — patterns of the form `](...)`.
             let mut rest = line;
@@ -269,14 +283,24 @@ fn docs_links_stay_inside_docs() {
                     break;
                 };
                 let target = &after[..end];
-                if target.starts_with("../../") {
-                    offenders.push(format!(
-                        "{}:{}: link target `{target}` escapes docs/src/",
-                        path.strip_prefix(&root).unwrap_or(path).display(),
-                        lineno + 1,
-                    ));
-                }
                 rest = &after[end..];
+
+                // Count leading `../` segments; skip anything else
+                // (`./`, a bare filename, `http(s)://`, `#anchor`, …).
+                let mut remainder = target;
+                let mut ups = 0usize;
+                while let Some(rest) = remainder.strip_prefix("../") {
+                    ups += 1;
+                    remainder = rest;
+                }
+                if ups == 0 || ups <= depth {
+                    continue;
+                }
+                offenders.push(format!(
+                    "{}:{}: link target `{target}` escapes docs/src/",
+                    path.strip_prefix(&root).unwrap_or(path).display(),
+                    lineno + 1,
+                ));
             }
         }
     });

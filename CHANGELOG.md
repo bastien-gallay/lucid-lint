@@ -9,6 +9,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **FR parallel sidebar locale filter (1.A of the FR per-rule pages
+  plan).** The mdBook sidebar is a single flat SUMMARY, so until now
+  both language trees showed side by side. CSS `:has()` rules in
+  `lucid-layout.css` now hide the wrong-locale entries based on
+  `html[lang]` (which `head.hbs` sets pre-paint on `/fr/` pages) —
+  same pattern F35a used for the header lang-switch. EN viewers see
+  only the EN tree; FR viewers see only the "Version française"
+  subtree. F90 (split `SUMMARY.md` per locale) and F91 (multi-book
+  mdBook layout) filed as future alternatives.
+- **Server-rendered EN ↔ FR counterpart deep-linking (F92, 2.B of
+  the same plan).** The stock lang-switch in `index.hbs` always
+  points at `/` and `/fr/`; a new post-build step
+  (`scripts/sync_lang_counterparts.py`) walks `docs/book/**/*.html`
+  and rewrites both `hreflang="en"` and `hreflang="fr"` anchors so
+  the toggle deep-links to the matching page. From
+  `/fr/rules/sentence-too-long.html` the EN toggle now goes to
+  `../../rules/sentence-too-long.html`, and vice versa. Wired into
+  `just docs-build`, `.github/workflows/docs-deploy.yml`, and the
+  new `just docs-lang-check` recipe (also run by CI) — which fails
+  the build if any FR page lacks an EN counterpart (orphaned
+  translation), while untranslated EN pages remain informational
+  (tracked as F25, not a gate).
+- **First FR per-rule page: `structure.sentence-too-long`.** Mirrors
+  the EN page's section structure (`Ce que cette règle signale` /
+  `En bref` / `Détection` / `Paramètres` / `Exemples` /
+  `Neutralisation` / `Voir aussi`) with FR-first example ordering.
+  Cross-links into the EN guide + scoring pages via `../../…`
+  until the FR guides land.
 - **`examples/texts.yaml` + `examples/texts.md` split by redistribution tier.**
   The tracked referential now lists only `public_ok` entries (25 of 55
   sources); the 30 `check_license` / `link_only` / `restricted` entries
@@ -37,6 +65,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   render must not surface `link_only` / `check_license` titles or
   totals — alongside axis slotting, counting, splice idempotence, and
   a smoke test against the real YAML.
+
+### Changed
+
+- **FR rules index moved from `fr/rules-index.md` to `fr/rules/index.md`**
+  for parity with the EN tree (`rules/index.md`). SUMMARY.md entry
+  updated; the intra-page relative links now use `../../rules/…` to
+  reach EN rule pages one directory deeper.
+- **`docs_links_stay_inside_docs` test now respects file depth.** The
+  previous heuristic flagged any `](../../…)` target as an escape,
+  assuming the docs tree was at most two levels deep. The FR tree
+  added a third level (`docs/src/fr/<section>/<page>.md`); the test
+  now compares the `../` count to the source file's depth relative
+  to `docs/src/`, so `../../` from a depth-2 page (into `docs/src/`)
+  is accepted while `../../../` (out of the tree) still fails.
 
 ## [0.2.1] — 2026-04-23
 

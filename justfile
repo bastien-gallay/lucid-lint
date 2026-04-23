@@ -114,6 +114,13 @@ texts-coverage-test:
 docs-build: sync-roadmap
     cd docs && mdbook build
     python3 scripts/sanitize-stock-css.py
+    python3 scripts/sync_lang_counterparts.py
+
+# Validate that every FR doc page has an EN counterpart (F92). CI gate.
+# EN pages without FR counterparts are informational only — the
+# translation backlog is tracked as F25, not enforced here.
+docs-lang-check: docs-build
+    python3 scripts/sync_lang_counterparts.py --check
 
 # Serve docs locally with hot reload.
 #
