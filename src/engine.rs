@@ -1,6 +1,7 @@
 //! The linting engine: orchestrates parsing, rule execution, and output.
 
 use std::fs;
+use std::num::NonZeroU32;
 use std::path::Path;
 
 use thiserror::Error;
@@ -11,6 +12,7 @@ use crate::language::{default_language, detect_language};
 use crate::parser::{parse_markdown, parse_plain, word_count};
 use crate::rules::lexicon::unexplained_abbreviation::{self, UnexplainedAbbreviation};
 use crate::rules::readability::score::{self, FormulaChoice, ReadabilityScore};
+use crate::rules::structure::excessive_commas::{self, ExcessiveCommas};
 use crate::rules::{default_rules, filter_by_conditions, Rule};
 use crate::scoring::{self, Scorecard, ScoringConfig};
 use crate::types::{Diagnostic, Language, SourceFile};
@@ -118,6 +120,23 @@ impl Engine {
                 let config = unexplained_abbreviation::Config::for_profile(self.profile)
                     .with_extra_whitelist(extra);
                 *rule = Box::new(UnexplainedAbbreviation::new(config));
+                break;
+            }
+        }
+        self
+    }
+
+    /// Override the [`ExcessiveCommas`] rule's `max_commas` threshold.
+    ///
+    /// If the rule set does not currently include an `excessive-commas`
+    /// rule (e.g., it was filtered out), this is a no-op.
+    #[must_use]
+    pub fn with_excessive_commas_max_commas(mut self, max_commas: NonZeroU32) -> Self {
+        for rule in &mut self.rules {
+            if rule.id() == ExcessiveCommas::ID {
+                let config =
+                    excessive_commas::Config::for_profile(self.profile).with_max_commas(max_commas);
+                *rule = Box::new(ExcessiveCommas::new(config));
                 break;
             }
         }

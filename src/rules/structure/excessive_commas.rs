@@ -36,6 +36,13 @@ impl Config {
             max_commas: NonZeroU32::new(max).expect("non-zero literal"),
         }
     }
+
+    /// Override the `max_commas` threshold, preserving other fields.
+    #[must_use]
+    pub const fn with_max_commas(mut self, max_commas: NonZeroU32) -> Self {
+        self.max_commas = max_commas;
+        self
+    }
 }
 
 /// The [`ExcessiveCommas`] rule.
@@ -204,6 +211,13 @@ mod tests {
         let text = "D'abord, ensuite, puis, enfin, la conclusion.";
         let diags = lint(text, Profile::Public);
         assert_eq!(diags.len(), 1);
+    }
+
+    #[test]
+    fn config_with_max_commas_preserves_other_fields() {
+        let base = Config::for_profile(Profile::Public);
+        let overridden = base.with_max_commas(NonZeroU32::new(7).unwrap());
+        assert_eq!(overridden.max_commas.get(), 7);
     }
 
     #[test]

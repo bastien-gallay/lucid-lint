@@ -158,4 +158,13 @@ whitelist = ["WCAG", "ARIA", "ADHD", "LLM"]
 
 Entries are **additive** over the profile baseline (F31). Use this to restore project-specific acronyms — accessibility standards, domain initialisms, engineering-practice terms — that the v0.2 baseline no longer ships. Each entry is silenced globally across the document, same as if it had been defined inline via `Expansion (ACRONYM)`.
 
+### `[rules."structure.excessive-commas"]`
+
+```toml
+[rules."structure.excessive-commas"]
+max_commas = 2
+```
+
+Overrides the per-sentence comma ceiling (default: 4 / 3 / 2 for `dev-doc` / `public` / `falc`). Must be a positive integer — `0` or negative values are rejected at load time. The override replaces the profile preset; it is not additive.
+
 Tables for other rules parse without error but have no runtime effect. Extending this list is a mechanical per-rule change and will continue through the v0.2.x cycle.

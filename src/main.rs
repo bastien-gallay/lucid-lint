@@ -98,10 +98,20 @@ fn run_check(args: CheckArgs) -> Result<ExitCode> {
         None => Vec::new(),
     };
 
-    let engine = Engine::with_profile_and_conditions(profile, &conditions)
+    let excessive_commas_max = match file_config.as_ref() {
+        Some(c) => c
+            .excessive_commas_max_commas()
+            .map_err(|e| anyhow::anyhow!("{e}"))?,
+        None => None,
+    };
+
+    let mut engine = Engine::with_profile_and_conditions(profile, &conditions)
         .with_readability_formula(formula)
         .with_unexplained_whitelist(unexplained_whitelist)
         .with_scoring_config(scoring_config.clone());
+    if let Some(max) = excessive_commas_max {
+        engine = engine.with_excessive_commas_max_commas(max);
+    }
 
     let exclude_matcher = build_exclude_matcher(&args.exclude, file_config.as_ref())?;
 

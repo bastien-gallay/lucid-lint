@@ -397,3 +397,69 @@ fn check_exclude_does_not_filter_explicit_file_args() {
         .code(1)
         .stdout(predicate::str::contains("vendor.md"));
 }
+
+/// `[rules."structure.excessive-commas"].max_commas` lowers the
+/// threshold below the Public profile default (3). A sentence with
+/// exactly 3 subordination commas passes under Public defaults but
+/// trips once the config narrows `max_commas` to 2.
+#[test]
+fn check_config_excessive_commas_override_tightens_threshold() {
+    let tmp = tempfile::tempdir().unwrap();
+    let config = tmp.path().join("lucid-lint.toml");
+    fs::write(
+        &config,
+        r#"[rules."structure.excessive-commas"]
+max_commas = 2
+"#,
+    )
+    .unwrap();
+
+    // 3 subordination commas: passes Public default (3), fails override (2).
+    let input = "Note, although we agreed, we packed carefully, and quietly.";
+
+    // Baseline: without the config, the sentence is clean under Public.
+    Command::cargo_bin("lucid-lint")
+        .unwrap()
+        .arg("check")
+        .arg("-")
+        .write_stdin(input)
+        .assert()
+        .stdout(predicate::str::contains("structure.excessive-commas").not());
+
+    // With the config, the same sentence trips the rule.
+    Command::cargo_bin("lucid-lint")
+        .unwrap()
+        .arg("check")
+        .arg("--config")
+        .arg(&config)
+        .arg("-")
+        .write_stdin(input)
+        .assert()
+        .stdout(predicate::str::contains("structure.excessive-commas"));
+}
+
+/// Invalid `max_commas` values (zero, negative, non-integer) must
+/// surface as a parse error rather than silently falling back.
+#[test]
+fn check_config_excessive_commas_rejects_zero() {
+    let tmp = tempfile::tempdir().unwrap();
+    let config = tmp.path().join("lucid-lint.toml");
+    fs::write(
+        &config,
+        r#"[rules."structure.excessive-commas"]
+max_commas = 0
+"#,
+    )
+    .unwrap();
+
+    Command::cargo_bin("lucid-lint")
+        .unwrap()
+        .arg("check")
+        .arg("--config")
+        .arg(&config)
+        .arg("-")
+        .write_stdin("anything")
+        .assert()
+        .code(2)
+        .stderr(predicate::str::contains("max_commas"));
+}

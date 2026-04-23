@@ -18,3 +18,6 @@ max_words = 22
 # but the config shape is ready).
 # [rules.passive-voice]
 # enabled = false
+
+[rules."structure.excessive-commas"]
+max_commas = 10

@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Per-rule TOML override for `structure.excessive-commas`.**
+  `[rules."structure.excessive-commas"].max_commas` now reaches the
+  rule builder and replaces the profile preset. Must be a positive
+  integer; `0`, negatives, and non-integer types are rejected at
+  load time with a targeted error. Third rule wired into the
+  per-rule override path, after `readability.score.formula` and
+  `lexicon.unexplained-abbreviation.whitelist`.
+
 ## [0.2.0] — 2026-04-22
 
 ### Added

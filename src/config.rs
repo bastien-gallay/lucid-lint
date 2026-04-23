@@ -5,6 +5,7 @@
 
 use std::fmt;
 use std::fs;
+use std::num::NonZeroU32;
 use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
@@ -185,6 +186,38 @@ impl Config {
             out.push(s.to_string());
         }
         Ok(out)
+    }
+
+    /// Extract the `[rules."structure.excessive-commas"].max_commas`
+    /// field when present. Returns `None` if the sub-table or field is
+    /// missing, and an error if the field exists but is not a positive
+    /// integer (zero or negative rejected, since the runtime threshold
+    /// is `NonZeroU32`).
+    ///
+    /// # Errors
+    ///
+    /// Returns [`ConfigError::Parse`] if `max_commas` is present but
+    /// not a positive integer.
+    pub fn excessive_commas_max_commas(&self) -> Result<Option<NonZeroU32>, ConfigError> {
+        let Some(sub) = self.rules.entries.get("structure.excessive-commas") else {
+            return Ok(None);
+        };
+        let Some(value) = sub.get("max_commas") else {
+            return Ok(None);
+        };
+        let Some(raw) = value.as_integer() else {
+            return Err(ConfigError::Parse(format!(
+                "[rules.\"structure.excessive-commas\"].max_commas must be a positive integer, got {}",
+                value.type_str()
+            )));
+        };
+        let parsed = u32::try_from(raw).ok().and_then(NonZeroU32::new);
+        parsed.map(Some).ok_or_else(|| {
+            ConfigError::Parse(format!(
+                "[rules.\"structure.excessive-commas\"].max_commas = {raw} must be a positive integer \
+                 (minimum 1)"
+            ))
+        })
     }
 
     /// Extract the `[rules."readability.score"].formula` field when
@@ -583,6 +616,72 @@ whitelist = ["WCAG", 42]
         .unwrap();
         assert!(matches!(
             config.unexplained_abbreviation_whitelist(),
+            Err(ConfigError::Parse(_))
+        ));
+    }
+
+    #[test]
+    fn excessive_commas_max_commas_absent_when_unset() {
+        let config = Config::from_toml_str("").unwrap();
+        assert_eq!(config.excessive_commas_max_commas().unwrap(), None);
+    }
+
+    #[test]
+    fn excessive_commas_max_commas_parses_positive_integer() {
+        let config = Config::from_toml_str(
+            r#"
+[rules."structure.excessive-commas"]
+max_commas = 5
+"#,
+        )
+        .unwrap();
+        assert_eq!(
+            config.excessive_commas_max_commas().unwrap(),
+            Some(NonZeroU32::new(5).unwrap())
+        );
+    }
+
+    #[test]
+    fn excessive_commas_max_commas_rejects_zero() {
+        let config = Config::from_toml_str(
+            r#"
+[rules."structure.excessive-commas"]
+max_commas = 0
+"#,
+        )
+        .unwrap();
+        assert!(matches!(
+            config.excessive_commas_max_commas(),
+            Err(ConfigError::Parse(_))
+        ));
+    }
+
+    #[test]
+    fn excessive_commas_max_commas_rejects_negative() {
+        let config = Config::from_toml_str(
+            r#"
+[rules."structure.excessive-commas"]
+max_commas = -1
+"#,
+        )
+        .unwrap();
+        assert!(matches!(
+            config.excessive_commas_max_commas(),
+            Err(ConfigError::Parse(_))
+        ));
+    }
+
+    #[test]
+    fn excessive_commas_max_commas_rejects_non_integer() {
+        let config = Config::from_toml_str(
+            r#"
+[rules."structure.excessive-commas"]
+max_commas = "three"
+"#,
+        )
+        .unwrap();
+        assert!(matches!(
+            config.excessive_commas_max_commas(),
             Err(ConfigError::Parse(_))
         ));
     }
