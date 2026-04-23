@@ -525,33 +525,48 @@ html[lang="fr"]      [data-lucid-lang="en"] {
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
-.lucid-stance__idea[data-idea="1"],
-.lucid-idea[data-idea="1"] { --lucid-idea-tint: oklch(95% 0.03 255); }
-.lucid-stance__idea[data-idea="2"],
+.lucid-stance__idea[data-idea="1"] { --lucid-idea-tint: oklch(95% 0.03 255); }
+.lucid-stance__idea[data-idea="2"] { --lucid-idea-tint: oklch(95% 0.035 300); }
+.lucid-stance__idea[data-idea="3"] { --lucid-idea-tint: oklch(94% 0.04 70);  }
+
+/* `.lucid-idea` is the generic variant, usable outside the stance
+ * figure. Rule-page blockquotes already sit on a light-blue surface,
+ * so idea #1 swaps hue 255 (blue) for 185 (teal) to stay distinct
+ * from the blockquote background. Ideas #2 (violet) and #3 (ochre)
+ * carry through unchanged. */
+.lucid-idea[data-idea="1"] { --lucid-idea-tint: oklch(95% 0.04 185); }
 .lucid-idea[data-idea="2"] { --lucid-idea-tint: oklch(95% 0.035 300); }
-.lucid-stance__idea[data-idea="3"],
 .lucid-idea[data-idea="3"] { --lucid-idea-tint: oklch(94% 0.04 70);  }
+.lucid-idea[data-idea="4"] { --lucid-idea-tint: oklch(95% 0.035 15); }
+.lucid-idea[data-idea="5"] { --lucid-idea-tint: oklch(94% 0.04 140); }
 
 /* Dark themes: same hues, inverted lightness. Keep chroma low so the
  * highlight never steals focus from the prose. */
 .coal .lucid-stance__idea[data-idea="1"],
 .navy .lucid-stance__idea[data-idea="1"],
-.ayu  .lucid-stance__idea[data-idea="1"],
-.coal .lucid-idea[data-idea="1"],
-.navy .lucid-idea[data-idea="1"],
-.ayu  .lucid-idea[data-idea="1"] { --lucid-idea-tint: oklch(32% 0.05 255); }
+.ayu  .lucid-stance__idea[data-idea="1"] { --lucid-idea-tint: oklch(32% 0.05 255); }
 .coal .lucid-stance__idea[data-idea="2"],
 .navy .lucid-stance__idea[data-idea="2"],
-.ayu  .lucid-stance__idea[data-idea="2"],
+.ayu  .lucid-stance__idea[data-idea="2"] { --lucid-idea-tint: oklch(32% 0.06 300); }
+.coal .lucid-stance__idea[data-idea="3"],
+.navy .lucid-stance__idea[data-idea="3"],
+.ayu  .lucid-stance__idea[data-idea="3"] { --lucid-idea-tint: oklch(32% 0.05 70);  }
+
+.coal .lucid-idea[data-idea="1"],
+.navy .lucid-idea[data-idea="1"],
+.ayu  .lucid-idea[data-idea="1"] { --lucid-idea-tint: oklch(32% 0.05 185); }
 .coal .lucid-idea[data-idea="2"],
 .navy .lucid-idea[data-idea="2"],
 .ayu  .lucid-idea[data-idea="2"] { --lucid-idea-tint: oklch(32% 0.06 300); }
-.coal .lucid-stance__idea[data-idea="3"],
-.navy .lucid-stance__idea[data-idea="3"],
-.ayu  .lucid-stance__idea[data-idea="3"],
 .coal .lucid-idea[data-idea="3"],
 .navy .lucid-idea[data-idea="3"],
 .ayu  .lucid-idea[data-idea="3"] { --lucid-idea-tint: oklch(32% 0.05 70);  }
+.coal .lucid-idea[data-idea="4"],
+.navy .lucid-idea[data-idea="4"],
+.ayu  .lucid-idea[data-idea="4"] { --lucid-idea-tint: oklch(32% 0.06 15); }
+.coal .lucid-idea[data-idea="5"],
+.navy .lucid-idea[data-idea="5"],
+.ayu  .lucid-idea[data-idea="5"] { --lucid-idea-tint: oklch(32% 0.05 140); }
 
 /* Windows / forced-colors: drop the decorative tint and let the OS
  * palette take over. The three ideas remain legible because the
