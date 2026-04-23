@@ -36,6 +36,11 @@ The overall pattern is:
 - `public`: 22 words per sentence, 3 commas, 5 sentences per paragraph
 - `falc`: 15 words per sentence, 2 commas, 3 sentences per paragraph
 
+The same file linted three times under `dev-doc`, `public`, and
+`falc` in turn — the score drops as the profile tightens:
+
+![Terminal capture: three sequential lucid-lint runs against examples/sample.md under the dev-doc, public, and falc profiles. The dev-doc pass surfaces a handful of diagnostics and a mid-range score; public tightens and more issues appear; falc flags the most and the score drops the furthest](../assets/tty/profiles.gif)
+
 ## Overriding a profile
 
 Any per-rule threshold set in `lucid-lint.toml` takes precedence over the profile preset.

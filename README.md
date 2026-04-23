@@ -8,6 +8,8 @@
 
 **Status:** 🚧 v0.1 under active development. Not ready for production use. Current backlog and rule-by-rule progress: [ROADMAP.md — v0.1 — In progress](ROADMAP.md#v01--in-progress).
 
+![lucid-lint linting its own demo file — five diagnostics clustered by rule, followed by a score block with five sparkline bars and an `explain` hint line](docs/src/assets/tty/hero.gif)
+
 ---
 
 ## What is lucid-lint?

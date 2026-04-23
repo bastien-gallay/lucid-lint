@@ -78,20 +78,39 @@ The severity multiplier is `info = 1`, `warning = 3`, `error = 5`.
 
 ## Reading the TTY output
 
-The terminal formatter appends one score line after the existing summary,
-showing the global number plus every category score:
+The terminal formatter prints each diagnostic, a short summary line,
+then a score block: the global number followed by every category
+score with an eight-step sparkline bar.
+
+![lucid-lint run on examples/sample.md — five diagnostics, a summary counting 3 warnings and 2 info, an explain hint, and a score block that reads 45/100 with category bars for structure, rhythm, lexicon, syntax, and readability](../assets/tty/hero.gif)
+
+The same run rendered as plain text, for screen readers and
+copy-paste:
 
 ```text
-warning /tmp/draft.md:12:1 Sentence is 27 words long (maximum 22).
-  rule: sentence-too-long
+warning examples/sample.md:7:1 Sentence is 35 words long (maximum 30). Consider splitting it into shorter sentences. [section: A paragraph with a long sentence] [structure.sentence-too-long]
+warning examples/sample.md:7:11 Weasel phrase "rather" weakens the statement. Replace with concrete language or remove it. [section: A paragraph with a long sentence] [lexicon.weasel-words]
+info    examples/sample.md:1:1 Flesch-Kincaid grade 6.8 (target ≤ 14.0). [readability.score]
+info    examples/sample.md:7:1 Sentence starts with a bare demonstrative "this". Name the referent to avoid forcing the reader to guess. [section: A paragraph with a long sentence] [syntax.unclear-antecedent]
+warning examples/sample.md:7:1 Line is 210 characters wide (maximum 120). [section: A paragraph with a long sentence] [structure.line-length-wide]
 
-Summary: 1 warnings.
-score: 88/100 · structure 8/20 · rhythm 20/20 · lexicon 20/20 · syntax 20/20 · readability 20/20
+summary: 3 warnings, 2 info.
+→ run 'lucid-lint explain <rule-id>' — seen here: structure.sentence-too-long, lexicon.weasel-words, readability.score + 2 more
+────────────────────────────────────────────────────────────
+score: 45/100
+       structure    █▎░░░  5/20
+       rhythm       █████  20/20
+       lexicon      █▎░░░  5/20
+       syntax       ██▌░░  10/20
+       readability  █▎░░░  5/20
 ```
 
 All five categories are always displayed so the breakdown stays
-structurally stable run-to-run. A perfect document reads
-`score: 100/100 · structure 20/20 · rhythm 20/20 · …`.
+structurally stable run-to-run. A perfect document reads `score:
+100/100` with every bar full (`█████`). When the same rule fires two
+or more times on one file, the hits cluster under a compact header
+and any shared message or section is hoisted up so it only appears
+once.
 
 ## Reading the JSON output
 

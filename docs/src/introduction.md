@@ -72,6 +72,27 @@ what comes next.
 
 ## Quick taste
 
+A clean file earns the full 100/100 and a wordmark banner — the
+peak-end moment of a passing lint run:
+
+![Terminal capture: a clean lucid-lint run showing the three-part wordmark banner, the message "No issues found.", and a score block reading 100/100 with every category bar full](./assets/tty/score-clean.gif)
+
+```text
+~~~~~ ⟨ • ⟩ ─────  lucid-lint  v0.1.1
+                   cognitive accessibility linter · prose · EN / FR
+                   ────────────────────────────────────────────────
+
+No issues found.
+
+────────────────────────────────────────────────────────────
+score: 100/100
+       structure    █████  20/20
+       rhythm       █████  20/20
+       lexicon      █████  20/20
+       syntax       █████  20/20
+       readability  █████  20/20
+```
+
 ```bash
 cargo install lucid-lint
 

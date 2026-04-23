@@ -26,6 +26,18 @@ Every rule belongs to exactly one of five fixed buckets. The taxonomy is authori
 | `warning` | Quality issue worth fixing | Reported; may fail CI depending on `--min-score` |
 | `error` | Reserved for v0.3+ | Not emitted in v0.2 |
 
+## Reading a rule at the terminal
+
+Each rule bundles its reference page into the binary. Run `lucid-lint
+explain <rule-id>` to print the same content this website serves —
+useful when CI only gives you a diagnostic id and no browser:
+
+![Terminal capture: lucid-lint explain structure.sentence-too-long, printing the rule's "What it flags" paragraph, the at-a-glance table with category, default severity, default weight, supported languages, and the source link](../assets/tty/explain.gif)
+
+```bash
+lucid-lint explain structure.sentence-too-long
+```
+
 ## Contributing a rule
 
 See [Contributing](../contributing.md) for the rule-addition checklist — every new rule must land with a page in this section.

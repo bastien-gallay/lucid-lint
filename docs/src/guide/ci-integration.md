@@ -135,3 +135,21 @@ that fits your adoption curve:
 | Catch newly introduced warnings (v0.1 behaviour) | default |
 | Tolerate individual warnings but fail on drift | `--fail-on-warning=false --min-score=85` |
 | Fail on both spikes and drift | default + `--min-score=85` |
+
+A gated run that fails — lucid-lint prints its usual summary, then
+the shell surfaces the non-zero exit code:
+
+![Terminal capture: a lucid-lint run on examples/sample.md with --min-score=85, which produces three warnings, two info diagnostics, a score of 45/100, and an "exit: 1" line written by the trailing echo command](../assets/tty/score-fail.gif)
+
+```text
+$ lucid-lint check --min-score=85 examples/sample.md
+…
+score: 45/100
+       structure    █▎░░░  5/20
+       rhythm       █████  20/20
+       lexicon      █▎░░░  5/20
+       syntax       ██▌░░  10/20
+       readability  █▎░░░  5/20
+$ echo "exit: $?"
+exit: 1
+```
