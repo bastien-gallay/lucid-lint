@@ -27,21 +27,23 @@ Split text into sentences via strong punctuation (`.`, `!`, `?`, `…`, paragrap
 
 ## Examples
 
+Three ideas, colour-matched across the rewrite — position already pairs them, the tint just confirms the rewrite loses none.
+
 **Before** (EN, flagged):
 
-> The caching subsystem, which was introduced in an earlier milestone, turned out to interact poorly with the new request pipeline under sustained load, and the investigation that followed required multiple rounds of profiling.
+> <span class="lucid-idea" data-idea="1">The caching subsystem, which was introduced in an earlier milestone,</span> <span class="lucid-idea" data-idea="2">turned out to interact poorly with the new request pipeline under sustained load,</span> and <span class="lucid-idea" data-idea="3">the investigation that followed required multiple rounds of profiling.</span>
 
 **After:**
 
-> The caching subsystem was introduced earlier. It interacts poorly with the new request pipeline under sustained load. The investigation required several rounds of profiling.
+> <span class="lucid-idea" data-idea="1">The caching subsystem was introduced earlier.</span> <span class="lucid-idea" data-idea="2">It interacts poorly with the new request pipeline under sustained load.</span> <span class="lucid-idea" data-idea="3">The investigation required several rounds of profiling.</span>
 
 **Before** (FR, flagged):
 
-> Le sous-système de cache introduit lors d'un jalon précédent interagit mal avec le nouveau pipeline de requêtes sous charge soutenue, et l'enquête a nécessité plusieurs rondes de profilage.
+> <span class="lucid-idea" data-idea="1">Le sous-système de cache introduit lors d'un jalon précédent</span> <span class="lucid-idea" data-idea="2">interagit mal avec le nouveau pipeline de requêtes sous charge soutenue,</span> et <span class="lucid-idea" data-idea="3">l'enquête a nécessité plusieurs rondes de profilage.</span>
 
 **After:**
 
-> Le cache a été introduit lors d'un jalon précédent. Il interagit mal avec le nouveau pipeline sous charge soutenue. L'enquête a nécessité plusieurs rondes de profilage.
+> <span class="lucid-idea" data-idea="1">Le cache a été introduit lors d'un jalon précédent.</span> <span class="lucid-idea" data-idea="2">Il interagit mal avec le nouveau pipeline sous charge soutenue.</span> <span class="lucid-idea" data-idea="3">L'enquête a nécessité plusieurs rondes de profilage.</span>
 
 ## Suppression
 

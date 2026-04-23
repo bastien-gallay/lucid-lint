@@ -1,6 +1,6 @@
 [package]
 name = "lucid-lint"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 rust-version = "1.80"
 authors = ["Bastien Gallay <bastien@example.com>"]
@@ -12,13 +12,24 @@ homepage = "https://github.com/bastien-gallay/lucid-lint"
 documentation = "https://bastien-gallay.github.io/lucid-lint"
 keywords = ["linter", "prose", "accessibility", "readability", "markdown"]
 categories = ["text-processing", "command-line-utilities", "accessibility"]
-exclude = [
-    ".github/",
-    ".agent/",
-    "docs/",
-    "tests/corpus/",
-    ".pre-commit-config.yaml",
-    "justfile",
+# `src/explain.rs` uses `include_str!("../docs/src/rules/<slug>.md")`
+# to bundle rule reference pages into the binary, so `docs/src/rules/`
+# must ship in the crate. Everything else under `docs/` (theme, CSS,
+# mdBook output) is excluded to keep the package lean.
+include = [
+    "src/**/*.rs",
+    "docs/src/rules/*.md",
+    "Cargo.toml",
+    "Cargo.lock",
+    "README.md",
+    "LICENSE-MIT",
+    "LICENSE-APACHE",
+    "CHANGELOG.md",
+    "RULES.md",
+    "CONTRIBUTING.md",
+    "CODING_STANDARDS.md",
+    "ROADMAP.md",
+    "AGENTS.md",
 ]
 
 [[bin]]

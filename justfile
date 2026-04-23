@@ -109,8 +109,14 @@ docs-build: sync-roadmap
 # collides with Node dev servers, Next.js, Rails, React toolchains,
 # and the VS Code Live Preview extension. 3010 is far enough away to
 # stay clear of the common dev-port band (3000-3001).
+# `MDBOOK_OUTPUT__HTML__SITE_URL=/` overrides `book.toml`'s
+# `site-url = "/lucid-lint/"` for local serve only. Production builds
+# on GitHub Pages still use the `/lucid-lint/` prefix; this override
+# only affects what ends up in `<base href>` on 404.html, so stylesheet
+# and script URLs resolve correctly when `mdbook serve` answers
+# unknown paths with the 404 template.
 docs-serve: sync-roadmap
-    cd docs && mdbook serve --open --port 3010
+    cd docs && MDBOOK_OUTPUT__HTML__SITE_URL=/ mdbook serve --open --port 3010
 
 # Pre-deploy gate: verify the built book doesn't ship banned stock fonts.
 # Not wired into `just check` (mdbook build is too slow for every dev loop);

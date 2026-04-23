@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] — 2026-04-23
+
 ### Added
 
 - **Per-rule TOML override for `structure.excessive-commas`.**
@@ -16,6 +18,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   load time with a targeted error. Third rule wired into the
   per-rule override path, after `readability.score.formula` and
   `lexicon.unexplained-abbreviation.whitelist`.
+- **Scraped prose fixtures pipeline.** `examples/texts.yaml` +
+  `just texts-plan` / `just texts` pull real-world prose sources
+  (plainlanguage.gov, EC *How to write clearly*, Canada.ca,
+  proselint / write-good test fixtures, ASSET / OneStopEnglish
+  before-after datasets, …) into `examples/public/` (committed) or
+  `examples/local/` (gitignored). Python cleaning + conversion
+  scripts under `scripts/`. See [`scripts/README.md`](scripts/README.md).
+- **TTY capture GIFs across the docs site.** New `docs/tapes/*.tape`
+  set (hero, score-clean, score-fail, profiles, explain) rendered
+  via `vhs` into `docs/src/assets/tty/*.gif`, embedded in the README,
+  introduction, scoring guide, CI-integration guide, profiles guide,
+  and rules index.
+- **Idea-highlight motif extended to the `structure.sentence-too-long`
+  rule page.** The before/after EN + FR examples now carry the same
+  colour-matched `data-idea` spans used on the introduction page, so
+  readers can trace each idea across the rewrite. Generic
+  `.lucid-idea` selectors added to `lucid-layout.css` in parallel
+  with the landing-page `.lucid-stance__idea` selectors.
+
+### Fixed
+
+- **`mdbook serve` no longer triggers 18 stylesheet / script 404s on
+  the 404.html page (Block A).** `book.toml` sets
+  `site-url = "/lucid-lint/"` for GitHub Pages, and mdBook emits
+  `<base href="/lucid-lint/">` into 404.html (and only there). On
+  localhost that prefix doesn't exist, so every asset would 404
+  before the page recovered via a second fetch. The old JS
+  workaround in `docs/theme/head.hbs` rewrote `<base>` at parse
+  time, but the browser's preload scanner had already dispatched
+  the wrong URLs. Fix: `just docs-serve` now sets
+  `MDBOOK_OUTPUT__HTML__SITE_URL=/` for the serve process, so 404.html
+  carries `<base href="/">` on localhost and the correct
+  `<base href="/lucid-lint/">` in production builds. The JS
+  workaround has been removed.
+
+### Changed
+
+- **Docs sweep: v0.1 / v0.2 claims refreshed post-0.2.0 release.**
+  README, RULES.md, and the mdBook site no longer describe lucid-lint
+  as "v0.1 under active development" or "17 rules" — 25 rules are
+  now shipped (17 from v0.1, 8 added in the v0.2 cycle). Example
+  TTY output in the docs uses the current format (new `[rule-id]`
+  suffix, sparkline score block); JSON examples use the
+  post-F29-slim `category.rule-name` rule-ID form. `(v0.2+)` section
+  tags dropped from shipped-feature headings. Editor-integration
+  section moved from "planned for v0.2" to "roadmap v0.3+". The
+  README's config example uses working per-rule overrides instead
+  of ones that parsed but had no runtime effect.
+
+### Packaging
+
+- **Crate now publishes to crates.io** (first publish since v0.1.1).
+  `Cargo.toml`'s packaging switched from `exclude = ["docs/", …]`
+  to an explicit `include = […]` list that keeps `docs/src/rules/`
+  inside the tarball — `src/explain.rs` uses
+  `include_str!("../docs/src/rules/<slug>.md")` to bundle reference
+  pages into the binary, so these files must ship.
 
 ## [0.2.0] — 2026-04-22
 
@@ -510,5 +569,7 @@ Style and global:
 - CI matrix: format, clippy, tests on Linux/macOS/Windows, MSRV build, rustdoc, security audit, dogfood.
 - MSRV pinned to Rust 1.80.
 
-[Unreleased]: https://github.com/bastien-gallay/lucid-lint/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/bastien-gallay/lucid-lint/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/bastien-gallay/lucid-lint/compare/v0.2.0...v0.2.1
+[0.2.0]: https://github.com/bastien-gallay/lucid-lint/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/bastien-gallay/lucid-lint/releases/tag/v0.1.0

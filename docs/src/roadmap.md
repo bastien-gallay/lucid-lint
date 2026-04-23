@@ -114,6 +114,19 @@ precisely to absorb per-rule polish and per-surface slices.
 
 **0.2.x (patch cycle, post-release):**
 
+- **0.2.1** ✅ released 2026-04-23 — first patch cut. Ships the
+  localhost 404.html rendering fix (**F84**), the per-rule TOML
+  override for `structure.excessive-commas` (third rule wired into
+  the override path after `readability.score.formula` and
+  `lexicon.unexplained-abbreviation.whitelist`), the scraped-prose
+  fixtures pipeline (`examples/texts.yaml` + `just texts` scripts),
+  TTY-capture GIFs across the docs site via the `vhs` tapes pipeline,
+  the v0.1 / v0.2 staleness sweep of user-facing prose, and the
+  idea-highlight motif extended from the landing page onto the
+  `structure.sentence-too-long` rule page. Also the first crates.io
+  publish since v0.1.1 — packaging switched from `exclude` to an
+  explicit `include` list so `docs/src/rules/*.md` reach the
+  tarball (needed by `src/explain.rs`'s `include_str!`).
 - **F25** — per-rule FR pages + guides. Each slice is self-contained
   and does not need to bundle with 0.2.0.
 - **F34** — responsive / mobile adaptation.
@@ -277,6 +290,7 @@ below close the remaining rough edges.
 |---|---|---|---|
 | F26 | ✅ MVP shipped in v0.2 via DOM-level trim in `lucid-navigation.js` — the picker now shows three honest items (`Auto · Lucid light · Lucid dark`); the stock Rust / Navy / Ayu `<li>`s are marked `hidden` so they're inert for keyboard and screen-reader. CSS class mapping is unchanged (`.light` / `.rust` → lucid-light, `.coal` / `.navy` / `.ayu` → lucid-dark), so pre-existing localStorage selections still render correctly. Follow-up (optional): a full `index.hbs` override to drop the stock markup entirely rather than hide it; preferred once the mdBook upgrade cadence settles. | 🟡 Later | v0.1 docs `/colorize` session; mdBook stock limitation |
 | F73 | ✅ Pre-deploy font-leak gate shipped in v0.2 — `just docs-check-clean` rebuilds the book, runs `scripts/sanitize-stock-css.py`, and greps the output for active `font-family` / `--*-font` / `local()` references to `Open Sans` or `Source Code Pro`. Not wired into `just check` (mdbook build is too slow for the dev loop); wire it into the docs-publish CI workflow before any release-candidate goes live. | 🟡 Later | v0.2 `/critique` polish pass follow-up |
+| F84 | ✅ Shipped in v0.2.1 — fixed localhost 404.html rendering under `mdbook serve`. `book.toml` sets `site-url = "/lucid-lint/"` for GitHub Pages, and mdBook emits `<base href="/lucid-lint/">` into 404.html (only there). On localhost that prefix doesn't exist, so the browser's preload scanner fired 18 stylesheet/script requests with the wrong prefix before the page recovered via a second fetch. The previous JS workaround in `docs/theme/head.hbs` rewrote `<base>` at parse time, but ran after the preload scanner. Fix: `just docs-serve` now sets `MDBOOK_OUTPUT__HTML__SITE_URL=/` for the serve process, so 404.html carries `<base href="/">` on localhost and the correct `<base href="/lucid-lint/">` in production builds; the JS workaround is removed. | — | 2026-04-23 Block A |
 
 ### Docs site — reading preferences
 
