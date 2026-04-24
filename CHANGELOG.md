@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Real-world corpus regression anchors.** Three short passages
+  lifted verbatim from `examples/public/` land under
+  `tests/corpus/public/`: a GOV.UK plain-language exemplar
+  (`public`-profile clean), the plainlanguage.gov intro
+  (`public` flags `structure.sentence-too-long`; `falc` also flags
+  `syntax.passive-voice`), and a Vikidia `Accueil` passage
+  (`falc`-profile clean). New `tests/cli.rs` tests shell out with
+  `--format=json`, parse the diagnostics, and pin each expectation
+  so a silent rule-tuning regression on curated real-world prose
+  fails loudly. Machinery reuses the existing `corpus_path` helper
+  — no new fixture format.
 - **Four more FR per-rule pages (F25 progress, 1/25 → 5/25).**
   `structure.excessive-commas`, `structure.long-enumeration`,
   `lexicon.weasel-words`, `lexicon.unexplained-abbreviation` land

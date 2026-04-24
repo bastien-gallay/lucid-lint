@@ -463,3 +463,93 @@ max_commas = 0
         .code(2)
         .stderr(predicate::str::contains("max_commas"));
 }
+
+// ---------------------------------------------------------------
+// Real-world corpus regression anchors
+//
+// Short passages lifted verbatim from `examples/public/` — curated
+// plain-language prose and deliberately-dense legalese. Each test
+// pins a specific rule-level expectation so a rule-tuning change
+// that quietly alters real-world behaviour fails loudly in CI.
+// ---------------------------------------------------------------
+
+fn rule_ids_fired(fixture: &std::path::Path, profile: &str) -> Vec<String> {
+    let output = Command::cargo_bin("lucid-lint")
+        .unwrap()
+        .arg("check")
+        .arg("--profile")
+        .arg(profile)
+        .arg("--format")
+        .arg("json")
+        .arg(fixture)
+        .output()
+        .unwrap();
+    let parsed: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
+    parsed["diagnostics"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|d| d["rule_id"].as_str().unwrap().to_string())
+        .collect()
+}
+
+#[test]
+fn corpus_public_gov_uk_prose_stays_clean_under_public_profile() {
+    // GOV.UK's "Meet the user need" passage is a curated plain-language
+    // exemplar. Under the `public` profile it must not trigger
+    // sentence-length, weasel-word, or passive-voice diagnostics — these
+    // would indicate a rule regression, not a problem in the source.
+    let fired = rule_ids_fired(
+        &corpus_path("public/en/gov-uk-meet-the-user-need.md"),
+        "public",
+    );
+    assert!(
+        !fired.contains(&"structure.sentence-too-long".to_string()),
+        "sentence-too-long regression on GOV.UK plain-prose anchor: {fired:?}"
+    );
+    assert!(
+        !fired.contains(&"lexicon.weasel-words".to_string()),
+        "weasel-words regression on GOV.UK plain-prose anchor: {fired:?}"
+    );
+    assert!(
+        !fired.contains(&"syntax.passive-voice".to_string()),
+        "passive-voice regression on GOV.UK plain-prose anchor: {fired:?}"
+    );
+}
+
+#[test]
+fn corpus_public_plainlanguage_intro_flags_dense_prose() {
+    // plainlanguage.gov's own intro has two deliberately long opening
+    // sentences. The `public` profile must flag `structure.sentence-too-long`;
+    // losing this signal would mean the sentence-length detector silently
+    // stopped catching a known-dense real-world passage.
+    let fired = rule_ids_fired(
+        &corpus_path("public/en/plainlanguage-gov-intro.md"),
+        "public",
+    );
+    assert!(
+        fired.iter().any(|r| r == "structure.sentence-too-long"),
+        "expected sentence-too-long on plainlanguage.gov intro: {fired:?}"
+    );
+
+    // Under `falc` (stricter) passive-voice must also fire — the Plain
+    // Writing Act sentence "content for the public is written for its
+    // specific audience" is a canonical passive construction.
+    let fired_falc = rule_ids_fired(&corpus_path("public/en/plainlanguage-gov-intro.md"), "falc");
+    assert!(
+        fired_falc.iter().any(|r| r == "syntax.passive-voice"),
+        "expected passive-voice under falc: {fired_falc:?}"
+    );
+}
+
+#[test]
+fn corpus_public_vikidia_fr_stays_clean_under_falc() {
+    // Vikidia targets 8–13-year-olds; the "Accueil" passage should pass
+    // even the strictest `falc` profile without any `structure.sentence-too-long`
+    // diagnostic. This is the tightest FR regression anchor we can pin.
+    let fired = rule_ids_fired(&corpus_path("public/fr/vikidia-accueil.md"), "falc");
+    assert!(
+        !fired.contains(&"structure.sentence-too-long".to_string()),
+        "sentence-too-long regression on Vikidia FR anchor under falc: {fired:?}"
+    );
+}
