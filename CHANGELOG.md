@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Four more FR per-rule pages (F25 progress, 1/25 → 5/25).**
+  `structure.excessive-commas`, `structure.long-enumeration`,
+  `lexicon.weasel-words`, `lexicon.unexplained-abbreviation` land
+  under `docs/src/fr/rules/` using the locked template from
+  `sentence-too-long` (sections `Ce que cette règle signale` /
+  `En bref` / `Détection` / `Paramètres` / `Exemples` /
+  `Faux positifs connus` / `Neutralisation` / `Voir aussi`,
+  FR-first example ordering when bilingual examples exist).
+  `SUMMARY.md` and `fr/rules/index.md` now link these pages
+  locally instead of pointing back to the EN versions. Guides
+  (`suppression`, `configuration`, `scoring`) still cross-link
+  via `../../` to EN until FR guide translations land. Remaining:
+  20 per-rule FR pages + FR guide translations.
+
 ## [0.2.2] — 2026-04-23
 
 ### Added
