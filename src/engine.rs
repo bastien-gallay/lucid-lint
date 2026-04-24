@@ -92,13 +92,11 @@ impl Engine {
     /// not be re-added.
     #[must_use]
     pub fn with_readability_formula(mut self, formula: FormulaChoice) -> Self {
-        for rule in &mut self.rules {
-            if rule.id() == ReadabilityScore::ID {
-                let config = score::Config::for_profile(self.profile).with_formula(formula);
-                *rule = Box::new(ReadabilityScore::new(config));
-                break;
-            }
-        }
+        let config = score::Config::for_profile(self.profile).with_formula(formula);
+        self.replace_rule(
+            ReadabilityScore::ID,
+            Box::new(ReadabilityScore::new(config)),
+        );
         self
     }
 
@@ -115,14 +113,12 @@ impl Engine {
         if extra.is_empty() {
             return self;
         }
-        for rule in &mut self.rules {
-            if rule.id() == UnexplainedAbbreviation::ID {
-                let config = unexplained_abbreviation::Config::for_profile(self.profile)
-                    .with_extra_whitelist(extra);
-                *rule = Box::new(UnexplainedAbbreviation::new(config));
-                break;
-            }
-        }
+        let config =
+            unexplained_abbreviation::Config::for_profile(self.profile).with_extra_whitelist(extra);
+        self.replace_rule(
+            UnexplainedAbbreviation::ID,
+            Box::new(UnexplainedAbbreviation::new(config)),
+        );
         self
     }
 
@@ -132,15 +128,21 @@ impl Engine {
     /// rule (e.g., it was filtered out), this is a no-op.
     #[must_use]
     pub fn with_excessive_commas_max_commas(mut self, max_commas: NonZeroU32) -> Self {
-        for rule in &mut self.rules {
-            if rule.id() == ExcessiveCommas::ID {
-                let config =
-                    excessive_commas::Config::for_profile(self.profile).with_max_commas(max_commas);
-                *rule = Box::new(ExcessiveCommas::new(config));
-                break;
-            }
-        }
+        let config =
+            excessive_commas::Config::for_profile(self.profile).with_max_commas(max_commas);
+        self.replace_rule(ExcessiveCommas::ID, Box::new(ExcessiveCommas::new(config)));
         self
+    }
+
+    /// Replace the rule matching `id` in-place with `replacement`, preserving
+    /// its position so rule-discovery order (and therefore diagnostic order)
+    /// stays stable. No-op when no rule with that id is present — this is the
+    /// contract the public `with_*` helpers rely on when the target rule has
+    /// been filtered out by condition tags.
+    fn replace_rule(&mut self, id: &str, replacement: Box<dyn Rule>) {
+        if let Some(slot) = self.rules.iter_mut().find(|r| r.id() == id) {
+            *slot = replacement;
+        }
     }
 
     /// The profile this engine was configured with.
@@ -334,6 +336,63 @@ mod tests {
     fn engine_profile_accessor() {
         let engine = Engine::with_profile(Profile::Falc);
         assert_eq!(engine.profile(), Profile::Falc);
+    }
+
+    #[test]
+    fn with_excessive_commas_max_commas_overrides_threshold() {
+        let base = Engine::with_profile(Profile::Public);
+        let tightened = Engine::with_profile(Profile::Public)
+            .with_excessive_commas_max_commas(NonZeroU32::new(1).unwrap());
+        let text = "Alpha, beta, gamma are three items in a short list.";
+        let base_hits = diags_for_rule(
+            &base.lint_str(text).diagnostics,
+            "structure.excessive-commas",
+        );
+        let tight_hits = diags_for_rule(
+            &tightened.lint_str(text).diagnostics,
+            "structure.excessive-commas",
+        );
+        assert!(
+            tight_hits > base_hits,
+            "tightened max_commas=1 should flag more than the Public baseline (base={base_hits}, tight={tight_hits})"
+        );
+    }
+
+    #[test]
+    fn with_unexplained_whitelist_suppresses_extra_acronym() {
+        let text = "WCAG is the relevant reference for accessibility compliance.";
+        let rule_id = "lexicon.unexplained-abbreviation";
+        let base = Engine::with_profile(Profile::Public);
+        let base_hits = diags_for_rule(&base.lint_str(text).diagnostics, rule_id);
+        if base_hits == 0 {
+            // The Public baseline already whitelists `WCAG`; pick any other
+            // acronym the rule would flag and re-run.
+            let text2 = "XYZZY governs that procedure as a policy baseline.";
+            let extended = Engine::with_profile(Profile::Public)
+                .with_unexplained_whitelist(vec!["XYZZY".into()]);
+            let baseline = Engine::with_profile(Profile::Public);
+            assert!(
+                diags_for_rule(&baseline.lint_str(text2).diagnostics, rule_id)
+                    > diags_for_rule(&extended.lint_str(text2).diagnostics, rule_id),
+                "extra whitelist entry should suppress at least one diagnostic"
+            );
+        } else {
+            let extended = Engine::with_profile(Profile::Public)
+                .with_unexplained_whitelist(vec!["WCAG".into()]);
+            let extended_hits = diags_for_rule(&extended.lint_str(text).diagnostics, rule_id);
+            assert!(extended_hits < base_hits);
+        }
+    }
+
+    #[test]
+    fn override_helpers_are_no_ops_when_rule_filtered_out() {
+        // An engine built with an empty rule set accepts the override helpers
+        // silently — contract documented on `replace_rule`.
+        let engine = Engine::with_rules(Profile::Public, Vec::new())
+            .with_readability_formula(FormulaChoice::Auto)
+            .with_unexplained_whitelist(vec!["NASA".into()])
+            .with_excessive_commas_max_commas(NonZeroU32::new(1).unwrap());
+        assert!(engine.lint_str("Anything.").diagnostics.is_empty());
     }
 
     #[test]
