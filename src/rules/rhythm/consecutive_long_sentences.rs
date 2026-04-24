@@ -92,9 +92,10 @@ impl Rule for ConsecutiveLongSentences {
                         already_flagged = false;
                     }
                     streak_len += 1;
-                    if streak_len > max && !already_flagged {
-                        let first =
-                            &sentences[streak_start.expect("streak_start set on first long")];
+                    if let Some(start_idx) =
+                        streak_start.filter(|_| streak_len > max && !already_flagged)
+                    {
+                        let first = &sentences[start_idx];
                         diagnostics.push(build_diagnostic(
                             &document.source,
                             first.line,

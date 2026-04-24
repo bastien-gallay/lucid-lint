@@ -179,9 +179,11 @@ fn find_caps_runs(text: &str, min_run: u32) -> Vec<Run> {
 
 fn flush_run(current: &mut Vec<(&str, u32, u32)>, min_run: u32, runs: &mut Vec<Run>) {
     let count = u32::try_from(current.len()).unwrap_or(u32::MAX);
-    if count >= min_run {
-        let first = current.first().copied().expect("len >= min_run >= 1");
-        let last = current.last().copied().expect("len >= min_run >= 1");
+    if let (true, Some(first), Some(last)) = (
+        count >= min_run,
+        current.first().copied(),
+        current.last().copied(),
+    ) {
         let span_text = format!(
             "{}…{}",
             first.0,

@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Strict validation of the `unexplained-abbreviation` whitelist at
+  config-load.** `[rules."lexicon.unexplained-abbreviation"].whitelist`
+  entries must now be non-empty strings of ASCII uppercase letters and
+  digits (e.g. `"WCAG"`, `"HTML5"`). The detector only ever emits
+  uppercase+digit acronym tokens, so previously a typo like `"wcag"` or
+  `"Wcag"` would silently never match. The error message names the
+  offending entry + its index so the fix is one grep away. Digits
+  inside entries remain supported (`"WCAG21"`).
 - **Parser / engine micro-benchmarks (`benches/parser_hotpath.rs`).**
   New `criterion` dev-dep and `just bench` recipe cover
   `split_sentences`, `parse_markdown`, and `Engine::lint_str` over two
@@ -49,6 +57,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`suppression`, `configuration`, `scoring`) still cross-link
   via `../../` to EN until FR guide translations land. Remaining:
   20 per-rule FR pages + FR guide translations.
+
+### Changed
+
+- **Two library-code `.expect()` calls dropped.**
+  `consecutive-long-sentences` and `all-caps-shouting` now use
+  idiomatic `if let` / `Option::filter` patterns instead of panic
+  paths. The invariants were infallible by construction but the panic
+  paths were cognitive overhead per AGENTS.md ("No `unwrap()` /
+  `expect()` in library code"). The remaining
+  `NonZeroU32::new(LITERAL).expect` sites stay — they collapse to
+  compile-time-checkable invariants.
+- **`scoring::compute` category-cost cast now asserts the clamp
+  invariant in debug builds.** Replaces the bare `#[allow(
+  clippy::cast_possible_truncation, …)]` with an explicit safety
+  contract comment plus `debug_assert!(normalized.is_finite() &&
+  (0.0..=cap).contains(&normalized))`, so any future edit that
+  loosens the `.min(cap).max(0.0)` clamp trips tests before it can
+  produce silently-wrong scores.
 
 ## [0.2.2] — 2026-04-23
 

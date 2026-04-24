@@ -183,6 +183,19 @@ impl Config {
                     entry.type_str()
                 )));
             };
+            // The detector only matches runs of ASCII uppercase + digits
+            // (see `is_acronym_byte` in the rule). Any other shape would
+            // silently never match — fail loud at load time instead.
+            if s.is_empty()
+                || !s
+                    .bytes()
+                    .all(|b| b.is_ascii_uppercase() || b.is_ascii_digit())
+            {
+                return Err(ConfigError::Parse(format!(
+                    "[rules.\"lexicon.unexplained-abbreviation\"].whitelist[{idx}] = {s:?} must be \
+                     a non-empty string of ASCII uppercase letters and digits (e.g. \"WCAG\", \"ARIA\", \"LLM\")"
+                )));
+            }
             out.push(s.to_string());
         }
         Ok(out)
@@ -618,6 +631,70 @@ whitelist = ["WCAG", 42]
             config.unexplained_abbreviation_whitelist(),
             Err(ConfigError::Parse(_))
         ));
+    }
+
+    #[test]
+    fn unexplained_whitelist_rejects_lowercase_entry() {
+        // The detector only matches runs of ASCII uppercase + digits, so a
+        // lowercase entry would silently never fire. Fail loud at load time.
+        let config = Config::from_toml_str(
+            r#"
+[rules."lexicon.unexplained-abbreviation"]
+whitelist = ["wcag"]
+"#,
+        )
+        .unwrap();
+        let err = config.unexplained_abbreviation_whitelist().unwrap_err();
+        assert!(matches!(err, ConfigError::Parse(_)));
+        let msg = err.to_string();
+        assert!(
+            msg.contains("\"wcag\""),
+            "error should name the offending entry, got: {msg}"
+        );
+    }
+
+    #[test]
+    fn unexplained_whitelist_rejects_mixed_case_entry() {
+        let config = Config::from_toml_str(
+            r#"
+[rules."lexicon.unexplained-abbreviation"]
+whitelist = ["Wcag"]
+"#,
+        )
+        .unwrap();
+        assert!(matches!(
+            config.unexplained_abbreviation_whitelist(),
+            Err(ConfigError::Parse(_))
+        ));
+    }
+
+    #[test]
+    fn unexplained_whitelist_rejects_empty_string_entry() {
+        let config = Config::from_toml_str(
+            r#"
+[rules."lexicon.unexplained-abbreviation"]
+whitelist = ["WCAG", ""]
+"#,
+        )
+        .unwrap();
+        assert!(matches!(
+            config.unexplained_abbreviation_whitelist(),
+            Err(ConfigError::Parse(_))
+        ));
+    }
+
+    #[test]
+    fn unexplained_whitelist_accepts_digits_in_entries() {
+        // `WCAG21`, `HTML5`, `UTF8` are valid — the detector accepts digits.
+        let config = Config::from_toml_str(
+            r#"
+[rules."lexicon.unexplained-abbreviation"]
+whitelist = ["WCAG21", "HTML5", "UTF8"]
+"#,
+        )
+        .unwrap();
+        let list = config.unexplained_abbreviation_whitelist().unwrap();
+        assert_eq!(list, vec!["WCAG21", "HTML5", "UTF8"]);
     }
 
     #[test]
