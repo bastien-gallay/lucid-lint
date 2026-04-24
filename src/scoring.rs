@@ -196,9 +196,17 @@ pub fn compute(diagnostics: &[Diagnostic], word_count: u32, config: &ScoringConf
 
     let per_category: [CategoryScore; 5] = core::array::from_fn(|i| {
         let normalized = (costs[i] / density_divisor).min(cap).max(0.0);
-        // Normalized is bounded to `[0, category_cap]` above, so casting the
-        // rounded value to u32 neither truncates nor loses a sign. Round
-        // half-up for the human-facing score.
+        // Safety contract for the `as u32` below: `normalized` is clamped to
+        // `[0.0, cap]` on the line above, and `cap = f64::from(category_cap)`
+        // with `category_cap: u32`. So `normalized.round()` is a finite
+        // non-negative `f64` ≤ `u32::MAX`, and the cast neither truncates nor
+        // loses a sign. If a future edit drops the `.min(cap).max(0.0)` clamp
+        // the debug_assert trips; the clippy allows only mask the lint, not a
+        // real bug.
+        debug_assert!(
+            normalized.is_finite() && (0.0..=cap).contains(&normalized),
+            "scoring invariant violated: normalized={normalized} outside [0, {cap}]",
+        );
         #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
         let cost_u32 = normalized.round() as u32;
         let score_value = max.saturating_sub(cost_u32);
