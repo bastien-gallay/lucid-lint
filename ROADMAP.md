@@ -97,7 +97,7 @@ excluded.
 | Ecosystem interop | — | F76 | — | F76 | — |
 | Plugins / NLP / LLM | — | F75 (Should) | F16, F75 | F75 | F16 |
 | Developer experience | — | F88 (narrow `--fix`) | LSP server | F73-dx (`--compare`), F79 | F12 |
-| Research track | — | — | F74, F98 (user feedback) | — | F64, F70, F74 |
+| Research track | — | — | F74, F101 (user feedback) | — | F64, F70, F74 |
 
 ### Cadence and gating
 
@@ -627,7 +627,7 @@ be true in ~6 months if 0.2 and 0.3 land cleanly".
 | F74 — rule-discovery corpus mining | Student / intern resource available; separate research track |
 | LSP server | Editor demand visible (Cursor / VSCode issues); would change the deployment story |
 | F70 / F64 — research-track rules | Only if someone codes them for fun |
-| **F98 — top 3 items from first-10-external-users feedback (TBD)** | 0.2.0 ships and ≥ 10 non-maintainer users exist — placeholder reserved so the horizon isn't 100 % maintainer bets |
+| **F101 — top 3 items from first-10-external-users feedback (TBD)** | 0.2.0 ships and ≥ 10 non-maintainer users exist — placeholder reserved so the horizon isn't 100 % maintainer bets (renumbered from F98 post-collision with stream-2 cargo-mutants) |
 
 **Deliberately off the 0.4 list:**
 
