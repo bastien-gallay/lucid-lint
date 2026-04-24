@@ -67,6 +67,10 @@ snapshot-accept:
 coverage:
     cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
 
+# Run the parser/engine hot-path micro-benchmarks (criterion).
+bench:
+    cargo bench --bench parser_hotpath
+
 # Coverage: summary only
 coverage-summary:
     cargo llvm-cov --all-features --workspace --summary-only

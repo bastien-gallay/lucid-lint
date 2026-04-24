@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Parser / engine micro-benchmarks (`benches/parser_hotpath.rs`).**
+  New `criterion` dev-dep and `just bench` recipe cover
+  `split_sentences`, `parse_markdown`, and `Engine::lint_str` over two
+  real tracked corpus files. Gives us a defensible baseline before
+  touching hot-path code — the first exploratory rewrite of the
+  `split_sentences` buffer-reuse pattern came back 48% slower, so the
+  harness already earned its keep by catching the regression before it
+  shipped. Parked the counter-finding on `ROADMAP.md` F93 (tokenizer
+  `Vec<char>` alloc, measured at ~5% ceiling — deferred).
+- **`engine::replace_rule` helper (internal).** The three `with_*`
+  config-override builders
+  (`with_readability_formula`, `with_unexplained_whitelist`,
+  `with_excessive_commas_max_commas`) collapsed from three duplicated
+  find-and-replace loops into a single named helper. No behaviour
+  change; three new regression tests lock in the tightening path,
+  whitelist path, and filtered-out no-op contract.
 - **Real-world corpus regression anchors.** Three short passages
   lifted verbatim from `examples/public/` land under
   `tests/corpus/public/`: a GOV.UK plain-language exemplar
