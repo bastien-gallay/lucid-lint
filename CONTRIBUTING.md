@@ -41,7 +41,7 @@ just setup
 
 <!-- lucid-lint disable-next-line structure.excessive-commas -->
 
-`just setup` installs required Cargo components (`rustfmt`, `clippy`, `cargo-insta`, `cargo-llvm-cov`), installs pre-commit hooks, and runs a sanity check.
+`just setup` installs required Cargo components (`rustfmt`, `clippy`, `cargo-insta`, `cargo-llvm-cov`, `agnix-cli`), installs pre-commit hooks, and runs a sanity check. `agnix` validates `AGENTS.md` / `.agent/` / `CLAUDE.md` and runs as part of `just check` via the `lint-agents` recipe; config lives in `.agnix.toml`.
 
 ### Common commands
 

@@ -17,7 +17,7 @@ setup:
     @echo "Installing Rust components..."
     rustup component add rustfmt clippy llvm-tools-preview
     @echo "Installing cargo tools..."
-    cargo install --locked cargo-insta cargo-llvm-cov cargo-dist mdbook || true
+    cargo install --locked cargo-insta cargo-llvm-cov cargo-dist mdbook agnix-cli || true
     @echo "Installing pre-commit hooks..."
     command -v pre-commit >/dev/null && pre-commit install || echo "pre-commit not found; skipping hook install"
     @echo "Running sanity check..."
@@ -32,7 +32,14 @@ check-quick: fmt-check lint test
 
 # Full quality gate: format, lint, test, coverage, docs build
 [group('check')]
-check: fmt-check lint test coverage-summary docs-build
+check: fmt-check lint test coverage-summary docs-build lint-agents
+
+# Validate AGENTS.md / .agent/ / CLAUDE.md against agnix rules.
+# Requires `cargo install agnix-cli`. Config: .agnix.toml.
+[group('check')]
+lint-agents:
+    @command -v agnix >/dev/null || { echo "agnix not installed; run: cargo install agnix-cli"; exit 1; }
+    agnix --strict .
 
 # ── Tests ────────────────────────────────────────────────
 

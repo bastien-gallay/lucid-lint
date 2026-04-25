@@ -1,99 +1,32 @@
 # Agent context
 
-This file captures project-specific context useful for coding agents working on `lucid-lint`.
+This file captures project state and reference pointers useful for coding agents working on `lucid-lint`. The directives live in [AGENTS.md](../AGENTS.md) at the repository root — read it first.
 
-The canonical entry point is [AGENTS.md](../AGENTS.md) at the repository root. This file adds project state and conventions that might not be obvious from the main docs.
+## Current state (v0.2)
 
-## Current state (v0.2 — scoring)
+Bootstrapped April 2026 with 17 rules in v0.1. The v0.2 cycle landed the hybrid scoring model (F14): `Diagnostic.weight`, `--min-score` CLI gate, `[scoring]` config table, JSON schema `version = 2`, fixed 5-variant taxonomy.
 
-The project was bootstrapped in April 2026 with 17 rules in v0.1. The
-v0.2 cycle landed the hybrid scoring model (F14):
+For shipped vs in-flight detail, see [CHANGELOG.md](../CHANGELOG.md) and [ROADMAP.md](../ROADMAP.md).
 
-- Rust-only core, 17 rules, Markdown + plain text + stdin inputs.
-- Bilingual EN/FR from day one.
-- Deterministic rules only (LLM-based rules remain a future v0.3 plugin).
-- **v0.2 additions**: hybrid scoring model (`X/max` global + 5 category
-  sub-scores), `Diagnostic.weight` field, `--min-score` CLI gate,
-  `[scoring]` config table, category taxonomy remapped to
-  `Structure · Rhythm · Lexicon · Syntax · Readability`.
-- Output is still linter-style *and* now scored; the JSON schema is at
-  `version = 2`.
+Reference rule implementation: `sentence-too-long`. Reference cross-cutting module: `src/scoring.rs`. The `Diagnostic` struct lives in `src/diagnostic.rs` — read the source rather than restating it.
 
-The reference rule implementation is `sentence-too-long`. The reference
-cross-cutting module is `src/scoring.rs`.
+## Backlog
 
-## Backlog and implementation order
-
-The authoritative v0.1 backlog (rules + cross-cutting features, with current status) lives in [ROADMAP.md — v0.1 — In progress](../ROADMAP.md#v01--in-progress). Consult it before picking up work, and update the checkbox when a rule lands.
+The authoritative v0.1 backlog (rules + cross-cutting features, with current status) lives in [ROADMAP.md — v0.1 — In progress](../ROADMAP.md#v01--in-progress). Update the checkbox when a rule lands.
 
 ## Design context
 
-Brand voice, palette, typography shortlist, audience, and the WCAG AAA accessibility bar live in [.impeccable.md](../.impeccable.md) at the repo root. Consult it before any frontend, mdBook, branding, or marketing-surface work.
+Brand voice, palette, typography shortlist, audience, and the WCAG AAA accessibility bar live in [.impeccable.md](../.impeccable.md). Consult before any frontend, mdBook, branding, or marketing-surface work.
 
-## Design decisions to respect
+## Taxonomy (do not regress)
 
-See also [ROADMAP.md](../ROADMAP.md) section "Design decisions from v0.1 session".
-
-### Diagnostic struct (v0.2)
-
-```rust
-pub struct Diagnostic {
-    pub rule_id: String,
-    pub severity: Severity,
-    pub location: Location,
-    pub section: Option<String>,
-    pub message: String,
-    pub weight: u32,   // v0.2: seeded from scoring::default_weight_for(rule_id)
-}
-```
-
-- `category` is NOT stored — derivable from `rule_id` via `Category::for_rule`.
-- `weight` IS stored (v0.2): so that `with_weight()` overrides and user
-  config overrides propagate without a second lookup. Rules almost never
-  need to override; the default table is tuned centrally in `scoring.rs`.
-- `suggestion` is NOT stored. Still deferred past v0.2.
-- `section` IS stored because recomputing it requires re-parsing the document.
-
-The v0.2 category taxonomy is **fixed at 5 variants**:
-`Structure · Rhythm · Lexicon · Syntax · Readability`. The pre-v0.2
-`Length`, `Lexical`, `Style`, `Global` variants are gone. Do not
-re-introduce them.
-
-### No premature abstraction
-
-- No trait for a single implementation.
-- No plugin system yet (v0.3 feature).
-- Parser is concrete `MarkdownParser` until a second format needs adding.
-
-### Deterministic core
-
-- No network calls.
-- No LLM calls.
-- No environment-dependent behavior.
-
-### Bilingual from day one
-
-- Language detection in `src/language/detect.rs`.
-- Language-specific data in `src/language/{en,fr}/`.
-- Every language-dependent rule takes a `Language` parameter.
+The v0.2 category taxonomy is fixed at 5 variants: `Structure · Rhythm · Lexicon · Syntax · Readability`. The pre-v0.2 `Length`, `Lexical`, `Style`, `Global` variants are gone — do not re-introduce them. `Diagnostic.category` is not stored; derive via `Category::for_rule`.
 
 ## Coding patterns
 
-### Rule implementation pattern
-
-Each rule implements the `Rule` trait and lives in its own file under `src/rules/`. See `src/rules/sentence_too_long.rs` for the canonical template.
-
-### Testing pattern
-
-Each rule file includes:
-
-- `#[cfg(test)] mod tests` with unit tests
-- A snapshot test in the same module
-- Corpus fixtures referenced from `tests/corpus/`
-
-### Configuration pattern
-
-Rule configuration uses `serde` with profile-based defaults. The user's `lucid-lint.toml` overrides the profile defaults per rule.
+- **Rule implementation** — each rule implements `Rule` and lives in its own file under `src/rules/`. Canonical template: `src/rules/structure/sentence_too_long.rs`.
+- **Testing** — per rule: `#[cfg(test)] mod tests` with unit tests, an `insta` snapshot, corpus fixtures referenced from `tests/corpus/{en,fr}/`.
+- **Configuration** — `serde` with profile-based defaults. `lucid-lint.toml` overrides profile defaults per rule.
 
 ## Useful commands during development
 
@@ -106,15 +39,4 @@ just texts-plan                     # Preview the texts.yaml → examples/ routi
 just texts                          # Fetch + clean + convert text fixtures
 ```
 
-The `texts*` recipes pull the sources listed in `examples/texts.yaml`
-(filtered to `markdownable >= 3`) into `examples/public/` (safe to
-commit) or `examples/local/` (gitignored). See
-[`scripts/README.md`](../scripts/README.md) for details.
-
-## What NOT to do
-
-- Do not add `unwrap()` or `expect()` in library code.
-- Do not use regex to parse Markdown (use `pulldown-cmark`).
-- Do not split sentences on `.` alone (use the tokenizer).
-- Do not hardcode language (accept `Language` as parameter).
-- Do not store derivable data in structs.
+The `texts*` recipes pull the sources listed in `examples/texts.yaml` (filtered to `markdownable >= 3`) into `examples/public/` (safe to commit) or `examples/local/` (gitignored). See [`scripts/README.md`](../scripts/README.md) for details.
