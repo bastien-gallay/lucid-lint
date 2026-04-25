@@ -31,18 +31,31 @@ Walk the sentence between strong-punctuation breaks; count consecutive subordina
 - 🇬🇧 Relative pronouns: *which, that, who, whom, whose*
 - 🇬🇧 Subordinators: *because, although, while, since, whereas, unless, until*
 
-## Example
+## Examples
+
+Each highlighted token is one subordinator counted by the rule. Four in a row triggers the `dev-doc` threshold (3); two in a row triggers `public` and `falc`.
 
 Flagged (FR):
 
 <!-- lucid-lint disable-next-line structure.deep-subordination -->
 <!-- lucid-lint disable-next-line syntax.passive-voice -->
 
-> Le document qui a été rédigé par l'équipe que nous avons constituée et qui couvre les points que nous avions discutés…
+> Le document <span class="lucid-idea" data-idea="1">qui</span> a été rédigé par l'équipe <span class="lucid-idea" data-idea="2">que</span> nous avons constituée et <span class="lucid-idea" data-idea="3">qui</span> couvre les points <span class="lucid-idea" data-idea="4">que</span> nous avions discutés…
 
-Not flagged:
+Flagged (EN):
+
+<!-- lucid-lint disable-next-line structure.deep-subordination -->
+<!-- lucid-lint disable-next-line syntax.passive-voice -->
+
+> The report <span class="lucid-idea" data-idea="1">that</span> was drafted by the team <span class="lucid-idea" data-idea="2">which</span> we formed last month and <span class="lucid-idea" data-idea="3">which</span> covers the topics <span class="lucid-idea" data-idea="4">that</span> we had discussed…
+
+Not flagged (enumeration form, recognised by the detector):
 
 > Les pronoms relatifs en français sont : qui, que, dont, où.
+
+And the matching English form:
+
+> The English relative pronouns are: which, that, who, whom, whose.
 
 ## Suppression
 

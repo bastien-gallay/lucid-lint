@@ -17,7 +17,11 @@ Source lines wider than the per-profile ceiling. WCAG 1.4.8 (AAA) caps rendered 
 
 ## Detection
 
-Per paragraph, scan each line's width in grapheme clusters and report lines above `max_line_length`. Fenced and indented code blocks are excluded by the Markdown parser; `paragraph.text` retains hard breaks from the source (Markdown soft-break reflow means a markdown-source paragraph wrapped as the author intended counts as one reflowed line for this rule — plain-text and stdin inputs measure the raw source lines directly).
+Per paragraph, scan each line's width in grapheme clusters and report lines above `max_line_length`.
+
+Fenced and indented code blocks are excluded upstream by the Markdown parser.
+
+`paragraph.text` retains hard breaks from the source. Markdown soft-break reflow means a markdown-source paragraph wrapped as the author intended counts as one reflowed line for this rule. Plain-text and stdin inputs measure the raw source lines directly.
 
 ## Parameters
 

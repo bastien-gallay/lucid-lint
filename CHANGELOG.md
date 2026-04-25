@@ -57,6 +57,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`suppression`, `configuration`, `scoring`) still cross-link
   via `../../` to EN until FR guide translations land. Remaining:
   20 per-rule FR pages + FR guide translations.
+- **Six more FR per-rule pages — `structure` category 100 %
+  FR-complete (F25 progress, 5/25 → 11/25).**
+  `structure.paragraph-too-long`, `structure.line-length-wide`,
+  `structure.mixed-numeric-format`, `structure.deeply-nested-lists`,
+  `structure.heading-jump`, `structure.deep-subordination` all land
+  under `docs/src/fr/rules/` against the same locked template. The
+  whole `structure` category is now FR-complete (9 / 9 rules
+  translated). `SUMMARY.md` and `fr/rules/index.md` rewired to point
+  at the local FR versions for the six new pages. Remaining: 14
+  per-rule FR pages (rhythm 2, lexicon 6, syntax 5, readability 1)
+  plus the FR guide translations.
 
 ### Changed
 

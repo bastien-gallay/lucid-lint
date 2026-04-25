@@ -58,7 +58,7 @@ the authoritative entry in its topic section.
 |---|---|---|
 | F15 | Architecture | Project-level scoring roll-up (per-file + summary) |
 | F22 | Rules refinement | Parenthesised-list slice shipped; next slice deferred to 0.3 |
-| F25 | Docs — bilingual | FR per-rule pages (5 / 25 shipped) |
+| F25 | Docs — bilingual | FR per-rule pages (11 / 25 shipped — `structure` category 100 % FR-complete) |
 | F30 | Docs — content | Rule-mention linking pass |
 | F34 | Docs — reading prefs | Responsive / mobile adaptation |
 | F35b | Docs — reading prefs | Drop `role="radiogroup"` on reading chips (P2 a11y) |
@@ -99,7 +99,7 @@ excluded.
 | Ecosystem interop | — | F76 | — | F76 | — |
 | Plugins / NLP / LLM | — | F75 (Should) | F16, F75 | F75 | F16 |
 | Developer experience | — | F88 (narrow `--fix`) | LSP server | F73-dx (`--compare`), F79 | F12 |
-| Research track | — | — | F74, F98 (user feedback) | — | F64, F70, F74 |
+| Research track | — | — | F74, F101 (user feedback) | — | F64, F70, F74 |
 
 ### Cadence and gating
 
@@ -221,7 +221,7 @@ routing decision.
 
 | ID | Topic | Item |
 |---|---|---|
-| F25 | Docs — bilingual | Per-rule FR pages + guides (5 / 25 shipped) |
+| F25 | Docs — bilingual | Per-rule FR pages + guides (11 / 25 shipped — `structure` category 100 % FR-complete) |
 | F34 | Docs — reading prefs | Responsive / mobile adaptation |
 | F35b | Docs — reading prefs | Drop `role="radiogroup"` on reading chips (P2 a11y) |
 | F35c | Docs — reading prefs | Reduced-motion colour-tint preservation (P2 a11y) |
@@ -409,7 +409,7 @@ below close the remaining rough edges.
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F25 | French mirror of the mdBook docs (`/fr/` tree). First slice shipped 2026-04-22: translated `introduction` + `rules-index`, short FR `accessibility` and `roadmap` pages pointing at EN, SUMMARY sidebar entry. Second slice shipped post-0.2.1 (2026-04-23): `fr/rules-index.md` renamed to `fr/rules/index.md` for EN-parity, first FR per-rule page landed (`structure.sentence-too-long`), parallel-version sidebar and EN↔FR deep-link toggle (F90 plan slot A, F92). Third slice shipped 2026-04-24: four more FR per-rule pages landed (`structure.excessive-commas`, `structure.long-enumeration`, `lexicon.weasel-words`, `lexicon.unexplained-abbreviation`), locked template honoured, `SUMMARY.md` + `fr/rules/index.md` rewired to point at the local FR versions. Remaining: 20 per-rule FR pages + FR guide translations. | 🟡 In progress | v0.1 docs `/shape` session, bilingual-equality prime directive |
+| F25 | French mirror of the mdBook docs (`/fr/` tree). First slice shipped 2026-04-22: translated `introduction` + `rules-index`, short FR `accessibility` and `roadmap` pages pointing at EN, SUMMARY sidebar entry. Second slice shipped post-0.2.1 (2026-04-23): `fr/rules-index.md` renamed to `fr/rules/index.md` for EN-parity, first FR per-rule page landed (`structure.sentence-too-long`), parallel-version sidebar and EN↔FR deep-link toggle (F90 plan slot A, F92). Third slice shipped 2026-04-24: four more FR per-rule pages landed (`structure.excessive-commas`, `structure.long-enumeration`, `lexicon.weasel-words`, `lexicon.unexplained-abbreviation`), locked template honoured, `SUMMARY.md` + `fr/rules/index.md` rewired to point at the local FR versions. Fourth slice shipped 2026-04-25: six more FR per-rule pages landed (`structure.paragraph-too-long`, `structure.line-length-wide`, `structure.mixed-numeric-format`, `structure.deeply-nested-lists`, `structure.heading-jump`, `structure.deep-subordination`), closing out the `structure` category (9 / 9 rules FR-complete). Remaining: 14 per-rule FR pages (rhythm 2, lexicon 6, syntax 5, readability 1) + FR guide translations. | 🟡 In progress | v0.1 docs `/shape` session, bilingual-equality prime directive |
 | F90 | Split `SUMMARY.md` per locale (EN + FR) via a small preprocessor. v0.2.1 ships the single-`SUMMARY.md` + CSS `:has()` locale-hiding approach (1.A); both language trees coexist in the built HTML and each viewer only sees theirs. A clean separation would maintain `SUMMARY.en.md` + `SUMMARY.fr.md` and stitch them at build. Benefit: smaller per-page sidebar payload; clearer authoring story; no `:has()` browser-support floor. Cost: build-time stitcher, tooling to keep the two files in pair-sync. File when the FR tree outgrows the hide-via-CSS approach. | 🟢 Speculative | 2026-04-23 FR per-rule pages session |
 | F91 | Multi-book mdBook layout (one book per locale). The truest "parallel version" — `/` redirects to `/en/`, `/fr/` is its own mdBook with its own theme inheritance. Benefit: each locale has its own table of contents, its own search index, its own navigation neighbour hints; no cross-locale bleed in any surface. Cost: biggest surgery — book.toml per locale, build orchestration, shared theme / asset de-duplication, sitemap updates, redirects. Revisit only if F90 isn't enough. | 🟢 Speculative | 2026-04-23 FR per-rule pages session |
 | F92 | ✅ Shipped post-0.2.1 (2026-04-23) — `scripts/sync_lang_counterparts.py` walks `docs/book/**/*.html` after `mdbook build` and rewrites both `hreflang="en"` and `hreflang="fr"` anchors so the lang-switch deep-links to the matching page (e.g. `/fr/rules/sentence-too-long.html` ↔ `/rules/sentence-too-long.html`). Wired into `just docs-build`, the Deploy-docs workflow, and a new `just docs-lang-check` CI gate that runs with `--check` and fails on orphaned FR pages (FR without EN counterpart). The invariant is asymmetric by design: EN is canonical, FR is a translation layer — untranslated EN pages are informational and tracked as F25, not gated. No front-matter flag yet; add a `counterpart: none` flag only when a truly asymmetric page appears. | — | 2026-04-23 FR per-rule pages session, option 2.B |
@@ -629,7 +629,7 @@ be true in ~6 months if 0.2 and 0.3 land cleanly".
 | F74 — rule-discovery corpus mining | Student / intern resource available; separate research track |
 | LSP server | Editor demand visible (Cursor / VSCode issues); would change the deployment story |
 | F70 / F64 — research-track rules | Only if someone codes them for fun |
-| **F98 — top 3 items from first-10-external-users feedback (TBD)** | 0.2.0 ships and ≥ 10 non-maintainer users exist — placeholder reserved so the horizon isn't 100 % maintainer bets |
+| **F101 — top 3 items from first-10-external-users feedback (TBD)** | 0.2.0 ships and ≥ 10 non-maintainer users exist — placeholder reserved so the horizon isn't 100 % maintainer bets (renumbered from F98 post-collision with stream-2 cargo-mutants) |
 
 **Deliberately off the 0.4 list:**
 
