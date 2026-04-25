@@ -40,7 +40,7 @@ need to answer "what's next?" or "what's the 0.3 shape?" in a glance.
 | v0.2.0 | ✅ Released 2026-04-22 | Yes (rule-id harmonisation) | Hybrid scoring (F14), SARIF (F32), condition tags (F71/F72), 8 new rules (25 total), F10 EN/FR auto-formula |
 | v0.2.1 | ✅ Released 2026-04-23 | No | Localhost 404.html fix, 3rd per-rule TOML override, fixtures pipeline, TTY GIFs, v0.1/v0.2 prose sweep |
 | v0.2.2 | ✅ Released 2026-04-23 | No | FR `syntax.nested-negation` pair-based counting |
-| **v0.2.x** | 🚧 **In progress** | No | FR per-rule pages (F25), responsive (F34), P2 a11y (F35b/c), F84 part 2, perf/hygiene (F93–F96), F15 project roll-up |
+| **v0.2.x** | 🚧 **In progress** | No | FR per-rule pages (F25), responsive (F34), P2 a11y (F35b/c), F84 part 2, perf (F102/F103 — F93/F94 refuted by profile 2026-04-25), hygiene (F95/F96), F15 project roll-up |
 | **v0.3** | ☐ Scoped | **Yes** | F22 v0.3 slice, F10 remainder, 5 condition-tag rules (F46/F49/F51/F53/F57) |
 | v0.4 | ☐ Horizon | Varies | LLM plugin (F16), alternative formats (F5–F8), feedback-driven items |
 
@@ -62,10 +62,13 @@ the authoritative entry in its topic section.
 | F35b | Docs — reading prefs | Drop `role="radiogroup"` on reading chips (P2 a11y) |
 | F35c | Docs — reading prefs | Reduced-motion colour-tint preservation (P2 a11y) |
 | F84 | Example-text fixtures | Part 2 — redistributable replacements |
-| F93 | Perf / hygiene | Parser hot-path allocations |
-| F94 | Perf / hygiene | Tokenizer `Vec<char>` per sentence |
 | F95 | Perf / hygiene | `.unwrap()` / `.expect(` audit |
 | F96 | Perf / hygiene | Document `scoring.rs:203` cast invariant |
+| F102 | Perf / hygiene | `detect_language` cost (7.5% of engine) |
+| F103 | Perf / hygiene | Per-rule `split_sentences` re-parse (8 rules) |
+| F104 | Docs — site | Per-category sidebar grouping in `SUMMARY.md` |
+| F105 | Docs — content | Consolidated references page (cited sources, one click) |
+| F107 | Docs — bilingual | FR rule labels (page subtitle + index gloss) |
 
 **v0.3 (breaking boundary):**
 
@@ -91,7 +94,7 @@ excluded.
 | Architecture / scoring | 1 (F15) | — | F38, F41 | F17, F38, F39, F40 | F41 |
 | Docs site (bilingual / content / theming / reading) | 4 (F25, F30, F34, F35b/c) | — | — | F36, F43, F44, F73, F89, F90/F91 | — |
 | Example-text fixtures | 1 (F84 part 2) | — | F85, F86 | F81, F82, F83 | F86 |
-| Performance / hygiene | 4 (F93–F96) | F97 | — | — | — |
+| Performance / hygiene | 4 (F95, F96, F102, F103) | F97 | — | — | — |
 | Suppression / config | — | F97 | — | F20, F21 | — |
 | Formats | — | — | F5–F8 (single pick) | F5–F8 | — |
 | Ecosystem interop | — | F76 | — | F76 | — |
@@ -224,10 +227,10 @@ routing decision.
 | F35b | Docs — reading prefs | Drop `role="radiogroup"` on reading chips (P2 a11y) |
 | F35c | Docs — reading prefs | Reduced-motion colour-tint preservation (P2 a11y) |
 | F84 part 2 | Example-text fixtures | Redistributable replacements for load-bearing slots |
-| F93 | Perf / hygiene | Parser hot-path allocations (bench before / after) |
-| F94 | Perf / hygiene | Tokenizer `Vec<char>` → `Peekable<CharIndices>` |
 | F95 | Perf / hygiene | `.unwrap()` / `.expect(` audit in library code |
 | F96 | Perf / hygiene | Document `scoring.rs:203` cast invariant |
+| F102 | Perf / hygiene | `detect_language` cost (7.5% of engine, samply 2026-04-25) |
+| F103 | Perf / hygiene | Per-rule `split_sentences` re-parse — move to parser phase, share across 8 rules |
 
 #### Should — ships as the next patch absorbs it
 
@@ -337,8 +340,10 @@ Findings filed from the 2026-04-24 code-review stream-2 pass on
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F93 | **Parser hot-path allocations.** `src/parser/mod.rs:43` (`Paragraph::new(trimmed.to_string(), …)`) and `src/parser/tokenizer.rs:~88/109` (`current.trim().to_string()` per sentence) allocate in hot loops. Confirm constructors accept `impl Into<String>`; pass the already-owned buffer where possible. Bench before / after — "fast" is a marketing claim per AGENTS.md, not a measurement. | 🔴 Next | 2026-04-24 code review (stream-2 #3) |
-| F94 | **Tokenizer `Vec<char>` per sentence.** `src/parser/tokenizer.rs:~60` collects a full `Vec<char>` for lookahead. Swap to `Peekable<CharIndices>` or a windowed iterator; also unblocks cleaner byte-offset tracking if ever needed. | 🔴 Next | 2026-04-24 code review (stream-2 #5) |
+| F93 | **Parser hot-path allocations.** `src/parser/mod.rs:43` (`Paragraph::new(trimmed.to_string(), …)`) and `src/parser/tokenizer.rs:~88/109` (`current.trim().to_string()` per sentence) allocate in hot loops. ~~Confirm constructors accept `impl Into<String>`; pass the already-owned buffer where possible.~~ **Refuted by samply profile 2026-04-25**: `Paragraph::new` does not appear in the profile; `to_string()` in tokenizer = 3 samples / 0.03%. Real hot spots are F102 (`detect_language` 7.5%) and F103 (per-rule `split_sentences`). | ✅ Done (refuted) | 2026-04-24 code review (stream-2 #3); refuted 2026-04-25 |
+| F94 | **Tokenizer `Vec<char>` per sentence.** `src/parser/tokenizer.rs:~60` collects a full `Vec<char>` for lookahead. ~~Swap to `Peekable<CharIndices>`.~~ **Refuted by samply profile 2026-04-25**: `Vec<char>` drop = 3 samples / 0.03% on the engine path. Yesterday's "low ceiling" note (~5%) was generous; real ceiling is ~0.1%. Skip. | ✅ Done (refuted) | 2026-04-24 code review (stream-2 #5); refuted 2026-04-25 |
+| F102 | **`detect_language` cost.** Single function takes 7.5% of `engine_lint_str/en_long_devdoc` (~230 µs / 3.1 ms) per samply profile 2026-04-25. Called once per `lint_str` (`src/engine.rs:185`), so caching is moot — the function itself needs work. Likely candidates: stop-words HashSet rebuild per call, redundant graphemes iteration, or O(n) where O(sample) suffices. Bench-gate against `stream2-start` baseline. | 🔴 Next | 2026-04-25 samply profile (stream-2) |
+| F103 | **Per-rule `split_sentences` re-parse.** 8 rules call `split_sentences(&paragraph.text, …)` directly: `consecutive_long_sentences`, `repetitive_connectors`, `excessive_nominalization`, `nested_negation`, `passive_voice`, `unclear_antecedent`, `conditional_stacking`, `paragraph_too_long`. Each repeats the same split per paragraph — exactly the AGENTS.md "do not re-parse per rule" anti-pattern. Move sentence splitting into the parser phase (cache on `Paragraph` or `Document`); rules consume `&[Sentence]`. Bench-gate. | 🔴 Next | 2026-04-25 samply profile (stream-2) |
 | F95 | **Audit `.unwrap()` / `.expect(` in library code.** Grep `src/rules/` and `src/parser/` (flagged candidate: `parser/tokenizer.rs:177`). Replace dictionary-lookup unwraps with `.contains()` / `.get().is_some_and()` per AGENTS.md. | 🔴 Next | 2026-04-24 code review (stream-2 #2) |
 | F96 | **Document the `scoring.rs:203` cast invariant.** Replace `#[allow(clippy::cast_possible_truncation, …)]` with a one-liner stating the `[0, cap]` clamp that makes the cast safe, so a future edit can't loosen the clamp silently. | 🔴 Next | 2026-04-24 code review (stream-2 #1) |
 | F97 | **Config whitelist normalization at load time.** `src/config.rs` — normalize (trim, case-fold per rule needs) on load instead of per invocation; catches user typos early. Small win; fits a v0.3 config-plumbing pass rather than a 0.2.x patch. | 🟡 Later | 2026-04-24 code review (stream-2 #6) |
@@ -411,6 +416,7 @@ below close the remaining rough edges.
 | F90 | Split `SUMMARY.md` per locale (EN + FR) via a small preprocessor. v0.2.1 ships the single-`SUMMARY.md` + CSS `:has()` locale-hiding approach (1.A); both language trees coexist in the built HTML and each viewer only sees theirs. A clean separation would maintain `SUMMARY.en.md` + `SUMMARY.fr.md` and stitch them at build. Benefit: smaller per-page sidebar payload; clearer authoring story; no `:has()` browser-support floor. Cost: build-time stitcher, tooling to keep the two files in pair-sync. File when the FR tree outgrows the hide-via-CSS approach. | 🟢 Speculative | 2026-04-23 FR per-rule pages session |
 | F91 | Multi-book mdBook layout (one book per locale). The truest "parallel version" — `/` redirects to `/en/`, `/fr/` is its own mdBook with its own theme inheritance. Benefit: each locale has its own table of contents, its own search index, its own navigation neighbour hints; no cross-locale bleed in any surface. Cost: biggest surgery — book.toml per locale, build orchestration, shared theme / asset de-duplication, sitemap updates, redirects. Revisit only if F90 isn't enough. | 🟢 Speculative | 2026-04-23 FR per-rule pages session |
 | F92 | ✅ Shipped post-0.2.1 (2026-04-23) — `scripts/sync_lang_counterparts.py` walks `docs/book/**/*.html` after `mdbook build` and rewrites both `hreflang="en"` and `hreflang="fr"` anchors so the lang-switch deep-links to the matching page (e.g. `/fr/rules/sentence-too-long.html` ↔ `/rules/sentence-too-long.html`). Wired into `just docs-build`, the Deploy-docs workflow, and a new `just docs-lang-check` CI gate that runs with `--check` and fails on orphaned FR pages (FR without EN counterpart). The invariant is asymmetric by design: EN is canonical, FR is a translation layer — untranslated EN pages are informational and tracked as F25, not gated. No front-matter flag yet; add a `counterpart: none` flag only when a truly asymmetric page appears. | — | 2026-04-23 FR per-rule pages session, option 2.B |
+| F107 | **FR rule labels (page subtitle + index gloss).** Every FR rule page opens with the H1 `structure.sentence-too-long` (rule ID in backticks) and the FR sidebar shows the same English ID — a FR-only reader sees no FR label anywhere. Hard constraint: the rule ID is a stable contract (CLI flags, `--format=json`, config keys, citations); it must not be renamed or aliased. Two-part fix: (1) **page subtitle** — keep the ID as the H1, add a small FR human-readable subtitle directly below (e.g. via a `<p class="lucid-rule-subtitle">` or italic gloss line, like `*Phrase trop longue.*`); (2) **index gloss** — extend the FR `rules/index.md` per-category table with a `Libellé FR` column (or inline gloss) so the catalog reads naturally. Skip translating the sidebar TOC labels — that would force a per-locale `SUMMARY.md` (which is F90, parked Speculative) and create drift risk between sidebar and H1. Effort: medium — define the subtitle convention once, apply to the 11 FR pages already shipped, propagate to the remaining 14 as they land. | 🟡 Later | 2026-04-25 docs UX critique (Block E) |
 
 ### Docs site — content
 
@@ -423,6 +429,9 @@ below close the remaining rough edges.
 | F42 | ✅ Shipped in v0.2 — rule documentation coverage gate. [`tests/rule_docs_coverage.rs`](tests/rule_docs_coverage.rs) cross-checks every shipped rule id against its mdBook page, `Category::for_rule`, `scoring::WEIGHTED_RULE_IDS`, and (on CI, gated by `RULE_DOCS_GATE_GIT=1`) the `## [Unreleased]` section of `CHANGELOG.md`. Contract documented in [`CONTRIBUTING.md`](CONTRIBUTING.md#adding-or-modifying-a-rule--documentation-contract). | — | v0.2 interlude |
 | F43 | ✅ Shipped in v0.2 — `RULES.md` category drift fixed. Per-rule `**Category**` lines and the Categories table now match `Category::for_rule`: `structure.excessive-commas` and `structure.deep-subordination` are `structure`, `rhythm.repetitive-connectors` is `rhythm`, `syntax.unclear-antecedent` is `syntax`. The drift banners on the four per-rule mdBook pages are removed. | 🟡 Later | Surfaced by F42 interlude |
 | F44 | Coverage test for F30 rule-mention linking — assert each rule id mentioned in `docs/src/**/*.md` is linked on first-per-section occurrence. Follow-up from F30. | 🟡 Later | F30 follow-up |
+| F104 | **Per-category sidebar grouping in `SUMMARY.md`.** Today the sidebar shows the 25 rules as one flat list under "Overview" — category-grouped in *order* but with no visible grouping. Readers scanning for rhythm or readability rules wade past 9 structure entries first. The `rules/index.md` page already shows the per-category table; the sidebar should mirror it. Add 5 sub-headings (`structure` · `rhythm` · `lexicon` · `syntax` · `readability`) with their rules nested below in `SUMMARY.md`. Mirror the same shape in the FR `Version française` block once each FR rule lands. Cost: small (one SUMMARY edit per locale; no new pages). Picked over (B) "one sub-page per category" — B doubles the page count without adding clarity the index table doesn't already provide. | 🟡 Later | 2026-04-25 docs UX critique (Block E) |
+| F105 | **Consolidated references page.** Today citations are scattered across 10+ rule pages — WCAG 1.3.1 / 1.4.8 / 2.4.6 / 3.1.4, RGAA 9.1 / 9.4, Sweller, Gibson 1998, Graesser, Coh-Metrix, BDA Dyslexia Style Guide, IFLA easy-to-read guidelines, FALC, plainlanguage.gov, Kandel-Moles. A reader who wants to know "what does this tool stand on?" has no single surface. New `docs/src/references.md` under the "Project" section: flat list of cited sources, each with a one-line context and the rules that cite it. Rule pages keep their inline citations but link to the anchor here. FR mirror at `docs/src/fr/references.md`. Cost: medium — one-pass scan of every rule page + draft + cross-link. | 🟡 Later | 2026-04-25 docs UX critique (Block E) |
+| F106 | **Landing-page polish.** `docs/src/introduction.md` already plays both roles today: lens-motif hero, before/after figure, "what makes it different", quick-taste terminal capture, "where to next". A real landing-page push only earns its cost when there's a *first consumer outside the maintainer* (project gets adopted, traffic shows up). Until then, polishing is design work without a forcing function. Notes for when triggered: more positioning above the fold, demo grid for the rule families (one canonical example per category), CTA toward profiles + quick-start, lens-motif extension already validated for use across the page. | 🟢 Speculative | 2026-04-25 docs UX critique (Block E) |
 
 ### Docs site — theming
 

@@ -68,6 +68,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   at the local FR versions for the six new pages. Remaining: 14
   per-rule FR pages (rhythm 2, lexicon 6, syntax 5, readability 1)
   plus the FR guide translations.
+- **Four ROADMAP entries from the 2026-04-25 docs UX critique
+  (Block E).** No code today — design lap. F104 per-category
+  sidebar grouping in `SUMMARY.md` (mirror the index-page table
+  shape in the sidebar), F105 consolidated references page (single
+  surface for the 10+ scattered citations: WCAG, RGAA, Sweller,
+  Gibson, Graesser, Coh-Metrix, BDA, IFLA, FALC, plainlanguage.gov,
+  Kandel-Moles), F106 landing-page polish (deferred — `introduction.md`
+  already plays the landing role; revisit when there's a first
+  external consumer), F107 FR rule labels via page subtitle + FR
+  index gloss (rule IDs stay as the stable contract; FR labels
+  earn a visible surface for FR-only readers). Picks documented
+  on the entries.
 
 ### Changed
 
