@@ -56,6 +56,13 @@ test-one name:
 bench:
     cargo bench --bench parser_hotpath
 
+# Run cargo-mutants on a single file (default: structure/sentence_too_long).
+# Override with: just mutants src/scoring.rs
+# Surviving mutants point at missing tests, not bugs to fix in this run.
+[group('test')]
+mutants file="src/rules/structure/sentence_too_long.rs":
+    cargo mutants --file {{file}} --timeout 60 --no-shuffle
+
 # ── Format ───────────────────────────────────────────────
 
 # Format code

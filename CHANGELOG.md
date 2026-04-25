@@ -68,6 +68,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   at the local FR versions for the six new pages. Remaining: 14
   per-rule FR pages (rhythm 2, lexicon 6, syntax 5, readability 1)
   plus the FR guide translations.
+- **`cargo-mutants` baseline + `just mutants` recipe (F98 ✅).**
+  Mutation testing wired in as a dev-tool (no new runtime dep).
+  `just mutants <file>` runs `cargo mutants --file <file> --timeout 60
+  --no-shuffle`; default file is the canonical reference rule
+  (`src/rules/structure/sentence_too_long.rs`). Four-file probe run
+  on 2026-04-25 — `sentence_too_long.rs` 6 / 0 / 4 (caught / missed /
+  unviable, 100 % score), `scoring.rs` 18 / 0 / 2, `engine.rs`
+  5 / 0 / 12, `low_lexical_diversity.rs` 29 / 47 / 5 (36 % score).
+  The canonical rule and the cross-cutting layer (engine + scoring)
+  are well-tested at the mutation level; the lexical-diversity rule
+  has two clear test gaps now filed as F108 (assert the reported
+  ratio in tests — 36 of the 47 misses) and F109 (borderline-cluster
+  fixtures — the remaining 11). Triage methodology: cluster missed
+  mutants by site → one ROADMAP entry per root cause, not per
+  mutant. `mutants.out/` is run-local output and stays gitignored.
 - **Four ROADMAP entries from the 2026-04-25 docs UX critique
   (Block E).** No code today — design lap. F104 per-category
   sidebar grouping in `SUMMARY.md` (mirror the index-page table
@@ -98,6 +113,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (0.0..=cap).contains(&normalized))`, so any future edit that
   loosens the `.min(cap).max(0.0)` clamp trips tests before it can
   produce silently-wrong scores.
+- **`detect_language` single-pass, alloc-light hot path (F102).**
+  The stop-words ratio scan no longer materialises two intermediate
+  vectors (`Vec<&str>` of words + `Vec<String>` of lowercased forms)
+  and no longer iterates the lowercased vector twice (once per
+  language). One pass over `text.unicode_words()` now feeds three
+  scalar counters; `to_lowercase()` is only invoked when the word
+  contains an uppercase character, so pure-ASCII lowercase prose —
+  the common case — pays no allocation. Bench delta on
+  `engine_lint_str/en_long_devdoc` against a fresh `stream2-noisy`
+  baseline: −0.56 % (p = 0.00, ~20 µs). Smaller than the samply
+  profile's 7.5 % inclusive figure suggested because most of the
+  inclusive cost was `unicode_words()` itself, which the rewrite
+  cannot touch. Same session refuted F93 + F94 — the previously
+  suspected hot spots accounted for under 0.1 % combined; ROADMAP
+  entries closed with the profile evidence.
 
 ## [0.2.2] — 2026-04-23
 

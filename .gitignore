@@ -18,6 +18,10 @@ Cargo.lock.bak
 *.profraw
 *.profdata
 
+# cargo-mutants run output (F98)
+/mutants.out
+/mutants.out.old
+
 # IDE
 .idea/
 .vscode/
