@@ -34,26 +34,39 @@ const MIN_WORDS: usize = 10;
 /// ```
 #[must_use]
 pub fn detect_language(text: &str) -> Language {
-    let words: Vec<&str> = text.unicode_words().collect();
+    let mut total: usize = 0;
+    let mut en_hits: usize = 0;
+    let mut fr_hits: usize = 0;
+    let mut owned;
 
-    if words.len() < MIN_WORDS {
+    for word in text.unicode_words() {
+        total += 1;
+        // Fast path: most prose words are already lowercase. Only allocate
+        // for sentence-start capitalisation, proper nouns, etc.
+        let key: &str = if word.chars().any(char::is_uppercase) {
+            owned = word.to_lowercase();
+            &owned
+        } else {
+            word
+        };
+        if en::STOPWORDS.contains(key) {
+            en_hits += 1;
+        }
+        if fr::STOPWORDS.contains(key) {
+            fr_hits += 1;
+        }
+    }
+
+    if total < MIN_WORDS {
         return Language::Unknown;
     }
 
-    let total = words.len() as f64;
-    let lower: Vec<String> = words.iter().map(|w| w.to_lowercase()).collect();
-
-    let en_hits = lower
-        .iter()
-        .filter(|w| en::STOPWORDS.contains(w.as_str()))
-        .count() as f64;
-    let fr_hits = lower
-        .iter()
-        .filter(|w| fr::STOPWORDS.contains(w.as_str()))
-        .count() as f64;
-
-    let en_ratio = en_hits / total;
-    let fr_ratio = fr_hits / total;
+    #[allow(clippy::cast_precision_loss)]
+    let total_f = total as f64;
+    #[allow(clippy::cast_precision_loss)]
+    let en_ratio = en_hits as f64 / total_f;
+    #[allow(clippy::cast_precision_loss)]
+    let fr_ratio = fr_hits as f64 / total_f;
 
     if (en_ratio - fr_ratio).abs() < CONFIDENCE_GAP {
         return Language::Unknown;
