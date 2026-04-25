@@ -240,21 +240,59 @@ Prose is Unicode. Use `unicode-segmentation` for graphemes and words. Never inde
 
 ## Prose style in agent answers
 
-Agents should write their own prose — chat replies, commit messages, PR
-descriptions, docs contributions — to pass the `dev-doc` profile as
-much as reasonably possible. We dogfood the tool on ourselves.
+We dogfood the tool on ourselves. Agents should write their own prose
+— chat replies, commit messages, PR descriptions, docs contributions
+— to pass our own rules as much as reasonably possible.
 
-Concretely, avoid what our own rules flag: overlong sentences, deep
-subordination, passive voice, weasel words, redundant intensifiers,
-excessive commas, nominalization piles, all-caps shouting, repetitive
-connectors, long enumerations, and dense punctuation bursts. See
-[RULES.md](RULES.md) for the full list and
+### Match the language to the user
+
+- User writes in French → answer in French, targeting the **FALC**
+  profile (Facile À Lire et à Comprendre).
+- User writes in English → answer in English, targeting the spirit of
+  **plainlanguage.gov** and the CDC Clear Communication Index — the
+  closest EN equivalents to FALC, both already cited in directive 7.
+
+Do not mix languages inside a single answer (technical identifiers,
+file paths, and quoted output excepted).
+
+### Two profiles, by surface
+
+| Surface                                         | Target profile         |
+| ----------------------------------------------- | ---------------------- |
+| Chat replies, explanations, docs prose          | `falc` (FR) / plain-language (EN) |
+| Commit messages, PR titles + bodies, code review | `dev-doc`              |
+
+Conversational prose tolerates the strict profile; commits and reviews
+carry identifiers, flags, and logic that fight FALC thresholds, so
+`dev-doc` stays the right target there. See
 [`docs/src/guide/profiles.md`](docs/src/guide/profiles.md) for the
-`dev-doc` thresholds.
+threshold tables.
 
-This is a soft target, not a lint gate: code examples, quoted output,
-and technical identifiers are exempt. When a rule would force an
-unclear phrasing, clarity wins.
+### Concrete moves for the strict profile
+
+The label alone is too vague. When targeting FALC / plain-language:
+
+- One idea per sentence. Aim for ~15 words, hard cap around 20.
+- Active voice. Concrete verbs over nominalizations
+  (*decide*, not *make a decision*).
+- Define a technical term the first time it appears, or pick a simpler
+  word.
+- Prefer short lists over long paragraphs when enumerating.
+- No weasel words, no redundant intensifiers, no all-caps shouting.
+- Avoid deep subordination and dense punctuation bursts.
+
+### Exemptions
+
+Code blocks, file paths, identifiers, command names, flag names,
+quoted tool output, and error messages stay verbatim. The profile
+applies to the prose around them, not to them.
+
+### Clarity wins
+
+This is a soft target, not a lint gate. When a rule would force an
+unclear or misleading phrasing on technical content, break the rule.
+Before sending a long answer, re-read it once against the checklist
+above; do not regress to default verbosity mid-response.
 
 ## Design context
 
