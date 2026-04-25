@@ -1,10 +1,10 @@
 # AGENTS.md
 
-This file provides guidance to coding agents (Claude Code, Cursor, GitHub Copilot Workspace, etc.) when working on this repository.
+Guidance for coding agents (Claude Code, Cursor, Copilot, …) working on this repository.
 
-## Project overview
+## Project
 
-`lucid-lint` is a cognitive accessibility linter for prose, written in Rust, bilingual EN/FR.
+`lucid-lint` is a cognitive accessibility linter for prose. Rust, bilingual EN/FR.
 
 Read in order:
 
@@ -14,295 +14,140 @@ Read in order:
 4. [ROADMAP.md](ROADMAP.md) — what's planned
 5. [CONTRIBUTING.md](CONTRIBUTING.md) — contribution workflow
 
-## Prime directives for agents
+Current project state, design decisions, and "what NOT to do" specifics live in [`.agent/context.md`](.agent/context.md). Brand voice, palette, typography, and the WCAG AAA accessibility bar live in [`.impeccable.md`](.impeccable.md) — read before any frontend, mdBook, branding, or marketing work; `/impeccable` reads it automatically.
 
-### 1. Respect YAGNI
+Claude-specific: this repo uses `.agent/` (not `.claude/`); `AGENTS.md` replaces `CLAUDE.md`.
 
-Do not add abstractions speculatively. A trait for a single implementation, a field for an unimplemented feature, a plugin system with no plugin — these are red flags.
+## Prime directives
 
-Previous design discussions explicitly removed:
+### 1. YAGNI
 
-- `category` from the `Diagnostic` struct (derivable from `rule_id` via `Category::for_rule`)
-- `suggestion` from the `Diagnostic` struct (still deferred past v0.2)
-- A pluggable `Parser` trait with a single `MarkdownParser` implementation
+No abstractions for hypothetical futures. A trait with one impl, a field with no reader, a plugin system with no plugin — red flags.
 
-`weight` was added to `Diagnostic` in v0.2 as part of the hybrid scoring
-model (F14). Seeded at emission from `scoring::default_weight_for(rule_id)`;
-rules rarely need to override via `with_weight`. Do not remove the field
-or re-derive it on the fly.
+Already removed by past design rounds. Do not reintroduce without confirming with a human:
 
-If you find yourself wanting to add one of the removed items, stop and
-confirm with a human.
+- `category` on `Diagnostic` — derive via `Category::for_rule`.
+- `suggestion` on `Diagnostic` — deferred past v0.2.
+- A pluggable `Parser` trait around the single `MarkdownParser`.
 
-### 2. Preserve typing discipline
+`weight` on `Diagnostic` is intentional (v0.2, F14 hybrid scoring). Seeded from `scoring::default_weight_for(rule_id)`; rules rarely override via `with_weight`. Do not remove it or recompute on the fly.
 
-The codebase follows "make impossible states impossible":
+### 2. Typing discipline
 
-- Newtype wrappers for domain primitives.
-- Enums with associated data.
-- `NonZeroU32` or similar for bounded primitives.
+Make impossible states impossible: newtypes for domain primitives, enums with associated data, `NonZeroU32` for bounded counts. Extend the enum rather than weaken the type.
 
-Do not weaken these types. If you need flexibility, extend the enum or add a variant.
+### 3. Deterministic core
 
-### 3. Atomic rules
+No network, no LLM, no env-dependent behavior in core. Such logic lives in plugin crates (`lucid-lint-llm`, `lucid-lint-nlp`).
 
-Each rule file under `src/rules/` implements one signal. Do not merge detection logic across rules. If a rule "would like to also detect X", file X is a new rule.
+### 4. Bilingual from day one
 
-### 4. Deterministic core
+Language-specific data goes under `src/language/{en,fr}/`. Rules accept `Language` as a parameter — never hardcode. Tests cover FR and EN. No "EN now, FR later".
 
-No network, no LLM, no environment-dependent behavior in the core. Such logic must live in an optional plugin crate.
+### 5. Tests required
 
-### 5. Bilingual from day one
+Every new rule: unit tests in the rule file (`#[cfg(test)] mod tests`) + at least one `insta` snapshot + corpus fixture under `tests/corpus/{en,fr}/`. Bug fixes: regression test before the fix.
 
-When adding a language-dependent rule:
+### 6. Atomic rules and the acceptance filter
 
-- Language-specific data goes in `src/language/{fr,en}/` or equivalent.
-- The rule itself should accept the language as a parameter, not hardcode one.
-- Tests must cover FR and EN cases.
+One signal per rule file under `src/rules/`. A rule that "would also like to detect X" makes X a new rule.
 
-### 6. Tests are not optional
+A new rule lands in core only if it passes every point:
 
-Every new rule requires:
+1. **Atomic** — one detection goal.
+2. **Cognitive-load-grounded** — cites research or a recognised standard (WCAG, RGAA, FALC, BDA, IFLA, CDC Clear Communication Index, plainlanguage.gov). No aesthetic-only rules; those go to a future `lucid-lint-style` plugin.
+3. **Deterministic in core** — pattern, counter, or window. POS / dependency tree / LLM goes to a plugin.
+4. **Bilingual-viable** — language-agnostic, or has a concrete FR + EN path at proposal time.
+5. **Category-coherent** — fits one of `structure · syntax · rhythm · lexicon · readability` cleanly. Fits three? Probably two rules.
+6. **Balance is monitored, not enforced** — an uneven category is a taxonomy signal, not a quota.
 
-- Unit tests in the rule file (`#[cfg(test)] mod tests`)
-- At least one snapshot test (`insta`)
-- Corpus fixtures in `tests/corpus/{en,fr}/`
+Rules may carry condition tags (F71) from a fixed ontology: `a11y-markup`, `dyslexia`, `dyscalculia`, `aphasia`, `adhd`, `non-native`, `general`. Most are `general`.
 
-Bug fixes require a regression test before the fix.
+### 7. Rule documentation contract
 
-### 7. New-rule acceptance filter
+Adding *or modifying* a rule means updating five surfaces: source, wiring (`default_rules`, `Category::for_rule`, `scoring::WEIGHTED_RULE_IDS`), `docs/src/rules/<rule-id>.md`, tests, and `CHANGELOG.md` `## [Unreleased]`. Full checklist and CI gating in [CONTRIBUTING.md](CONTRIBUTING.md). The coverage test `tests/rule_docs_coverage.rs` enforces surfaces 1–4.
 
-A new rule earns its place in core only if it passes every point:
+### 8. Docs links stay inside `docs/src/`
 
-1. **Atomic** — one detection goal. (Restates directive 3.)
-2. **Cognitive-load-grounded** — traceable to a cited source
-   (cognitive / linguistic research) or a recognised standard: WCAG,
-   RGAA, FALC, BDA, IFLA, CDC Clear Communication Index,
-   plainlanguage.gov. No aesthetic-only rules — those belong in a
-   future `lucid-lint-style` plugin.
-3. **Deterministic in core** — pattern, counter, or window.
-   LLM / POS / dependency-tree goes to a plugin (`lucid-lint-llm`,
-   `lucid-lint-nlp`).
-4. **Bilingual-viable** — language-agnostic, or has a concrete FR + EN
-   implementation path at proposal time. No "EN now, FR later".
-5. **Category-coherent** — fits one of the five categories
-   (`structure`, `syntax`, `rhythm`, `lexicon`, `readability`)
-   cleanly. If a rule fits three, it is probably two rules.
-6. **Balance is monitored, not enforced** — a category growing or
-   staying thin is a signal to revisit the taxonomy, not a reason to
-   invent or reject rules.
+mdBook only serves `docs/src/`. A relative link from any `docs/src/**` page must resolve under `docs/src/` — `../../RULES.md` renders as 404.
 
-Rules may additionally declare condition tags (F71) from the fixed
-ontology `a11y-markup`, `dyslexia`, `dyscalculia`, `aphasia`, `adhd`,
-`non-native`, `general`. Most rules are `general`; some carry multiple
-tags.
+When the canonical target is missing, create a short page under `docs/src/guide/` or `docs/src/architecture/` (for stable content) or a placeholder + roadmap entry (otherwise). Absolute `https://github.com/...` URLs remain fine for explicit "see the repo file" references.
 
-### 8. Rule documentation is not optional
+The test `docs_links_stay_inside_docs` fails on any `](../../…)` pattern in `docs/src/**/*.md`.
 
-Adding *or modifying* a rule means updating all five surfaces listed under
-"Adding or modifying a rule — documentation contract" in
-[`CONTRIBUTING.md`](CONTRIBUTING.md): source, wiring (`default_rules`,
-`Category::for_rule`, `scoring::WEIGHTED_RULE_IDS`),
-`docs/src/rules/<rule-id>.md`, tests, and `CHANGELOG.md`
-`## [Unreleased]`. The coverage test at `tests/rule_docs_coverage.rs`
-enforces surfaces 1–4; CI enforces surface 5 by diffing against
-`origin/main` (gated by `RULE_DOCS_GATE_GIT=1`).
+### 9. `examples/local/` is opaque to public surfaces
 
-### 9. Docs links stay inside `docs/src/`
+`examples/local/` is a local-only scratch space (gitignored except its `README.md`). Treat it like `.env`: tools may read and parse it, but **nothing committed to git may reveal what lives inside**.
 
-Any relative link written from a page under `docs/src/` must resolve to
-another page under `docs/src/`. mdBook only serves what's inside `src/`,
-so `../../RULES.md` or `../../ROADMAP.md` render as 404s. When a
-canonical target is missing:
+In source, docs, `CHANGELOG.md`, `ROADMAP.md`, `examples/texts.md`, commit messages, PR descriptions, generated reports:
 
-- If the content is stable and high-confidence (a shipped feature, a
-  settled convention), create a short page under `docs/src/guide/` or
-  `docs/src/architecture/` and link to it.
-- Otherwise create a placeholder page + roadmap entry so future
-  contributors know where to land the full version.
+- No filenames, folder names, slugs, titles, URLs, or identifying snippets from `examples/local/`.
+- No aggregate counts that betray local-only existence by subtraction (e.g. `4 / 7` reveals "3 local-only" — publish only the `public_ok` count).
+- No "we also have X under local" phrasings.
 
-Absolute `https://github.com/...` URLs remain acceptable for explicit
-"see the repo file" references (LICENSE, root-level `RULES.md` /
-`ROADMAP.md` as external browseable artifacts). The coverage test
-`docs_links_stay_inside_docs` in `tests/rule_docs_coverage.rs` fails on
-any `](../../…)` pattern in a `docs/src/**/*.md` file.
+When a tool needs local-only output (target list, gap map, audit), write it under `examples/local/` so gitignore keeps it off GitHub. The texts pipeline is the reference pattern: `examples/texts.yaml` (tracked, `public_ok` only) ↔ `examples/local/texts.yaml` (gitignored, everything else); merge logic in `scripts/texts_common.py::load_sources()`. The `redistribution` field is the tripwire: only `public_ok` entries are safe to name.
 
-### 10. `examples/local/` is opaque to public surfaces
+## Conventions
 
-`examples/local/` is a local-only scratch space (gitignored under
-`/examples/local/*` with only its `README.md` tracked). Treat its
-contents with the same discretion as `.env` or any other secret: tools
-may **read and parse** files there (scrapers, benchmarks, coverage
-scripts), but public / tracked surfaces must **never reveal** what
-lives inside.
+- **Rule IDs**: `category.rule-name` in kebab-case. Prefix matches the `src/rules/` subdir, name matches the filename. Struct is `PascalCase` of the name half. Example: `structure.sentence-too-long` → `src/rules/structure/sentence_too_long.rs` → `struct SentenceTooLong`. Reference rule: that file.
+- **Config**: global `lucid-lint.toml`; per-rule `[rules.<rule-id>]`; profiles (`dev-doc`, `public`, `falc`) preset every threshold at once.
+- **Output**: human TTY by default with a `score:` summary (v0.2+); `--format=json` is the stable schema (`version = 2`, carries `score`, `category_scores`, per-diagnostic `weight` — see `docs/src/guide/scoring.md`); SARIF v2.1.0 planned.
 
-Concretely, in anything committed to git — source, docs, `CHANGELOG.md`,
-`ROADMAP.md`, `examples/texts.md`, commit messages, PR descriptions,
-generated reports:
+## Definition of "done"
 
-- No file names, folder names, or slugs from under `examples/local/`.
-- No titles, URLs, or identifying snippets of the sources they hold.
-- No aggregate counts that reveal how many local-only sources exist
-  for a given axis (e.g. `4 / 7` publishes "3 local-only" by
-  subtraction — publish the `public_ok` count alone).
-- No "we also have X under local" phrasings in prose.
-
-When a tool needs to surface local-only information (a target list, a
-gap map, an audit), emit that output to a file under `examples/local/`
-so the gitignore keeps it off GitHub. The `texts` pipeline is the
-reference pattern:
-
-- `examples/texts.yaml` (tracked) holds only `public_ok` entries.
-- `examples/local/texts.yaml` (gitignored) holds the
-  `check_license` / `link_only` / `restricted` entries.
-- `examples/texts.md` (tracked) lists only the public subset.
-- `examples/local/texts.md` and `examples/local/COVERAGE.md`
-  (gitignored) carry the full referential + coverage map.
-- `scripts/texts_common.py::load_sources()` merges both YAML halves
-  when the local one exists, so the fetch / clean / convert / coverage
-  tools see every entry while public surfaces never do.
-
-The `redistribution` field is the unambiguous tripwire: `public_ok`
-entries live in the tracked files and are safe to name; anything else
-stays under `examples/local/` and is invisible to anything published.
-
-## Project-specific conventions
-
-### Naming
-
-- Rule IDs: `category.rule-name` in kebab-case (`structure.sentence-too-long`, `lexicon.weasel-words`, `readability.score`). The prefix matches the category subdirectory under `src/rules/`; the rule-name part matches the filename.
-- Rule struct: `PascalCase` matching the rule-name half of the ID (`struct SentenceTooLong`).
-- Rust files: `snake_case` under the category subdir (`src/rules/structure/sentence_too_long.rs`).
-
-### Rule structure
-
-Every rule implements a common `Rule` trait, exposes a default config, and lives in its own file inside its category subdirectory under `src/rules/`. See `src/rules/structure/sentence_too_long.rs` as the canonical example.
-
-### Configuration
-
-- Global config: `lucid-lint.toml` in the project root.
-- Per-rule overrides under `[rules.<rule-id>]`.
-- Profiles (`dev-doc`, `public`, `falc`) are presets that set all thresholds at once.
-
-### Output
-
-- Default: human-readable TTY with colors when stdout is a tty. Appends a
-  `score:` summary line (v0.2+) with optional per-category breakdown.
-- `--format=json`: stable JSON schema for CI integration. `version = 2`
-  as of v0.2 — carries `score`, `category_scores`, and per-diagnostic
-  `weight`. See `docs/src/guide/scoring.md`.
-- SARIF v2.1.0 for GitHub Code Scanning is planned for v0.2 (see `ROADMAP.md`).
-
-## Definition of "done" for a change
-
-A change is done when:
-
-- [ ] Code compiles with zero warnings.
+- [ ] Compiles with zero warnings.
 - [ ] `just check` passes (fmt, clippy, test, coverage).
 - [ ] New rules have unit + snapshot + corpus tests.
 - [ ] Public API has doc comments.
-- [ ] If behavior changed, documentation (`RULES.md`, `docs/`) is updated.
+- [ ] Behavior changes are documented (`RULES.md`, `docs/`).
 - [ ] Commit messages follow Conventional Commits.
 
 ## Known pitfalls
 
-### Markdown parsing
-
-Use `pulldown-cmark`. Do NOT parse Markdown with regexes. Code blocks must be excluded from most rules; see `src/parser/markdown.rs` for the extraction helper.
-
-### Sentence splitting
-
-Use the project's `Tokenizer` in `src/parser/tokenizer.rs`. Do NOT split on `.` alone: abbreviations (`Dr.`, `e.g.`), decimals, and ellipses are edge cases handled there.
-
-### Language detection
-
+- **Markdown**: parse with `pulldown-cmark`. Never with regex. Most rules must exclude code blocks — see the helper in `src/parser/markdown.rs`.
+- **Sentence splitting**: use the project `Tokenizer` in `src/parser/tokenizer.rs`. Never split on `.` alone — abbreviations (`Dr.`, `e.g.`), decimals, and ellipses are handled there.
 <!-- lucid-lint disable-next-line lexicon.weasel-words -->
-
-Heuristic based on stop-words ratio. See `src/language/detect.rs`. Returns `Language::Unknown` if confidence is low — respect that and skip language-specific rules rather than guessing.
-
-### Unicode
-
-Prose is Unicode. Use `unicode-segmentation` for graphemes and words. Never index strings by byte offset.
-
-### Performance
-
-`lucid-lint` is marketed as fast. Avoid:
-
-- Cloning strings unnecessarily.
-- Re-parsing the document per rule (use the shared AST from the parser phase).
-- Regex in the hot path if a direct scan works.
+- **Language detection**: stop-words ratio heuristic in `src/language/detect.rs`. Returns `Language::Unknown` when confidence is low — respect it and skip language-specific rules rather than guess.
+- **Unicode**: prose is Unicode. Use `unicode-segmentation` for graphemes and words. Never index strings by byte offset.
+- **Performance**: avoid string clones, per-rule re-parsing (use the shared AST), and regex in the hot path when a direct scan works.
 
 ## When in doubt
 
-- Open an issue before large refactors.
-- Ask a maintainer before adding a dependency.
-- Prefer small PRs over sweeping ones.
+Open an issue before large refactors. Ask a maintainer before adding a dependency. Prefer small PRs over sweeping ones.
 
 ## Prose style in agent answers
 
-We dogfood the tool on ourselves. Agents should write their own prose
-— chat replies, commit messages, PR descriptions, docs contributions
-— to pass our own rules as much as reasonably possible.
+We dogfood the tool on ourselves. Write your own prose — chat replies, commit messages, PR descriptions, docs contributions — to pass our own rules as much as reasonably possible.
 
 ### Match the language to the user
 
-- User writes in French → answer in French, targeting the **FALC**
-  profile (Facile À Lire et à Comprendre).
-- User writes in English → answer in English, targeting the spirit of
-  **plainlanguage.gov** and the CDC Clear Communication Index — the
-  closest EN equivalents to FALC, both already cited in directive 7.
+- User writes in French → answer in French, targeting the **FALC** profile (Facile À Lire et à Comprendre).
+- User writes in English → answer in English, targeting the spirit of **plainlanguage.gov** and the **CDC Clear Communication Index** — the closest EN equivalents to FALC, both already cited in directive 6.
 
-Do not mix languages inside a single answer (technical identifiers,
-file paths, and quoted output excepted).
+Do not mix languages inside a single answer (technical identifiers, file paths, and quoted output excepted).
 
 ### Two profiles, by surface
 
-| Surface                                         | Target profile         |
-| ----------------------------------------------- | ---------------------- |
-| Chat replies, explanations, docs prose          | `falc` (FR) / plain-language (EN) |
-| Commit messages, PR titles + bodies, code review | `dev-doc`              |
+| Surface                                          | Target profile                    |
+| ------------------------------------------------ | --------------------------------- |
+| Chat replies, explanations, docs prose           | `falc` (FR) / plain-language (EN) |
+| Commit messages, PR titles + bodies, code review | `dev-doc`                         |
 
-Conversational prose tolerates the strict profile; commits and reviews
-carry identifiers, flags, and logic that fight FALC thresholds, so
-`dev-doc` stays the right target there. See
-[`docs/src/guide/profiles.md`](docs/src/guide/profiles.md) for the
-threshold tables.
+Conversational prose tolerates the strict profile; commits and reviews carry identifiers, flags, and logic that fight FALC thresholds, so `dev-doc` stays the right target there. Threshold tables: [`docs/src/guide/profiles.md`](docs/src/guide/profiles.md).
 
 ### Concrete moves for the strict profile
 
 The label alone is too vague. When targeting FALC / plain-language:
 
 - One idea per sentence. Aim for ~15 words, hard cap around 20.
-- Active voice. Concrete verbs over nominalizations
-  (*decide*, not *make a decision*).
-- Define a technical term the first time it appears, or pick a simpler
-  word.
+- Active voice. Concrete verbs over nominalizations (*decide*, not *make a decision*).
+- Define a technical term the first time it appears, or pick a simpler word.
 - Prefer short lists over long paragraphs when enumerating.
 - No weasel words, no redundant intensifiers, no all-caps shouting.
 - Avoid deep subordination and dense punctuation bursts.
 
-### Exemptions
+### Exemptions and escape hatch
 
-Code blocks, file paths, identifiers, command names, flag names,
-quoted tool output, and error messages stay verbatim. The profile
-applies to the prose around them, not to them.
+Code blocks, file paths, identifiers, command names, flag names, quoted tool output, and error messages stay verbatim — the profile applies to the prose around them, not to them.
 
-### Clarity wins
-
-This is a soft target, not a lint gate. When a rule would force an
-unclear or misleading phrasing on technical content, break the rule.
-Before sending a long answer, re-read it once against the checklist
-above; do not regress to default verbosity mid-response.
-
-## Design context
-
-<!-- lucid-lint disable-next-line structure.long-enumeration -->
-
-Brand voice, palette, typography shortlist, audience, and the WCAG AAA accessibility bar live in [.impeccable.md](.impeccable.md). Read it before any frontend, mdBook, branding, or marketing-surface work. The `/impeccable` skill also reads it automatically.
-
-## For Claude specifically
-
-- The project owner uses `.agent/` instead of `.claude/` for agent-specific files.
-- This file (`AGENTS.md`) replaces `CLAUDE.md`.
-- Project-specific agent context lives in `.agent/context.md`.
-- Design context lives in [.impeccable.md](.impeccable.md) (see above).
+This is a soft target, not a lint gate. When a rule would force unclear or misleading phrasing on technical content, break the rule. Before sending a long answer, re-read it once against the checklist above; do not regress to default verbosity mid-response.
