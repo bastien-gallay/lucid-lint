@@ -95,6 +95,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   index gloss (rule IDs stay as the stable contract; FR labels
   earn a visible surface for FR-only readers). Picks documented
   on the entries.
+- **F108 + F109 closed — `low_lexical_diversity` mutation score 36 %
+  → 89 %.** Five new tests target the gaps that the F98 baseline
+  surfaced. `reported_ratio_is_minimum_observed_in_cluster` builds a
+  50-W + 100-cache + 50-V fixture so the cluster exits via the
+  non-flush path and the min ratio (0.01) appears mid-slide, not at
+  the anchor — kills 36 of the 47 missed mutants in
+  `ratio_at_anchor_min` (arithmetic shifts in slide-in / slide-out
+  / ratio computation). `flush_path_reports_final_ratio` covers the
+  end-of-document case. `exactly_window_size_tokens_runs_the_check`
+  pins the early-return guard at exactly `tokens.len() == window`.
+  `cluster_starts_at_strict_inequality` and
+  `ratio_exactly_at_threshold_does_not_trigger` use a 49-W +
+  51-cache construction so the single full window has unique = 50
+  → ratio == `min_ratio` exactly: a `< → <=` flip on the trigger
+  would emit, the test asserts none. Remaining 8 missed mutants
+  are equivalent under the current rule logic (defensive guards
+  unreachable in normal flow; initial values overwritten by the
+  first slide step) — documented in the F108 / F109 ROADMAP rows.
 
 ### Changed
 
@@ -128,6 +146,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   cannot touch. Same session refuted F93 + F94 — the previously
   suspected hot spots accounted for under 0.1 % combined; ROADMAP
   entries closed with the profile evidence.
+- **Sentence splitting moved into the parser phase (F103).**
+  `Paragraph::new` now calls `split_sentences` once at construction
+  and the result lives on the paragraph as a public `sentences:
+  Vec<Sentence>` field. The eight rules that previously re-ran the
+  split — `consecutive_long_sentences`,
+  `repetitive_connectors`, `excessive_nominalization`,
+  `nested_negation`, `passive_voice`, `unclear_antecedent`,
+  `conditional_stacking`, `paragraph_too_long` — read
+  `&paragraph.sentences` instead. The previous lazy-per-rule pattern
+  predates the rule explosion and silently violated the AGENTS.md
+  "do not re-parse the document per rule" directive once eight rules
+  needed sentences. Bench delta against `stream2-noisy`:
+  `engine_lint_str/en_long_devdoc` −11.58 % (p = 0.00, ~394 µs);
+  `parse_markdown/en_long` +17.67 % (p = 0.00, ~38 µs) — the split
+  cost moved into the parser phase, where it was previously
+  multiplied across rules. Net user-facing path: ~360 µs faster on
+  the long EN devdoc input, which closes the stream-2 perf arc
+  (F95–F96 hygiene shipped earlier today; F93/F94 refuted by
+  profile; F102 + F103 measured wins).
 
 ## [0.2.2] — 2026-04-23
 
