@@ -115,6 +115,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the file boundary with `iconv` or "save as UTF-8" once). New
   ROADMAP sub-section "Encoding / input handling" carries the
   rationale.
+- **F84 part 2 — first redistributable replacement (public_ok count
+  +1).** `Mon Parcours Handicap — fiches FALC`
+  (`monparcourshandicap.gouv.fr/aides`) added to
+  `examples/texts.yaml` under the Health-literacy section. French
+  government portal, Easy-to-Read fact sheets on disability
+  benefits (PCH, AAH, complément de ressources, …). Licence is
+  Etalab Open Licence 2.0 (site footer: "Sauf mention contraire,
+  tous les contenus de ce site sont sous licence etalab-2.0"),
+  CC-BY-equivalent — `redistribution: public_ok`. Type
+  `gov_guide`, polarity `good_example`, conditions
+  `[aphasia, non-native, general]`, language FR. Fact sheets are
+  flowing-text PDFs (`markdownable: 2`); still inside the existing
+  CDC-style precedent. The entry is also surfaced in the curated
+  per-section table in `examples/texts.md` under "Easy-read / FALC
+  / dyslexia / aphasia / ADHD". Auto-generated coverage matrix
+  refreshed; the public-side `texts.md` snapshot reflects the new
+  count without leaking local-only state. The "Aphasia-specific
+  French samples beyond SPF/HAS are thin" note in `gaps:` is
+  marked partially closed.
 - **F108 + F109 closed — `low_lexical_diversity` mutation score 36 %
   → 89 %.** Five new tests target the gaps that the F98 baseline
   surfaced. `reported_ratio_is_minimum_observed_in_cluster` builds a

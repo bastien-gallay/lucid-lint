@@ -40,7 +40,7 @@ need to answer "what's next?" or "what's the 0.3 shape?" in a glance.
 | v0.2.0 | ✅ Released 2026-04-22 | Yes (rule-id harmonisation) | Hybrid scoring (F14), SARIF (F32), condition tags (F71/F72), 8 new rules (25 total), F10 EN/FR auto-formula |
 | v0.2.1 | ✅ Released 2026-04-23 | No | Localhost 404.html fix, 3rd per-rule TOML override, fixtures pipeline, TTY GIFs, v0.1/v0.2 prose sweep |
 | v0.2.2 | ✅ Released 2026-04-23 | No | FR `syntax.nested-negation` pair-based counting |
-| **v0.2.x** | 🚧 **In progress** | No | FR per-rule pages (F25), responsive (F34), P2 a11y (F35b/c), F84 part 2, perf (F102/F103 — F93/F94 refuted by profile 2026-04-25), hygiene (F95/F96), F15 project roll-up |
+| **v0.2.x** | 🚧 **In progress** | No | FR per-rule pages (F25), responsive (F34), P2 a11y (F35b/c), F84 part 2, perf (F102/F103 — F93/F94 refuted by profile 2026-04-25), hygiene (F95/F96), F15 project roll-up, adoption channels (F110/F111/F112) |
 | **v0.3** | ☐ Scoped | **Yes** | F22 v0.3 slice, F10 remainder, 5 condition-tag rules (F46/F49/F51/F53/F57) |
 | v0.4 | ☐ Horizon | Varies | LLM plugin (F16), alternative formats (F5–F8), feedback-driven items |
 
@@ -98,6 +98,7 @@ excluded.
 | Docs site (bilingual / content / theming / reading) | 4 (F25, F30, F34, F35b/c) | — | — | F36, F43, F44, F73, F89, F90/F91 | — |
 | Example-text fixtures | 1 (F84 part 2) | — | F85, F86 | F81, F82, F83 | F86 |
 | Performance / hygiene | 4 (F95, F96, F102, F103) | F97 | — | — | — |
+| Adoption channels | 3 (F110, F111, F112) | — | F118 (conference talk) | F113, F114, F115, F116, F117, F119, F120 | — |
 | Suppression / config | — | F97 | — | F20, F21 | — |
 | Formats | — | — | F5–F8 (single pick) | F5–F8 | — |
 | Ecosystem interop | — | F76 | — | F76 | — |
@@ -234,6 +235,9 @@ routing decision.
 | F96 | Perf / hygiene | Document `scoring.rs:203` cast invariant |
 | F102 | Perf / hygiene | `detect_language` cost (7.5% of engine, samply 2026-04-25) |
 | F103 | Perf / hygiene | Per-rule `split_sentences` re-parse — move to parser phase, share across 8 rules |
+| F110 | Adoption channels | Vale style pack (subset of rules → `vale-cli/packages` topic) |
+| F111 | Adoption channels | DINUM submission to `accessibilité.numerique.gouv.fr` resources |
+| F112 | Adoption channels | Three awesome-list PRs (`awesome-a11y`, `awesome-writing-tools`, `awesome-rust`) |
 
 #### Should — ships as the next patch absorbs it
 
@@ -243,12 +247,19 @@ routing decision.
 | — | Suppression / config | Per-rule TOML plumbing, rule-by-rule as each `Config` gains `Deserialize` |
 | F20 | Suppression / config | `reason="..."` field on suppression directives |
 | F30 | Docs — content | Rule-mention linking audit + coverage test (F44) |
+| F113 | Adoption channels | Audit-and-PR play on one famous OSS doc target |
+| F114 | Adoption channels | GitHub Action published to Marketplace (depends on stable SARIF output) |
+| F115 | Adoption channels | FALC-readiness guide page citing Inclusion Europe standards |
 
 #### Could — nice-to-have
 
 F24 (nominalization suffix refine), F43 (RULES.md drift cleanup), F73
 (font-leak CI gate), F36 (final polish pass), F79 (fancy `explain`
-rendering), F21 (`disable-file`), F81 / F82 / F83 (fixture hygiene).
+rendering), F21 (`disable-file`), F81 / F82 / F83 (fixture hygiene),
+**F116** (mdbook-lint coexistence guide), **F117** (W3C COGA tools
+survey submission), **F118** (conference talk — RustNation /
+EuroRust / Write the Docs CFP), **F119** (Mastodon / Bluesky cadence),
+**F120** (pre-commit hook listing once `--check` mode stabilises).
 
 #### Won't (pushed to 0.3)
 
@@ -420,7 +431,7 @@ below close the remaining rough edges.
 | F81 | Per-source adapters for git-cloned upstreams. The generic `clean` / `convert` path doesn't know how to extract text from shallow-cloned repos (proselint checks, Vale style packs, write-good / alex / retext / textlint-rule fixtures, ASSET / OneStopEnglish / EASSE / CLEAR-corpus datasets). Each needs a small extractor that walks the repo and emits one or more `.md` files per rule / excerpt. | 🟡 Later | First scraper batch, 2026-04-22 |
 | F82 | Refine `texts_convert._split_before_after`. The current heuristic looks for literal `## Before` / `## After` (EN/FR) headings; no upstream page in the current batch uses that shape, so every `before_after` source fell back to a single `content.md` with a warning. Replace with a per-source pair-extraction rule (plainlanguage.gov, EC *How to write clearly*, Canada.ca, OneStopEnglish, ASSET, Inclusion Europe) that emits `before.md` + `after.md`. | 🟡 Later | First scraper batch, 2026-04-22 |
 | F83 | Maintenance pass on `examples/texts.yaml` URLs. 12 sources failed on the first batch — 404s from moved landing pages (canada.ca × 2, BDA Dyslexia, Center for Plain Language, Newsela, HuggingFace wiki_auto), UA-/bot-blocking (Légifrance 403, Orthodidacte 403, ADHD Foundation 400), and a DNS error for the specific 18F post. Audit and update entries; for sources that genuinely require a browser-flavoured UA, add a per-source override in the fetcher. Fold in the opportunistic hygiene tasks from the 2026-04-23 brainstorm: (a) dedupe overlapping canada.ca / plainlanguage.gov entries, (b) add a licence-drift guard that flags when a source's `redistribution` changes between fetches. | 🟡 Later | First scraper batch, 2026-04-22 + referential brainstorm, 2026-04-23 |
-| F84 | Desired-fixture-shapes coverage table + replacements for high-value local-only entries. **Part 1 — coverage tables:** ✅ Shipped (2026-04-23) — `scripts/texts_coverage.py` splits output by audience: the committed `examples/texts.md` shows `public_ok` counts only (no totals, no names that would leak local-only existence), spliced between `<!-- coverage:begin/end -->` markers; the gitignored `examples/local/COVERAGE.md` carries the full matrices plus the load-bearing local-only list. Wired as `just texts-coverage` / `just texts-coverage-check`. **Part 2 — replacement hunting:** 🔴 Next (promoted 2026-04-24). The load-bearing list flags four slots with zero redistributable sources — hunt for open-licence equivalents so the coverage honesty at `public` is not a hollow victory. | 🔴 Next (part 2) | Referential brainstorm, 2026-04-23 |
+| F84 | Desired-fixture-shapes coverage table + replacements for high-value local-only entries. **Part 1 — coverage tables:** ✅ Shipped (2026-04-23) — `scripts/texts_coverage.py` splits output by audience: the committed `examples/texts.md` shows `public_ok` counts only (no totals, no names that would leak local-only existence), spliced between `<!-- coverage:begin/end -->` markers; the gitignored `examples/local/COVERAGE.md` carries the full matrices plus the load-bearing local-only list. Wired as `just texts-coverage` / `just texts-coverage-check`. **Part 2 — replacement hunting:** 🟡 In progress. First addition landed 2026-04-25: a French government FALC source under Etalab Open Licence 2.0 (CC-BY-equivalent), surfaced in the curated Easy-read section of `examples/texts.md` and counted in the public coverage matrix. Knock-on effect on `aphasia × FR` and `gov_guide × FR` (both lifted out of `0 / N ⚠`). Hunt continues — load-bearing list still has slots in the same condition × language clusters. | 🟡 In progress | Referential brainstorm, 2026-04-23 |
 | F85 | Bidirectional rule ↔ fixture coverage map. Generate `examples/COVERAGE.md` from each `content.md`'s `rules_relevant` frontmatter, rendered as two views: rule → fixtures that exercise it (surfaces under-fixtured rules) and fixture → rules it covers (surfaces untagged or mis-tagged fixtures). Once stable, embed or link the canonical fixture per rule from `docs/src/rules/<rule-id>.md`. Optional follow-up: calibrated snapshot tests that lock expected lint output per canonical fixture. | 🟡 Later | Referential brainstorm, 2026-04-23 |
 | F86 | Auto-discovery of new references with triage queue. Crawler (sitemaps, RSS, GitHub search, ACL Anthology API) surfaces candidate sources against a relevance filter derived from `rules_relevant` keywords; a lightweight triage file lists candidates with accept / ignore / defer. Mini-product — revisit post-v0.3 once the referential has stabilised. | 🟢 Speculative | Referential brainstorm, 2026-04-23 |
 
@@ -595,6 +606,45 @@ single-rule problem.
 |---|---|---|---|
 | F77 | ✅ Shipped in v0.2 — `main.rs` now auto-discovers `lucid-lint.toml` walking up from the CWD (stopping at the nearest `.git` boundary) and applies `[default].profile`, `[default].conditions`, `[scoring]` via `ScoringFileConfig::into_scoring_config`, and `[rules.readability-score].formula`. New `--config <path>` flag overrides discovery. Precedence: built-in profile defaults → TOML → CLI flags. Per-rule TOML overrides beyond `readability.score` extend rule-by-rule as each `Config` gains `Deserialize`. See [`docs/src/guide/configuration.md`](docs/src/guide/configuration.md). | — | F11 follow-up (2026-04-21) |
 | F76 | Interop suppression mechanism. Rules declare overlapping external linter rules in their metadata (e.g. `Rule::external_overlaps() -> &[(Linter, &'static str)]`, enum `Linter::Markdownlint \| Vale \| Proselint \| Textlint`). Users opt in via `[interop] suppress_when = ["markdownlint"]` in `lucid-lint.toml` (CLI equivalent: `--interop-suppress=markdownlint`); opt-out is default, so coverage never silently drops. When active, affected rules are skipped at emission time with an info-level trace in `--verbose`. Ships CLI + LSP (the LSP path is the real motivator: two servers squiggling the same span with different severities and wording erodes trust in both). Only `structure.deeply-nested-lists` qualifies at time of writing (MD007); framework is designed to scale to future overlaps. Non-goal: detecting whether the external linter is actually installed or configured — the config field is the signal. | 🟡 Later | Markdownlint-overlap scan (2026-04-20) |
+
+### Adoption channels
+
+Filed 2026-04-25 from the adoption-channels brainstorm
+(`.personal/brainstorm/20260425-adoption-channels.md`). The topic is
+"how does `lucid-lint` get adoption without a marketing program?" —
+no paid ads, no PR firm, no communication program. The brainstorm
+inventoried 35 candidates across linter-plugin slots, target OSS
+projects, public initiatives, awesome-list channels, and emergent
+plays; eleven survived MoSCoW routing and land here.
+
+The regulatory tailwind (EAA enforceable since 2025-06-28; RGAA 5
+ships end-2026 with DGCCRF / Arcom sanctions up to 50k€ + renewable)
+shapes the must-list — F110 + F111 lean directly on it. Bilingual
+EN/FR is the differentiator that makes the FR-government channel
+viable.
+
+| ID | Item | Priority | Origin |
+|---|---|---|---|
+| F110 | **Vale style pack — subset of rules → `vale-cli/packages` topic.** Map only the rules that fit Vale's `existence` / `substitution` / `occurrence` checks (target list: `lexicon.weasel-words`, `lexicon.redundant-intensifier`, `lexicon.jargon-undefined`, `lexicon.unexplained-abbreviation`, `lexicon.all-caps-shouting` — plus a couple thresholded `structure` rules if Vale's `conditional` extends cleanly). The cognitive-load core (sentence-too-long thresholds, `structure.deep-subordination`, scoring engine, FALC profile) stays standalone-only. Pack is **generated** from the rule registry (~50 lines of Rust emitting Vale YAML) — zero hand-maintenance, regenerated per release. Each rule's Vale `link:` field points to `docs/src/rules/<id>.md` so curiosity about gaps surfaces the standalone tool. Pack README opens with: *"This is a subset of `lucid-lint` for Vale users. For sentence-shape, paragraph rhythm, scoring and the FALC profile, use `lucid-lint` standalone — see `[link]`."* The Vale pack is intentionally a "trailer." Risks (discovery dilution, identity blur, maintenance drag) all fall on the README + per-rule link surfaces; not cannibalisation — Vale users are a new audience, not poached existing users. | 🔴 Next | Adoption-channels brainstorm 2026-04-25 |
+| F111 | **DINUM submission to `accessibilité.numerique.gouv.fr` resources page.** Bilingual EN/FR + cognitive a11y + RGAA-friendly profile is a clean fit for the FR government's recommended-tools surface. Submission packet: project URL, README in FR, RGAA mapping table (which `lucid-lint` rules cite which RGAA criteria), `--profile=falc` walkthrough, screenshots of `score:` summary line. Wait on a public-sector inbox cadence is fine; effort is upstream of waiting (~half day). Coincides with RGAA 5 ship + sanctions starting end-2026 — channel leverage peaks in Q4 2026 / Q1 2027. | 🔴 Next | Adoption-channels brainstorm 2026-04-25 |
+| F112 | **Three awesome-list PRs in one sitting** — `brunopulis/awesome-a11y`, `yowainwright/awesome-writing-tools`, `rust-unofficial/awesome-rust`. One-shot, ~half day total. Standard credibility + discovery move; cheapest pick on the list. Skip `awesome-plaintext` and the smaller a11y forks unless the bigger three reject (then iterate). | 🔴 Next | Adoption-channels brainstorm 2026-04-25 |
+| F113 | **Free audit-and-PR play on one famous OSS doc.** Pick ONE prominent target, run `lucid-lint --profile=public`, open a careful, well-explained PR with diffs and rule citations. Suggested first targets: Rust async-book (small, dev-focused, EN), `plainlanguage.gov` GitHub repo (meta-perfect — they already preach plain language, so the bar is "did our tool find anything they missed?"), or one CNCF doc site (Prometheus, Linkerd) for the cloud-native audience. Repeatable pattern; once one lands, the second halves. Side-benefit: stress-tests our rules on real prose — F25 dogfooding extends here. | 🟡 Later | Adoption-channels brainstorm 2026-04-25 |
+| F114 | **GitHub Action in Marketplace.** Package the binary as a reusable Action; publish to GitHub Marketplace. Docs-as-code communities pull from there. Inputs: `paths`, `profile`, `min-score`. Outputs: SARIF (already shipped), JSON, optional PR-comment summary. Two-day project once we lock the input/output contract. Dependency: stable SARIF output (already in v0.2). | 🟡 Later | Adoption-channels brainstorm 2026-04-25 |
+| F115 | **FALC-readiness guide page** — new docs page `docs/src/guide/falc-readiness.md` (FR mirror at `docs/src/fr/guide/falc-readiness.md`) explaining how `lucid-lint --profile=falc` maps to the Inclusion Europe European Easy-to-Read standards. Cite the European Easy-to-Read logo program (logo use is free if conditions met: document follows the standards + at least one person with intellectual disability validated readability). **Do not claim certification** — claim *readiness*. The guide drives qualified traffic from disability-federation networks (UNAPEI, Inclusion Europe, etc.). | 🟡 Later | Adoption-channels brainstorm 2026-04-25 |
+| F116 | **mdbook-lint coexistence guide.** Short page in our docs (and a one-liner cross-PR to mdbook-lint's README) explaining "use both": mdbook-lint = markdown structure, `lucid-lint` = prose / cognitive load. Different niches, complementary. Free, opportunistic. | 🟢 Could | Adoption-channels brainstorm 2026-04-25 |
+| F117 | **W3C Cognitive and Learning Disabilities Accessibility Task Force (COGA) tools survey submission.** Submit `lucid-lint` next time COGA refreshes its public tools list. High credibility, slow cadence, low effort once the submission template is identified. | 🟢 Could | Adoption-channels brainstorm 2026-04-25 |
+| F118 | **Conference talk submission.** Targets: Write the Docs (Portland or Australia), RustNation 2027, EuroRust 2026, A11y Camp. CFP-driven, variable effort. The "from samply profile to 12% perf win" arc from 2026-04-25 plus the bilingual-cognitive-a11y angle is talk-shaped. | 🟢 Could | Adoption-channels brainstorm 2026-04-25 |
+| F119 | **Mastodon / Bluesky cadence.** Modest (1–2 posts/week), tag accessibility + tech-writing communities. Cheap, ongoing; effective when paired with F113 audit-PR landings or F110 pack release as anchors. | 🟢 Could | Adoption-channels brainstorm 2026-04-25 |
+| F120 | **Pre-commit hook listing in `pre-commit/pre-commit` registry.** Fires once `--check` mode is stable across our CLI surface (currently most surfaces use `--format=json` and exit codes; hook-friendly summary + fast-fail mode is the prerequisite). | 🟢 Could | Adoption-channels brainstorm 2026-04-25 |
+
+**Watch-only (filed in brainstorm, not in ROADMAP):**
+mkdocs / Docusaurus / VitePress / Astro Starlight plugins — YAGNI
+until first user asks. "FALC-ready" badge program parked behind F115
+(needs Inclusion Europe coordination first; do not squat on their
+logo). Hacker News "Show HN" parked until at least one of
+F110 / F111 / F113 has landed an anchor. Co-authored academic letter
+parked indefinitely (long ROI, low control). Public-sector
+procurement frameworks (UGAP) parked — way too early for the project.
 
 ### Research track
 

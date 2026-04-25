@@ -110,6 +110,7 @@ full attribute set per entry. Every source listed below is
 
 | Source | Polarity | Lang | Interest | Confidence | MD |
 |---|---|---|---|---|---|
+| [Mon Parcours Handicap — fiches FALC](https://www.monparcourshandicap.gouv.fr/aides) | good | FR | high | high | 2 |
 
 ### 🩺 Health literacy
 
@@ -163,13 +164,13 @@ full attribute set per entry. Every source listed below is
 
 ## 📏 Coverage snapshot / Couverture
 
-Auto-generated from [`texts.yaml`](./texts.yaml). Cells count **`public_ok` sources only** — the 25 of 55 entries safe to commit under `examples/public/`. A `—` cell means zero redistributable sources for that slot. The full map (including non-redistributable slots and the load-bearing target list for sourcing work) lives at `examples/local/COVERAGE.md`, which is gitignored by design.
+Auto-generated from [`texts.yaml`](./texts.yaml). Cells count **`public_ok` sources only** — the 26 of 56 entries safe to commit under `examples/public/`. A `—` cell means zero redistributable sources for that slot. The full map (including non-redistributable slots and the load-bearing target list for sourcing work) lives at `examples/local/COVERAGE.md`, which is gitignored by design.
 
 ### Shape × language
 
 | Shape | EN | FR | EN+FR |
 |---|---|---|---|
-| good | 2 | 2 | — |
+| good | 2 | 3 | — |
 | bad | 4 | 1 | 1 |
 | before/after | 8 | — | 1 |
 | mixed | 4 | — | — |
@@ -179,19 +180,19 @@ Auto-generated from [`texts.yaml`](./texts.yaml). Cells count **`public_ok` sour
 
 | Condition | EN | FR | EN+FR |
 |---|---|---|---|
-| `general` | 19 | 3 | 3 |
+| `general` | 19 | 4 | 3 |
 | `dyslexia` | 2 | 1 | — |
 | `dyscalculia` | — | — | — |
-| `aphasia` | 5 | — | — |
+| `aphasia` | 5 | 1 | — |
 | `adhd` | — | — | — |
-| `non-native` | 14 | 2 | 2 |
+| `non-native` | 14 | 3 | 2 |
 | `a11y-markup` | — | 1 | — |
 
 ### Type × language
 
 | Type | EN | FR | EN+FR |
 |---|---|---|---|
-| `gov_guide` | 3 | — | 1 |
+| `gov_guide` | 3 | 1 | 1 |
 | `style_guide` | 2 | — | — |
 | `standard` | 4 | 1 | — |
 | `research_paper` | 1 | — | — |
