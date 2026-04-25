@@ -95,6 +95,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   index gloss (rule IDs stay as the stable contract; FR labels
   earn a visible surface for FR-only readers). Picks documented
   on the entries.
+- **Four ROADMAP entries from the 2026-04-25 encoding-coverage
+  survey (F110 – F113).** No code today — design lap. The test
+  surface covers grapheme clusters (`unicode-segmentation`
+  everywhere), CRLF normalisation, and Latin-1 NFC accented
+  characters. It does **not** cover four real corpus realities:
+  F110 — UTF-8 BOM (Windows-edited Markdown carries a leading
+  `\u{FEFF}` that `read_to_string` does not strip); F111 — NFC vs
+  NFD normalisation (the biggest risk: HashMap-keying rules like
+  `low_lexical_diversity`, `consecutive_long_sentences`,
+  `weasel-words`, the stop-words check in `detect_language` would
+  treat NFC `café` and NFD `café` as different words); F112 —
+  lone-CR (the implemented but untested classic-Mac path) and
+  zero-width characters mid-word; F113 — mixed-script paragraphs
+  (filed Speculative). Out-of-scope and explicitly so: invalid
+  UTF-8 (the type system rejects it at the read boundary) and
+  non-UTF-8 encodings (would violate the deterministic-core prime
+  directive — charset detection is heuristic, users transcode at
+  the file boundary with `iconv` or "save as UTF-8" once). New
+  ROADMAP sub-section "Encoding / input handling" carries the
+  rationale.
 - **F108 + F109 closed — `low_lexical_diversity` mutation score 36 %
   → 89 %.** Five new tests target the gaps that the F98 baseline
   surfaced. `reported_ratio_is_minimum_observed_in_cluster` builds a

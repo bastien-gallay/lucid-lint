@@ -69,6 +69,9 @@ the authoritative entry in its topic section.
 | F104 | Docs — site | Per-category sidebar grouping in `SUMMARY.md` |
 | F105 | Docs — content | Consolidated references page (cited sources, one click) |
 | F107 | Docs — bilingual | FR rule labels (page subtitle + index gloss) |
+| F110 | Encoding — input | Strip the UTF-8 BOM at read |
+| F111 | Encoding — input | Normalise input to NFC before linting (NFC vs NFD) |
+| F112 | Encoding — tests | Lone-CR + zero-width-char regression fixtures |
 
 **v0.3 (breaking boundary):**
 
@@ -284,6 +287,25 @@ section below.
 | F41 | Reading-time-seconds as an alternative score unit — ties score to concrete user outcome. Requires validated heuristic + companion metrics (comfort, fatigue, understandability) so the time unit doesn't monopolize the read. | 🟢 Speculative | F14 `brainstorm/20260420-score-semantics.md` |
 | F71 | ✅ Shipped in v0.2 — `ConditionTag` enum (fixed 7-variant ontology: `a11y-markup`, `dyslexia`, `dyscalculia`, `aphasia`, `adhd`, `non-native`, `general`) plus `Rule::condition_tags()` trait method (default `&[General]`). All 17 v0.2 rules are `general`; future tagged rules (F48, F55, F56) opt in by overriding. See [`docs/src/guide/conditions.md`](docs/src/guide/conditions.md). | — | Rule-system-growth brainstorm (2026-04-20) |
 | F72 | ✅ Shipped in v0.2 — `[default] conditions = [...]` config field and `--conditions` CLI flag (comma-separated). Filter semantics: rules tagged `general` always run; tagged-only rules run iff their tags intersect the active list. Profiles unchanged; FALC retains its regulatory meaning. See [`docs/src/guide/conditions.md`](docs/src/guide/conditions.md). | — | Rule-system-growth brainstorm (2026-04-20) |
+
+### Encoding / input handling
+
+The linter is a UTF-8 → diagnostics function. Encoding conversion is
+the user's responsibility, exactly once, before lint-time (`iconv`
+or "save as UTF-8"). Invalid UTF-8 fails at the read boundary
+(`std::fs::read_to_string` returns an `io::Error`). Other encodings
+(Windows-1252, Latin-1, Shift-JIS, …) are explicit non-goals: any
+in-process transcoder would violate the deterministic-core prime
+directive (charset detection is heuristic, "same input, same output"
+no longer holds). The entries below cover the *valid-UTF-8* edge
+cases the test surface should pin.
+
+| ID | Item | Priority | Origin |
+|---|---|---|---|
+| F110 | **Strip the UTF-8 BOM at read.** Windows-edited Markdown often carries a leading `\u{FEFF}` (UTF-8 BOM, bytes `EF BB BF`). `std::fs::read_to_string` does not strip it, so it becomes the first character of the document. `unicode_words()` skips the BOM, but column counts and the first-character location can shift by one. Fix: strip the leading `\u{FEFF}` once at the read-boundary helper (likely `cli` or wherever `read_to_string` is called for path inputs and stdin). One regression test: a fixture with a leading BOM produces the same diagnostics + locations as the same fixture without one. | 🔴 Next | 2026-04-25 encoding survey |
+| F111 | **Normalise input to NFC before linting.** Same word can arrive as NFC (precomposed `café`, one codepoint per accented letter) or NFD (decomposed `e + \u{0301}`, two codepoints per accented letter). Source code typed by humans is usually NFC; text copy-pasted from PDFs, pulled from raw upstreams, or saved by certain Linux file managers may be NFD. `unicode-segmentation` treats both as one grapheme, but rules that hash strings (HashMap keys in `low_lexical_diversity`, `consecutive_long_sentences`, dictionary lookups in `weasel-words` / `redundant-intensifier`, the stop-words HashSet check in `detect_language`) would treat NFC `café` and NFD `café` as **different keys** — same prose, different lint output. Fix: add `unicode-normalization` dep and call `.nfc().collect::<String>()` once at the parser-input boundary, so every rule consumes NFC. Add NFD-fixture tests across the rules-using-HashMap surface to prove parity. | 🔴 Next | 2026-04-25 encoding survey |
+| F112 | **Lone-CR + zero-width-character regression fixtures.** Two small defensive tests. (1) Lone `\r` (classic Mac line endings) — the parser already normalises `\r` → `\n` at `src/parser/mod.rs:27`, but no test exercises a `\r`-only input. (2) Zero-width characters (`\u{200B}` zero-width space, `\u{200C}` zero-width non-joiner) inserted mid-word — common in copy-pasted social-media content. Currently silently kept by `unicode_words()` and may split or silently glue tokens. Pin the behaviour either way so it can't drift. | 🔴 Next | 2026-04-25 encoding survey |
+| F113 | **Mixed-script test fixtures.** Pin behaviour on EN + CJK and LTR + RTL prose mixed within one paragraph. `unicode_words()` should handle the boundaries correctly (UAX-29), but no regression test exists. Filed as Speculative — no known bug, just a coverage gap. Open if a real-world bilingual corpus surfaces edge cases. | 🟢 Speculative | 2026-04-25 encoding survey |
 
 ### Rules refinement
 
