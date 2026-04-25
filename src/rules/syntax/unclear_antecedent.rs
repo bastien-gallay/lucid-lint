@@ -22,7 +22,7 @@ use std::sync::LazyLock;
 use unicode_segmentation::UnicodeSegmentation;
 
 use crate::config::Profile;
-use crate::parser::{split_sentences, Document};
+use crate::parser::Document;
 use crate::rules::Rule;
 use crate::types::{Diagnostic, Language, Location, Severity, SourceFile};
 
@@ -184,7 +184,7 @@ impl Rule for UnclearAntecedent {
             }
 
             if self.config.check_demonstratives {
-                for sentence in split_sentences(&paragraph.text, paragraph.start_line, 1) {
+                for sentence in &paragraph.sentences {
                     if let Some(pronoun) = bare_demonstrative(&sentence.text, &lists) {
                         diagnostics.push(build_diagnostic(
                             &document.source,

@@ -14,7 +14,7 @@
 use std::num::NonZeroU32;
 
 use crate::config::Profile;
-use crate::parser::{split_sentences, word_count, Document};
+use crate::parser::{word_count, Document};
 use crate::rules::Rule;
 use crate::types::{Diagnostic, Language, Location, Severity, SourceFile};
 
@@ -80,7 +80,7 @@ impl Rule for ConsecutiveLongSentences {
         let mut diagnostics = Vec::new();
 
         for (paragraph, section_title) in document.paragraphs_with_section() {
-            let sentences = split_sentences(&paragraph.text, paragraph.start_line, 1);
+            let sentences = &paragraph.sentences;
             let mut streak_start: Option<usize> = None;
             let mut streak_len: u32 = 0;
             let mut already_flagged = false;

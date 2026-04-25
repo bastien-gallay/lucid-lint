@@ -17,7 +17,7 @@ use std::num::NonZeroU32;
 use unicode_segmentation::UnicodeSegmentation;
 
 use crate::config::Profile;
-use crate::parser::{split_sentences, Document};
+use crate::parser::Document;
 use crate::rules::Rule;
 use crate::types::{Diagnostic, Language, Location, Severity, SourceFile};
 
@@ -101,7 +101,7 @@ impl Rule for ExcessiveNominalization {
 
         let mut diagnostics = Vec::new();
         for (paragraph, section_title) in document.paragraphs_with_section() {
-            for sentence in split_sentences(&paragraph.text, paragraph.start_line, 1) {
+            for sentence in &paragraph.sentences {
                 let count = count_nominalizations(&sentence.text, &suffixes);
                 if count > max {
                     diagnostics.push(build_diagnostic(

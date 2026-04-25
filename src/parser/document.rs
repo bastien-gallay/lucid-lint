@@ -2,11 +2,13 @@
 //!
 //! A [`Document`] contains an ordered list of [`Section`]s (derived from
 //! headings in Markdown). Each section contains an ordered list of
-//! [`Paragraph`]s. Sentences are derived on demand from paragraph text
-//! via [`super::tokenizer::split_sentences`] because some rules work on
-//! full paragraphs and some on sentences — we avoid eagerly paying for
-//! sentence splitting when it is not needed.
+//! [`Paragraph`]s. Each paragraph carries its sentences, computed once
+//! at construction via [`super::tokenizer::split_sentences`] — eight
+//! rhythm/syntax/lexicon/structure rules consume them, so paying the
+//! split once and sharing across rules is strictly cheaper than the
+//! previous "lazy per-rule" pattern (F103, samply 2026-04-25).
 
+use crate::parser::tokenizer::split_sentences;
 use crate::types::SourceFile;
 
 /// The parsed representation of a single input text.
@@ -124,13 +126,23 @@ pub struct Paragraph {
 
     /// 1-based line number in the source where the paragraph starts.
     pub start_line: u32,
+
+    /// Sentences extracted from `text` at construction time, with absolute
+    /// source positions seeded from `start_line`. Rules consume this slice
+    /// instead of re-running [`split_sentences`] per rule.
+    pub sentences: Vec<Sentence>,
 }
 
 impl Paragraph {
-    /// Create a new paragraph.
+    /// Create a new paragraph and split it into sentences.
     #[must_use]
-    pub const fn new(text: String, start_line: u32) -> Self {
-        Self { text, start_line }
+    pub fn new(text: String, start_line: u32) -> Self {
+        let sentences = split_sentences(&text, start_line, 1);
+        Self {
+            text,
+            start_line,
+            sentences,
+        }
     }
 }
 

@@ -17,7 +17,7 @@ use std::sync::LazyLock;
 use unicode_segmentation::UnicodeSegmentation;
 
 use crate::config::Profile;
-use crate::parser::{split_sentences, Document};
+use crate::parser::{Document, Sentence};
 use crate::rules::Rule;
 use crate::types::{Diagnostic, Language, Location, Severity, SourceFile};
 
@@ -150,7 +150,7 @@ impl Rule for PassiveVoice {
         let mut diagnostics = Vec::new();
 
         for (paragraph, section_title) in document.paragraphs_with_section() {
-            let count = count_passives(&paragraph.text, paragraph.start_line, language);
+            let count = count_passives(&paragraph.sentences, language);
             if count > max {
                 diagnostics.push(build_diagnostic(
                     &document.source,
@@ -166,9 +166,9 @@ impl Rule for PassiveVoice {
     }
 }
 
-fn count_passives(paragraph_text: &str, start_line: u32, language: Language) -> u32 {
+fn count_passives(sentences: &[Sentence], language: Language) -> u32 {
     let mut total: u32 = 0;
-    for sentence in split_sentences(paragraph_text, start_line, 1) {
+    for sentence in sentences {
         total = total.saturating_add(count_sentence_passives(&sentence.text, language));
     }
     total
