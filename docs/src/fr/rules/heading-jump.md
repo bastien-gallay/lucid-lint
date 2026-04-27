@@ -1,5 +1,7 @@
 # `structure.heading-jump`
 
+*Saut de niveau de titre.*
+
 ## Ce que cette règle signale
 
 Les sauts de niveau de titre qui cassent la carte mentale du document

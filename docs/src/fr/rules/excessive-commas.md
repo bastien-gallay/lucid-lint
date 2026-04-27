@@ -1,5 +1,7 @@
 # `structure.excessive-commas`
 
+*Virgules en excès.*
+
 ## Ce que cette règle signale
 
 Les phrases dont le nombre de virgules dépasse un plafond par profil.

@@ -1,5 +1,7 @@
 # `structure.long-enumeration`
 
+*Énumération trop longue.*
+
 ## Ce que cette règle signale
 
 Les énumérations en prose inline qui seraient plus claires sous forme

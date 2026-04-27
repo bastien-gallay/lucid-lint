@@ -1,5 +1,7 @@
 # `structure.paragraph-too-long`
 
+*Paragraphe trop long.*
+
 ## Ce que cette règle signale
 
 Les paragraphes qui dépassent un seuil en nombre de phrases ou en

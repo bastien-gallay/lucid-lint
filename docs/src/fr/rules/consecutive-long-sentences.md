@@ -1,5 +1,7 @@
 # `rhythm.consecutive-long-sentences`
 
+*Phrases longues consécutives.*
+
 ## Ce que cette règle signale
 
 Des séries de phrases longues à l'intérieur d'un même paragraphe. Une

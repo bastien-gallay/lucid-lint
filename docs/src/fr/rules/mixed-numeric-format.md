@@ -1,5 +1,7 @@
 # `structure.mixed-numeric-format`
 
+*Formats numériques mixtes.*
+
 ## Ce que cette règle signale
 
 Les phrases qui mêlent des numéraux en chiffres (`42`, `3.14`,

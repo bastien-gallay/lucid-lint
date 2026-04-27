@@ -1,5 +1,7 @@
 # `lexicon.unexplained-abbreviation`
 
+*Abréviations non explicitées.*
+
 ## Ce que cette règle signale
 
 Les acronymes employés sans définition proche. Chaque interruption

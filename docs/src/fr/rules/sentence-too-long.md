@@ -1,5 +1,7 @@
 # `structure.sentence-too-long`
 
+*Phrase trop longue.*
+
 ## Ce que cette règle signale
 
 Les phrases dont la longueur dépasse un plafond par profil. La charge

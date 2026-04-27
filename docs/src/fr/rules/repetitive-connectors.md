@@ -1,5 +1,7 @@
 # `rhythm.repetitive-connectors`
 
+*Répétition de connecteurs.*
+
 ## Ce que cette règle signale
 
 Surutilisation d'un même connecteur logique dans une fenêtre courte

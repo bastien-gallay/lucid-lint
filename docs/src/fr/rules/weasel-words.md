@@ -1,5 +1,7 @@
 # `lexicon.weasel-words`
 
+*Mots évasifs.*
+
 ## Ce que cette règle signale
 
 Les qualificatifs vagues qui affaiblissent une affirmation. Un mot

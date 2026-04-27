@@ -1,5 +1,7 @@
 # `structure.deeply-nested-lists`
 
+*Listes trop imbriquées.*
+
 ## Ce que cette règle signale
 
 Les items de liste à puces imbriqués au-delà d'une profondeur

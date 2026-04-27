@@ -1,5 +1,7 @@
 # `structure.deep-subordination`
 
+*Subordination profonde.*
+
 ## Ce que cette règle signale
 
 Les cascades de subordonnées : plusieurs pronoms relatifs ou

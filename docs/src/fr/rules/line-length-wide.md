@@ -1,5 +1,7 @@
 # `structure.line-length-wide`
 
+*Lignes trop larges.*
+
 ## Ce que cette règle signale
 
 Les lignes source plus larges que le plafond du profil. WCAG 1.4.8
