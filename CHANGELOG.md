@@ -79,6 +79,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `repetitive-connectors`). `SUMMARY.md` and `fr/rules/index.md`
   rewired to local FR versions. Remaining: 12 per-rule FR pages
   (lexicon 6, syntax 5, readability 1) plus FR guide translations.
+- **Per-category sidebar grouping in `SUMMARY.md` (F104).** The
+  rules sidebar is reshaped into 5 collapsible sub-trees
+  (Structure / Rhythm / Lexicon / Syntax / Readability) using mdBook
+  draft-chapter syntax (`- [Title]()`) as non-clickable group
+  headers. The flat 25-row list under "Overview" is replaced by
+  category groups that mirror the per-category table on
+  `rules/index.md` — readers scanning for a rhythm or readability
+  rule no longer wade past 9 structure entries first. The
+  "Version française" block mirrors the same shape (Structure /
+  Rythme / Lexique; Syntaxe and Lisibilité materialise as the FR
+  translations of those categories land). `markdownlint` MD042
+  (no-empty-links) is disabled globally to permit the draft-chapter
+  syntax — same pattern as the pre-existing MD025 carve-out for
+  SUMMARY's required multiple H1s.
 - **`cargo-mutants` baseline + `just mutants` recipe (F98 ✅).**
   Mutation testing wired in as a dev-tool (no new runtime dep).
   `just mutants <file>` runs `cargo mutants --file <file> --timeout 60
