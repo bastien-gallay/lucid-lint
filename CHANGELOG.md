@@ -106,6 +106,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   when the page still points to the EN version (marked `(en)`).
   Sidebar TOC labels stay in EN to keep `SUMMARY.md` single-locale
   (per-locale split is F90, parked Speculative).
+- **Consolidated references page (F105).** Every academic, normative,
+  and practical source that grounds a rule now lives in the docs
+  site at `docs/src/references.md` (EN, under Project) and
+  `docs/src/fr/references.md` (FR, under Version française). The
+  page preserves the full taxonomy from `examples/REFERENCES.md`:
+  status legend, per-domain sections (Cognitive Load Theory, text
+  cohesion, syntactic complexity, discourse connectors, readability
+  formulas, lexical diversity, negation processing, conditional
+  reasoning, typography, phonological complexity, intensifiers,
+  style guides, numeric formatting, working memory, dyslexia,
+  WCAG/RGAA/FALC/CAN-ASC/EAA normative standards, practical tools)
+  and the rule → reference summary table. `examples/REFERENCES.md`
+  becomes a thin redirect to the docs sources — kept because external
+  citations may already point there. Both rule indexes cross-link
+  to the new page next to the existing `RULES.md` pointer.
 - **`cargo-mutants` baseline + `just mutants` recipe (F98 ✅).**
   Mutation testing wired in as a dev-tool (no new runtime dep).
   `just mutants <file>` runs `cargo mutants --file <file> --timeout 60
