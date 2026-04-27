@@ -9,14 +9,14 @@ Ce document liste les références qui ont façonné les règles, profils et dé
 
 ## 📋 Legend / Légende
 
-| Status | Meaning | Signification |
-|---|---|---|
-| ✅ | Verified — canonical reference | Vérifiée — référence canonique |
-| ⚠️ | To verify — likely correct, confirm citation details | À vérifier — probablement correcte, détails à confirmer |
-| 🔍 | Opportunistic — sound rationale, citation may be looser | Opportuniste — raisonnement solide, citation plus lâche |
-| 📖 | Book / secondary source | Livre / source secondaire |
-| 🌐 | Normative standard | Standard normatif |
-| 🧪 | Practical source (style guide, tool) | Source pratique (guide de style, outil) |
+| Status | Meaning                                                 | Signification                                           |
+| ------ | ------------------------------------------------------- | ------------------------------------------------------- |
+| ✅      | Verified — canonical reference                          | Vérifiée — référence canonique                          |
+| ⚠️      | To verify — likely correct, confirm citation details    | À vérifier — probablement correcte, détails à confirmer |
+| 🔍      | Opportunistic — sound rationale, citation may be looser | Opportuniste — raisonnement solide, citation plus lâche |
+| 📖      | Book / secondary source                                 | Livre / source secondaire                               |
+| 🌐      | Normative standard                                      | Standard normatif                                       |
+| 🧪      | Practical source (style guide, tool)                    | Source pratique (guide de style, outil)                 |
 
 ## 🗂️ Rule taxonomy / Taxonomie des règles
 
@@ -24,13 +24,13 @@ The v0.1 rules are organized into **five categories**:
 
 Les règles de la v0.1 sont organisées en **cinq catégories** :
 
-| Category / Catégorie | Focus |
-|---|---|
-| `lexicon` | Word choice, vocabulary, terminology / Choix des mots, vocabulaire, terminologie |
-| `readability` | Document-level synthetic metrics / Métriques synthétiques au niveau du document |
-| `rhythm` | Patterns across multiple sentences / Motifs sur plusieurs phrases |
-| `structure` | Syntactic and document structure / Structure syntaxique et du document |
-| `syntax` | Style and sentence-level constructions / Style et constructions au niveau de la phrase |
+| Category / Catégorie | Focus                                                                                  |
+| -------------------- | -------------------------------------------------------------------------------------- |
+| `lexicon`            | Word choice, vocabulary, terminology / Choix des mots, vocabulaire, terminologie       |
+| `readability`        | Document-level synthetic metrics / Métriques synthétiques au niveau du document        |
+| `rhythm`             | Patterns across multiple sentences / Motifs sur plusieurs phrases                      |
+| `structure`          | Syntactic and document structure / Structure syntaxique et du document                 |
+| `syntax`             | Style and sentence-level constructions / Style et constructions au niveau de la phrase |
 
 ---
 
@@ -190,7 +190,7 @@ The canonical English writing guide. Codifies active voice, concision, clear pro
 
 → Relevant to: `syntax.passive-voice`, `lexicon.weasel-words`, `lexicon.redundant-intensifier`, `syntax.unclear-antecedent`.
 
-**🧪 US Plain Language Action and Information Network (2011).** *Federal Plain Language Guidelines.* https://www.plainlanguage.gov/
+**🧪 US Plain Language Action and Information Network (2011).** *Federal Plain Language Guidelines.* <https://www.plainlanguage.gov/>
 
 Grounds short sentences, active voice, no nominalization, no jargon.
 
@@ -236,7 +236,7 @@ Empirical research on font choice impact for dyslexic readers.
 
 ### ♿ Normative standards
 
-**🌐 W3C (2018).** *Web Content Accessibility Guidelines (WCAG) 2.1.* https://www.w3.org/TR/WCAG21/
+**🌐 W3C (2018).** *Web Content Accessibility Guidelines (WCAG) 2.1.* <https://www.w3.org/TR/WCAG21/>
 
 Key criteria invoked:
 
@@ -249,7 +249,7 @@ Key criteria invoked:
 
 > ⚠️ Verify exact criterion numbers against the WCAG version you want to cite (2.1 or 2.2).
 
-**🌐 Accessibility Standards Canada (2025).** *CAN-ASC-3.1:2025 — Plain Language* (first edition). https://accessible.canada.ca/creating-accessibility-standards/summary-standard-can-asc-312025-plain-language
+**🌐 Accessibility Standards Canada (2025).** *CAN-ASC-3.1:2025 — Plain Language* (first edition). <https://accessible.canada.ca/creating-accessibility-standards/summary-standard-can-asc-312025-plain-language>
 
 First-edition Canadian national standard on plain language, published bilingually by Accessibility Standards Canada under the *Accessible Canada Act*. Prescriptive (`shall` / `should` / `may`) requirements over five areas: audience identification, evaluation methods, structure, wording, design. Grounds many of our `lexicon.*`, `structure.*`, and `readability.score` defaults independently of the US / EU plain-language canons.
 
@@ -263,11 +263,11 @@ Legal framework extending accessibility requirements to private-sector services 
 
 ### 🧑‍💻 Practical tools that shaped our design
 
-- **🧪 Coh-Metrix** (Graesser & McNamara) — https://soletlab.asu.edu/coh-metrix/
-- **🧪 Vale** (Chris Ward) — https://vale.sh/
-- **🧪 textlint** — https://textlint.github.io/
-- **🧪 Hemingway Editor** — https://hemingwayapp.com/
-- **🧪 Proselint** — https://github.com/amperser/proselint
+- **🧪 Coh-Metrix** (Graesser & McNamara) — <https://soletlab.asu.edu/coh-metrix/>
+- **🧪 Vale** (Chris Ward) — <https://vale.sh/>
+- **🧪 textlint** — <https://textlint.github.io/>
+- **🧪 Hemingway Editor** — <https://hemingwayapp.com/>
+- **🧪 Proselint** — <https://github.com/amperser/proselint>
 
 ---
 
@@ -421,7 +421,7 @@ Guide pratique qui plaide contre les adverbes intensificateurs comme encombremen
 
 → Concerne : `syntax.passive-voice`, `lexicon.weasel-words`, `lexicon.redundant-intensifier`, `syntax.unclear-antecedent`.
 
-**🧪 US Plain Language Action and Information Network (2011).** *Federal Plain Language Guidelines.* https://www.plainlanguage.gov/
+**🧪 US Plain Language Action and Information Network (2011).** *Federal Plain Language Guidelines.* <https://www.plainlanguage.gov/>
 
 → Concerne : `structure.sentence-too-long`, `structure.paragraph-too-long`, `lexicon.excessive-nominalization`, `lexicon.jargon-undefined`, `syntax.passive-voice`.
 
@@ -453,7 +453,7 @@ Guide de style canonique couvrant quand écrire les nombres en lettres ou en chi
 
 ### ♿ Standards normatifs internationaux
 
-**🌐 W3C (2018).** *Web Content Accessibility Guidelines (WCAG) 2.1.* https://www.w3.org/TR/WCAG21/
+**🌐 W3C (2018).** *Web Content Accessibility Guidelines (WCAG) 2.1.* <https://www.w3.org/TR/WCAG21/>
 
 Critères clés invoqués :
 
@@ -468,7 +468,7 @@ Critères clés invoqués :
 
 ### 🇫🇷 Standards normatifs francophones
 
-**🌐 DINUM (2023).** *Référentiel Général d'Amélioration de l'Accessibilité (RGAA) version 4.1.* https://accessibilite.numerique.gouv.fr/
+**🌐 DINUM (2023).** *Référentiel Général d'Amélioration de l'Accessibilité (RGAA) version 4.1.* <https://accessibilite.numerique.gouv.fr/>
 
 - **Critère 9.1** — structure de l'information → `structure.heading-jump`
 - **Critère 9.4** — expansion des abréviations → `lexicon.unexplained-abbreviation`
@@ -479,7 +479,7 @@ Référentiel FALC (Facile À Lire et à Comprendre).
 
 → Concerne : le profil `falc` est directement inspiré de ces règles.
 
-**🌐 Normes d'accessibilité Canada (2025).** *CAN-ASC-3.1:2025 — Langage clair* (première édition). https://accessibilite.canada.ca/elaboration-normes-accessibilite/resume-de-la-norme-can-asc-312025-langage-clair
+**🌐 Normes d'accessibilité Canada (2025).** *CAN-ASC-3.1:2025 — Langage clair* (première édition). <https://accessibilite.canada.ca/elaboration-normes-accessibilite/resume-de-la-norme-can-asc-312025-langage-clair>
 
 Première norme nationale canadienne sur le langage clair, publiée en version bilingue par Normes d'accessibilité Canada dans le cadre de la *Loi canadienne sur l'accessibilité*. Exigences prescriptives (`doit` / `devrait` / `peut`) sur cinq axes : identification du public, méthodes d'évaluation, structure, formulation, conception. Fonde indépendamment plusieurs de nos seuils par défaut côté `lexicon.*`, `structure.*` et `readability.score`.
 
@@ -493,11 +493,11 @@ Cadre légal étendant les exigences d'accessibilité aux services du secteur pr
 
 ### 🧑‍💻 Outils pratiques qui ont façonné notre design
 
-- **🧪 Coh-Metrix** (Graesser & McNamara) — https://soletlab.asu.edu/coh-metrix/
-- **🧪 Vale** (Chris Ward) — https://vale.sh/
-- **🧪 textlint** — https://textlint.github.io/
-- **🧪 Hemingway Editor** — https://hemingwayapp.com/
-- **🧪 Proselint** — https://github.com/amperser/proselint
+- **🧪 Coh-Metrix** (Graesser & McNamara) — <https://soletlab.asu.edu/coh-metrix/>
+- **🧪 Vale** (Chris Ward) — <https://vale.sh/>
+- **🧪 textlint** — <https://textlint.github.io/>
+- **🧪 Hemingway Editor** — <https://hemingwayapp.com/>
+- **🧪 Proselint** — <https://github.com/amperser/proselint>
 
 ---
 
@@ -505,53 +505,53 @@ Cadre légal étendant les exigences d'accessibilité aux services du secteur pr
 
 ### Lexicon / Lexique
 
-| Rule / Règle | Primary references / Références principales |
-|---|---|
-| `lexicon.all-caps-shouting` | Arditi & Cho (2007); Nielsen Norman Group; Bringhurst (2013) |
-| `lexicon.consonant-cluster` | Seidenberg et al. (1984); Treiman et al. (2006) — 🔍 practitioner heuristic |
-| `lexicon.excessive-nominalization` | Plain Language US; FALC; CAN-ASC-3.1:2025 |
-| `lexicon.jargon-undefined` | WCAG 3.1.3; Plain Language US; FALC; CAN-ASC-3.1:2025 |
-| `lexicon.low-lexical-diversity` | Herdan (1960); McCarthy & Jarvis (2010); Graesser et al. (2004) |
-| `lexicon.redundant-intensifier` | Strunk & White; Quirk et al. (1985); Zinsser (2006) |
-| `lexicon.unexplained-abbreviation` | WCAG 3.1.4; RGAA 9.4; CAN-ASC-3.1:2025 |
-| `lexicon.weasel-words` | Strunk & White; Wikipedia style guide; CAN-ASC-3.1:2025 |
+| Rule / Règle                       | Primary references / Références principales                                |
+| ---------------------------------- | -------------------------------------------------------------------------- |
+| `lexicon.all-caps-shouting`        | Arditi & Cho (2007); Nielsen Norman Group; Bringhurst (2013)               |
+| `lexicon.consonant-cluster`        | Seidenberg et al. (1984); Treiman et al. (2006) — 🔍 practitioner heuristic |
+| `lexicon.excessive-nominalization` | Plain Language US; FALC; CAN-ASC-3.1:2025                                  |
+| `lexicon.jargon-undefined`         | WCAG 3.1.3; Plain Language US; FALC; CAN-ASC-3.1:2025                      |
+| `lexicon.low-lexical-diversity`    | Herdan (1960); McCarthy & Jarvis (2010); Graesser et al. (2004)            |
+| `lexicon.redundant-intensifier`    | Strunk & White; Quirk et al. (1985); Zinsser (2006)                        |
+| `lexicon.unexplained-abbreviation` | WCAG 3.1.4; RGAA 9.4; CAN-ASC-3.1:2025                                     |
+| `lexicon.weasel-words`             | Strunk & White; Wikipedia style guide; CAN-ASC-3.1:2025                    |
 
 ### Readability / Lisibilité
 
-| Rule / Règle | Primary references / Références principales |
-|---|---|
+| Rule / Règle        | Primary references / Références principales                                                 |
+| ------------------- | ------------------------------------------------------------------------------------------- |
 | `readability.score` | Flesch (1948); Kincaid et al. (1975); Henry (1975); Kandel & Moles (1958); CAN-ASC-3.1:2025 |
 
 ### Rhythm / Rythme
 
-| Rule / Règle | Primary references / Références principales |
-|---|---|
-| `rhythm.consecutive-long-sentences` | Sweller (1988); Sweller et al. (2011) |
-| `rhythm.repetitive-connectors` | Sanders & Noordman (2000); Graesser et al. (2004) |
+| Rule / Règle                        | Primary references / Références principales       |
+| ----------------------------------- | ------------------------------------------------- |
+| `rhythm.consecutive-long-sentences` | Sweller (1988); Sweller et al. (2011)             |
+| `rhythm.repetitive-connectors`      | Sanders & Noordman (2000); Graesser et al. (2004) |
 
 ### Structure
 
-| Rule / Règle | Primary references / Références principales |
-|---|---|
-| `structure.deep-subordination` | Gibson (1998); FALC |
-| `structure.deeply-nested-lists` | WCAG 2.1; cognitive load heuristics |
-| `structure.excessive-commas` | Gibson (1998) — 🔍 practitioner heuristic |
-| `structure.heading-jump` | WCAG 1.3.1 & 2.4.6; RGAA 9.1 |
-| `structure.line-length-wide` | WCAG 1.4.8 (AAA); Legge & Bigelow (2011) |
-| `structure.long-enumeration` | FALC; Plain Language US |
-| `structure.mixed-numeric-format` | ISO 80000-1; Chicago Manual of Style |
-| `structure.paragraph-too-long` | Sweller (1988); Graesser et al. (2004); CAN-ASC-3.1:2025 |
-| `structure.sentence-too-long` | Sweller (1988); Plain Language US; FALC; CAN-ASC-3.1:2025 |
+| Rule / Règle                     | Primary references / Références principales               |
+| -------------------------------- | --------------------------------------------------------- |
+| `structure.deep-subordination`   | Gibson (1998); FALC                                       |
+| `structure.deeply-nested-lists`  | WCAG 2.1; cognitive load heuristics                       |
+| `structure.excessive-commas`     | Gibson (1998) — 🔍 practitioner heuristic                  |
+| `structure.heading-jump`         | WCAG 1.3.1 & 2.4.6; RGAA 9.1                              |
+| `structure.line-length-wide`     | WCAG 1.4.8 (AAA); Legge & Bigelow (2011)                  |
+| `structure.long-enumeration`     | FALC; Plain Language US                                   |
+| `structure.mixed-numeric-format` | ISO 80000-1; Chicago Manual of Style                      |
+| `structure.paragraph-too-long`   | Sweller (1988); Graesser et al. (2004); CAN-ASC-3.1:2025  |
+| `structure.sentence-too-long`    | Sweller (1988); Plain Language US; FALC; CAN-ASC-3.1:2025 |
 
 ### Syntax / Syntaxe
 
-| Rule / Règle | Primary references / Références principales |
-|---|---|
-| `syntax.conditional-stacking` | Johnson-Laird & Byrne (1991); Evans & Over (2004); Gibson (1998) — 🔍 threshold is practitioner heuristic |
-| `syntax.dense-punctuation-burst` | Sweller (1988); Gibson (1998) — 🔍 purely heuristic |
-| `syntax.nested-negation` | Clark & Chase (1972); Carpenter & Just (1975); Kaup et al. (2006) |
-| `syntax.passive-voice` | Strunk & White; Plain Language US; FALC; CAN-ASC-3.1:2025 |
-| `syntax.unclear-antecedent` | Strunk & White; Gibson (1998); Graesser et al. (2004) |
+| Rule / Règle                     | Primary references / Références principales                                                              |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `syntax.conditional-stacking`    | Johnson-Laird & Byrne (1991); Evans & Over (2004); Gibson (1998) — 🔍 threshold is practitioner heuristic |
+| `syntax.dense-punctuation-burst` | Sweller (1988); Gibson (1998) — 🔍 purely heuristic                                                       |
+| `syntax.nested-negation`         | Clark & Chase (1972); Carpenter & Just (1975); Kaup et al. (2006)                                        |
+| `syntax.passive-voice`           | Strunk & White; Plain Language US; FALC; CAN-ASC-3.1:2025                                                |
+| `syntax.unclear-antecedent`      | Strunk & White; Gibson (1998); Graesser et al. (2004)                                                    |
 
 ---
 
