@@ -66,6 +66,8 @@
   - [`structure.excessive-commas`](./fr/rules/excessive-commas.md)
   - [`structure.long-enumeration`](./fr/rules/long-enumeration.md)
   - [`structure.deep-subordination`](./fr/rules/deep-subordination.md)
+  - [`rhythm.consecutive-long-sentences`](./fr/rules/consecutive-long-sentences.md)
+  - [`rhythm.repetitive-connectors`](./fr/rules/repetitive-connectors.md)
   - [`lexicon.weasel-words`](./fr/rules/weasel-words.md)
   - [`lexicon.unexplained-abbreviation`](./fr/rules/unexplained-abbreviation.md)
 - [Feuille de route](./fr/roadmap.md)
