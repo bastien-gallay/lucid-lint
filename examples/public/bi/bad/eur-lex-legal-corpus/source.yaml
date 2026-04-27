@@ -21,12 +21,7 @@ conditions:
 - general
 - non-native
 bilingual_parallel: true
-fetched_at: '2026-04-22T21:39:11+00:00'
+fetched_at: '2026-04-27T19:22:32+00:00'
 fetch_method: http_get
 raw_file: raw.html
 raw_sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-clean_file: clean.html
-clean_sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-md_content_sha256: 1acd18c0258e8b8293bb8fd16f4647eb881cc8c38a7ec1ad7d2caedabd82730b
-converted_at: '2026-04-22T21:40:51+00:00'
-md_backend: pandoc

@@ -17,12 +17,7 @@ rules_relevant:
 conditions:
 - general
 bilingual_parallel: false
-fetched_at: '2026-04-22T21:39:14+00:00'
+fetched_at: '2026-04-27T19:22:33+00:00'
 fetch_method: http_get
 raw_file: raw.html
-raw_sha256: 95940191e69d60c02796b49d258a85e348244f10fd3decabc8366c97c0d4921d
-clean_file: clean.html
-clean_sha256: c7b01d75cd7ca0cbcec553378fcff567c53b9588115234af568bec4131b6c402
-md_content_sha256: be3c0e4e469372a43ed66fdebc7dd5d88a85a9f6d989db4a2ce903101c990419
-converted_at: '2026-04-22T21:40:51+00:00'
-md_backend: pandoc
+raw_sha256: 663e449ab2be5916856d380926587aed8fcda4f0af4aaaff7c18b5726a57ae2d

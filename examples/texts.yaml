@@ -326,6 +326,66 @@ sources:
     notes: Each fact sheet is a `Fiche_FALC_*.pdf` linked from the parent page; flowing-text PDF, manual cleanup expected.
 
 
+  - url: https://www.nimh.nih.gov/health/topics/attention-deficit-hyperactivity-disorder-adhd
+    title: NIMH — ADHD topic page
+    description: US National Institute of Mental Health long-form explainer on ADHD — symptoms, risk factors, diagnosis, treatment, research.
+    type: gov_guide
+    polarity: mixed_unaligned
+    rules_relevant: [structure.sentence-too-long, structure.paragraph-too-long, lexicon.jargon-undefined, lexicon.unexplained-abbreviation, syntax.passive-voice]
+    conditions: [adhd, non-native, general]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [documentation, example, corpus]
+    has_explanations: false
+    license_or_access: open
+    redistribution: public_ok
+    license_details: US federal government work — public domain in the US (NIMH copyright policy at https://www.nimh.nih.gov/site-info/policies states "Most NIMH information is in the public domain. You may copy and reuse it without permission.").
+    markdownable: 4
+    notes: ~3.5k words mixing plain-language symptoms prose with longer clinical/diagnostic passages — exercises both `good`-style and flag-worthy sentences in one fixture.
+
+
+  - url: https://www.cdc.gov/adhd/about/index.html
+    title: CDC — About ADHD
+    description: US CDC short condition explainer on ADHD aimed at general public.
+    type: gov_guide
+    polarity: good_example
+    rules_relevant: [readability.score, structure.sentence-too-long, lexicon.jargon-undefined]
+    conditions: [adhd, non-native, general]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [documentation, example]
+    has_explanations: false
+    license_or_access: open
+    redistribution: public_ok
+    license_details: US federal government work — public domain in the US (CDC reuse policy at https://www.cdc.gov/other/agencymaterials.html states "Most material on CDC's site is not subject to copyright, is in the public domain, and may be freely used or reproduced without obtaining copyright permission."). Image/contractor exceptions noted; body prose unaffected.
+    markdownable: 4
+    notes: ~600 words; tight plain-language overview, short sentences, active voice — clean exemplar for the `public` profile.
+
+
+  - url: https://www.cdc.gov/adhd/treatment/index.html
+    title: CDC — Treatment of ADHD
+    description: US CDC plain-language guidance on ADHD treatment options (behavior therapy, medication, parent training).
+    type: gov_guide
+    polarity: good_example
+    rules_relevant: [readability.score, structure.sentence-too-long, structure.paragraph-too-long, lexicon.jargon-undefined]
+    conditions: [adhd, non-native, general]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [documentation, example]
+    has_explanations: false
+    license_or_access: open
+    redistribution: public_ok
+    license_details: US federal government work — public domain in the US (CDC reuse policy, see About-ADHD entry).
+    markdownable: 4
+    notes: ~700 words; second-person guidance register — accommodation/management angle that the corpus didn't previously have under `adhd`.
+
+
   # ── Bad-example corpora (dense legal / admin prose) ─────────────────────
   - url: https://eur-lex.europa.eu/
     title: EUR-Lex legal corpus
@@ -607,5 +667,5 @@ sources:
 gaps:
   - No solid dyscalculia-specific corpus found; only `structure.mixed-numeric-format`-adjacent WCAG notes.
   - Aphasia-specific French samples beyond SPF/HAS are thin (partially closed by Mon Parcours Handicap FALC fact sheets, Etalab 2.0).
-  - No ADHD-specific before/after prose pairs; evidence base is mostly layout.
+  - No ADHD-specific *before/after* prose pairs found; evidence base is mostly layout. Condition-explainer prose is now covered by the NIMH and CDC public-domain pages (F84 part 2, 2026-04-27).
   - No open legal/EULA dataset with expert plain-language annotations at scale (ToSDR has uneven coverage).

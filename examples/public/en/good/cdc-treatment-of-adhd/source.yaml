@@ -1,0 +1,29 @@
+url: https://www.cdc.gov/adhd/treatment/index.html
+title: CDC — Treatment of ADHD
+type: gov_guide
+polarity: good_example
+languages:
+- en
+redistribution: public_ok
+license_details: US federal government work — public domain in the US (CDC reuse policy,
+  see About-ADHD entry).
+markdownable: 4
+rules_relevant:
+- readability.score
+- structure.sentence-too-long
+- structure.paragraph-too-long
+- lexicon.jargon-undefined
+conditions:
+- adhd
+- non-native
+- general
+bilingual_parallel: false
+fetched_at: '2026-04-27T19:22:32+00:00'
+fetch_method: http_get
+raw_file: raw.html
+raw_sha256: b0ce8a48635fe79dcb52d9cbf22936a8b414da5e8f967558b57f132247128f1f
+clean_file: clean.html
+clean_sha256: 597cf93529b60ac2dd04c53357b278f1277a6301c54020b263231e12c2884bbb
+md_content_sha256: d84102b6bdbcce2934ba777e7190c490bf57097a5b9c565dc60f68ac1e1ca90c
+converted_at: '2026-04-27T19:23:56+00:00'
+md_backend: pandoc

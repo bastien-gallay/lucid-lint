@@ -15,5 +15,5 @@ rules_relevant:
 conditions:
 - general
 bilingual_parallel: false
-fetched_at: '2026-04-22T21:39:16+00:00'
+fetched_at: '2026-04-27T19:22:33+00:00'
 fetch_method: git_clone_depth1

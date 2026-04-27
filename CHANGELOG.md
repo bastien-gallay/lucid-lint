@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Three US-federal public-domain ADHD sources (F84 part 2 progress).**
+  `examples/texts.yaml` gains the NIMH ADHD topic page (`mixed` shape,
+  ~780 words), CDC About ADHD (`good`, ~920 words) and CDC Treatment of
+  ADHD (`good`, ~1040 words). All three are public-domain US federal
+  works under 17 USC § 105 with explicit reproduction notices on the
+  agencies' policy pages — quoted verbatim in each entry's
+  `license_details`. Material lands under `examples/public/en/` after
+  `just texts`. Knock-on on the public coverage snapshot in
+  `examples/texts.md`: `condition adhd × EN` lifts to `3` (was `—`),
+  `gov_guide × EN` rises to `6`, and the gitignored load-bearing list
+  drops the `adhd × EN` slot entirely. Remaining load-bearing slots are
+  `dyscalculia × EN` and `aphasia × EN+FR` — both flagged as harder in
+  the existing `gaps:` notes; tackled in a later lap.
+
 - **Strict validation of the `unexplained-abbreviation` whitelist at
   config-load.** `[rules."lexicon.unexplained-abbreviation"].whitelist`
   entries must now be non-empty strings of ASCII uppercase letters and

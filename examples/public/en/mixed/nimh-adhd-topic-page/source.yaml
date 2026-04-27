@@ -1,0 +1,31 @@
+url: https://www.nimh.nih.gov/health/topics/attention-deficit-hyperactivity-disorder-adhd
+title: NIMH — ADHD topic page
+type: gov_guide
+polarity: mixed_unaligned
+languages:
+- en
+redistribution: public_ok
+license_details: US federal government work — public domain in the US (NIMH copyright
+  policy at https://www.nimh.nih.gov/site-info/policies states "Most NIMH information
+  is in the public domain. You may copy and reuse it without permission.").
+markdownable: 4
+rules_relevant:
+- structure.sentence-too-long
+- structure.paragraph-too-long
+- lexicon.jargon-undefined
+- lexicon.unexplained-abbreviation
+- syntax.passive-voice
+conditions:
+- adhd
+- non-native
+- general
+bilingual_parallel: false
+fetched_at: '2026-04-27T19:22:32+00:00'
+fetch_method: http_get
+raw_file: raw.html
+raw_sha256: 516ab48f50df112bb00178caeebc3e7465067df8bce2d5f1f2b407d7d411fc1e
+clean_file: clean.html
+clean_sha256: 99c411cf3380f6c355ebfb91870c4672113fa1b0279a358b2b3eaf17e1361a8c
+md_content_sha256: 5eef33147d535e581de76be6bc4d75beef7d781991547ca5aa2dbbcd5a8c68a3
+converted_at: '2026-04-27T19:23:55+00:00'
+md_backend: pandoc

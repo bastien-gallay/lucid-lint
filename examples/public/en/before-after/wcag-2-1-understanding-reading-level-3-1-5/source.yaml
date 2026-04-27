@@ -17,12 +17,7 @@ conditions:
 - non-native
 - aphasia
 bilingual_parallel: false
-fetched_at: '2026-04-22T21:39:10+00:00'
+fetched_at: '2026-04-27T19:22:32+00:00'
 fetch_method: http_get
 raw_file: raw.html
-raw_sha256: c810dc5f44d131c9284bdfc232c96c673d1223bcf68498927e12503891583efd
-clean_file: clean.html
-clean_sha256: e1b59a6ac98638388159948ccd2d300a9eb1d86be27dc0f44d0d0b3314646bb1
-md_content_sha256: e0b780086e75bb193544a4c249e7ecbe52c7b721415cd93fb62d4804f69db42b
-converted_at: '2026-04-22T21:40:51+00:00'
-md_backend: pandoc
+raw_sha256: c4e54eb4aa503e22d67837277dff28012025235899c9d91395e53b3a052d8085

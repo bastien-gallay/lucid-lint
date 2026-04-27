@@ -1,0 +1,31 @@
+url: https://www.cdc.gov/adhd/about/index.html
+title: CDC — About ADHD
+type: gov_guide
+polarity: good_example
+languages:
+- en
+redistribution: public_ok
+license_details: US federal government work — public domain in the US (CDC reuse policy
+  at https://www.cdc.gov/other/agencymaterials.html states "Most material on CDC's
+  site is not subject to copyright, is in the public domain, and may be freely used
+  or reproduced without obtaining copyright permission."). Image/contractor exceptions
+  noted; body prose unaffected.
+markdownable: 4
+rules_relevant:
+- readability.score
+- structure.sentence-too-long
+- lexicon.jargon-undefined
+conditions:
+- adhd
+- non-native
+- general
+bilingual_parallel: false
+fetched_at: '2026-04-27T19:22:32+00:00'
+fetch_method: http_get
+raw_file: raw.html
+raw_sha256: 8f23bea8d65665cca381c6268096400f66369ba1d074baca4545d47058ca245d
+clean_file: clean.html
+clean_sha256: 091a09b6cb379f6c200902f9dae264d6cd925324195ec001a3d76fafedf3870c
+md_content_sha256: 4e27ef5c67de087bda5f0e2f1188f40abc85c1eb9170f99fe6bf84140f4373a9
+converted_at: '2026-04-27T19:23:56+00:00'
+md_backend: pandoc
