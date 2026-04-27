@@ -32,9 +32,21 @@ Maintenir un compteur de phrases consécutives au-dessus de
 | `word_threshold` | `int` | 20 | 15 | 10 |
 | `max_consecutive` | `int` | 3 | 2 | 2 |
 
-**Invariant.** `word_threshold` doit rester inférieur à
-`sentence-too-long.max_words` pour le même profil. Sinon les deux
-règles se déclenchent sur les mêmes phrases.
+## Relation à `structure.sentence-too-long`
+
+Les deux règles regardent la longueur des phrases mais signalent des
+problèmes différents :
+
+| Règle | Seuil (`dev-doc` / `public` / `falc`) | Se déclenche sur |
+|---|---|---|
+| [`structure.sentence-too-long`](./sentence-too-long.md) | `max_words` 30 / 22 / 15 | une phrase isolée au-delà du plafond |
+| `rhythm.consecutive-long-sentences` | `word_threshold` 20 / 15 / 10 | une série de `max_consecutive` phrases chacune au-dessus du seuil inférieur |
+
+Comme `word_threshold` reste sous `max_words`, cette règle capte le
+rythme même quand aucune phrase isolée ne franchit
+`sentence-too-long`. L'invariant `word_threshold < max_words` (par
+profil) empêche les deux règles de se déclencher ensemble sur la
+même phrase.
 
 ## Exemples
 
@@ -46,7 +58,7 @@ appartient.
 
 **Avant** (signalée) :
 
-> <span class="lucid-idea" data-idea="1">La migration a introduit une couche de cache qui se place devant chaque lecture de la base primaire.</span> <span class="lucid-idea" data-idea="2">L'équipe a observé des pics de latence inattendus chaque fois que le cache s'invalidait sous une charge d'écriture soutenue.</span> <span class="lucid-idea" data-idea="3">Une enquête ultérieure a relié la régression à un motif de troupeau tonnant qui se déclenchait sur chaque clé froide.</span> <span class="lucid-idea" data-idea="4">Le tableau de bord des métriques signalait à tort un délai d'attente générique parce que la propagation de la trace était incomplète.</span> <span class="lucid-idea" data-idea="5">Le correctif a fusionné les remplissages concurrents, ajouté un TTL avec gigue, et instrumenté la couche de cache avec un émetteur de span dédié.</span>
+> <span class="lucid-idea" data-idea="1">La migration a introduit une couche de cache qui se place devant chaque lecture de la base de données primaire.</span> <span class="lucid-idea" data-idea="2">L'équipe a observé des pics de latence inattendus chaque fois que le cache s'invalidait sous une charge d'écriture soutenue.</span> <span class="lucid-idea" data-idea="3">Une enquête ultérieure a relié la régression à un effet *thundering-herd* qui se déclenchait sur chaque clé froide.</span> <span class="lucid-idea" data-idea="4">Le tableau de bord des métriques signalait à tort un délai d'attente générique parce que la propagation de la trace était incomplète.</span> <span class="lucid-idea" data-idea="5">Le correctif a fusionné les remplissages concurrents, randomisé les TTL, et instrumenté la couche de cache avec un émetteur de span dédié.</span>
 
 Cinq phrases, chacune au-delà de 20 mots — la série fatigue l'attention.
 
@@ -58,7 +70,7 @@ warning input.md:1:1 5 consecutive sentences exceed 20 words (max 3). Vary sente
 
 **Après** (votre réécriture) :
 
-> <span class="lucid-idea" data-idea="1">La migration a introduit une couche de cache devant la base primaire.</span> <span class="lucid-idea" data-idea="2">La latence montait dès que le cache s'invalidait sous écritures soutenues.</span> <span class="lucid-idea" data-idea="3">Le coupable : un troupeau tonnant sur les clés froides.</span> <span class="lucid-idea" data-idea="4">Les métriques signalaient un délai générique — la trace était cassée.</span> <span class="lucid-idea" data-idea="5">Le correctif fusionne les remplissages, ajoute un TTL avec gigue et émet un span dédié.</span>
+> <span class="lucid-idea" data-idea="1">La migration a introduit une couche de cache devant la base de données primaire.</span> <span class="lucid-idea" data-idea="2">La latence montait dès que le cache s'invalidait sous écritures soutenues.</span> <span class="lucid-idea" data-idea="3">Le coupable : un *thundering-herd* sur les clés froides.</span> <span class="lucid-idea" data-idea="4">Les métriques signalaient un délai générique — la trace était cassée.</span> <span class="lucid-idea" data-idea="5">Le correctif fusionne les remplissages, randomise les TTL et émet un span dédié.</span>
 
 ### Anglais
 

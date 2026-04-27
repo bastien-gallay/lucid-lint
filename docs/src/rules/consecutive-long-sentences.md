@@ -25,7 +25,16 @@ Walk sentences sequentially inside each paragraph. Maintain a running count of c
 | `word_threshold` | `int` | 20 | 15 | 10 |
 | `max_consecutive` | `int` | 3 | 2 | 2 |
 
-**Invariant.** `word_threshold` must stay below `sentence-too-long.max_words` for the same profile. Otherwise both rules fire on the same sentences.
+## Relation to `structure.sentence-too-long`
+
+Both rules look at sentence length but catch different problems:
+
+| Rule | Threshold (`dev-doc` / `public` / `falc`) | Fires on |
+|---|---|---|
+| [`structure.sentence-too-long`](./sentence-too-long.md) | `max_words` 30 / 22 / 15 | a single sentence past the ceiling |
+| `rhythm.consecutive-long-sentences` | `word_threshold` 20 / 15 / 10 | a streak of `max_consecutive` sentences each above the lower threshold |
+
+Because `word_threshold` sits below `max_words`, this rule catches the rhythm even when no individual sentence trips `sentence-too-long`. The invariant `word_threshold < max_words` (per profile) keeps the two from co-firing on the same sentence.
 
 ## Examples
 
