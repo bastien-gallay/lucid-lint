@@ -68,6 +68,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   at the local FR versions for the six new pages. Remaining: 14
   per-rule FR pages (rhythm 2, lexicon 6, syntax 5, readability 1)
   plus the FR guide translations.
+- **Two more FR per-rule pages — `rhythm` category 100 %
+  FR-complete (F25 progress, 11/25 → 13/25).**
+  `rhythm.consecutive-long-sentences` and `rhythm.repetitive-connectors`
+  land under `docs/src/fr/rules/` against the locked template. The
+  whole `rhythm` category is now FR-complete (2 / 2 rules
+  translated), joining `structure` at 100 %. Both EN pages were
+  brought up to canonical shape first (Examples + See also added to
+  `consecutive-long-sentences`; FR Examples block added to
+  `repetitive-connectors`). `SUMMARY.md` and `fr/rules/index.md`
+  rewired to local FR versions. Remaining: 12 per-rule FR pages
+  (lexicon 6, syntax 5, readability 1) plus FR guide translations.
 - **`cargo-mutants` baseline + `just mutants` recipe (F98 ✅).**
   Mutation testing wired in as a dev-tool (no new runtime dep).
   `just mutants <file>` runs `cargo mutants --file <file> --timeout 60
