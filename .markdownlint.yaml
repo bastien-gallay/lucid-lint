@@ -27,6 +27,10 @@ MD041: false
 # MD025: mdBook SUMMARY.md uses multiple H1s as part titles — required syntax
 MD025: false
 
+# MD042: mdBook SUMMARY.md uses empty links `[Title]()` for draft-chapter
+# group headers (per-category sidebar grouping) — required syntax
+MD042: false
+
 # MD024: Multiple headings with the same content — allow different nesting
 MD024:
   siblings_only: true
