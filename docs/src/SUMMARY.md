@@ -56,6 +56,7 @@
 
 - [Roadmap](./roadmap.md)
 - [Accessibility](./accessibility.md)
+- [References](./references.md)
 - [Contributing](./contributing.md)
 
 # Version française
@@ -80,3 +81,4 @@
     - [`lexicon.unexplained-abbreviation`](./fr/rules/unexplained-abbreviation.md)
 - [Feuille de route](./fr/roadmap.md)
 - [Accessibilité](./fr/accessibility.md)
+- [Références](./fr/references.md)

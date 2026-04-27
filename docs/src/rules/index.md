@@ -2,7 +2,7 @@
 
 `lucid-lint` ships 25 rules as of v0.2 (17 from v0.1 plus 8 added during the v0.2 cycle). Each rule has a dedicated page below with category, severity, default weight, thresholds per profile, examples, and suppression guidance.
 
-The compact reference at [`RULES.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/RULES.md) remains the single-file overview kept in the repository root.
+The compact reference at [`RULES.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/RULES.md) remains the single-file overview kept in the repository root. The academic and normative sources behind every rule are consolidated on the [References](../references.md) page.
 
 ## Categories
 

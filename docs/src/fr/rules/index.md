@@ -9,7 +9,8 @@ et les consignes de neutralisation.
 
 La référence compacte [`RULES.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/RULES.md)
 reste la vue d'ensemble en un seul fichier, conservée à la racine du
-dépôt.
+dépôt. Les sources académiques et normatives derrière chaque règle
+sont consolidées sur la page [Références](../references.md).
 
 > **Traduction FR en cours.** Seules quelques règles ont leur page
 > dédiée en français pour l'instant ; les autres liens du tableau
