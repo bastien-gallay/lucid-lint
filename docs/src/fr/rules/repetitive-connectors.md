@@ -113,3 +113,10 @@ EN pour l'instant) pour les formes en ligne et par bloc.
 
 - [`structure.sentence-too-long`](./sentence-too-long.md) — phrases longues et abus de connecteurs co-occurrent souvent ; signaler les deux fait apparaître un signal de rythme plus riche.
 - [Modèle de score](../../guide/scoring.md) — `rhythm.repetitive-connectors` porte le poids par défaut `1` ; le coût est local, pas cumulatif.
+
+## Références
+
+- [Sanders & Noordman (2000)](../references.md#sanders-noordman-2000)
+- [Graesser et al. (2004)](../references.md#graesser-2004)
+
+Voir [Références](../references.md) pour la bibliographie complète.

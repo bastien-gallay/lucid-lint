@@ -43,3 +43,10 @@ Two patterns still fire in v0.2: straight-quoted terms (`"many X"` without backt
 ## Suppression
 
 Use `<!-- lucid-lint disable-next-line lexicon.weasel-words -->` when the weasel is intentional (quotation, legitimate subset reference, meta-discussion). See [Suppressing diagnostics](../guide/suppression.md).
+
+## References
+
+- [Strunk & White (1999)](../references.md#strunk-white-1999)
+- [CAN-ASC-3.1:2025](../references.md#can-asc-3-1-2025)
+
+See [References](../references.md) for the full bibliography.

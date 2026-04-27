@@ -64,3 +64,11 @@ Override `formula` via `--readability-formula` on the CLI; `auto` uses the detec
 ## Suppression
 
 Suppressing a document-level metric is rarely the right answer; adjust `max_grade_level` in `lucid-lint.toml` instead. See [Configuration](../guide/configuration.md).
+
+## References
+
+- [Flesch (1948)](../references.md#flesch-1948)
+- [Kincaid et al. (1975)](../references.md#kincaid-1975)
+- [CAN-ASC-3.1:2025](../references.md#can-asc-3-1-2025)
+
+See [References](../references.md) for the full bibliography.

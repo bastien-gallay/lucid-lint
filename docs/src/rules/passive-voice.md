@@ -33,3 +33,11 @@ Expect ~70–80% precision. A POS-parser-based replacement is planned for a futu
 ## Suppression
 
 Use inline disables on intentional passives. See [Suppressing diagnostics](../guide/suppression.md).
+
+## References
+
+- [Strunk & White (1999)](../references.md#strunk-white-1999)
+- [Plain Language US (2011)](../references.md#plain-language-us-2011)
+- [CAN-ASC-3.1:2025](../references.md#can-asc-3-1-2025)
+
+See [References](../references.md) for the full bibliography.

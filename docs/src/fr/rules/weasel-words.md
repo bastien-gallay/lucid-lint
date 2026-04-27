@@ -63,3 +63,10 @@ quand le mot fuyant est intentionnel (citation, référence légitime à
 un sous-ensemble, méta-discussion). Voir
 [Neutraliser des diagnostics](../../guide/suppression.md) (page EN
 pour l'instant).
+
+## Références
+
+- [Strunk & White (1999)](../references.md#strunk-white-1999)
+- [CAN-ASC-3.1:2025](../references.md#can-asc-3-1-2025)
+
+Voir [Références](../references.md) pour la bibliographie complète.

@@ -101,3 +101,10 @@ See [Suppressing diagnostics](../guide/suppression.md) for the inline and block 
 
 - [`structure.sentence-too-long`](./sentence-too-long.md) — long sentences and connector overuse often co-occur; flagging both surfaces a richer rhythm signal.
 - [Scoring model](../guide/scoring.md) — `rhythm.repetitive-connectors` carries the default weight `1`; the cost is local rather than compounding.
+
+## References
+
+- [Sanders & Noordman (2000)](../references.md#sanders-noordman-2000)
+- [Graesser et al. (2004)](../references.md#graesser-2004)
+
+See [References](../references.md) for the full bibliography.

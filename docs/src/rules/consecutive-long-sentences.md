@@ -82,3 +82,10 @@ See [Suppressing diagnostics](../guide/suppression.md) for the inline and block 
 
 - [`structure.sentence-too-long`](./sentence-too-long.md) — catches individual long sentences; this rule catches the streak even when each sentence is under that ceiling.
 - [Scoring model](../guide/scoring.md) — `rhythm.consecutive-long-sentences` carries the default weight `1`; the cognitive cost is the cumulative streak, not any single sentence.
+
+## References
+
+- [Sweller (1988)](../references.md#sweller-1988)
+- [Sweller, Ayres & Kalyuga (2011)](../references.md#sweller-2011)
+
+See [References](../references.md) for the full bibliography.

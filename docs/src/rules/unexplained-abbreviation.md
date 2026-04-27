@@ -58,3 +58,10 @@ See [Suppressing diagnostics](../guide/suppression.md).
 ## See also
 
 - [`lexicon.jargon-undefined`](./jargon-undefined.md) — the content-word equivalent.
+
+## References
+
+- [WCAG 2.1 — 3.1.4](../references.md#wcag-2-1)
+- [CAN-ASC-3.1:2025](../references.md#can-asc-3-1-2025)
+
+See [References](../references.md) for the full bibliography.

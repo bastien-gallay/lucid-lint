@@ -71,3 +71,9 @@ Et la forme équivalente en anglais :
 
 Voir [Neutraliser des diagnostics](../../guide/suppression.md) (page
 EN pour l'instant).
+
+## Références
+
+- [Gibson (1998)](../references.md#gibson-1998)
+
+Voir [Références](../references.md) pour la bibliographie complète.

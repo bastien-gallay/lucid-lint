@@ -106,6 +106,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   when the page still points to the EN version (marked `(en)`).
   Sidebar TOC labels stay in EN to keep `SUMMARY.md` single-locale
   (per-locale split is F90, parked Speculative).
+- **References page cross-links + external URLs (F105b).** Per-citation
+  anchors (`<a id="author-year">`) on every entry of `docs/src/references.md`
+  and `docs/src/fr/references.md`, so each rule page now links to the
+  exact citation rather than scrolling. Rule pages gain a `## References`
+  / `## Références` section listing the relevant citations as anchored
+  links back into the references page (25 EN + 13 FR pages). The
+  references page links rule IDs in `→ Relevant to:` lines and the
+  rule → reference summary table to their per-rule mdBook pages,
+  closing the loop in both directions. Verified canonical URLs (DOI,
+  publisher landing page, official archive) are added inline as raw
+  HTML anchors with `rel="nofollow noopener noreferrer" target="_blank"`
+  — `nofollow` so the docs site does not vouch for outside content,
+  `noopener noreferrer` so the new tab is safe from reverse-tabnabbing.
+  Sources without a verifiable canonical URL (Herdan 1960, Quirk 1985,
+  Strunk & White 1999, Bringhurst 2013, Zinsser 2006, Kandel & Moles
+  1958, Inclusion Europe FALC, Nielsen Norman Group all-caps articles)
+  are kept as text-only entries; we prefer no link to a guessed one.
+  External-link visible text reduced to a single `↗` (the repeated
+  "doi.org" / "doi.org" / "doi.org" cadence read as visual noise);
+  the hostname moves to `aria-label` for screen readers and the link
+  carries `class="ref-link"` so a small CSS rule in `lucid-colors.css`
+  mutes it (smaller, fog-coloured, underline only on hover) — it sits
+  next to its citation without competing with the rule-page links.
+  Caveat phrasing unified: EN page now uses "Caveat" everywhere
+  ("Note" / "Honest caveat" merged in); FR uses "Précaution" for the
+  generic uncertainty marker, while keeping "Rectification"
+  (factual correction, distinct) and "À vérifier" (pending
+  verification, distinct).
+  Subsumes the F30 rule-mention linking pass for the references-page
+  surface; wider F30 audit (rule mentions in `docs/src/guide/*` prose
+  pages) stays open.
 - **Consolidated references page (F105).** Every academic, normative,
   and practical source that grounds a rule now lives in the docs
   site at `docs/src/references.md` (EN, under Project) and

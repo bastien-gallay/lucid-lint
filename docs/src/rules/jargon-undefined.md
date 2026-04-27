@@ -54,3 +54,11 @@ See [Suppressing diagnostics](../guide/suppression.md).
 ## See also
 
 - [`lexicon.unexplained-abbreviation`](./unexplained-abbreviation.md)
+
+## References
+
+- [WCAG 2.1 — 3.1.3](../references.md#wcag-2-1)
+- [Plain Language US (2011)](../references.md#plain-language-us-2011)
+- [CAN-ASC-3.1:2025](../references.md#can-asc-3-1-2025)
+
+See [References](../references.md) for the full bibliography.

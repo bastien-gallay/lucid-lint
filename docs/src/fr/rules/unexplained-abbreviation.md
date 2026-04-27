@@ -83,3 +83,10 @@ EN pour l'instant).
 
 - [`lexicon.jargon-undefined`](../../rules/jargon-undefined.md) —
   l'équivalent pour les mots de contenu.
+
+## Références
+
+- [WCAG 2.1 — 3.1.4](../references.md#wcag-2-1)
+- [CAN-ASC-3.1:2025](../references.md#can-asc-3-1-2025)
+
+Voir [Références](../references.md) pour la bibliographie complète.

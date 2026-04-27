@@ -67,3 +67,9 @@ EN pour l'instant).
 
 - [`structure.deeply-nested-lists`](./deeply-nested-lists.md) — le
   signal équivalent au niveau des listes.
+
+## Références
+
+- [WCAG 2.1 — 1.3.1 & 2.4.6](../references.md#wcag-2-1)
+
+Voir [Références](../references.md) pour la bibliographie complète.

@@ -58,3 +58,9 @@ EN pour l'instant).
 
 - [`structure.long-enumeration`](../../rules/long-enumeration.md)
 - [`structure.deep-subordination`](../../rules/deep-subordination.md)
+
+## Références
+
+- [Gibson (1998)](../references.md#gibson-1998)
+
+Voir [Références](../references.md) pour la bibliographie complète.

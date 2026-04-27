@@ -77,3 +77,10 @@ EN pour l'instant).
 
 - [`readability.score`](../../rules/readability-score.md)
 - [Conditions](../../guide/conditions.md) (page EN pour l'instant)
+
+## Références
+
+- [ISO 80000-1:2022](../references.md#iso-80000-1-2022)
+- [Chicago Manual of Style (17th ed.)](../references.md#chicago-manual-17e)
+
+Voir [Références](../references.md) pour la bibliographie complète.

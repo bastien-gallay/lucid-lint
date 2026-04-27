@@ -67,3 +67,11 @@ See [Suppressing diagnostics](../guide/suppression.md).
 
 - [`lexicon.unexplained-abbreviation`](./unexplained-abbreviation.md)
 - [Conditions](../guide/conditions.md)
+
+## References
+
+- [Arditi & Cho (2007)](../references.md#arditi-cho-2007)
+- [Nielsen Norman Group](../references.md#nielsen-norman-allcaps)
+- [Bringhurst (2013)](../references.md#bringhurst-2013)
+
+See [References](../references.md) for the full bibliography.

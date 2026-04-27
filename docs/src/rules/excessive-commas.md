@@ -38,3 +38,9 @@ See [Suppressing diagnostics](../guide/suppression.md).
 
 - [`structure.long-enumeration`](./long-enumeration.md)
 - [`structure.deep-subordination`](./deep-subordination.md)
+
+## References
+
+- [Gibson (1998)](../references.md#gibson-1998)
+
+See [References](../references.md) for the full bibliography.

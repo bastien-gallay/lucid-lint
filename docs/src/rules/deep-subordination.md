@@ -60,3 +60,9 @@ And the matching English form:
 ## Suppression
 
 See [Suppressing diagnostics](../guide/suppression.md).
+
+## References
+
+- [Gibson (1998)](../references.md#gibson-1998)
+
+See [References](../references.md) for the full bibliography.

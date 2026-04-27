@@ -43,3 +43,10 @@ See [Suppressing diagnostics](../guide/suppression.md).
 
 - [`readability.score`](./readability-score.md)
 - [Conditions](../guide/conditions.md)
+
+## References
+
+- [ISO 80000-1:2022](../references.md#iso-80000-1-2022)
+- [Chicago Manual of Style (17th ed.)](../references.md#chicago-manual-17e)
+
+See [References](../references.md) for the full bibliography.

@@ -69,3 +69,11 @@ See [Suppressing diagnostics](../guide/suppression.md) for the inline and block 
 
 - [`rhythm.consecutive-long-sentences`](./consecutive-long-sentences.md) — catches rhythm; its threshold must stay lower than `max_words` here.
 - [Scoring model](../guide/scoring.md) — `structure.sentence-too-long` carries weight `2` because the cognitive cost compounds with length.
+
+## References
+
+- [Sweller (1988)](../references.md#sweller-1988)
+- [Plain Language US (2011)](../references.md#plain-language-us-2011)
+- [CAN-ASC-3.1:2025](../references.md#can-asc-3-1-2025)
+
+See [References](../references.md) for the full bibliography.

@@ -99,3 +99,10 @@ EN pour l'instant) pour les formes en ligne et par bloc.
 
 - [`structure.sentence-too-long`](./sentence-too-long.md) — capte les phrases longues isolées ; cette règle capte la série même quand chaque phrase reste sous ce plafond.
 - [Modèle de score](../../guide/scoring.md) — `rhythm.consecutive-long-sentences` porte le poids par défaut `1` ; le coût cognitif est cumulatif, pas par phrase.
+
+## Références
+
+- [Sweller (1988)](../references.md#sweller-1988)
+- [Sweller, Ayres & Kalyuga (2011)](../references.md#sweller-2011)
+
+Voir [Références](../references.md) pour la bibliographie complète.

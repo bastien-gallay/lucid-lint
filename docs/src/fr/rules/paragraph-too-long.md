@@ -51,3 +51,11 @@ EN pour l'instant).
 
 - [`structure.sentence-too-long`](./sentence-too-long.md)
 - [`rhythm.consecutive-long-sentences`](../../rules/consecutive-long-sentences.md)
+
+## Références
+
+- [Sweller (1988)](../references.md#sweller-1988)
+- [Graesser et al. (2004)](../references.md#graesser-2004)
+- [CAN-ASC-3.1:2025](../references.md#can-asc-3-1-2025)
+
+Voir [Références](../references.md) pour la bibliographie complète.

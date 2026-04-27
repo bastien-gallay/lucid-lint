@@ -85,3 +85,11 @@ See [Suppressing diagnostics](../guide/suppression.md).
 - [`syntax.passive-voice`](./passive-voice.md)
 - [`structure.deep-subordination`](./deep-subordination.md)
 - [Conditions](../guide/conditions.md)
+
+## References
+
+- [Clark & Chase (1972)](../references.md#clark-chase-1972)
+- [Carpenter & Just (1975)](../references.md#carpenter-just-1975)
+- [Kaup et al. (2006)](../references.md#kaup-2006)
+
+See [References](../references.md) for the full bibliography.

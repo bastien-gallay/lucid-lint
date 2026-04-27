@@ -73,3 +73,11 @@ See [Suppressing diagnostics](../guide/suppression.md).
 - [`syntax.nested-negation`](./nested-negation.md)
 - [`structure.deep-subordination`](./deep-subordination.md)
 - [Conditions](../guide/conditions.md)
+
+## References
+
+- [Johnson-Laird & Byrne (1991)](../references.md#johnson-laird-byrne-1991)
+- [Evans & Over (2004)](../references.md#evans-over-2004)
+- [Gibson (1998)](../references.md#gibson-1998)
+
+See [References](../references.md) for the full bibliography.

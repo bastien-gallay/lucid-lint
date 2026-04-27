@@ -84,3 +84,9 @@ chaque terme inline s'aligne avec sa puce.
 
 Voir [Neutraliser des diagnostics](../../guide/suppression.md) (page
 EN pour l'instant).
+
+## Références
+
+- [Plain Language US (2011)](../references.md#plain-language-us-2011)
+
+Voir [Références](../references.md) pour la bibliographie complète.

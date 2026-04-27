@@ -65,3 +65,9 @@ warning input.md:1:1 Inline enumeration of 5 items. Consider converting it into 
 ## Suppression
 
 See [Suppressing diagnostics](../guide/suppression.md).
+
+## References
+
+- [Plain Language US (2011)](../references.md#plain-language-us-2011)
+
+See [References](../references.md) for the full bibliography.

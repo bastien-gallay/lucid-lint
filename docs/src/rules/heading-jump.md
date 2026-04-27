@@ -53,3 +53,9 @@ See [Suppressing diagnostics](../guide/suppression.md).
 ## See also
 
 - [`structure.deeply-nested-lists`](./deeply-nested-lists.md) — the list-level equivalent signal.
+
+## References
+
+- [WCAG 2.1 — 1.3.1 & 2.4.6](../references.md#wcag-2-1)
+
+See [References](../references.md) for the full bibliography.

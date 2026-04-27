@@ -45,3 +45,11 @@ See [Suppressing diagnostics](../guide/suppression.md).
 - [`lexicon.weasel-words`](./weasel-words.md)
 - [`lexicon.jargon-undefined`](./jargon-undefined.md)
 - [Conditions](../guide/conditions.md)
+
+## References
+
+- [Strunk & White (1999)](../references.md#strunk-white-1999)
+- [Quirk et al. (1985)](../references.md#quirk-1985)
+- [Zinsser (2006)](../references.md#zinsser-2006)
+
+See [References](../references.md) for the full bibliography.

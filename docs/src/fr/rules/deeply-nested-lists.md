@@ -54,3 +54,9 @@ des titres.
 
 Voir [Neutraliser des diagnostics](../../guide/suppression.md) (page
 EN pour l'instant).
+
+## Références
+
+- [WCAG 2.1](../references.md#wcag-2-1)
+
+Voir [Références](../references.md) pour la bibliographie complète.

@@ -42,3 +42,9 @@ Includes repair guidance: flatten the structure, split into multiple lists, or p
 ## Suppression
 
 See [Suppressing diagnostics](../guide/suppression.md).
+
+## References
+
+- [WCAG 2.1](../references.md#wcag-2-1)
+
+See [References](../references.md) for the full bibliography.

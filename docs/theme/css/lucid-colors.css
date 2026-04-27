@@ -280,3 +280,24 @@
 :where(a, button, input, select, textarea, [tabindex]):focus-visible {
   outline-color: var(--links);
 }
+
+/* External reference links on `references.md` (and its FR mirror) carry
+   `class="ref-link"`. Quiet them so they don't compete with the rule-page
+   cross-links: muted colour, no underline at rest, underline + full link
+   colour on hover/focus so the affordance is still clear. */
+.content a.ref-link {
+  color: var(--lucid-fog);
+  text-decoration: none;
+  font-size: 0.9em;
+  margin-left: 0.15em;
+}
+.coal .content a.ref-link,
+.navy .content a.ref-link,
+.ayu  .content a.ref-link {
+  color: var(--lucid-mist-dark, var(--lucid-fog));
+}
+.content a.ref-link:hover,
+.content a.ref-link:focus-visible {
+  color: var(--links);
+  text-decoration: underline;
+}
