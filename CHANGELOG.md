@@ -93,6 +93,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (no-empty-links) is disabled globally to permit the draft-chapter
   syntax — same pattern as the pre-existing MD025 carve-out for
   SUMMARY's required multiple H1s.
+- **FR rule labels — page subtitle + index gloss (F107).** The rule
+  ID stays the stable contract (CLI flags, JSON output, config keys,
+  citations), but FR readers now see a human-readable label in two
+  places. Each shipped FR rule page opens with a short italic gloss
+  directly under the H1 (e.g. `*Phrase trop longue.*`); 13 pages
+  updated, the remaining 12 receive theirs alongside translation.
+  `fr/rules/index.md` "Catégories" block reshaped from a single
+  roll-up into 5 per-category sub-tables (Structure / Rythme /
+  Lexique / Syntaxe / Lisibilité), each with a `Règle | Libellé`
+  two-column layout — all 25 rules now carry their FR label even
+  when the page still points to the EN version (marked `(en)`).
+  Sidebar TOC labels stay in EN to keep `SUMMARY.md` single-locale
+  (per-locale split is F90, parked Speculative).
 - **`cargo-mutants` baseline + `just mutants` recipe (F98 ✅).**
   Mutation testing wired in as a dev-tool (no new runtime dep).
   `just mutants <file>` runs `cargo mutants --file <file> --timeout 60
