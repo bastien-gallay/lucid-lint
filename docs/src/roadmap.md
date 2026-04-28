@@ -64,10 +64,6 @@ the authoritative entry in its topic section.
 | F35b | Docs — reading prefs | Drop `role="radiogroup"` on reading chips (P2 a11y) |
 | F35c | Docs — reading prefs | Reduced-motion colour-tint preservation (P2 a11y) |
 | F84 | Example-text fixtures | Part 2 — redistributable replacements |
-| F95 | Perf / hygiene | `.unwrap()` / `.expect(` audit |
-| F96 | Perf / hygiene | Document `scoring.rs:203` cast invariant |
-| F102 | Perf / hygiene | `detect_language` cost (7.5% of engine) |
-| F103 | Perf / hygiene | Per-rule `split_sentences` re-parse (8 rules) |
 | F104 | Docs — site | Per-category sidebar grouping in `SUMMARY.md` |
 | F105 | Docs — content | Consolidated references page (cited sources, one click) |
 | F107 | Docs — bilingual | FR rule labels (page subtitle + index gloss) |
@@ -102,7 +98,7 @@ excluded.
 | Architecture / scoring | 1 (F15) | — | F38, F41 | F17, F38, F39, F40 | F41 |
 | Docs site (bilingual / content / theming / reading) | 4 (F25, F30, F34, F35b/c) | — | — | F36, F43, F44, F73, F89, F90/F91 | — |
 | Example-text fixtures | 1 (F84 part 2) | — | F85, F86 | F81, F82, F83 | F86 |
-| Performance / hygiene | 4 (F95, F96, F102, F103) | F97 | — | — | — |
+| Performance / hygiene | — | F97 | — | — | — |
 | Adoption channels | 3 (F110, F111, F112) | — | F118 (conference talk) | F113, F114, F115, F116, F117, F119, F120 | — |
 | Suppression / config | — | F97 | — | F20, F21 | — |
 | Formats | — | — | F5–F8 (single pick) | F5–F8 | — |
@@ -236,10 +232,6 @@ routing decision.
 | F35b | Docs — reading prefs | Drop `role="radiogroup"` on reading chips (P2 a11y) |
 | F35c | Docs — reading prefs | Reduced-motion colour-tint preservation (P2 a11y) |
 | F84 part 2 | Example-text fixtures | Redistributable replacements for load-bearing slots |
-| F95 | Perf / hygiene | `.unwrap()` / `.expect(` audit in library code |
-| F96 | Perf / hygiene | Document `scoring.rs:203` cast invariant |
-| F102 | Perf / hygiene | `detect_language` cost (7.5% of engine, samply 2026-04-25) |
-| F103 | Perf / hygiene | Per-rule `split_sentences` re-parse — move to parser phase, share across 8 rules |
 | F110 | Adoption channels | Vale style pack (subset of rules → `vale-cli/packages` topic) |
 | F111 | Adoption channels | DINUM submission to `accessibilité.numerique.gouv.fr` resources |
 | F112 | Adoption channels | Three awesome-list PRs (`awesome-a11y`, `awesome-writing-tools`, `awesome-rust`) |
@@ -318,9 +310,9 @@ cases the test surface should pin.
 
 | ID | Item | Priority | Origin |
 |---|---|---|---|
-| F110 | **Strip the UTF-8 BOM at read.** Windows-edited Markdown often carries a leading `\u{FEFF}` (UTF-8 BOM, bytes `EF BB BF`). `std::fs::read_to_string` does not strip it, so it becomes the first character of the document. `unicode_words()` skips the BOM, but column counts and the first-character location can shift by one. Fix: strip the leading `\u{FEFF}` once at the read-boundary helper (likely `cli` or wherever `read_to_string` is called for path inputs and stdin). One regression test: a fixture with a leading BOM produces the same diagnostics + locations as the same fixture without one. | 🔴 Next | 2026-04-25 encoding survey |
-| F111 | **Normalise input to NFC before linting.** Same word can arrive as NFC (precomposed `café`, one codepoint per accented letter) or NFD (decomposed `e + \u{0301}`, two codepoints per accented letter). Source code typed by humans is usually NFC; text copy-pasted from PDFs, pulled from raw upstreams, or saved by certain Linux file managers may be NFD. `unicode-segmentation` treats both as one grapheme, but rules that hash strings (HashMap keys in `low_lexical_diversity`, `consecutive_long_sentences`, dictionary lookups in `weasel-words` / `redundant-intensifier`, the stop-words HashSet check in `detect_language`) would treat NFC `café` and NFD `café` as **different keys** — same prose, different lint output. Fix: add `unicode-normalization` dep and call `.nfc().collect::<String>()` once at the parser-input boundary, so every rule consumes NFC. Add NFD-fixture tests across the rules-using-HashMap surface to prove parity. | 🔴 Next | 2026-04-25 encoding survey |
-| F112 | **Lone-CR + zero-width-character regression fixtures.** Two small defensive tests. (1) Lone `\r` (classic Mac line endings) — the parser already normalises `\r` → `\n` at `src/parser/mod.rs:27`, but no test exercises a `\r`-only input. (2) Zero-width characters (`\u{200B}` zero-width space, `\u{200C}` zero-width non-joiner) inserted mid-word — common in copy-pasted social-media content. Currently silently kept by `unicode_words()` and may split or silently glue tokens. Pin the behaviour either way so it can't drift. | 🔴 Next | 2026-04-25 encoding survey |
+| F110 | ✅ Shipped 2026-04-28 — leading `\u{FEFF}` stripped once at the engine boundary (`Engine::lint_with_source`, via the `normalize_input` helper). Funnels every input path (string, stdin, file) through the same boundary so rules never see the BOM. Regression test in `src/engine.rs::tests::bom_prefix_does_not_shift_diagnostics` proves identical diagnostics + line/column locations with and without a leading BOM on a sentence-too-long fixture. | — | 2026-04-25 encoding survey |
+| F111 | ✅ Shipped 2026-04-28 — `unicode-normalization = "0.1"` added; `Engine::lint_with_source` NFC-normalizes input at the same boundary as F110, fast-pathing already-NFC text via `is_nfc_quick`. NFC `café` and NFD `cafe + U+0301` now hash identically in every HashMap-using rule. Regression test in `src/engine.rs::tests::nfd_input_yields_same_diagnostics_as_nfc` exercises a 4-sentence FR fixture and asserts diagnostic count + per-diagnostic rule id and line match across NFC and NFD inputs. | — | 2026-04-25 encoding survey |
+| F112 | ✅ Shipped 2026-04-28 — `src/engine.rs::tests::lone_cr_line_endings_are_normalized` pins parity between LF and lone-CR three-paragraph fixtures (word count + diagnostic count). `src/engine.rs::tests::zero_width_chars_inside_words_pin_behaviour` pins observed behaviour for U+200B / 200C / 200D inside words: the engine round-trips without panicking and produces a valid `Report`; exact word count is intentionally not asserted because `nfc()` does not strip them and tokenisation is owned by `unicode-segmentation`. | — | 2026-04-25 encoding survey |
 | F113 | **Mixed-script test fixtures.** Pin behaviour on EN + CJK and LTR + RTL prose mixed within one paragraph. `unicode_words()` should handle the boundaries correctly (UAX-29), but no regression test exists. Filed as Speculative — no known bug, just a coverage gap. Open if a real-world bilingual corpus surfaces edge cases. | 🟢 Speculative | 2026-04-25 encoding survey |
 
 ### Rules refinement
@@ -383,8 +375,8 @@ Findings filed from the 2026-04-24 code-review stream-2 pass on
 | F94 | **Tokenizer `Vec<char>` per sentence.** `src/parser/tokenizer.rs:~60` collects a full `Vec<char>` for lookahead. ~~Swap to `Peekable<CharIndices>`.~~ **Refuted by samply profile 2026-04-25**: `Vec<char>` drop = 3 samples / 0.03% on the engine path. Yesterday's "low ceiling" note (~5%) was generous; real ceiling is ~0.1%. Skip. | ✅ Done (refuted) | 2026-04-24 code review (stream-2 #5); refuted 2026-04-25 |
 | F102 | **`detect_language` cost.** Single function showed 7.5% inclusive in samply profile 2026-04-25. Rewrote as single-pass, alloc-light: scalar counters, `to_lowercase()` only for words containing an uppercase character, no intermediate vectors. Bench delta on `engine_lint_str/en_long_devdoc` vs `stream2-noisy`: **−0.56 % (p = 0.00, ~20 µs)** — smaller than profile suggested because most of the inclusive cost is `unicode_words()` itself, which the rewrite cannot touch. | ✅ Done | 2026-04-25 samply profile; landed 2026-04-25 |
 | F103 | **Per-rule `split_sentences` re-parse.** 8 rules called `split_sentences(&paragraph.text, …)` directly. Moved sentence splitting into `Paragraph::new`; rules now read `&paragraph.sentences`. Bench delta vs `stream2-noisy`: **`engine_lint_str/en_long_devdoc` −11.58 % (~394 µs)**; `parse_markdown/en_long` +17.67 % (~38 µs, intentional — split cost moved into the parser phase, where it pays for itself across the eight consumers). Net user-facing win ~360 µs. New baseline saved as `stream2-after-f103`. | ✅ Done | 2026-04-25 samply profile; landed 2026-04-25 |
-| F95 | **Audit `.unwrap()` / `.expect(` in library code.** Grep `src/rules/` and `src/parser/` (flagged candidate: `parser/tokenizer.rs:177`). Replace dictionary-lookup unwraps with `.contains()` / `.get().is_some_and()` per AGENTS.md. | 🔴 Next | 2026-04-24 code review (stream-2 #2) |
-| F96 | **Document the `scoring.rs:203` cast invariant.** Replace `#[allow(clippy::cast_possible_truncation, …)]` with a one-liner stating the `[0, cap]` clamp that makes the cast safe, so a future edit can't loosen the clamp silently. | 🔴 Next | 2026-04-24 code review (stream-2 #1) |
+| F95 | ✅ Shipped 2026-04-24 in commit `925ffb5`. Two non-literal expects fixed: `consecutive_long_sentences.rs` (`streak_start` unwrap when `streak_len > max`) and `all_caps_shouting.rs::flush_run` (`first()`/`last()` on a `Vec` already verified `len >= min_run`). The originally flagged `parser/tokenizer.rs:177` candidate is now an `if let Some(...)` pattern. Remaining `expect("non-zero literal")` sites are all `NonZeroU32::new(LITERAL)` — idiomatic compile-time invariants, explicitly out of audit scope. | ✅ Done | 2026-04-24 code review (stream-2 #2) |
+| F96 | ✅ Shipped 2026-04-24 in commit `925ffb5`. `src/scoring.rs:199-209` now carries an explicit safety-contract comment naming the `[0, cap]` clamp dependency, plus a `debug_assert!(normalized.is_finite() && (0.0..=cap).contains(&normalized))` that trips in debug builds if a future edit loosens the clamp. The `#[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]` stays — it masks a lint, not a real bug — but the invariant is now load-bearing in tests. | ✅ Done | 2026-04-24 code review (stream-2 #1) |
 | F97 | **Config whitelist normalization at load time.** `src/config.rs` — normalize (trim, case-fold per rule needs) on load instead of per invocation; catches user typos early. Small win; fits a v0.3 config-plumbing pass rather than a 0.2.x patch. | 🟡 Later | 2026-04-24 code review (stream-2 #6) |
 
 ### New rules (v0.2)
