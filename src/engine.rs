@@ -182,6 +182,8 @@ impl Engine {
     }
 
     fn lint_with_source(&self, input: &str, source: SourceFile, is_markdown: bool) -> Report {
+        let normalized = normalize_input(input);
+        let input = normalized.as_ref();
         let language = match detect_language(input) {
             Language::Unknown => default_language(),
             detected => detected,
@@ -212,6 +214,21 @@ impl Engine {
             scorecard,
             word_count: words,
         }
+    }
+}
+
+/// Normalize input at the engine boundary so every rule consumes the same
+/// shape of text: leading UTF-8 BOM stripped (F110), and NFC-normalized so
+/// `café` (precomposed) and `café` (decomposed) hash to the same key (F111).
+fn normalize_input(input: &str) -> std::borrow::Cow<'_, str> {
+    use unicode_normalization::{is_nfc_quick, IsNormalized, UnicodeNormalization};
+
+    let stripped = input.strip_prefix('\u{FEFF}');
+    let body = stripped.unwrap_or(input);
+    match is_nfc_quick(body.chars()) {
+        IsNormalized::Yes if stripped.is_none() => std::borrow::Cow::Borrowed(input),
+        IsNormalized::Yes => std::borrow::Cow::Owned(body.to_string()),
+        _ => std::borrow::Cow::Owned(body.nfc().collect()),
     }
 }
 
@@ -393,6 +410,123 @@ mod tests {
             .with_unexplained_whitelist(vec!["NASA".into()])
             .with_excessive_commas_max_commas(NonZeroU32::new(1).unwrap());
         assert!(engine.lint_str("Anything.").diagnostics.is_empty());
+    }
+
+    #[test]
+    fn normalize_input_passes_through_clean_ascii_borrowed() {
+        // Fast path: already-NFC + no BOM → Cow::Borrowed, no allocation.
+        let input = "Plain ASCII sentence.";
+        let out = normalize_input(input);
+        assert!(matches!(out, std::borrow::Cow::Borrowed(_)));
+        assert_eq!(out.as_ref(), input);
+    }
+
+    #[test]
+    fn normalize_input_passes_through_nfc_unicode_borrowed() {
+        // Already-NFC accented text without a BOM also stays borrowed.
+        let input = "Le café est prêt.";
+        let out = normalize_input(input);
+        assert!(matches!(out, std::borrow::Cow::Borrowed(_)));
+        assert_eq!(out.as_ref(), input);
+    }
+
+    #[test]
+    fn normalize_input_strips_leading_bom_only() {
+        let out = normalize_input("\u{FEFF}hello");
+        assert_eq!(out.as_ref(), "hello");
+    }
+
+    #[test]
+    fn normalize_input_does_not_strip_inner_bom() {
+        // Only the *leading* BOM is stripped; inner U+FEFF (zero-width
+        // no-break space) is preserved so it doesn't silently mutate prose.
+        let input = "hello\u{FEFF}world";
+        let out = normalize_input(input);
+        assert_eq!(out.as_ref(), input);
+    }
+
+    #[test]
+    fn normalize_input_nfc_normalizes_decomposed_text() {
+        // NFD `cafe + U+0301` → NFC `café`.
+        let out = normalize_input("cafe\u{0301}");
+        assert_eq!(out.as_ref(), "café");
+    }
+
+    #[test]
+    fn normalize_input_strips_bom_and_nfc_normalizes() {
+        // Combined path: leading BOM + NFD body.
+        let out = normalize_input("\u{FEFF}cafe\u{0301}");
+        assert_eq!(out.as_ref(), "café");
+    }
+
+    #[test]
+    fn normalize_input_handles_empty_string() {
+        let out = normalize_input("");
+        assert_eq!(out.as_ref(), "");
+        assert!(matches!(out, std::borrow::Cow::Borrowed(_)));
+    }
+
+    #[test]
+    fn bom_prefix_does_not_shift_diagnostics() {
+        let engine = Engine::with_profile(Profile::Public);
+        let body = "This is a long sentence that keeps adding more and more words until it \
+                    exceeds the public profile threshold by a comfortable margin of safety.";
+        let with_bom = format!("\u{FEFF}{body}");
+        let plain = engine.lint_str(body);
+        let bommed = engine.lint_str(&with_bom);
+        assert_eq!(plain.diagnostics.len(), bommed.diagnostics.len());
+        for (a, b) in plain.diagnostics.iter().zip(bommed.diagnostics.iter()) {
+            assert_eq!(a.rule_id, b.rule_id);
+            assert_eq!(a.location.line, b.location.line);
+            assert_eq!(a.location.column, b.location.column);
+            assert_eq!(a.message, b.message);
+        }
+    }
+
+    #[test]
+    fn nfd_input_yields_same_diagnostics_as_nfc() {
+        // "café" precomposed (NFC) vs decomposed (NFD: e + combining acute).
+        // Rules using HashMap keys (e.g. low-lexical-diversity) would treat
+        // the two as different words without normalization at the boundary.
+        let engine = Engine::with_profile(Profile::Public);
+        let nfc = "Le café est bon. Le café est chaud. Le café est noir. Le café est fort.";
+        let nfd = "Le cafe\u{0301} est bon. Le cafe\u{0301} est chaud. Le cafe\u{0301} est noir. \
+                   Le cafe\u{0301} est fort.";
+        let a = engine.lint_str(nfc);
+        let b = engine.lint_str(nfd);
+        assert_eq!(a.diagnostics.len(), b.diagnostics.len());
+        for (x, y) in a.diagnostics.iter().zip(b.diagnostics.iter()) {
+            assert_eq!(x.rule_id, y.rule_id);
+            assert_eq!(x.location.line, y.location.line);
+        }
+    }
+
+    #[test]
+    fn lone_cr_line_endings_are_normalized() {
+        // Classic Mac line endings: bare \r between paragraphs.
+        // Parser already maps \r → \n at src/parser/mod.rs; this pins the
+        // behaviour so a future refactor can't silently drop it.
+        let engine = Engine::with_profile(Profile::Public);
+        let lf = "First paragraph.\n\nSecond paragraph.\n\nThird.";
+        let cr = "First paragraph.\r\rSecond paragraph.\r\rThird.";
+        let a = engine.lint_str(lf);
+        let b = engine.lint_str(cr);
+        assert_eq!(a.word_count, b.word_count);
+        assert_eq!(a.diagnostics.len(), b.diagnostics.len());
+    }
+
+    #[test]
+    fn zero_width_chars_inside_words_pin_behaviour() {
+        // Zero-width chars (U+200B/200C/200D) sometimes survive copy-paste
+        // from social-media or PDF sources. Pin observed behaviour: input
+        // round-trips through the engine without panicking and produces a
+        // valid Report. The exact word count is not asserted — `nfc()` does
+        // not strip them, and `unicode-segmentation`'s word boundary rules
+        // decide whether they split tokens.
+        let engine = Engine::with_profile(Profile::Public);
+        let text = "Hello\u{200B}world. Bonjour\u{200C}le\u{200D}monde.";
+        let report = engine.lint_str(text);
+        let _ = report.word_count;
     }
 
     #[test]

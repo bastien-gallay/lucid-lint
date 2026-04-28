@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Encoding hygiene at the engine boundary (F110 / F111 / F112).**
+  `Engine::lint_with_source` now strips a leading UTF-8 BOM
+  (`U+FEFF`) and NFC-normalizes input once at the funnel point, so
+  every rule consumes the same shape of text. F110: a Windows-edited
+  Markdown file with `EF BB BF` no longer shifts column counts by one
+  on the first character. F111: NFC `café` and NFD `café`
+  (`e + U+0301`) now hash to the same key in HashMap-using rules
+  (e.g. `low-lexical-diversity`, the stop-words detector); same prose
+  → same lint output. Adds `unicode-normalization = "0.1"` and uses
+  `is_nfc_quick` for the zero-cost path on already-normalized input.
+  F112: regression fixtures for bare `\r` line endings (classic Mac)
+  and zero-width characters (`U+200B/200C/200D`) inside words pin the
+  observed behaviour so it can't drift.
 - **Three US-federal public-domain ADHD sources (F84 part 2 progress).**
   `examples/texts.yaml` gains the NIMH ADHD topic page (`mixed` shape,
   ~780 words), CDC About ADHD (`good`, ~920 words) and CDC Treatment of
