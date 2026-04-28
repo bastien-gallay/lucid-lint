@@ -158,8 +158,27 @@ precisely to absorb per-rule polish and per-surface slices.
 | F39 | Letter-grade decoration (A–F) on the `X/max` score — promote when user feedback shows the numbers feel noisy or hard to compare across docs. | 🟡 Later | F14 `brainstorm/20260420-score-semantics.md` |
 | F40 | Traffic-light (🔴🟡🟢) + pass/fail margin in the TTY output — promote when CI users ask for a stronger glance signal than the number alone. | 🟡 Later | F14 `brainstorm/20260420-score-semantics.md` |
 | F41 | Reading-time-seconds as an alternative score unit — ties score to concrete user outcome. Requires validated heuristic + companion metrics (comfort, fatigue, understandability) so the time unit doesn't monopolize the read. | 🟢 Speculative | F14 `brainstorm/20260420-score-semantics.md` |
-| F71 | ✅ Shipped in v0.2 — `ConditionTag` enum (fixed 7-variant ontology: `a11y-markup`, `dyslexia`, `dyscalculia`, `aphasia`, `adhd`, `non-native`, `general`) plus `Rule::condition_tags()` trait method (default `&[General]`). All 17 v0.2 rules are `general`; future tagged rules (F48, F55, F56) opt in by overriding. See [`docs/src/guide/conditions.md`](docs/src/guide/conditions.md). | 🔴 Next | Rule-system-growth brainstorm (2026-04-20) |
-| F72 | ✅ Shipped in v0.2 — `[default] conditions = [...]` config field and `--conditions` CLI flag (comma-separated). Filter semantics: rules tagged `general` always run; tagged-only rules run iff their tags intersect the active list. Profiles unchanged; FALC retains its regulatory meaning. See [`docs/src/guide/conditions.md`](docs/src/guide/conditions.md). | 🔴 Next | Rule-system-growth brainstorm (2026-04-20) |
+| F71 | ✅ Shipped in v0.2 — `ConditionTag` enum (fixed 7-variant ontology: `a11y-markup`, `dyslexia`, `dyscalculia`, `aphasia`, `adhd`, `non-native`, `general`) plus `Rule::condition_tags()` trait method (default `&[General]`). All 17 v0.2 rules are `general`; future tagged rules (F48, F55, F56) opt in by overriding. See [`docs/src/guide/conditions.md`](docs/src/guide/conditions.md). | — | Rule-system-growth brainstorm (2026-04-20) |
+| F72 | ✅ Shipped in v0.2 — `[default] conditions = [...]` config field and `--conditions` CLI flag (comma-separated). Filter semantics: rules tagged `general` always run; tagged-only rules run iff their tags intersect the active list. Profiles unchanged; FALC retains its regulatory meaning. See [`docs/src/guide/conditions.md`](docs/src/guide/conditions.md). | — | Rule-system-growth brainstorm (2026-04-20) |
+
+### Encoding / input handling
+
+The linter is a UTF-8 → diagnostics function. Encoding conversion is
+the user's responsibility, exactly once, before lint-time (`iconv`
+or "save as UTF-8"). Invalid UTF-8 fails at the read boundary
+(`std::fs::read_to_string` returns an `io::Error`). Other encodings
+(Windows-1252, Latin-1, Shift-JIS, …) are explicit non-goals: any
+in-process transcoder would violate the deterministic-core prime
+directive (charset detection is heuristic, "same input, same output"
+no longer holds). The entries below cover the *valid-UTF-8* edge
+cases the test surface should pin.
+
+| ID | Item | Priority | Origin |
+|---|---|---|---|
+| F110 | ✅ Shipped 2026-04-28 — leading `\u{FEFF}` stripped once at the engine boundary (`Engine::lint_with_source`, via the `normalize_input` helper). Funnels every input path (string, stdin, file) through the same boundary so rules never see the BOM. Regression test in `src/engine.rs::tests::bom_prefix_does_not_shift_diagnostics` proves identical diagnostics + line/column locations with and without a leading BOM on a sentence-too-long fixture. | — | 2026-04-25 encoding survey |
+| F111 | ✅ Shipped 2026-04-28 — `unicode-normalization = "0.1"` added; `Engine::lint_with_source` NFC-normalizes input at the same boundary as F110, fast-pathing already-NFC text via `is_nfc_quick`. NFC `café` and NFD `cafe + U+0301` now hash identically in every HashMap-using rule. Regression test in `src/engine.rs::tests::nfd_input_yields_same_diagnostics_as_nfc` exercises a 4-sentence FR fixture and asserts diagnostic count + per-diagnostic rule id and line match across NFC and NFD inputs. | — | 2026-04-25 encoding survey |
+| F112 | ✅ Shipped 2026-04-28 — `src/engine.rs::tests::lone_cr_line_endings_are_normalized` pins parity between LF and lone-CR three-paragraph fixtures (word count + diagnostic count). `src/engine.rs::tests::zero_width_chars_inside_words_pin_behaviour` pins observed behaviour for U+200B / 200C / 200D inside words: the engine round-trips without panicking and produces a valid `Report`; exact word count is intentionally not asserted because `nfc()` does not strip them and tokenisation is owned by `unicode-segmentation`. | — | 2026-04-25 encoding survey |
+| F113 | **Mixed-script test fixtures.** Pin behaviour on EN + CJK and LTR + RTL prose mixed within one paragraph. `unicode_words()` should handle the boundaries correctly (UAX-29), but no regression test exists. Filed as Speculative — no known bug, just a coverage gap. Open if a real-world bilingual corpus surfaces edge cases. | 🟢 Speculative | 2026-04-25 encoding survey |
 
 ### Rules refinement
 
