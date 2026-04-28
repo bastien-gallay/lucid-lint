@@ -97,9 +97,14 @@ lint-fix:
 # Dogfood: run lucid-lint on its own documentation (dev-doc profile for technical docs).
 # Score-only gate (F80): warnings are informational, --min-score is the CI signal.
 # Floor sits below the current baseline so prose drift trips it; ratchet up as we fix.
+#
+# Scope is authored prose only. RULES.md, ROADMAP.md and CHANGELOG.md are
+# project-state databases (dense table cells, Keep-a-Changelog narrative
+# rows) where line-length-wide and excessive-commas fire on structure rather
+# than prose — keep them out of the dogfood gate.
 [group('lint')]
 dogfood:
-    cargo run --release -- check --profile dev-doc --no-fail-on-warning --min-score 60 README.md RULES.md ROADMAP.md CHANGELOG.md CONTRIBUTING.md CODING_STANDARDS.md AGENTS.md docs/src
+    cargo run --release -- check --profile dev-doc --no-fail-on-warning --min-score 60 README.md CONTRIBUTING.md CODING_STANDARDS.md AGENTS.md docs/src
 
 # ── Snapshots ────────────────────────────────────────────
 
