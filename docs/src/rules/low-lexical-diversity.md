@@ -4,8 +4,6 @@
 
 Passages with excessive repetition of content words. A monotonous text loses reader attention and often signals unstructured thinking. The rule is *not* an anti-jargon detector: technical terms (`API`, `request`, `cache`) are expected to repeat — the signal targets non-technical content words.
 
-**Reference.** Type-Token Ratio (TTR), a classical corpus-linguistics metric (Herdan, 1960).
-
 ## At a glance
 
 | | |

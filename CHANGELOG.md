@@ -82,6 +82,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   at the local FR versions for the six new pages. Remaining: 14
   per-rule FR pages (rhythm 2, lexicon 6, syntax 5, readability 1)
   plus the FR guide translations.
+- **`lexicon.jargon-undefined` page polish (EN + FR).** Drops the
+  obsolete `(v0.1 simplified)` section qualifier, removes the stale
+  link to F9 (which shipped a different feature — definition-aware
+  acronym detection — not a definition-aware variant of jargon),
+  and replaces the inaccurate Parameters table (which suggested
+  `jargon_lists`/`custom_jargon`/`whitelist` were TOML-configurable)
+  with an honest Configuration section: in v0.2 the active lists
+  are set by the profile and not yet user-overridable from
+  `lucid-lint.toml`, with the gap tracked as **F126**.
+- **`lexicon.all-caps-shouting` shape-cue explainer (EN + FR).**
+  The "ascenders / descenders / x-height contrast" parenthetical
+  expands into a teaching paragraph naming representative letters
+  for each cue and explaining why ALL-CAPS flattens the silhouette
+  — closes the implicit-jargon gap surfaced in the
+  FR-translation review.
+- **`lexicon.excessive-nominalization` example highlights
+  (EN + FR).** Nominalizations in the "before" line and matching
+  active verbs in the "after" line now wear `lucid-idea` colour
+  spans (1–4) so the rewrite mapping is visible at a glance,
+  matching the convention `lexicon.all-caps-shouting` already
+  uses.
+- **`lexicon.low-lexical-diversity` reference cleanup
+  (EN + FR).** Drops the inline `**Reference.** Type-Token Ratio …
+  (Herdan, 1960)` line from the body — the reference is already
+  in the page's References section. (A full-rules pass to
+  normalise this convention is pending.)
+- **F126 filed — TOML overrides for `lexicon.jargon-undefined`.**
+  v0.2 has no `[rules."lexicon.jargon-undefined"]` deserializer;
+  the rule's `Config` struct exposes `active_lists` / `custom` /
+  `whitelist` but they're only set through the profile preset.
+  Filed under "Rules refinement" 🟡 Later — same shape as the
+  existing `unexplained-abbreviation` whitelist wiring.
+- **Six more FR per-rule pages — `lexicon` category 100 %
+  FR-complete (F25 progress, 13/25 → 19/25).**
+  `lexicon.low-lexical-diversity`, `lexicon.excessive-nominalization`,
+  `lexicon.jargon-undefined`, `lexicon.all-caps-shouting`,
+  `lexicon.redundant-intensifier`, `lexicon.consonant-cluster` land
+  under `docs/src/fr/rules/` against the locked template. The whole
+  `lexicon` category is now FR-complete (8 / 8 rules translated),
+  joining `structure` and `rhythm` at 100 %. `SUMMARY.md` and
+  `fr/rules/index.md` rewired to local FR versions. Remaining: 6
+  per-rule FR pages (syntax 5, readability 1) plus FR guide
+  translations.
 - **Two more FR per-rule pages — `rhythm` category 100 %
   FR-complete (F25 progress, 11/25 → 13/25).**
   `rhythm.consecutive-long-sentences` and `rhythm.repetitive-connectors`

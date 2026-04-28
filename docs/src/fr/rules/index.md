@@ -53,14 +53,14 @@ est un repère humain ; il n'aliase jamais l'identifiant.
 
 | Règle | Libellé |
 |---|---|
-| [`lexicon.low-lexical-diversity`](../../rules/low-lexical-diversity.md) (en) | Diversité lexicale faible |
-| [`lexicon.excessive-nominalization`](../../rules/excessive-nominalization.md) (en) | Nominalisations en excès |
+| [`lexicon.low-lexical-diversity`](./low-lexical-diversity.md) | Diversité lexicale faible |
+| [`lexicon.excessive-nominalization`](./excessive-nominalization.md) | Nominalisations en excès |
 | [`lexicon.unexplained-abbreviation`](./unexplained-abbreviation.md) | Abréviations non explicitées |
 | [`lexicon.weasel-words`](./weasel-words.md) | Mots évasifs |
-| [`lexicon.jargon-undefined`](../../rules/jargon-undefined.md) (en) | Jargon non défini |
-| [`lexicon.all-caps-shouting`](../../rules/all-caps-shouting.md) (en) | Majuscules criardes |
-| [`lexicon.redundant-intensifier`](../../rules/redundant-intensifier.md) (en) | Intensificateurs redondants |
-| [`lexicon.consonant-cluster`](../../rules/consonant-cluster.md) (en) | Amas consonantiques |
+| [`lexicon.jargon-undefined`](./jargon-undefined.md) | Jargon non défini |
+| [`lexicon.all-caps-shouting`](./all-caps-shouting.md) | Majuscules criardes |
+| [`lexicon.redundant-intensifier`](./redundant-intensifier.md) | Intensificateurs redondants |
+| [`lexicon.consonant-cluster`](./consonant-cluster.md) | Amas consonantiques |
 
 ### Syntaxe
 

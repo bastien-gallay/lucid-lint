@@ -34,15 +34,17 @@ Technical vocabulary (`function`, `implementation`, `configuration`) contains ma
 
 ## Example
 
+Nominalizations colour-matched to their active-verb counterparts in the rewrite.
+
 Before (heavy):
 
 <!-- lucid-lint disable-next-line lexicon.excessive-nominalization -->
 
-> La réalisation de l'analyse de la conformité permettra l'identification des axes d'amélioration.
+> La <span class="lucid-idea" data-idea="1">réalisation</span> de l'<span class="lucid-idea" data-idea="2">analyse</span> de la conformité permettra l'<span class="lucid-idea" data-idea="3">identification</span> des axes d'<span class="lucid-idea" data-idea="4">amélioration</span>.
 
 After (lighter):
 
-> Nous analyserons la conformité. Cela permettra d'identifier les axes à améliorer.
+> Nous <span class="lucid-idea" data-idea="2">analyserons</span> la conformité. Cela permettra d'<span class="lucid-idea" data-idea="3">identifier</span> les axes à <span class="lucid-idea" data-idea="4">améliorer</span>.
 
 ## Suppression
 

@@ -16,21 +16,11 @@ Domain-specific terms used without definition. Jargon is contextual: acceptable 
 | **Languages** | EN · FR (separate lists per language and domain) |
 | **Source** | [`src/rules/jargon_undefined.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/jargon_undefined.rs) |
 
-## Detection (v0.1 simplified)
+## Detection
 
 1. Maintain multiple jargon lists per domain (`tech`, `legal`, `medical`, `admin`).
 2. User activates the relevant lists via profile.
 3. Flag each occurrence of a listed term.
-
-A definition-aware variant is tracked as part of **[F9](../roadmap.md)** on the [roadmap](../roadmap.md).
-
-## Parameters
-
-| Key | Type | Default |
-|---|---|---|
-| `jargon_lists` | `list` | profile-dependent |
-| `custom_jargon` | `list` | `[]` |
-| `whitelist` | `list` | `[]` |
 
 ## Profile activation
 
@@ -40,7 +30,11 @@ A definition-aware variant is tracked as part of **[F9](../roadmap.md)** on the 
 | `public` | `tech`, `legal`, `medical`, `admin` |
 | `falc` | `tech`, `legal`, `medical`, `admin`, strict mode |
 
-## Default starter lists (v0.1 — community contributions welcome)
+## Configuration
+
+In v0.2, the active lists are set by the profile and are not yet user-overridable from `lucid-lint.toml`. Per-rule TOML overrides — adding custom domain terms, silencing specific entries, or activating a non-default list combination — are tracked as **[F126](../roadmap.md)** on the [roadmap](../roadmap.md).
+
+## Default starter lists (community contributions welcome)
 
 - **Tech:** *idempotent, orthogonal, deterministic, polymorphic, serialization, deserialization, synchronous, asynchronous, concurrency, thread-safe, side-effect, referential transparency, memoization, currying, hoisting, closure, monad, immutable, stateless, refactoring*
 - **Legal (mostly FR):** *apériteur, clause résolutoire, force majeure, cessation de paiement, préjudice subi, onéreux, nonobstant, préalablement, susmentionné, infra, supra, ad hoc, de facto, in fine, subséquemment*
