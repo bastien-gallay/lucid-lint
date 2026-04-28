@@ -94,10 +94,12 @@ lint:
 lint-fix:
     cargo clippy --all-features --all-targets --workspace --fix --allow-dirty --allow-staged -- -D warnings
 
-# Dogfood: run lucid-lint on its own documentation (dev-doc profile for technical docs)
+# Dogfood: run lucid-lint on its own documentation (dev-doc profile for technical docs).
+# Score-only gate (F80): warnings are informational, --min-score is the CI signal.
+# Floor sits below the current baseline so prose drift trips it; ratchet up as we fix.
 [group('lint')]
 dogfood:
-    cargo run --release -- check --profile dev-doc README.md RULES.md ROADMAP.md CHANGELOG.md CONTRIBUTING.md CODING_STANDARDS.md AGENTS.md docs/src
+    cargo run --release -- check --profile dev-doc --no-fail-on-warning --min-score 60 README.md RULES.md ROADMAP.md CHANGELOG.md CONTRIBUTING.md CODING_STANDARDS.md AGENTS.md docs/src
 
 # ── Snapshots ────────────────────────────────────────────
 
