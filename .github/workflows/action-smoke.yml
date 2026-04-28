@@ -1,0 +1,42 @@
+name: action-smoke
+
+# Internal validation for the composite action defined in action.yml (F114).
+# Runs only when the action surface itself changes. Not a release gate; this
+# workflow proves the input contract works end-to-end against this repo's own
+# docs before a `v1` tag is cut and the action is published externally.
+
+on:
+  push:
+    paths:
+      - 'action.yml'
+      - '.github/workflows/action-smoke.yml'
+  pull_request:
+    paths:
+      - 'action.yml'
+      - '.github/workflows/action-smoke.yml'
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    name: lint via local action (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run lucid-lint via local composite action
+        uses: ./
+        with:
+          paths: docs/src/introduction.md
+          profile: dev-doc
+          # Smoke run only verifies that the binary loads, the inputs are
+          # forwarded correctly and PATH wiring sticks. Diagnostics are not
+          # the gate here.
+          args: --no-fail-on-warning
+
+      - name: Verify binary remains on PATH
+        shell: bash
+        run: lucid-lint --version

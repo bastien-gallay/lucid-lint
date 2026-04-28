@@ -1,0 +1,134 @@
+name: lucid-lint
+description: Lint prose for cognitive accessibility (WCAG 2.2, FALC, plain language).
+author: bastien-gallay
+branding:
+  icon: book-open
+  color: purple
+
+# Internal scaffold (F114). Not yet published to the GitHub Marketplace
+# and not pinned to a stable major. Used by `.github/workflows/action-smoke.yml`
+# to dogfood the contract against this repo's own docs. The input shape may
+# still shift before a `v1` tag is cut. See ROADMAP.md F114.
+
+inputs:
+  version:
+    description: 'Release tag to install (e.g. v0.2.2). Use "latest" to fetch the latest GitHub release.'
+    required: false
+    default: latest
+  paths:
+    description: 'Paths to lint, space-separated. Defaults to the working directory.'
+    required: false
+    default: '.'
+  profile:
+    description: 'Profile preset: dev-doc | public | falc. Leave blank to defer to lucid-lint.toml or the CLI default.'
+    required: false
+    default: ''
+  format:
+    description: 'Output format: tty | json | sarif.'
+    required: false
+    default: tty
+  min-score:
+    description: 'Fail (exit 1) if the aggregate document score is below this threshold (0-100).'
+    required: false
+    default: ''
+  working-directory:
+    description: 'Directory to cd into before running lucid-lint.'
+    required: false
+    default: '.'
+  args:
+    description: 'Additional raw arguments forwarded verbatim to `lucid-lint check`.'
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Resolve target triple
+      id: target
+      shell: bash
+      run: |
+        case "${RUNNER_OS}-${RUNNER_ARCH}" in
+          Linux-X64)   triple=x86_64-unknown-linux-gnu ; ext=tar.gz ;;
+          macOS-X64)   triple=x86_64-apple-darwin      ; ext=tar.gz ;;
+          macOS-ARM64) triple=aarch64-apple-darwin     ; ext=tar.gz ;;
+          Windows-X64) triple=x86_64-pc-windows-msvc   ; ext=zip    ;;
+          *)
+            echo "::error::Unsupported runner ${RUNNER_OS}-${RUNNER_ARCH}. Supported: Linux x64, macOS x64/arm64, Windows x64."
+            exit 1
+            ;;
+        esac
+        echo "triple=$triple" >> "$GITHUB_OUTPUT"
+        echo "ext=$ext"       >> "$GITHUB_OUTPUT"
+
+    - name: Resolve release tag
+      id: version
+      shell: bash
+      env:
+        REQUESTED: ${{ inputs.version }}
+      run: |
+        if [ -z "$REQUESTED" ] || [ "$REQUESTED" = "latest" ]; then
+          tag=$(curl -fsSL \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/bastien-gallay/lucid-lint/releases/latest" \
+            | grep -oE '"tag_name":[[:space:]]*"[^"]+"' \
+            | head -1 \
+            | sed -E 's/.*"([^"]+)"$/\1/')
+          if [ -z "$tag" ]; then
+            echo "::error::Could not resolve the latest release tag from the GitHub API."
+            exit 1
+          fi
+        else
+          tag="$REQUESTED"
+        fi
+        echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+    - name: Download lucid-lint (Unix)
+      if: runner.os != 'Windows'
+      shell: bash
+      env:
+        TAG:    ${{ steps.version.outputs.tag }}
+        TRIPLE: ${{ steps.target.outputs.triple }}
+      run: |
+        url="https://github.com/bastien-gallay/lucid-lint/releases/download/${TAG}/lucid-lint-${TAG}-${TRIPLE}.tar.gz"
+        dest="$RUNNER_TEMP/lucid-lint-bin"
+        echo "Downloading $url"
+        mkdir -p "$dest"
+        curl --proto '=https' --tlsv1.2 -fsSL "$url" -o "$dest/lucid-lint.tar.gz"
+        tar -xzf "$dest/lucid-lint.tar.gz" -C "$dest"
+        chmod +x "$dest/lucid-lint"
+        echo "$dest" >> "$GITHUB_PATH"
+
+    - name: Download lucid-lint (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      env:
+        TAG:    ${{ steps.version.outputs.tag }}
+        TRIPLE: ${{ steps.target.outputs.triple }}
+      run: |
+        $url  = "https://github.com/bastien-gallay/lucid-lint/releases/download/$env:TAG/lucid-lint-$env:TAG-$env:TRIPLE.zip"
+        $dest = Join-Path $env:RUNNER_TEMP 'lucid-lint-bin'
+        Write-Host "Downloading $url"
+        New-Item -ItemType Directory -Force -Path $dest | Out-Null
+        $zip = Join-Path $dest 'lucid-lint.zip'
+        Invoke-WebRequest -Uri $url -OutFile $zip
+        Expand-Archive -Path $zip -DestinationPath $dest -Force
+        Add-Content -Path $env:GITHUB_PATH -Value $dest
+
+    - name: Run lucid-lint
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        PATHS:     ${{ inputs.paths }}
+        PROFILE:   ${{ inputs.profile }}
+        FORMAT:    ${{ inputs.format }}
+        MIN_SCORE: ${{ inputs.min-score }}
+        EXTRA:     ${{ inputs.args }}
+      run: |
+        flags=()
+        [ -n "$PROFILE"   ] && flags+=( --profile   "$PROFILE"   )
+        [ -n "$FORMAT"    ] && flags+=( --format    "$FORMAT"    )
+        [ -n "$MIN_SCORE" ] && flags+=( --min-score "$MIN_SCORE" )
+        # `paths` and `args` are intentionally word-split so callers can pass
+        # multiple files / multi-flag strings via a single input.
+        # shellcheck disable=SC2086
+        lucid-lint check "${flags[@]}" $EXTRA $PATHS

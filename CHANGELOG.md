@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **GitHub Action composite scaffold (F114, internal).** New
+  `action.yml` at the repo root wraps the `cargo-dist` release tarball
+  in a composite GitHub Action with five inputs (`version`, `paths`,
+  `profile`, `format`, `min-score`, plus `working-directory` and
+  passthrough `args`). The runner detects its OS/arch
+  (`Linux-X64`, `macOS-X64`, `macOS-ARM64`, `Windows-X64`), downloads
+  the matching tarball/zip from the GitHub release, adds the binary
+  to `$GITHUB_PATH`, then runs `lucid-lint check` with the resolved
+  flags. A companion smoke workflow
+  (`.github/workflows/action-smoke.yml`) exercises the contract on
+  the three runner OSes against this repo's own `docs/src/`,
+  triggered only when `action.yml` or the workflow itself changes.
+  Not yet published to the GitHub Marketplace and not pinned to a
+  stable major — the input shape is allowed to drift until the v0.3
+  cut, when `v1` will be tagged and the action will move to its own
+  `lucid-lint-action` repo per the F114 ROADMAP entry.
 - **Encoding hygiene at the engine boundary (F110 / F111 / F112).**
   `Engine::lint_with_source` now strips a leading UTF-8 BOM
   (`U+FEFF`) and NFC-normalizes input once at the funnel point, so
