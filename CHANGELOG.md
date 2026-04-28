@@ -82,6 +82,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   at the local FR versions for the six new pages. Remaining: 14
   per-rule FR pages (rhythm 2, lexicon 6, syntax 5, readability 1)
   plus the FR guide translations.
+- **F123 — install-route documentation surfaces the cargo-dist
+  installers.** `README.md` and `docs/src/guide/installation.md`
+  now lead with the `curl … | sh` (Linux / macOS / WSL) and
+  PowerShell (`irm | iex`) one-liners that ship with every
+  release, document the `--check` / audit-before-running pattern
+  (download to a file, `less`/`notepad`, then execute), explain
+  how to pin a specific version (`releases/download/v<version>/`
+  vs `releases/latest/`), and keep `cargo install` and source-build
+  routes alongside as fallbacks. Stale "Once released to crates.io"
+  lead-in dropped. The cargo-dist `installers = ["shell",
+  "powershell"]` flip itself was a no-op — that config has been
+  in `Cargo.toml` `[workspace.metadata.dist]` since the initial
+  scaffold; v0.1.1 / v0.2.0 / v0.2.1 / v0.2.2 have all been
+  attaching the installer scripts to their GitHub Releases.
 - **`lexicon.jargon-undefined` page polish (EN + FR).** Drops the
   obsolete `(v0.1 simplified)` section qualifier, removes the stale
   link to F9 (which shipped a different feature — definition-aware
