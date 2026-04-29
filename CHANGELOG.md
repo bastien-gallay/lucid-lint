@@ -339,6 +339,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`structure.line-length-wide` is now author-break-aware.** The rule
+  used to fire on any paragraph whose joined text exceeded the
+  per-profile ceiling, including soft-wrapped Markdown prose. That
+  conflated source mechanics with rendered width — WCAG 1.4.8 (the
+  rule's stated grounding) targets the rendered line, but the
+  Markdown parser collapses soft breaks to spaces, so a normal
+  multi-sentence paragraph written as one source line was being
+  measured as if the renderer would never reflow it. The rule now
+  only fires on paragraphs that carry an authorial line break:
+  Markdown hard breaks (`<br>` or two trailing spaces) and explicit
+  newlines in plain-text input. Soft-wrapped Markdown paragraphs are
+  exempt regardless of length — pair with
+  `structure.paragraph-too-long` to bound paragraph density.
+  Surfaced by dogfood on the FR rule pages, where 60+ false positives
+  were being emitted on prose that mdBook reflows correctly. Docs,
+  RULES.md, and unit tests updated accordingly.
 - **Two library-code `.expect()` calls dropped.**
   `consecutive-long-sentences` and `all-caps-shouting` now use
   idiomatic `if let` / `Option::filter` patterns instead of panic

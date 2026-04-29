@@ -4,12 +4,9 @@
 
 ## Ce que cette règle signale
 
-Les lignes source plus larges que le plafond du profil. WCAG 1.4.8
-(AAA) plafonne le texte rendu à environ 80 caractères par ligne, car
-des lignes plus longues forcent l'œil à parcourir plus de distance
-entre saccades et augmentent la relecture au retour à la ligne — une
-difficulté connue chez les lecteurs dyslexiques (BDA Dyslexia Style
-Guide).
+Les lignes choisies par l'auteur plus larges que le plafond du profil. WCAG 1.4.8 (AAA) plafonne le texte rendu à environ 80 caractères par ligne, car des lignes plus longues forcent l'œil à parcourir plus de distance entre saccades et augmentent la relecture au retour à la ligne — une difficulté connue chez les lecteurs dyslexiques (BDA Dyslexia Style Guide).
+
+« Choisies par l'auteur » est important. En Markdown, les sauts mous sont remplacés par des espaces lors de l'analyse, parce que le rendu réorganise le texte selon la largeur de l'écran. La largeur de la ligne source ne dit donc rien de ce que voit le lecteur. Cette règle ne mesure que les sauts gardés volontairement : sauts durs Markdown (`<br>` ou deux espaces en fin de ligne) et retours à la ligne explicites en texte brut. Un paragraphe Markdown soft-wrappé est exempté, peu importe la longueur de son texte joint. Pour borner la densité d'un paragraphe, voir [`structure.paragraph-too-long`](./paragraph-too-long.md).
 
 ## En bref
 
@@ -24,18 +21,11 @@ Guide).
 
 ## Détection
 
-Pour chaque paragraphe, mesure de la largeur de chaque ligne en
-clusters de graphèmes ; signalement des lignes au-delà de
-`max_line_length`.
+Pour chaque paragraphe qui contient un saut de ligne voulu par l'auteur, mesure de la largeur de chaque ligne en clusters de graphèmes ; signalement des lignes au-delà de `max_line_length`.
 
-Les blocs de code (clôturés ou indentés) sont exclus en amont par le
-parseur Markdown.
+Un paragraphe Markdown sans saut dur (le cas courant en prose) est exempté. Les sauts mous sont remplacés par des espaces lors de l'analyse : ce qui reste est une ligne logique dont la longueur source suit la largeur de l'éditeur, pas le rendu visé par WCAG 1.4.8. Le texte brut suit la même logique : un paragraphe sans `\n` interne est exempté ; un paragraphe avec retours à la ligne internes est mesuré ligne par ligne.
 
-`paragraph.text` conserve les sauts durs depuis la source. En
-Markdown, les sauts mous sont reformés en espaces, ce qui signifie
-qu'un paragraphe-source enveloppé selon l'intention de l'auteur
-compte comme une seule ligne reformée pour cette règle. Les entrées
-texte brut et stdin mesurent directement les lignes-source.
+Les blocs de code (clôturés ou indentés) sont exclus en amont par le parseur Markdown. Les titres, items de liste et cellules de tableau sont hors scope par construction — `paragraph-too-long`, `sentence-too-long` et les règles de titres couvrent les charges cognitives qui s'appliquent à ces blocs.
 
 ## Paramètres
 
@@ -48,12 +38,9 @@ caractères.
 
 ## Mises en garde connues
 
-Les sauts mous Markdown dans la source sont reformés en espaces
-durant l'analyse ; la règle voit donc le texte du paragraphe une fois
-*reformé*. Un paragraphe Markdown dont chaque ligne-source fait moins
-de 80 caractères mais dont le texte reformé fait 400 caractères se
-déclenchera quand même. Pour un contrôle strict de la largeur de
-retour, lintez la sortie rendue ou utilisez une entrée texte brut.
+Les paragraphes de prose en une seule ligne source sont exemptés volontairement. La règle se déclenchait dessus auparavant et générait beaucoup de bruit sur de la prose réelle ; v0.2.x la restreint aux sauts choisis par l'auteur. À combiner avec [`structure.paragraph-too-long`](./paragraph-too-long.md) si tu veux aussi un plafond sur la longueur jointe du paragraphe.
+
+Les titres et items de liste ne sont pas mesurés par cette règle. Leur largeur de retour dépend du rendu (corps des titres, indentation des listes), et les charges cognitives sous-jacentes sont déjà couvertes par d'autres règles.
 
 ## Neutralisation
 
