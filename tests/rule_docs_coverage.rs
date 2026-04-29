@@ -232,20 +232,25 @@ fn changed_rules_appear_in_changelog_unreleased() {
 
     let changelog =
         fs::read_to_string(workspace_root().join("CHANGELOG.md")).expect("CHANGELOG.md missing");
-    let unreleased =
-        extract_unreleased(&changelog).expect("CHANGELOG.md has no `## [Unreleased]` section");
+    // Accept mentions in `[Unreleased]` OR the topmost dated release
+    // section. On main the next-release home is `[Unreleased]`; on a
+    // release branch we rename it to `[X.Y.Z] — DATE` and add a fresh
+    // empty `[Unreleased]` above it. Both surfaces are legitimate
+    // documentation homes during the release window.
+    let documented = extract_release_window(&changelog)
+        .expect("CHANGELOG.md has no `## [Unreleased]` or dated release section");
 
     let mut missing = Vec::new();
     for id in &changed {
-        if !unreleased.contains(id.as_str()) {
+        if !documented.contains(id.as_str()) {
             missing.push(id.clone());
         }
     }
 
     assert!(
         missing.is_empty(),
-        "rules touched without a CHANGELOG Unreleased mention: {missing:?}\n\
-         Fix: add a line under `## [Unreleased]` in CHANGELOG.md naming each rule id."
+        "rules touched without a CHANGELOG Unreleased / current-release mention: {missing:?}\n\
+         Fix: add a line under `## [Unreleased]` (or the topmost dated section on a release branch) in CHANGELOG.md naming each rule id."
     );
 }
 
@@ -335,25 +340,49 @@ fn extract_backticked(line: &str) -> Option<String> {
     Some(inside.to_string())
 }
 
-fn extract_unreleased(changelog: &str) -> Option<String> {
-    let mut lines = changelog.lines();
-    let mut in_unreleased = false;
+/// Extract the contiguous "release window" at the top of the changelog:
+/// the `[Unreleased]` section plus the first dated `[X.Y.Z] — date`
+/// section that follows it. Stops at the second dated section.
+///
+/// On main this collapses to `[Unreleased]` only (the dated section is
+/// already shipped, but accepting it costs nothing and keeps the rule
+/// from tripping if a hot-fix mentions a rule already in the most
+/// recent release notes). On a release branch, where the entries have
+/// been renamed from `[Unreleased]` to `[X.Y.Z] — date` and a fresh
+/// empty `[Unreleased]` sits above, this captures both — so rules
+/// documented in the named release still satisfy the gate.
+fn extract_release_window(changelog: &str) -> Option<String> {
     let mut out = String::new();
-    for line in lines.by_ref() {
+    let mut in_window = false;
+    let mut dated_seen = 0usize;
+    for line in changelog.lines() {
         if line.starts_with("## ") {
-            let header_is_unreleased = line.to_ascii_lowercase().contains("unreleased");
-            if in_unreleased && !header_is_unreleased {
-                break;
+            let header = line.to_ascii_lowercase();
+            let is_unreleased = header.contains("unreleased");
+            let is_dated = !is_unreleased && header.contains('[');
+            if is_unreleased {
+                in_window = true;
+                continue;
             }
-            in_unreleased = header_is_unreleased;
+            if is_dated {
+                dated_seen += 1;
+                // Accept the FIRST dated section that follows
+                // `[Unreleased]`; stop at the second.
+                if dated_seen >= 2 {
+                    break;
+                }
+                in_window = true;
+                continue;
+            }
+            // Some other `## ` heading — leave window unchanged.
             continue;
         }
-        if in_unreleased {
+        if in_window {
             out.push_str(line);
             out.push('\n');
         }
     }
-    if in_unreleased || !out.is_empty() {
+    if in_window || !out.is_empty() {
         Some(out)
     } else {
         None
