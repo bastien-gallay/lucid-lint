@@ -375,13 +375,13 @@ Fully deterministic. No false positives.
 **Condition tags** : `dyslexia`, `general`
 **Bilingual** : yes, script-agnostic
 
-**Intent** : flag source lines wider than the per-profile ceiling. WCAG 1.4.8 (AAA) caps rendered text at roughly 80 characters because longer lines force longer return sweeps and increase re-reading — a known difficulty for dyslexic readers.
+**Intent** : flag author-chosen lines wider than the per-profile ceiling. WCAG 1.4.8 (AAA) caps rendered text at roughly 80 characters because longer lines force longer return sweeps and increase re-reading — a known difficulty for dyslexic readers. Markdown soft-wraps are NOT author choices; only hard breaks (`<br>` / two trailing spaces) and plain-text newlines are.
 
 **References** : WCAG 1.4.8 (AAA), BDA Dyslexia Style Guide.
 
 **Detection**
 
-Per paragraph, count grapheme clusters on each line and report lines above `max_line_length`. Fenced and indented code blocks are excluded by the Markdown parser. Markdown soft breaks in the source are reflowed to spaces during parsing, so the rule measures the reflowed paragraph text; for hard control over wrap width, lint the rendered output or use a plain-text input.
+For every paragraph that carries an authorial line break, count grapheme clusters on each chunk between breaks and report any chunk above `max_line_length`. Soft-wrapped Markdown paragraphs (the common prose case) are exempt by construction: the parser collapses their soft breaks to spaces, so what remains is one logical line whose source length tracks the editor width, not the rendered width WCAG 1.4.8 targets. Pair with `structure.paragraph-too-long` if you also want a ceiling on joined paragraph length. Fenced and indented code blocks are excluded by the Markdown parser. Headings, list items, and table cells are out of scope.
 
 **Parameters**
 
