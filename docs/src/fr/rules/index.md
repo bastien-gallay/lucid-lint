@@ -12,10 +12,9 @@ reste la vue d'ensemble en un seul fichier, conservée à la racine du
 dépôt. Les sources académiques et normatives derrière chaque règle
 sont consolidées sur la page [Références](../references.md).
 
-> **Traduction FR en cours.** Seules quelques règles ont leur page
-> dédiée en français pour l'instant ; les autres liens du tableau
-> ci-dessous pointent vers la version anglaise. La progression est
-> suivie dans **F25** sur la [feuille de route](../roadmap.md).
+> **Traduction FR — complète.** Les 25 règles ont chacune leur page
+> dédiée en français (jalon **F25** sur la
+> [feuille de route](../roadmap.md)).
 
 ## Catégories
 
@@ -66,17 +65,17 @@ est un repère humain ; il n'aliase jamais l'identifiant.
 
 | Règle | Libellé |
 |---|---|
-| [`syntax.passive-voice`](../../rules/passive-voice.md) (en) | Voix passive |
-| [`syntax.unclear-antecedent`](../../rules/unclear-antecedent.md) (en) | Antécédent flou |
-| [`syntax.nested-negation`](../../rules/nested-negation.md) (en) | Négations imbriquées |
-| [`syntax.conditional-stacking`](../../rules/conditional-stacking.md) (en) | Empilement de conditions |
-| [`syntax.dense-punctuation-burst`](../../rules/dense-punctuation-burst.md) (en) | Rafale de ponctuation |
+| [`syntax.passive-voice`](./passive-voice.md) | Voix passive |
+| [`syntax.unclear-antecedent`](./unclear-antecedent.md) | Antécédent flou |
+| [`syntax.nested-negation`](./nested-negation.md) | Négations imbriquées |
+| [`syntax.conditional-stacking`](./conditional-stacking.md) | Empilement de conditions |
+| [`syntax.dense-punctuation-burst`](./dense-punctuation-burst.md) | Rafale de ponctuation |
 
 ### Lisibilité
 
 | Règle | Libellé |
 |---|---|
-| [`readability.score`](../../rules/readability-score.md) (en) | Score de lisibilité |
+| [`readability.score`](./readability-score.md) | Score de lisibilité |
 
 > **Source d'autorité.** La catégorie de chaque règle est déterminée
 > par `Category::for_rule` dans `src/types.rs`. Les tableaux ci-dessus

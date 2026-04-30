@@ -50,7 +50,7 @@ warning input.md:1:1 Sentence stacks 3 negations (maximum 2). Rewrite as a posit
 
 **After** (your rewrite):
 
-> We <span class="lucid-idea" data-idea="1">say</span> <span class="lucid-idea" data-idea="2">everything</span> <span class="lucid-idea" data-idea="3">is possible</span>.
+> We <span class="lucid-idea" data-idea="1">say</span> <span class="lucid-idea" data-idea="2">something</span> <span class="lucid-idea" data-idea="3">is possible</span>.
 
 ### French
 
@@ -74,7 +74,7 @@ warning input.md:1:1 Sentence stacks 3 negations (maximum 2). Rewrite as a posit
 
 **After** (your rewrite):
 
-> Nous <span class="lucid-idea" data-idea="1">disons</span> que <span class="lucid-idea" data-idea="2">tout</span> <span class="lucid-idea" data-idea="3">est possible</span>.
+> Nous <span class="lucid-idea" data-idea="1">disons</span> que <span class="lucid-idea" data-idea="2">quelque chose</span> <span class="lucid-idea" data-idea="3">est possible</span>.
 
 ## Suppression
 
