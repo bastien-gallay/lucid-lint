@@ -121,6 +121,14 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
                 // Inline code: skip contents.
             },
             Event::Html(s) | Event::InlineHtml(s) => {
+                // `<br>` is an authorial line break the renderer respects;
+                // map it to `\n` so paragraph-level rules that care about
+                // author-chosen wrap (e.g. `structure.line-length-wide`)
+                // see it the same way as a Markdown HardBreak. Comments
+                // carrying suppression directives flow through unchanged.
+                if (in_heading.is_some() || in_paragraph) && html_is_br_tag(&s) {
+                    buf.push('\n');
+                }
                 let block_line = offset_to_line(text, range.start);
                 for (parsed, line) in parse_all_directives_in_html(&s, block_line) {
                     match parsed {
@@ -344,6 +352,21 @@ fn finish_section(
     }
 }
 
+/// Recognise `<br>`, `<br/>`, `<br />` (any case, optional whitespace).
+///
+/// Pulldown-cmark emits a `<br>` tag as `Event::InlineHtml`, not as
+/// `Event::HardBreak`. We treat it as an authorial newline so paragraph
+/// rules see the same shape they get from a Markdown `HardBreak` (two
+/// trailing spaces).
+fn html_is_br_tag(s: &str) -> bool {
+    let trimmed = s.trim();
+    let Some(inner) = trimmed.strip_prefix('<').and_then(|t| t.strip_suffix('>')) else {
+        return false;
+    };
+    let inner = inner.trim_end_matches('/').trim();
+    inner.eq_ignore_ascii_case("br")
+}
+
 const fn heading_depth(level: HeadingLevel) -> u32 {
     match level {
         HeadingLevel::H1 => 1,
@@ -411,6 +434,33 @@ mod tests {
         let doc = parse_markdown(md, SourceFile::Anonymous);
         let depths: Vec<u32> = doc.sections.iter().map(|s| s.depth).collect();
         assert_eq!(depths, vec![1, 2, 3]);
+    }
+
+    #[test]
+    fn br_tag_inside_paragraph_is_a_hard_break() {
+        // `<br>` is parsed as InlineHtml, not HardBreak — the parser must
+        // still preserve it as a `\n` in paragraph.text so rules that key
+        // off authorial line breaks (e.g. `structure.line-length-wide`)
+        // see it like the two-trailing-spaces hard-break form.
+        for variant in ["<br>", "<br/>", "<br />", "<BR>", "<Br />"] {
+            let md = format!("Lead.{variant}Tail.");
+            let doc = parse_markdown(&md, SourceFile::Anonymous);
+            let para = &doc.sections[0].paragraphs[0].text;
+            assert!(
+                para.contains("Lead.\nTail."),
+                "variant {variant:?} produced {para:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn html_comment_directives_do_not_inject_newlines() {
+        // Suppression directives ride on InlineHtml too. Make sure the
+        // <br> handling didn't accidentally turn comments into breaks.
+        let md = "Lead. <!-- lucid-lint-disable rhythm.foo --> Tail.";
+        let doc = parse_markdown(md, SourceFile::Anonymous);
+        let para = &doc.sections[0].paragraphs[0].text;
+        assert!(!para.contains('\n'), "got {para:?}");
     }
 
     #[test]

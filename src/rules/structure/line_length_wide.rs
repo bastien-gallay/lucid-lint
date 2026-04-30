@@ -263,6 +263,42 @@ mod tests {
     }
 
     #[test]
+    fn markdown_br_tag_is_checked() {
+        // `<br>` is the HTML hard-break form. The parser maps it to `\n`
+        // in paragraph.text, so a long chunk between two `<br>` tags is
+        // treated like the two-trailing-spaces hard-break variant — the
+        // author chose this wrap, the renderer respects it, the rule
+        // measures it.
+        let long = "a".repeat(150);
+        let md = format!("Lead.<br>{long}<br>Trail.\n");
+        let diags = lint_md(&md, Profile::Public);
+        assert_eq!(diags.len(), 1);
+        assert!(diags[0].message.contains("150 characters"));
+    }
+
+    #[test]
+    fn list_item_text_is_out_of_scope() {
+        // Parser contract (src/parser/markdown.rs): list-item content is
+        // not emitted as a paragraph, so over-length list items are out
+        // of scope by construction. Pin this — a future parser change
+        // that starts emitting list items as paragraphs would need to
+        // revisit how this rule treats them (rendered list items wrap
+        // inside a narrower column than body prose).
+        let long = "a".repeat(200);
+        let md = format!("Lead-in paragraph.\n\n- {long}\n- short item\n");
+        assert!(lint_md(&md, Profile::Public).is_empty());
+    }
+
+    #[test]
+    fn table_cell_text_is_out_of_scope() {
+        // Same parser contract: GFM table cells are not emitted as
+        // paragraphs. Long cell content does not feed this rule today.
+        let long = "a".repeat(200);
+        let md = format!("Lead-in paragraph.\n\n| col |\n|---|\n| {long} |\n");
+        assert!(lint_md(&md, Profile::Public).is_empty());
+    }
+
+    #[test]
     fn long_heading_is_out_of_scope() {
         // Long headings render in display type at much larger sizes; WCAG
         // 1.4.8 targets body-text line length. The parser stores headings

@@ -355,6 +355,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Surfaced by dogfood on the FR rule pages, where 60+ false positives
   were being emitted on prose that mdBook reflows correctly. Docs,
   RULES.md, and unit tests updated accordingly.
+- **Markdown parser now treats `<br>` as an authorial line break (F126).**
+  Pulldown-cmark emits `<br>` as `Event::InlineHtml`, not as
+  `Event::HardBreak`, so the original author-break-aware fix above
+  silently dropped `<br>` and the rule did not fire on long lines
+  separated by `<br>` tags — even though the docstring and rule docs
+  already advertised `<br>` as a measured hard break. The parser now
+  pushes a `\n` to `paragraph.text` when it sees `<br>`, `<br/>`, or
+  `<br />` (any case, optional whitespace) inside a paragraph or
+  heading, matching the two-trailing-spaces variant. HTML comments
+  (suppression directives) flow through unchanged. Three new tests
+  pin the behaviour: `<br>`-as-hard-break in the parser, an HTML-
+  comment regression guard, and a `markdown_br_tag_is_checked` rule
+  test that mirrors `markdown_hard_break_is_checked`. Two further
+  tests pin the parser-construction out-of-scope contract for the
+  rule: `list_item_text_is_out_of_scope` and
+  `table_cell_text_is_out_of_scope` — list items and GFM table cells
+  are not emitted as paragraphs today, and the rule is silent on
+  over-length content inside them.
 - **Two library-code `.expect()` calls dropped.**
   `consecutive-long-sentences` and `all-caps-shouting` now use
   idiomatic `if let` / `Option::filter` patterns instead of panic
