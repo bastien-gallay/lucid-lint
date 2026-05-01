@@ -131,17 +131,34 @@ pub struct Paragraph {
     /// source positions seeded from `start_line`. Rules consume this slice
     /// instead of re-running [`split_sentences`] per rule.
     pub sentences: Vec<Sentence>,
+
+    /// `true` when the paragraph was extracted from a list-item span (tight
+    /// or loose). Rules that target body-prose width (e.g.
+    /// `structure.line-length-wide`) skip these because a rendered list item
+    /// wraps in a narrower column than running prose.
+    pub from_list_item: bool,
 }
 
 impl Paragraph {
-    /// Create a new paragraph and split it into sentences.
+    /// Create a new body paragraph and split it into sentences.
     #[must_use]
     pub fn new(text: String, start_line: u32) -> Self {
+        Self::with_origin(text, start_line, false)
+    }
+
+    /// Create a new paragraph derived from a list-item span.
+    #[must_use]
+    pub fn from_list_item(text: String, start_line: u32) -> Self {
+        Self::with_origin(text, start_line, true)
+    }
+
+    fn with_origin(text: String, start_line: u32, from_list_item: bool) -> Self {
         let sentences = split_sentences(&text, start_line, 1);
         Self {
             text,
             start_line,
             sentences,
+            from_list_item,
         }
     }
 }
