@@ -61,7 +61,7 @@ globset = "0.4"
 # Simple heuristic for v0.1; revisit with `whatlang` if needed.
 
 # Errors
-thiserror = "1.0"
+thiserror = "2.0"
 anyhow = "1.0"
 
 # Output
