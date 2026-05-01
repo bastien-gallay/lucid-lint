@@ -65,10 +65,18 @@ runs:
       shell: bash
       env:
         REQUESTED: ${{ inputs.version }}
+        # Authenticate the API call so it counts against the 1000/hr
+        # installation-token quota instead of the 60/hr unauthenticated
+        # per-IP limit. Dependabot and forked-PR runs both surface a
+        # token here, just with reduced scopes — read access to public
+        # release metadata is fine in either case.
+        GH_TOKEN: ${{ github.token }}
       run: |
         if [ -z "$REQUESTED" ] || [ "$REQUESTED" = "latest" ]; then
           tag=$(curl -fsSL \
             -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
             "https://api.github.com/repos/bastien-gallay/lucid-lint/releases/latest" \
             | grep -oE '"tag_name":[[:space:]]*"[^"]+"' \
             | head -1 \
