@@ -122,6 +122,38 @@ Every rule lands on five surfaces. CI (`tests/rule_docs_coverage.rs`) enforces t
 
 The same contract applies when you **modify** a shipped rule (new parameter, changed threshold, refined detection). Only step 1 is optional in that case — the other four are still required.
 
+### Marking version-gated changes (`.since-version`)
+
+When a rule's behavior changes in a release, mark the affected paragraph with the `since-version` callout so readers know what shifted and when. The styling lives in [`docs/theme/css/lucid-layout.css`](docs/theme/css/lucid-layout.css) (search `.since-version`).
+
+EN:
+
+```html
+<aside class="since-version" aria-label="New in v0.3">
+
+<span class="since-version__tag">Since v0.3</span> — One-line summary
+of what changed, in body voice.
+
+</aside>
+```
+
+FR mirror:
+
+```html
+<aside class="since-version" aria-label="Nouveauté en v0.3">
+
+<span class="since-version__tag">Depuis v0.3</span> — Résumé en une
+ligne, voix corps de texte.
+
+</aside>
+```
+
+Notes:
+
+- Blank lines around the inner content are required so mdBook re-enables markdown parsing inside the `<aside>`.
+- Ship the callout to `main` *with* the code slice that introduces the behavior — it's safe ahead of the tagged release because the badge itself dates the change.
+- Remove the callout one minor cycle after the release lands (e.g. drop `Since v0.3` notes during the `v0.4` polish pass) so rule pages don't accumulate version archaeology. Long-term history belongs in `CHANGELOG.md`.
+
 ### Docs links stay inside `docs/src/`
 
 mdBook only renders files under `docs/src/`. Any relative link written from a page inside `docs/src/` must resolve to another page inside `docs/src/` — a `(../../RULES.md)` or `(../../ROADMAP.md)` link points outside the mdBook tree and renders as a 404 on the published site.
