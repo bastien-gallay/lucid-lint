@@ -1,3 +1,4 @@
+<!-- en-source-sha: 8400741a215a89c5e49eeff68e7194d9c643b350 -->
 # `lexicon.jargon-undefined`
 
 *Jargon non défini.*
@@ -67,7 +68,7 @@ du profil — sont suivies sous **[F126](../roadmap.md)** dans la
 
 ## Neutralisation
 
-Voir [Neutraliser des diagnostics](../../guide/suppression.md) (page
+Voir [Neutralisation des diagnostics](../../guide/suppression.md) (page
 EN pour l'instant).
 
 ## Voir aussi

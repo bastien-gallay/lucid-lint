@@ -164,13 +164,13 @@ full attribute set per entry. Every source listed below is
 
 ## 📏 Coverage snapshot / Couverture
 
-Auto-generated from [`texts.yaml`](./texts.yaml). Cells count **`public_ok` sources only** — the 29 of 59 entries safe to commit under `examples/public/`. A `—` cell means zero redistributable sources for that slot. The full map (including non-redistributable slots and the load-bearing target list for sourcing work) lives at `examples/local/COVERAGE.md`, which is gitignored by design.
+Auto-generated from [`texts.yaml`](./texts.yaml). Cells count **`public_ok` sources only** — the 32 of 62 entries safe to commit under `examples/public/`. A `—` cell means zero redistributable sources for that slot. The full map (including non-redistributable slots and the load-bearing target list for sourcing work) lives at `examples/local/COVERAGE.md`, which is gitignored by design.
 
 ### Shape × language
 
 | Shape | EN | FR | EN+FR |
 |---|---|---|---|
-| good | 4 | 3 | — |
+| good | 6 | 4 | — |
 | bad | 4 | 1 | 1 |
 | before/after | 8 | — | 1 |
 | mixed | 5 | — | — |
@@ -180,19 +180,19 @@ Auto-generated from [`texts.yaml`](./texts.yaml). Cells count **`public_ok` sour
 
 | Condition | EN | FR | EN+FR |
 |---|---|---|---|
-| `general` | 22 | 4 | 3 |
+| `general` | 24 | 5 | 3 |
 | `dyslexia` | 2 | 1 | — |
-| `dyscalculia` | — | — | — |
-| `aphasia` | 5 | 1 | — |
+| `dyscalculia` | 1 | — | — |
+| `aphasia` | 6 | 2 | — |
 | `adhd` | 3 | — | — |
-| `non-native` | 17 | 3 | 2 |
+| `non-native` | 19 | 4 | 2 |
 | `a11y-markup` | — | 1 | — |
 
 ### Type × language
 
 | Type | EN | FR | EN+FR |
 |---|---|---|---|
-| `gov_guide` | 6 | 1 | 1 |
+| `gov_guide` | 8 | 2 | 1 |
 | `style_guide` | 2 | — | — |
 | `standard` | 4 | 1 | — |
 | `research_paper` | 1 | — | — |

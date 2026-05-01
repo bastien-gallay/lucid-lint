@@ -1,3 +1,4 @@
+<!-- en-source-sha: e3d59a57e55ff6172e68e297a7057b2c8d54dbe4 -->
 # `structure.deep-subordination`
 
 *Subordination profonde.*
@@ -69,7 +70,7 @@ Et la forme équivalente en anglais :
 
 ## Neutralisation
 
-Voir [Neutraliser des diagnostics](../../guide/suppression.md) (page
+Voir [Neutralisation des diagnostics](../../guide/suppression.md) (page
 EN pour l'instant).
 
 ## Références

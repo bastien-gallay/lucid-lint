@@ -1,3 +1,4 @@
+<!-- en-source-sha: a3e9313b09cbd0cb92944f71695df4f1f8ac27dd -->
 # `readability.score`
 
 *Score de lisibilité.*
@@ -57,13 +58,19 @@ scolaire.
 | 12–16 | Études supérieures |
 | > 16 | Expert |
 
-L'option `--readability-formula` (livrée avec F11 en v0.2) fige une
-formule indépendamment de la langue détectée :
+<aside class="since-version" aria-label="Nouveauté en v0.2">
+
+<span class="since-version__tag">Depuis v0.2</span> — L'option
+`--readability-formula` ([F11](../roadmap.md)) fige une formule
+indépendamment de la langue détectée :
 `--readability-formula flesch-kincaid` ou
 `--readability-formula kandel-moles`. La valeur par défaut `auto`
-garde le comportement par langue. D'autres formules (`Gunning Fog`,
-`SMOG`, `Dale-Chall`, `Scolarius`) et un rapport multi-formules
-`--readability-verbose` restent sur la
+garde le comportement par langue.
+
+</aside>
+
+D'autres formules (`Gunning Fog`, `SMOG`, `Dale-Chall`, `Scolarius`)
+et un rapport multi-formules `--readability-verbose` restent sur la
 [feuille de route](../roadmap.md).
 
 ## Paramètres

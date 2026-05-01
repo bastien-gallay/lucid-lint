@@ -18,7 +18,12 @@ Vague qualifiers that weaken a statement. A weasel word adds an invisible cognit
 
 Word-boundary match against a per-language list. Case-insensitive. One diagnostic per occurrence.
 
-Two context-aware exclusions, added in v0.2 as the first slice of **[F23](../roadmap.md)**:
+<aside class="since-version" aria-label="New in v0.2">
+
+<span class="since-version__tag">Since v0.2</span> — Two context-aware
+exclusions land as the first slice of **[F23](../roadmap.md)**.
+
+</aside>
 
 - **Inline code spans.** A hit inside `` `…` `` is skipped. Wrap a weasel term in backticks when you are discussing the word itself.
 - **Directional pairings.** `rather than` (EN) and `plutôt que` (FR) are conjunctions meaning "instead of" — not hedges — and are skipped.

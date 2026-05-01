@@ -1,3 +1,4 @@
+<!-- en-source-sha: 7fd1aca2e72b0dbed3b66f6e2f522afe51ebb77d -->
 <svg class="lucid-landing__mark" viewBox="0 0 120 36" aria-hidden="true" focusable="false">
   <title>loupe lucid-lint</title>
   <circle cx="18" cy="18" r="12" fill="none" stroke="currentColor" stroke-width="2.25"/>
@@ -121,14 +122,14 @@ lucid-lint check --min-score=85 docs/
       son coût. Une bonne prose maintient ce coût bas.
     </p>
   </article>
-  <div class="reading-demo__chips" role="radiogroup" aria-label="Police de lecture">
-    <button type="button" class="reading-demo__chip" data-apply="atkinson" role="radio" aria-checked="true">
+  <div class="reading-demo__chips" role="group" aria-label="Police de lecture">
+    <button type="button" class="reading-demo__chip" data-apply="atkinson" aria-pressed="true">
       Atkinson <span class="reading-demo__default">défaut</span>
     </button>
-    <button type="button" class="reading-demo__chip" data-apply="standard" role="radio" aria-checked="false">
+    <button type="button" class="reading-demo__chip" data-apply="standard" aria-pressed="false">
       Standard
     </button>
-    <button type="button" class="reading-demo__chip" data-apply="dyslexic" role="radio" aria-checked="false">
+    <button type="button" class="reading-demo__chip" data-apply="dyslexic" aria-pressed="false">
       OpenDyslexic
     </button>
   </div>

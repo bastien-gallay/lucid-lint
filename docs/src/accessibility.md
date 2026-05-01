@@ -52,18 +52,6 @@ has a roadmap ticket; fixes land in subsequent v0.2.x slices.
   WCAG 2.4.1 (*Bypass Blocks*) asks for the skip link without
   JS. A `theme/index.hbs` override that server-renders both is
   tracked as [F35a](./roadmap.md).
-- **Reading-demo chips declare radiogroup semantics without
-  keyboard arrow-key traversal.** The chips behave as toggle
-  buttons; arrow keys do not move focus between them. The fix is
-  to drop `role="radiogroup"` / `role="radio"` and use plain
-  buttons with `aria-pressed`. Tracked as
-  [F35b](./roadmap.md).
-- **`prefers-reduced-motion` over-reaches on the pair-comparison
-  idea-highlight.** The reduced-motion rule currently strips the
-  colour tint as well as the animation. Readers who opt out of
-  motion lose the pedagogical highlight itself. The rule will be
-  split so only transitions go under the media query. Tracked as
-  [F35c](./roadmap.md).
 - **The French page renders under `<html lang="en">` at build
   time** because mdBook supports a single book-wide language. A
   small script corrects `lang="fr"` on load; screen readers that

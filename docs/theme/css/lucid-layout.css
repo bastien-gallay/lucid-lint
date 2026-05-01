@@ -681,13 +681,13 @@ html[lang="fr"] .chapter li.part-title:not(:has(+ li.chapter-item span > a[href^
   border-color: var(--links);
   color: var(--links);
 }
-.reading-demo__chip[aria-checked="true"] {
+.reading-demo__chip[aria-pressed="true"] {
   background: var(--links);
   color: var(--bg);
   border-color: var(--links);
   cursor: default;
 }
-.reading-demo__chip[aria-checked="true"] .reading-demo__default {
+.reading-demo__chip[aria-pressed="true"] .reading-demo__default {
   background: var(--bg);
   color: var(--lucid-fog);
 }
@@ -959,6 +959,75 @@ html[lang="fr"] .chapter li.part-title:not(:has(+ li.chapter-item span > a[href^
 .content blockquote[class*="alert-"] {
   border-inline-start-width: 1px !important;
   padding-inline-start: 1em;
+}
+
+/* ---------- Version-gated callout (.since-version) ----------
+ * Marks a paragraph that describes behavior introduced in a specific
+ * release (e.g. "Since v0.3 — 3–4-word Oxford items now exempt").
+ * Shipped to prod ahead of the release so readers see what changed
+ * the moment a sub-slice lands. Conceptually the version is the
+ * moment a change came into focus, so the badge echoes the brand's
+ * lens motif (ring + focal dot) before the tag.
+ *
+ * Markup contract (see CONTRIBUTING.md):
+ *   <aside class="since-version" aria-label="New in v0.3">
+ *     <span class="since-version__tag">Since v0.3</span> — One-line
+ *     summary in body voice.
+ *   </aside>
+ *
+ * Why <aside> and not <blockquote>: blockquote is reserved for
+ * italic pull-quotes in this theme (typography.css:301). A version
+ * callout is informative, not literary.
+ *
+ * No border-left stripe: brand-banned and the most recognisable
+ * AI-doc tell. The tint + lens glyph carry the affordance instead.
+ * ---------------------------------------- */
+
+.content .since-version {
+  /* Soft warm tint — same family as the audience callout, calmer. */
+  background: color-mix(in oklch, var(--color-lucid) 4%, var(--color-paper));
+  padding: var(--lucid-space-md) var(--lucid-space-lg);
+  border-radius: 2px;
+  margin-block: var(--lucid-space-lg);
+  max-width: var(--measure);
+}
+.content .since-version > p {
+  margin: 0;
+}
+.content .since-version > p + p {
+  margin-block-start: 0.5em;
+}
+
+.since-version__tag {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5em;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  /* AAA on small text — color-fog (4.9:1) would fail the bar.
+     Recede via size + weight + uppercase, not via contrast loss. */
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+
+/* Lens glyph — pure-CSS ring + focal dot in --color-lucid.
+   Sized in em so it scales with the tag's font-size. */
+.since-version__tag::before {
+  content: "";
+  width: 0.65em;
+  height: 0.65em;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-lucid);
+  background: radial-gradient(
+    circle at 50% 50%,
+    var(--color-lucid) 0 18%,
+    transparent 19%
+  );
+  align-self: center;
+  flex-shrink: 0;
 }
 
 /* ============================================================

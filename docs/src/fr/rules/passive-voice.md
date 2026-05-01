@@ -1,3 +1,4 @@
+<!-- en-source-sha: 9e6be0c432915d364d877b302e70186928303088 -->
 # `syntax.passive-voice`
 
 *Voix passive.*
@@ -45,7 +46,7 @@ morphosyntaxique est prévu pour un futur greffon `lucid-lint-nlp`.
 ## Neutralisation
 
 Pour les passives volontaires, utiliser une directive inline. Voir
-[Neutraliser des diagnostics](../../guide/suppression.md) (page EN
+[Neutralisation des diagnostics](../../guide/suppression.md) (page EN
 pour l'instant).
 
 ## Références

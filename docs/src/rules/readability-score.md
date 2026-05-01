@@ -44,7 +44,17 @@ The result is an ease score on roughly `0..100` (higher = easier), Flesch-style.
 | 12–16 | College |
 | > 16 | Expert |
 
-The `--readability-formula` flag (shipped with F11 in v0.2) pins a formula regardless of detected language: `--readability-formula flesch-kincaid` or `--readability-formula kandel-moles`. Default `auto` keeps the per-language behaviour. Additional formulas (`Gunning Fog`, `SMOG`, `Dale-Chall`, `Scolarius`) and multi-formula `--readability-verbose` reports remain on the [roadmap](../roadmap.md).
+<aside class="since-version" aria-label="New in v0.2">
+
+<span class="since-version__tag">Since v0.2</span> — The
+`--readability-formula` flag ([F11](../roadmap.md)) pins a formula
+regardless of detected language: `--readability-formula flesch-kincaid`
+or `--readability-formula kandel-moles`. Default `auto` keeps the
+per-language behaviour.
+
+</aside>
+
+Additional formulas (`Gunning Fog`, `SMOG`, `Dale-Chall`, `Scolarius`) and multi-formula `--readability-verbose` reports remain on the [roadmap](../roadmap.md).
 
 ## Parameters
 

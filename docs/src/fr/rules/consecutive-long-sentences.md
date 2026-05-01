@@ -1,3 +1,4 @@
+<!-- en-source-sha: 80459a267e6baf6a1c076a5e5e3d1fb3ddf8d8b8 -->
 # `rhythm.consecutive-long-sentences`
 
 *Phrases longues consécutives.*
@@ -92,7 +93,7 @@ warning input.md:1:1 5 consecutive sentences exceed 20 words (max 3). Vary sente
 
 ## Neutralisation
 
-Voir [Neutraliser des diagnostics](../../guide/suppression.md) (page
+Voir [Neutralisation des diagnostics](../../guide/suppression.md) (page
 EN pour l'instant) pour les formes en ligne et par bloc.
 
 ## Voir aussi

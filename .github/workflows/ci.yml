@@ -92,6 +92,13 @@ jobs:
           mdbook-version: "latest"
       - name: Build mdBook
         run: cd docs && mdbook build
+      - name: FR content-staleness check (F92 sub-task)
+        # Soft on PRs: reports drift on stderr, exits 0. Compares each
+        # FR page's `en-source-sha` front-matter to the EN counterpart's
+        # current last-touching commit. Strict mode is wired separately
+        # on `main` via docs-deploy.yml once the existing stale backlog
+        # is reconciled.
+        run: python3 scripts/check_lang_staleness.py
       - name: Build rustdoc
         run: cargo doc --all-features --no-deps --workspace
         env:

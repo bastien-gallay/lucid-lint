@@ -1,3 +1,4 @@
+<!-- en-source-sha: 9e6be0c432915d364d877b302e70186928303088 -->
 # `syntax.dense-punctuation-burst`
 
 *Rafale de ponctuation.*
@@ -67,7 +68,7 @@ plus lâches.
 
 ## Neutralisation
 
-Voir [Neutraliser des diagnostics](../../guide/suppression.md) (page
+Voir [Neutralisation des diagnostics](../../guide/suppression.md) (page
 EN pour l'instant).
 
 ## Voir aussi

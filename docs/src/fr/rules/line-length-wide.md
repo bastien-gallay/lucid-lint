@@ -1,3 +1,4 @@
+<!-- en-source-sha: e3d59a57e55ff6172e68e297a7057b2c8d54dbe4 -->
 # `structure.line-length-wide`
 
 *Lignes trop larges.*
@@ -44,7 +45,7 @@ Les titres et items de liste ne sont pas mesurés par cette règle. Leur largeur
 
 ## Neutralisation
 
-Voir [Neutraliser des diagnostics](../../guide/suppression.md) (page
+Voir [Neutralisation des diagnostics](../../guide/suppression.md) (page
 EN pour l'instant).
 
 ## Voir aussi
