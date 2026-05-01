@@ -57,13 +57,18 @@ API, CLI, GUI, OS, CPU, RAM, SSD, USB, IDE, SDK, CI, CD` — plus les
 acronymes FR/EN courants et les mots-clés d'emphase RFC 2119
 (`PDF, SMS, GPS, ID, OK, FAQ`, `MUST, SHALL, SHOULD, …`).
 
-**Ce qui a changé en v0.2 :** les standards d'accessibilité
-(`WCAG`, `ARIA`, `RGAA`, …), les initiales du champ IA / traitement
-des langues (`LLM`, `NLP`) et les acronymes de pratiques d'ingénierie
-(`YAGNI`, `DRY`, `TDD`, …) ne sont plus dans la liste blanche de base
-livrée. Les projets qui les utilisent doivent les ajouter à
-`[rules.unexplained-abbreviation].whitelist` dans `lucid-lint.toml` —
-voir le [guide de configuration](../../guide/configuration.md#per-rule-overrides).
+<aside class="since-version" aria-label="Nouveauté en v0.2">
+
+<span class="since-version__tag">Depuis v0.2</span> — Les standards
+d'accessibilité (`WCAG`, `ARIA`, `RGAA`, …), les initiales du champ IA
+/ traitement des langues (`LLM`, `NLP`) et les acronymes de pratiques
+d'ingénierie (`YAGNI`, `DRY`, `TDD`, …) ne sont plus dans la liste
+blanche de base livrée. Les projets qui les utilisent doivent les
+ajouter à `[rules.unexplained-abbreviation].whitelist` dans
+`lucid-lint.toml` — voir le
+[guide de configuration](../../guide/configuration.md#per-rule-overrides).
+
+</aside>
 
 ```toml
 [rules.unexplained-abbreviation]

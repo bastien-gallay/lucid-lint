@@ -24,8 +24,13 @@ style Wikipédia (*Avoid weasel words*), Strunk & White, FALC.
 Correspondance sur frontière de mot contre une liste par langue.
 Insensible à la casse. Un diagnostic par occurrence.
 
-Deux exclusions contextuelles, ajoutées en v0.2 comme première tranche
-de **[F23](../../roadmap.md)** :
+<aside class="since-version" aria-label="Nouveauté en v0.2">
+
+<span class="since-version__tag">Depuis v0.2</span> — Deux exclusions
+contextuelles arrivent comme première tranche de
+**[F23](../../roadmap.md)**.
+
+</aside>
 
 - **Spans de code inline.** Une occurrence à l'intérieur de `` `…` ``
   est ignorée. Entourer un terme fuyant de backticks quand on parle du
