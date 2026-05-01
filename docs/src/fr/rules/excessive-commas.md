@@ -28,11 +28,12 @@ Compter les virgules par phrase, signaler celles qui dépassent
 **Interaction.** Quand [`structure.long-enumeration`](../../rules/long-enumeration.md)
 se déclenche sur la même phrase, cette règle est neutralisée pour cette
 phrase afin d'éviter un double signalement. Le détecteur d'énumération
-partagé décompte également les virgules Oxford (3 items courts ou plus)
-et les virgules à l'intérieur des listes de tokens parenthésées
-`(A, B, C, …)` (3 segments courts ou plus séparés par des virgules
-entre parenthèses équilibrées) — les deux décomptes sont agnostiques
-à la langue.
+partagé décompte les virgules Oxford (3 items courts ou plus, plus une
+passe rythmique relâchée pour les items de 1 à 4 mots — voir « Faux
+positifs connus » ci-dessous) et les virgules à l'intérieur des listes
+de tokens parenthésées `(A, B, C, …)` (3 segments courts ou plus
+séparés par des virgules entre parenthèses équilibrées) — tous les
+décomptes sont agnostiques à la langue.
 
 ## Paramètres
 
@@ -50,11 +51,23 @@ virgules ([F22](../../roadmap.md), première tranche).
 
 </aside>
 
-Les faux positifs restants viennent surtout des listes séparées par
-virgules avec des items de 3 mots et plus (`as long as`, `as soon as`)
-et des listes non-Oxford ou fermées par « plus » ; ils sont suivis
-sous **[F22](../../roadmap.md)** dans la [feuille de route](../../roadmap.md)
-pour une tranche v0.3.
+<aside class="since-version" aria-label="Nouveauté en v0.3">
+
+<span class="since-version__tag">Depuis v0.3</span> — Les énumérations
+Oxford d'items de 1 à 4 mots qui partagent une cadence régulière sont
+désormais décomptées — par exemple `categorie, severite, poids par
+defaut, seuils par profil, exemples, et neutralisation`. Le détecteur
+exige au moins 5 items, un écart de mots ≤ 2, et ne remonte pas plus
+loin que la frontière de proposition la plus proche
+([F22](../../roadmap.md), seconde tranche).
+
+</aside>
+
+Les faux positifs restants viennent surtout des listes non-Oxford ou
+fermées par « plus » et des énumérations Oxford interrompues par une
+parenthèse interleavée ; ils sont suivis sous **[F22](../../roadmap.md)**
+dans la [feuille de route](../../roadmap.md) pour les prochaines
+sous-tranches v0.3.
 
 ## Neutralisation
 

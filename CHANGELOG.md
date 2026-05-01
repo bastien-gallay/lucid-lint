@@ -339,6 +339,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`structure.excessive-commas` and `structure.long-enumeration` —
+  rhythmic-relaxation pass (F22 v0.3 slice).** The shared enumeration
+  detector now accepts Oxford runs whose segments are 1–4 words each,
+  provided the run is rhythmically regular: spread (max − min word
+  count) ≤ 2, with a per-language clause-onset stop list (subject
+  pronouns, common subordinators) that prevents the relaxed walk-back
+  from crossing clause boundaries. Floor for the relaxed pass is 5
+  items — high enough that rhythm alone carries the signal where the
+  tight pass's word-count limit no longer can. Unblocks the F22
+  research §4 deferred targets (corpus #12 / #24 / #25:
+  `category, severity, default weight, parameters per profile, EN/FR
+  examples, and suppression`-shape lists). Dogfood: excessive-commas
+  drops 2 hits; long-enumeration gains 2 (correct: those rhythmic
+  5-item runs are real bullet-list candidates). Tight pass preserved
+  verbatim, so existing detection cannot regress. Future tightening
+  of the 5-item / spread-2 / clause-onset thresholds tracked under F22
+  for a 0.3.x slice if dogfood surfaces a false positive.
 - **`structure.line-length-wide` is now author-break-aware.** The rule
   used to fire on any paragraph whose joined text exceeded the
   per-profile ceiling, including soft-wrapped Markdown prose. That

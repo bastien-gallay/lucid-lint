@@ -18,7 +18,7 @@ Sentences whose comma count exceeds a per-profile ceiling. The comma is the most
 
 Count commas per sentence, report those above `max_commas`.
 
-**Interaction.** When [`structure.long-enumeration`](./long-enumeration.md) fires on the same sentence, this rule is suppressed for that sentence to avoid double-reporting. The shared enumeration detector also discounts Oxford-style enumeration commas (3+ short items) and commas inside `(A, B, C, …)` parenthesised token lists (3+ short comma-separated segments inside balanced parens) — both discounts are language-agnostic.
+**Interaction.** When [`structure.long-enumeration`](./long-enumeration.md) fires on the same sentence, this rule is suppressed for that sentence to avoid double-reporting. The shared enumeration detector discounts Oxford-style enumeration commas (3+ short items, plus a relaxed rhythmic pass for 1–4-word items — see "Known false positives" below) and commas inside `(A, B, C, …)` parenthesised token lists (3+ short comma-separated segments inside balanced parens) — all language-agnostic.
 
 ## Parameters
 
@@ -36,7 +36,18 @@ lists `(A, B, C, …)` no longer count toward the comma total
 
 </aside>
 
-Remaining false positives mostly come from bare comma-separated lists with 3+-word items (`as long as`, `as soon as`) and non-Oxford or "plus"-closed lists; these are tracked as **[F22](../roadmap.md)** in the [roadmap](../roadmap.md) for a v0.3 slice.
+<aside class="since-version" aria-label="New in v0.3">
+
+<span class="since-version__tag">Since v0.3</span> — Oxford runs of
+1–4-word items that share a regular rhythm are now discounted too — for
+example `category, severity, default weight, parameters per profile,
+EN/FR examples, and suppression`. The detector requires at least 5
+items, a word-count spread ≤ 2, and walks no further back than the
+nearest clause boundary ([F22](../roadmap.md), second slice).
+
+</aside>
+
+Remaining false positives mostly come from non-Oxford or "plus"-closed lists and Oxford runs interrupted by an interleaved parenthetical; these are tracked as **[F22](../roadmap.md)** in the [roadmap](../roadmap.md) for further v0.3 sub-slices.
 
 ## Suppression
 

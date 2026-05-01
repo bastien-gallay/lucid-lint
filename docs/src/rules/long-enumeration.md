@@ -18,6 +18,18 @@ Inline prose enumerations that would be clearer as a bulleted list — 5+ comma-
 
 Sequence of `min_items` or more short comma-separated segments ending with `, et` / `, ou` / `, and` / `, or` (Oxford comma optional). Shared detector also informs [`structure.excessive-commas`](./excessive-commas.md).
 
+<aside class="since-version" aria-label="New in v0.3">
+
+<span class="since-version__tag">Since v0.3</span> — The shared detector
+also recognises rhythmically-regular runs of 1–4-word items (5+ items,
+word-count spread ≤ 2, no clause boundary inside the run). Sentences
+like `Each rule has a dedicated page below with category, severity,
+default weight, thresholds per profile, examples, and suppression
+guidance.` now surface as bullet-list candidates
+([F22](../roadmap.md), second slice).
+
+</aside>
+
 ## Parameters
 
 | Key | Type | Default |

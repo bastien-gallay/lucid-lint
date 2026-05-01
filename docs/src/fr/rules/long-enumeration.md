@@ -25,6 +25,19 @@ virgules, terminée par `, et` / `, ou` / `, and` / `, or` (virgule
 Oxford facultative). Le détecteur partagé alimente également
 [`structure.excessive-commas`](../../rules/excessive-commas.md).
 
+<aside class="since-version" aria-label="Nouveauté en v0.3">
+
+<span class="since-version__tag">Depuis v0.3</span> — Le détecteur
+partagé reconnaît aussi les énumérations rythmiquement régulières
+d'items de 1 à 4 mots (5 items minimum, écart de mots ≤ 2, sans
+frontière de proposition à l'intérieur). Des phrases comme
+`Chaque règle a une page dédiée avec catégorie, sévérité, poids par
+défaut, seuils par profil, exemples, et neutralisation.` ressortent
+maintenant comme candidates à une liste à puces
+([F22](../../roadmap.md), seconde tranche).
+
+</aside>
+
 ## Paramètres
 
 | Clé | Type | Défaut |
