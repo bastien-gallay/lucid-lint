@@ -1,0 +1,61 @@
+name: CodeQL
+
+# Static analysis for the Rust workspace. CodeQL builds the project,
+# extracts a database, and runs the `security-and-quality` query suite.
+# Findings land in the Security tab as code-scanning alerts. Pairs with
+# `cargo audit` (CVE-driven, dependency-side) and Clippy (style + simple
+# soundness, in-tree) — CodeQL adds whole-program SAST: taint tracking,
+# control-flow, cross-function patterns Clippy cannot see.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Weekly run catches drift in the query packs themselves: GitHub
+    # ships new queries that may flag code that was already on main.
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write   # upload SARIF to code-scanning
+  actions: read            # required for private repos; harmless on public
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze (Rust)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9 # master (no semver tags upstream)
+        with:
+          toolchain: stable
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2.9.1
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@0daab03d71ff584ef619d027a3fd9146679c5d84 # v3.35.3
+        with:
+          languages: rust
+          queries: security-and-quality
+
+      - name: Autobuild
+        # CodeQL's autobuilder runs `cargo build` for Rust. Explicit
+        # build steps would only matter for non-default targets.
+        uses: github/codeql-action/autobuild@0daab03d71ff584ef619d027a3fd9146679c5d84 # v3.35.3
+
+      - name: Perform analysis
+        uses: github/codeql-action/analyze@0daab03d71ff584ef619d027a3fd9146679c5d84 # v3.35.3
+        with:
+          category: "/language:rust"
