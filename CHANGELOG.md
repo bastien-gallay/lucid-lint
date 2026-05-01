@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **F25 — next-tier FR translations (architecture + contributing).**
+  Three new FR pages land: `fr/architecture/overview.md` (pipeline
+  diagram, key types, design principles, module layout),
+  `fr/architecture/design-decisions.md` (linter vs scoring, hybrid
+  scoring rationale, Diagnostic struct, deterministic core, bilingual
+  EN/FR, single readability formula in v0.1, Pandoc strategy, one
+  file per rule, stop-word heuristic, profile presets), and
+  `fr/contributing.md` (TL;DR + welcome list). `SUMMARY.md` gains an
+  `Architecture` draft-chapter group with both children, plus a
+  `Contribuer` entry under `Version française`. All three pages are
+  stamped with the F92 sub-task `en-source-sha` HTML comment. **F25
+  closes**: FR pair-completeness 41 / 41 (all EN pages with FR
+  counterparts; only `roadmap.md` remains intentionally asymmetric).
 - **F25 — FR guide pages, Block C complete (8 / 8).** `docs/src/fr/guide/`
   now ships all eight guide translations. Slices A + B (earlier today)
   landed `installation.md`, `quick-start.md`, `profiles.md`, and
