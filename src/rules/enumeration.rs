@@ -11,9 +11,16 @@
 //! Detection recognizes the Oxford-comma pattern documented in
 //! `RULES.md` for `long-enumeration`: a run of comma-separated short
 //! segments ending with a connector segment (`, and X` / `, or X` /
-//! `, et X` / `, ou X`). Non-Oxford enumerations ("A, B, C and D" with
-//! no comma before the connector) are deliberately out of scope for
-//! v0.1.
+//! `, plus X` / `, et X` / `, ou X`). Non-Oxford enumerations
+//! ("A, B, C and D" with no comma before the connector) are
+//! deliberately out of scope for v0.1.
+//!
+//! `plus` is treated as an honorary Oxford terminator (F22 v0.3 second
+//! tranche). Syntactically it occupies the same slot as `and` / `et` —
+//! `profile, format, min-score, plus working-directory and args` is a
+//! list, not a clause pile — and the existing connector-stop guard in
+//! the walk-back already rejects `…, and X, plus we did Y` shapes
+//! where `plus` would otherwise extend the run.
 
 use crate::types::Language;
 
@@ -141,8 +148,8 @@ pub struct Enumeration {
 #[must_use]
 pub fn detect_enumerations(sentence: &str, language: Language) -> Vec<Enumeration> {
     let connectors: &[&str] = match language {
-        Language::En => &["and", "or"],
-        Language::Fr => &["et", "ou"],
+        Language::En => &["and", "or", "plus"],
+        Language::Fr => &["et", "ou", "plus"],
         Language::Unknown => return Vec::new(),
     };
 
@@ -692,6 +699,48 @@ mod tests {
         // clause-onset "although" → only 1 item collected, well below the
         // floor. Subordinate-pile rejected.
         let s = "Note, although we agreed, to pack the red, green, and blue files, carefully";
+        assert!(detect_enumerations(s, Language::En).is_empty());
+    }
+
+    // ---- F22 v0.3 second tranche — `plus`-closed enumerations ----
+
+    #[test]
+    fn plus_closes_an_english_enumeration() {
+        // F22 corpus #11 shape: `profile, format, min-score, plus
+        // working-directory and args`. Tight pass walks back over three
+        // 1-word segments, terminator is "plus".
+        let s = "profile, format, min-score, plus working-directory and args";
+        let enums = detect_enumerations(s, Language::En);
+        assert_eq!(enums.len(), 1);
+        assert_eq!(enums[0].items, 4);
+        assert_eq!(enums[0].commas, 3);
+    }
+
+    #[test]
+    fn plus_closes_a_french_enumeration() {
+        let s = "profil, format, score minimal, plus repertoire et arguments";
+        let enums = detect_enumerations(s, Language::Fr);
+        assert_eq!(enums.len(), 1);
+        assert_eq!(enums[0].items, 4);
+    }
+
+    #[test]
+    fn plus_after_oxford_does_not_extend_the_oxford_run() {
+        // Two terminator segments. The "and" segment closes a 3-item
+        // Oxford run; the "plus" segment that follows must not absorb
+        // it — the connector-stop guard makes walk-back refuse to fold
+        // a prior connector segment into a new run.
+        let s = "apples, oranges, and bananas, plus laughed";
+        let enums = detect_enumerations(s, Language::En);
+        assert_eq!(enums.len(), 1);
+        assert_eq!(enums[0].items, 3);
+    }
+
+    #[test]
+    fn plus_without_a_preceding_run_does_not_trigger() {
+        // Only one comma-separated segment before "plus" → below the
+        // 3-item floor. "plus" alone never invents an enumeration.
+        let s = "we shopped today, plus we ordered grapes";
         assert!(detect_enumerations(s, Language::En).is_empty());
     }
 

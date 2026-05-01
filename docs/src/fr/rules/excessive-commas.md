@@ -30,11 +30,12 @@ Compter les virgules par phrase, signaler celles qui dépassent
 se déclenche sur la même phrase, cette règle est neutralisée pour cette
 phrase afin d'éviter un double signalement. Le détecteur d'énumération
 partagé décompte les virgules Oxford (3 items courts ou plus, plus une
-passe rythmique relâchée pour les items de 1 à 4 mots — voir « Faux
-positifs connus » ci-dessous) et les virgules à l'intérieur des listes
-de tokens parenthésées `(A, B, C, …)` (3 segments courts ou plus
-séparés par des virgules entre parenthèses équilibrées) — tous les
-décomptes sont agnostiques à la langue.
+passe rythmique relâchée pour les items de 1 à 4 mots, plus les listes
+fermées par `plus` au même titre que `et` / `ou` — voir « Faux positifs
+connus » ci-dessous) et les virgules à l'intérieur des listes de tokens
+parenthésées `(A, B, C, …)` (3 segments courts ou plus séparés par des
+virgules entre parenthèses équilibrées) — tous les décomptes sont
+agnostiques à la langue.
 
 ## Paramètres
 
@@ -64,10 +65,21 @@ loin que la frontière de proposition la plus proche
 
 </aside>
 
-Les faux positifs restants viennent surtout des listes non-Oxford ou
-fermées par « plus » et des énumérations Oxford interrompues par une
-parenthèse interleavée ; ils sont suivis sous **[F22](../../roadmap.md)**
-dans la [feuille de route](../../roadmap.md) pour les prochaines
+<aside class="since-version" aria-label="Nouveauté en v0.3">
+
+<span class="since-version__tag">Depuis v0.3</span> — `plus` est
+désormais reconnu comme terminateur Oxford au même titre que `and` /
+`or` / `et` / `ou`. Une liste comme `profile, format, min-score, plus
+working-directory and args` est détectée et décomptée. Même mot
+connecteur en EN et FR ([F22](../../roadmap.md), troisième tranche).
+
+</aside>
+
+Les faux positifs restants viennent surtout des listes sans
+connecteur terminal (par exemple `Rules touched: A, B, C`) et des
+énumérations Oxford interrompues par une parenthèse interleavée ;
+ils sont suivis sous **[F22](../../roadmap.md)** dans la
+[feuille de route](../../roadmap.md) pour les prochaines
 sous-tranches v0.3.
 
 ## Neutralisation

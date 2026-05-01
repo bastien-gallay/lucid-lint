@@ -415,6 +415,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   with `prefers-reduced-motion: reduce`. No code change; ROADMAP
   entry and accessibility known-limitation bullet updated.
 - **`structure.excessive-commas` and `structure.long-enumeration` —
+  `plus`-closed enumerations recognised (F22 v0.3 second tranche).**
+  The shared enumeration detector now accepts `plus` as an honorary
+  Oxford terminator alongside `and` / `or` / `et` / `ou`. A run like
+  `profile, format, min-score, plus working-directory and args` is
+  now detected as a 4-item enumeration; commas inside it are
+  discounted by `excessive-commas`, and `long-enumeration` will flag
+  the 5-item-and-up shapes as bullet-list candidates. Same connector
+  word in EN and FR. The existing connector-stop guard in walk-back
+  prevents `…, and X, plus we did Y` from being folded into a single
+  run. Bare-list (`Rules touched: A, B, C`) and interleaved-
+  parenthetical shapes remain deferred to a later F22 slice.
+- **`structure.excessive-commas` and `structure.long-enumeration` —
   rhythmic-relaxation pass (F22 v0.3 slice).** The shared enumeration
   detector now accepts Oxford runs whose segments are 1–4 words each,
   provided the run is rhythmically regular: spread (max − min word
