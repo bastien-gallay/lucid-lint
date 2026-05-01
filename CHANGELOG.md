@@ -460,6 +460,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **F92 sub-task — stale FR backlog reconciled.** All 13 FR pages
+  reported stale by `check_lang_staleness.py` brought back to fresh.
+  Twelve were cosmetic drift only (the F105/F105b references-section
+  sweep, the F35b/F35c a11y fix, and the `line-length-wide` author-
+  break-aware fix all touched FR counterparts in the same commits, so
+  the FR content was already in sync — only the `en-source-sha` stamp
+  needed bumping): `accessibility`, `references`, `rules/index`, and 9
+  per-rule pages. One was substantive: `fr/index.md` had three EN-only
+  drifts to port — updated `État du projet` (v0.2 release date,
+  25-rule count, 17 + 8 split, pre-1.0 caveat), added the lead-in
+  sentence + TTY GIF + clean-run text block to `Aperçu` (matches the
+  EN `Quick taste` peak-end demo), and replaced the outdated
+  `Pour aller plus loin` list with the full set of guide links now
+  that F25 closed (also fixed the broken `./rules-index.md` link →
+  `./rules/index.md`). Staleness gate now reports 40 fresh / 0 stale.
+  Same commit flips the `docs-deploy.yml` step from soft to
+  `--strict`: an FR page whose `en-source-sha` lags its EN
+  counterpart now fails the deploy. AGENTS.md updated to reflect
+  the flip.
 - **F35c closed as audit false-positive.** The 2026-04-22 F35 audit
   flagged `.lucid-stance__idea` as losing its colour tint under
   `prefers-reduced-motion`. Re-audit on 2026-05-01 confirmed no

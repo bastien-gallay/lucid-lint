@@ -1,4 +1,4 @@
-<!-- en-source-sha: 3afe9b59984a266abbd99dc06f8925aa474bca95 -->
+<!-- en-source-sha: 54981efa05dc99bddc513454e37bef6b8e25f04f -->
 # Référence des règles
 
 `lucid-lint` livre 25 règles en v0.2 (17 reprises de v0.1, 8 ajouts

@@ -1,4 +1,4 @@
-<!-- en-source-sha: 7fd1aca2e72b0dbed3b66f6e2f522afe51ebb77d -->
+<!-- en-source-sha: 3ed057f90edd778c9113711fd867d52f945cf2d3 -->
 <svg class="lucid-landing__mark" viewBox="0 0 120 36" aria-hidden="true" focusable="false">
   <title>loupe lucid-lint</title>
   <circle cx="18" cy="18" r="12" fill="none" stroke="currentColor" stroke-width="2.25"/>
@@ -67,15 +67,38 @@ la recherche de Sweller, Gibson, Graesser et
 
 ## État du projet
 
-`lucid-lint` est en v0.2. Les 17 règles listées dans
+`lucid-lint` est en v0.2 (publiée le 2026-04-22). Les 25 règles
+listées dans
 [`RULES.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/RULES.md)
-ont été livrées en v0.1. La v0.2 ajoute le
-[modèle de score hybride](../guide/scoring.md) — un score global
-`X / max` accompagné de cinq sous-scores par catégorie, calculé
-au-dessus des diagnostics existants. La [feuille de route](./roadmap.md)
-indique la suite.
+sont livrées (17 en v0.1, 8 ajoutées pendant le cycle v0.2),
+accompagnées du [modèle de score hybride](./guide/scoring.md) — un
+score global `X / max` et cinq sous-scores par catégorie, calculés
+au-dessus des diagnostics. Pré-1.0 : des changements de rupture
+restent possibles entre versions mineures. La
+[feuille de route](./roadmap.md) indique la suite.
 
 ## Aperçu
+
+Un fichier sans diagnostic obtient le score complet 100/100 et la
+bannière du logo — le moment fort d'une analyse réussie :
+
+![Capture terminal : une analyse lucid-lint sans diagnostic, avec la bannière du logo en trois parties, le message « No issues found. », et un bloc de score 100/100 — chaque barre de catégorie pleine](./assets/tty/score-clean.gif)
+
+```text
+~~~~~ ⟨ • ⟩ ─────  lucid-lint  v0.2.0
+                   cognitive accessibility linter · prose · EN / FR
+                   ────────────────────────────────────────────────
+
+No issues found.
+
+────────────────────────────────────────────────────────────
+score: 100/100
+       structure    █████  20/20
+       rhythm       █████  20/20
+       lexicon      █████  20/20
+       syntax       █████  20/20
+       readability  █████  20/20
+```
 
 ```bash
 cargo install lucid-lint
@@ -98,13 +121,14 @@ lucid-lint check --min-score=85 docs/
 
 ## Pour aller plus loin
 
-- [Référence des règles](./rules-index.md) — les 25 règles livrées.
+- [Installation](./guide/installation.md) — comment l'installer.
+- [Démarrage rapide](./guide/quick-start.md) — visite guidée en cinq
+  minutes.
+- [Profils](./guide/profiles.md) — choisir celui qui convient.
+- [Référence des règles](./rules/index.md) — les 25 règles
+  expliquées.
 - [Accessibilité](./accessibility.md) — l'exigence WCAG AAA et comment
   le site lui-même met en pratique ce qu'il prêche.
-- [Feuille de route](./roadmap.md) — ce qui vient ensuite.
-- Les pages de guide (installation, démarrage rapide, profils) sont
-  pour l'instant en anglais. Elles seront traduites au fil des
-  prochains jalons — suivi dans **F25** sur la feuille de route.
 
 ## Préférences de lecture
 

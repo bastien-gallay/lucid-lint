@@ -1,4 +1,4 @@
-<!-- en-source-sha: 9179cb7bc93b77150cabde79bca19b3ec0edce8f -->
+<!-- en-source-sha: 3ed057f90edd778c9113711fd867d52f945cf2d3 -->
 # Accessibilité
 
 > **Traduction en cours.** La page d'accessibilité détaillée est

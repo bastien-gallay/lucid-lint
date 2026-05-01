@@ -1,4 +1,4 @@
-<!-- en-source-sha: 9594202969efbf001af153da9d37f18bb0786e18 -->
+<!-- en-source-sha: 9e6be0c432915d364d877b302e70186928303088 -->
 # `structure.paragraph-too-long`
 
 *Paragraphe trop long.*

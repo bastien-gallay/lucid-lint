@@ -44,10 +44,10 @@ jobs:
         run: python3 scripts/sync_lang_counterparts.py --check
 
       - name: FR content-staleness check (F92 sub-task)
-        # Soft on `main` until the 17 already-stale pages from the
-        # 2026-04-27 references-section sweep (F105/F105b) are
-        # reconciled. Flip to `--strict` once the backlog clears.
-        run: python3 scripts/check_lang_staleness.py
+        # Strict on `main`: backlog reconciled 2026-05-01, the gate
+        # now fails the deploy if any FR page's `en-source-sha`
+        # stamp lags the EN counterpart.
+        run: python3 scripts/check_lang_staleness.py --strict
 
       - name: Setup Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
