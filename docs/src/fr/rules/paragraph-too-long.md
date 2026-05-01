@@ -45,7 +45,7 @@ phrase de 120 mots se déclenchera sur `max_words` (et également sur
 
 ## Neutralisation
 
-Voir [Neutraliser des diagnostics](../../guide/suppression.md) (page
+Voir [Neutralisation des diagnostics](../../guide/suppression.md) (page
 EN pour l'instant).
 
 ## Voir aussi

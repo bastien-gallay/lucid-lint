@@ -107,7 +107,7 @@ warning input.md:1:1 Connector "then" appears 4 times within 5 consecutive sente
 
 ## Neutralisation
 
-Voir [Neutraliser des diagnostics](../../guide/suppression.md) (page
+Voir [Neutralisation des diagnostics](../../guide/suppression.md) (page
 EN pour l'instant) pour les formes en ligne et par bloc.
 
 ## Voir aussi

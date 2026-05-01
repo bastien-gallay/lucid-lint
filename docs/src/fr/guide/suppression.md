@@ -1,5 +1,5 @@
 <!-- en-source-sha: 9594202969efbf001af153da9d37f18bb0786e18 -->
-# Supprimer des diagnostics
+# Neutralisation des diagnostics
 
 `lucid-lint` propose deux directives en ligne pour faire taire des diagnostics dans les entrées Markdown. Elles servent aux cas rares où une règle se déclenche sur de la prose intentionnelle (un terme vague cité, un exemple didactique de nominalisation lourde, une voix passive légitime). Préférez réécrire la prose d'abord. Sortez une directive quand la détection est un faux positif connu, ou quand l'autrice a vu l'avertissement et choisi de garder le texte.
 

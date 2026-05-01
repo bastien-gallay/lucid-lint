@@ -52,7 +52,7 @@ dans la [feuille de route](../../roadmap.md) pour une tranche v0.3.
 
 ## Neutralisation
 
-Voir [Neutraliser des diagnostics](../../guide/suppression.md) (page
+Voir [Neutralisation des diagnostics](../../guide/suppression.md) (page
 EN pour l'instant).
 
 ## Voir aussi

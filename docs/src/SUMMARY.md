@@ -69,7 +69,7 @@
   - [Conditions](./fr/guide/conditions.md)
   - [Configuration](./fr/guide/configuration.md)
   - [Score](./fr/guide/scoring.md)
-  - [Supprimer des diagnostics](./fr/guide/suppression.md)
+  - [Neutralisation des diagnostics](./fr/guide/suppression.md)
   - [Intégration CI](./fr/guide/ci-integration.md)
 - [Référence des règles](./fr/rules/index.md)
   - [Structure]()

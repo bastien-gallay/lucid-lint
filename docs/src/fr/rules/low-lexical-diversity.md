@@ -38,7 +38,7 @@ blocs de code. Le diagnostic se déclenche quand le ratio passe sous
 
 ## Neutralisation
 
-Voir [Neutraliser des diagnostics](../../guide/suppression.md) (page
+Voir [Neutralisation des diagnostics](../../guide/suppression.md) (page
 EN pour l'instant).
 
 ## Références

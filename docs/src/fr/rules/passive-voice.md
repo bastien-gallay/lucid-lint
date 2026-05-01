@@ -46,7 +46,7 @@ morphosyntaxique est prévu pour un futur greffon `lucid-lint-nlp`.
 ## Neutralisation
 
 Pour les passives volontaires, utiliser une directive inline. Voir
-[Neutraliser des diagnostics](../../guide/suppression.md) (page EN
+[Neutralisation des diagnostics](../../guide/suppression.md) (page EN
 pour l'instant).
 
 ## Références
