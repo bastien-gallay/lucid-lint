@@ -65,6 +65,8 @@
 - [Premiers pas]()
   - [Installation](./fr/guide/installation.md)
   - [Démarrage rapide](./fr/guide/quick-start.md)
+  - [Profils](./fr/guide/profiles.md)
+  - [Supprimer des diagnostics](./fr/guide/suppression.md)
 - [Référence des règles](./fr/rules/index.md)
   - [Structure]()
     - [`structure.sentence-too-long`](./fr/rules/sentence-too-long.md)
