@@ -5,11 +5,17 @@ All notable changes to `lucid-lint` are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+Within `## [Unreleased]`, every entry is prefixed with a
+`[YYYY-MM-DD]` date stamp recording when it landed on the branch,
+and entries are sorted **descending by date** within each subsection.
+On release, dates are dropped and entries are folded into the
+released-version block.
+
 ## [Unreleased]
 
 ### Added
 
-- **docs.rs landing-page banner.** `src/lib.rs` now opens with a short
+- **[2026-05-01] docs.rs landing-page banner.** `src/lib.rs` now opens with a short
   banner pointing readers to the mdBook guide
   (<https://bastien-gallay.github.io/lucid-lint>), the rule catalogue
   (`RULES.md`), and the source repository, plus a one-sentence note
@@ -23,7 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   *Docs.rs / API reference polish* (renumbered from F129–F132 after
   F129 was claimed in parallel by the parser tight-list correctness
   fix below).
-- **F25 — next-tier FR translations (architecture + contributing).**
+
+- **[2026-05-01] F25 — next-tier FR translations (architecture + contributing).**
   Three new FR pages land: `fr/architecture/overview.md` (pipeline
   diagram, key types, design principles, module layout),
   `fr/architecture/design-decisions.md` (linter vs scoring, hybrid
@@ -36,7 +43,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   stamped with the F92 sub-task `en-source-sha` HTML comment. **F25
   closes**: FR pair-completeness 41 / 41 (all EN pages with FR
   counterparts; only `roadmap.md` remains intentionally asymmetric).
-- **F25 — FR guide pages, Block C complete (8 / 8).** `docs/src/fr/guide/`
+
+- **[2026-05-01] F25 — FR guide pages, Block C complete (8 / 8).** `docs/src/fr/guide/`
   now ships all eight guide translations. Slices A + B (earlier today)
   landed `installation.md`, `quick-start.md`, `profiles.md`, and
   `suppression.md`. Slice C adds `conditions.md` (fixed ontology of
@@ -51,7 +59,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   sub-task `en-source-sha` HTML comment. FR pair-completeness now
   39 / 42 — only three EN-only pages remain (architecture overview,
   design-decisions, contributing). Block C now closed.
-- **F92 sub-task — FR content-staleness gate.** Every FR page under
+
+- **[2026-05-01] F92 sub-task — FR content-staleness gate.** Every FR page under
   `docs/src/fr/` now carries an `en-source-sha` HTML-comment stamp on
   its first line (`<!-- en-source-sha: 5e24f614… -->`) recording the
   EN counterpart's commit SHA at translation time. New
@@ -73,7 +82,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   front-matter because mdBook does not strip front-matter — `---`
   renders as `<hr>` and the body as text; HTML comments pass through
   unchanged. F92 ROADMAP entry extended with the sub-task summary.
-- **GitHub Action composite scaffold (F114, internal).** New
+
+- **[2026-05-01] F84 part 2 — dyscalculia + aphasia load-bearing slots closed.**
+  Three new `redistribution: public_ok` entries land under
+  `examples/public/`: MedlinePlus Aphasia (~995 words, NLM/NIH public
+  domain), MedlinePlus Medical Encyclopedia "Mathematics disorder /
+  developmental dyscalculia" (~482 words, NLM/NIH public domain), and
+  Mon Parcours Handicap "L'aphasie, un handicap invisible et méconnu"
+  (~886 words, Etalab Licence Ouverte 2.0). All three are first
+  dedicated condition-primary entries — existing entries only carried
+  `aphasia` as a secondary tag, and `dyscalculia` had no source at
+  all. Coverage snapshot in `examples/texts.md`: `condition
+  dyscalculia × EN` lifts to `1` (was `—`), `aphasia × EN` rises to
+  `6` (was `5`), `aphasia × FR` to `2` (was `1`); public total `32 of
+  62` entries (was `29 of 59`). The `gaps:` note in `texts.yaml`
+  rewritten to record both closures with date and rationale.
+
+- **[2026-04-28] GitHub Action composite scaffold (F114, internal).** New
   `action.yml` at the repo root wraps the `cargo-dist` release tarball
   in a composite GitHub Action with five inputs (`version`, `paths`,
   `profile`, `format`, `min-score`, plus `working-directory` and
@@ -89,7 +114,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   stable major — the input shape is allowed to drift until the v0.3
   cut, when `v1` will be tagged and the action will move to its own
   `lucid-lint-action` repo per the F114 ROADMAP entry.
-- **Encoding hygiene at the engine boundary (F110 / F111 / F112).**
+
+- **[2026-04-28] Encoding hygiene at the engine boundary (F110 / F111 / F112).**
   `Engine::lint_with_source` now strips a leading UTF-8 BOM
   (`U+FEFF`) and NFC-normalizes input once at the funnel point, so
   every rule consumes the same shape of text. F110: a Windows-edited
@@ -102,95 +128,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   F112: regression fixtures for bare `\r` line endings (classic Mac)
   and zero-width characters (`U+200B/200C/200D`) inside words pin the
   observed behaviour so it can't drift.
-- **F84 part 2 — dyscalculia + aphasia load-bearing slots closed.**
-  Three new `redistribution: public_ok` entries land under
-  `examples/public/`: MedlinePlus Aphasia (~995 words, NLM/NIH public
-  domain), MedlinePlus Medical Encyclopedia "Mathematics disorder /
-  developmental dyscalculia" (~482 words, NLM/NIH public domain), and
-  Mon Parcours Handicap "L'aphasie, un handicap invisible et méconnu"
-  (~886 words, Etalab Licence Ouverte 2.0). All three are first
-  dedicated condition-primary entries — existing entries only carried
-  `aphasia` as a secondary tag, and `dyscalculia` had no source at
-  all. Coverage snapshot in `examples/texts.md`: `condition
-  dyscalculia × EN` lifts to `1` (was `—`), `aphasia × EN` rises to
-  `6` (was `5`), `aphasia × FR` to `2` (was `1`); public total `32 of
-  62` entries (was `29 of 59`). The `gaps:` note in `texts.yaml`
-  rewritten to record both closures with date and rationale.
 
-- **Three US-federal public-domain ADHD sources (F84 part 2 progress).**
-  `examples/texts.yaml` gains the NIMH ADHD topic page (`mixed` shape,
-  ~780 words), CDC About ADHD (`good`, ~920 words) and CDC Treatment of
-  ADHD (`good`, ~1040 words). All three are public-domain US federal
-  works under 17 USC § 105 with explicit reproduction notices on the
-  agencies' policy pages — quoted verbatim in each entry's
-  `license_details`. Material lands under `examples/public/en/` after
-  `just texts`. Knock-on on the public coverage snapshot in
-  `examples/texts.md`: `condition adhd × EN` lifts to `3` (was `—`),
-  `gov_guide × EN` rises to `6`, and the gitignored load-bearing list
-  drops the `adhd × EN` slot entirely. Remaining load-bearing slots are
-  `dyscalculia × EN` and `aphasia × EN+FR` — both flagged as harder in
-  the existing `gaps:` notes; tackled in a later lap.
-
-- **Strict validation of the `unexplained-abbreviation` whitelist at
-  config-load.** `[rules."lexicon.unexplained-abbreviation"].whitelist`
-  entries must now be non-empty strings of ASCII uppercase letters and
-  digits (e.g. `"WCAG"`, `"HTML5"`). The detector only ever emits
-  uppercase+digit acronym tokens, so previously a typo like `"wcag"` or
-  `"Wcag"` would silently never match. The error message names the
-  offending entry + its index so the fix is one grep away. Digits
-  inside entries remain supported (`"WCAG21"`).
-- **Parser / engine micro-benchmarks (`benches/parser_hotpath.rs`).**
-  New `criterion` dev-dep and `just bench` recipe cover
-  `split_sentences`, `parse_markdown`, and `Engine::lint_str` over two
-  real tracked corpus files. Gives us a defensible baseline before
-  touching hot-path code — the first exploratory rewrite of the
-  `split_sentences` buffer-reuse pattern came back 48% slower, so the
-  harness already earned its keep by catching the regression before it
-  shipped. Parked the counter-finding on `ROADMAP.md` F93 (tokenizer
-  `Vec<char>` alloc, measured at ~5% ceiling — deferred).
-- **`engine::replace_rule` helper (internal).** The three `with_*`
-  config-override builders
-  (`with_readability_formula`, `with_unexplained_whitelist`,
-  `with_excessive_commas_max_commas`) collapsed from three duplicated
-  find-and-replace loops into a single named helper. No behaviour
-  change; three new regression tests lock in the tightening path,
-  whitelist path, and filtered-out no-op contract.
-- **Real-world corpus regression anchors.** Three short passages
-  lifted verbatim from `examples/public/` land under
-  `tests/corpus/public/`: a GOV.UK plain-language exemplar
-  (`public`-profile clean), the plainlanguage.gov intro
-  (`public` flags `structure.sentence-too-long`; `falc` also flags
-  `syntax.passive-voice`), and a Vikidia `Accueil` passage
-  (`falc`-profile clean). New `tests/cli.rs` tests shell out with
-  `--format=json`, parse the diagnostics, and pin each expectation
-  so a silent rule-tuning regression on curated real-world prose
-  fails loudly. Machinery reuses the existing `corpus_path` helper
-  — no new fixture format.
-- **Four more FR per-rule pages (F25 progress, 1/25 → 5/25).**
-  `structure.excessive-commas`, `structure.long-enumeration`,
-  `lexicon.weasel-words`, `lexicon.unexplained-abbreviation` land
-  under `docs/src/fr/rules/` using the locked template from
-  `sentence-too-long` (sections `Ce que cette règle signale` /
-  `En bref` / `Détection` / `Paramètres` / `Exemples` /
-  `Faux positifs connus` / `Neutralisation` / `Voir aussi`,
-  FR-first example ordering when bilingual examples exist).
-  `SUMMARY.md` and `fr/rules/index.md` now link these pages
-  locally instead of pointing back to the EN versions. Guides
-  (`suppression`, `configuration`, `scoring`) still cross-link
-  via `../../` to EN until FR guide translations land. Remaining:
-  20 per-rule FR pages + FR guide translations.
-- **Six more FR per-rule pages — `structure` category 100 %
-  FR-complete (F25 progress, 5/25 → 11/25).**
-  `structure.paragraph-too-long`, `structure.line-length-wide`,
-  `structure.mixed-numeric-format`, `structure.deeply-nested-lists`,
-  `structure.heading-jump`, `structure.deep-subordination` all land
-  under `docs/src/fr/rules/` against the same locked template. The
-  whole `structure` category is now FR-complete (9 / 9 rules
-  translated). `SUMMARY.md` and `fr/rules/index.md` rewired to point
-  at the local FR versions for the six new pages. Remaining: 14
-  per-rule FR pages (rhythm 2, lexicon 6, syntax 5, readability 1)
-  plus the FR guide translations.
-- **F123 — install-route documentation surfaces the cargo-dist
+- **[2026-04-28] F123 — install-route documentation surfaces the cargo-dist
   installers.** `README.md` and `docs/src/guide/installation.md`
   now lead with the `curl … | sh` (Linux / macOS / WSL) and
   PowerShell (`irm | iex`) one-liners that ship with every
@@ -204,7 +143,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   in `Cargo.toml` `[workspace.metadata.dist]` since the initial
   scaffold; v0.1.1 / v0.2.0 / v0.2.1 / v0.2.2 have all been
   attaching the installer scripts to their GitHub Releases.
-- **`lexicon.jargon-undefined` page polish (EN + FR).** Drops the
+
+- **[2026-04-28] `lexicon.jargon-undefined` page polish (EN + FR).** Drops the
   obsolete `(v0.1 simplified)` section qualifier, removes the stale
   link to F9 (which shipped a different feature — definition-aware
   acronym detection — not a definition-aware variant of jargon),
@@ -213,30 +153,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   with an honest Configuration section: in v0.2 the active lists
   are set by the profile and not yet user-overridable from
   `lucid-lint.toml`, with the gap tracked as **F126**.
-- **`lexicon.all-caps-shouting` shape-cue explainer (EN + FR).**
+
+- **[2026-04-28] `lexicon.all-caps-shouting` shape-cue explainer (EN + FR).**
   The "ascenders / descenders / x-height contrast" parenthetical
   expands into a teaching paragraph naming representative letters
   for each cue and explaining why ALL-CAPS flattens the silhouette
   — closes the implicit-jargon gap surfaced in the
   FR-translation review.
-- **`lexicon.excessive-nominalization` example highlights
+
+- **[2026-04-28] `lexicon.excessive-nominalization` example highlights
   (EN + FR).** Nominalizations in the "before" line and matching
   active verbs in the "after" line now wear `lucid-idea` colour
   spans (1–4) so the rewrite mapping is visible at a glance,
   matching the convention `lexicon.all-caps-shouting` already
   uses.
-- **`lexicon.low-lexical-diversity` reference cleanup
+
+- **[2026-04-28] `lexicon.low-lexical-diversity` reference cleanup
   (EN + FR).** Drops the inline `**Reference.** Type-Token Ratio …
   (Herdan, 1960)` line from the body — the reference is already
   in the page's References section. (A full-rules pass to
   normalise this convention is pending.)
-- **F126 filed — TOML overrides for `lexicon.jargon-undefined`.**
+
+- **[2026-04-28] F126 filed — TOML overrides for `lexicon.jargon-undefined`.**
   v0.2 has no `[rules."lexicon.jargon-undefined"]` deserializer;
   the rule's `Config` struct exposes `active_lists` / `custom` /
   `whitelist` but they're only set through the profile preset.
   Filed under "Rules refinement" 🟡 Later — same shape as the
   existing `unexplained-abbreviation` whitelist wiring.
-- **Six more FR per-rule pages — `lexicon` category 100 %
+
+- **[2026-04-28] Six more FR per-rule pages — `lexicon` category 100 %
   FR-complete (F25 progress, 13/25 → 19/25).**
   `lexicon.low-lexical-diversity`, `lexicon.excessive-nominalization`,
   `lexicon.jargon-undefined`, `lexicon.all-caps-shouting`,
@@ -247,7 +192,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `fr/rules/index.md` rewired to local FR versions. Remaining: 6
   per-rule FR pages (syntax 5, readability 1) plus FR guide
   translations.
-- **Two more FR per-rule pages — `rhythm` category 100 %
+
+- **[2026-04-27] Three US-federal public-domain ADHD sources (F84 part 2 progress).**
+  `examples/texts.yaml` gains the NIMH ADHD topic page (`mixed` shape,
+  ~780 words), CDC About ADHD (`good`, ~920 words) and CDC Treatment of
+  ADHD (`good`, ~1040 words). All three are public-domain US federal
+  works under 17 USC § 105 with explicit reproduction notices on the
+  agencies' policy pages — quoted verbatim in each entry's
+  `license_details`. Material lands under `examples/public/en/` after
+  `just texts`. Knock-on on the public coverage snapshot in
+  `examples/texts.md`: `condition adhd × EN` lifts to `3` (was `—`),
+  `gov_guide × EN` rises to `6`, and the gitignored load-bearing list
+  drops the `adhd × EN` slot entirely. Remaining load-bearing slots are
+  `dyscalculia × EN` and `aphasia × EN+FR` — both flagged as harder in
+  the existing `gaps:` notes; tackled in a later lap.
+
+- **[2026-04-27] Two more FR per-rule pages — `rhythm` category 100 %
   FR-complete (F25 progress, 11/25 → 13/25).**
   `rhythm.consecutive-long-sentences` and `rhythm.repetitive-connectors`
   land under `docs/src/fr/rules/` against the locked template. The
@@ -258,7 +218,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `repetitive-connectors`). `SUMMARY.md` and `fr/rules/index.md`
   rewired to local FR versions. Remaining: 12 per-rule FR pages
   (lexicon 6, syntax 5, readability 1) plus FR guide translations.
-- **Per-category sidebar grouping in `SUMMARY.md` (F104).** The
+
+- **[2026-04-27] Per-category sidebar grouping in `SUMMARY.md` (F104).** The
   rules sidebar is reshaped into 5 collapsible sub-trees
   (Structure / Rhythm / Lexicon / Syntax / Readability) using mdBook
   draft-chapter syntax (`- [Title]()`) as non-clickable group
@@ -272,7 +233,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (no-empty-links) is disabled globally to permit the draft-chapter
   syntax — same pattern as the pre-existing MD025 carve-out for
   SUMMARY's required multiple H1s.
-- **FR rule labels — page subtitle + index gloss (F107).** The rule
+
+- **[2026-04-27] FR rule labels — page subtitle + index gloss (F107).** The rule
   ID stays the stable contract (CLI flags, JSON output, config keys,
   citations), but FR readers now see a human-readable label in two
   places. Each shipped FR rule page opens with a short italic gloss
@@ -285,7 +247,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   when the page still points to the EN version (marked `(en)`).
   Sidebar TOC labels stay in EN to keep `SUMMARY.md` single-locale
   (per-locale split is F90, parked Speculative).
-- **References page cross-links + external URLs (F105b).** Per-citation
+
+- **[2026-04-27] References page cross-links + external URLs (F105b).** Per-citation
   anchors (`<a id="author-year">`) on every entry of `docs/src/references.md`
   and `docs/src/fr/references.md`, so each rule page now links to the
   exact citation rather than scrolling. Rule pages gain a `## References`
@@ -316,7 +279,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Subsumes the F30 rule-mention linking pass for the references-page
   surface; wider F30 audit (rule mentions in `docs/src/guide/*` prose
   pages) stays open.
-- **Consolidated references page (F105).** Every academic, normative,
+
+- **[2026-04-27] Consolidated references page (F105).** Every academic, normative,
   and practical source that grounds a rule now lives in the docs
   site at `docs/src/references.md` (EN, under Project) and
   `docs/src/fr/references.md` (FR, under Version française). The
@@ -331,7 +295,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   becomes a thin redirect to the docs sources — kept because external
   citations may already point there. Both rule indexes cross-link
   to the new page next to the existing `RULES.md` pointer.
-- **`cargo-mutants` baseline + `just mutants` recipe (F98 ✅).**
+
+- **[2026-04-25] Six more FR per-rule pages — `structure` category 100 %
+  FR-complete (F25 progress, 5/25 → 11/25).**
+  `structure.paragraph-too-long`, `structure.line-length-wide`,
+  `structure.mixed-numeric-format`, `structure.deeply-nested-lists`,
+  `structure.heading-jump`, `structure.deep-subordination` all land
+  under `docs/src/fr/rules/` against the same locked template. The
+  whole `structure` category is now FR-complete (9 / 9 rules
+  translated). `SUMMARY.md` and `fr/rules/index.md` rewired to point
+  at the local FR versions for the six new pages. Remaining: 14
+  per-rule FR pages (rhythm 2, lexicon 6, syntax 5, readability 1)
+  plus the FR guide translations.
+
+- **[2026-04-25] `cargo-mutants` baseline + `just mutants` recipe (F98 ✅).**
   Mutation testing wired in as a dev-tool (no new runtime dep).
   `just mutants <file>` runs `cargo mutants --file <file> --timeout 60
   --no-shuffle`; default file is the canonical reference rule
@@ -346,7 +323,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   fixtures — the remaining 11). Triage methodology: cluster missed
   mutants by site → one ROADMAP entry per root cause, not per
   mutant. `mutants.out/` is run-local output and stays gitignored.
-- **Four ROADMAP entries from the 2026-04-25 docs UX critique
+
+- **[2026-04-25] Four ROADMAP entries from the 2026-04-25 docs UX critique
   (Block E).** No code today — design lap. F104 per-category
   sidebar grouping in `SUMMARY.md` (mirror the index-page table
   shape in the sidebar), F105 consolidated references page (single
@@ -358,7 +336,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   index gloss (rule IDs stay as the stable contract; FR labels
   earn a visible surface for FR-only readers). Picks documented
   on the entries.
-- **Four ROADMAP entries from the 2026-04-25 encoding-coverage
+
+- **[2026-04-25] Four ROADMAP entries from the 2026-04-25 encoding-coverage
   survey (F110 – F113).** No code today — design lap. The test
   surface covers grapheme clusters (`unicode-segmentation`
   everywhere), CRLF normalisation, and Latin-1 NFC accented
@@ -378,7 +357,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the file boundary with `iconv` or "save as UTF-8" once). New
   ROADMAP sub-section "Encoding / input handling" carries the
   rationale.
-- **F84 part 2 — first redistributable replacement (public_ok count
+
+- **[2026-04-25] F84 part 2 — first redistributable replacement (public_ok count
   +1).** `Mon Parcours Handicap — fiches FALC`
   (`monparcourshandicap.gouv.fr/aides`) added to
   `examples/texts.yaml` under the Health-literacy section. French
@@ -397,7 +377,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   count without leaking local-only state. The "Aphasia-specific
   French samples beyond SPF/HAS are thin" note in `gaps:` is
   marked partially closed.
-- **F108 + F109 closed — `low_lexical_diversity` mutation score 36 %
+
+- **[2026-04-25] F108 + F109 closed — `low_lexical_diversity` mutation score 36 %
   → 89 %.** Five new tests target the gaps that the F98 baseline
   surfaced. `reported_ratio_is_minimum_observed_in_cluster` builds a
   50-W + 100-cache + 50-V fixture so the cluster exits via the
@@ -416,9 +397,62 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   unreachable in normal flow; initial values overwritten by the
   first slide step) — documented in the F108 / F109 ROADMAP rows.
 
+- **[2026-04-24] Strict validation of the `unexplained-abbreviation` whitelist at
+  config-load.** `[rules."lexicon.unexplained-abbreviation"].whitelist`
+  entries must now be non-empty strings of ASCII uppercase letters and
+  digits (e.g. `"WCAG"`, `"HTML5"`). The detector only ever emits
+  uppercase+digit acronym tokens, so previously a typo like `"wcag"` or
+  `"Wcag"` would silently never match. The error message names the
+  offending entry + its index so the fix is one grep away. Digits
+  inside entries remain supported (`"WCAG21"`).
+
+- **[2026-04-24] Parser / engine micro-benchmarks (`benches/parser_hotpath.rs`).**
+  New `criterion` dev-dep and `just bench` recipe cover
+  `split_sentences`, `parse_markdown`, and `Engine::lint_str` over two
+  real tracked corpus files. Gives us a defensible baseline before
+  touching hot-path code — the first exploratory rewrite of the
+  `split_sentences` buffer-reuse pattern came back 48% slower, so the
+  harness already earned its keep by catching the regression before it
+  shipped. Parked the counter-finding on `ROADMAP.md` F93 (tokenizer
+  `Vec<char>` alloc, measured at ~5% ceiling — deferred).
+
+- **[2026-04-24] `engine::replace_rule` helper (internal).** The three `with_*`
+  config-override builders
+  (`with_readability_formula`, `with_unexplained_whitelist`,
+  `with_excessive_commas_max_commas`) collapsed from three duplicated
+  find-and-replace loops into a single named helper. No behaviour
+  change; three new regression tests lock in the tightening path,
+  whitelist path, and filtered-out no-op contract.
+
+- **[2026-04-24] Real-world corpus regression anchors.** Three short passages
+  lifted verbatim from `examples/public/` land under
+  `tests/corpus/public/`: a GOV.UK plain-language exemplar
+  (`public`-profile clean), the plainlanguage.gov intro
+  (`public` flags `structure.sentence-too-long`; `falc` also flags
+  `syntax.passive-voice`), and a Vikidia `Accueil` passage
+  (`falc`-profile clean). New `tests/cli.rs` tests shell out with
+  `--format=json`, parse the diagnostics, and pin each expectation
+  so a silent rule-tuning regression on curated real-world prose
+  fails loudly. Machinery reuses the existing `corpus_path` helper
+  — no new fixture format.
+
+- **[2026-04-24] Four more FR per-rule pages (F25 progress, 1/25 → 5/25).**
+  `structure.excessive-commas`, `structure.long-enumeration`,
+  `lexicon.weasel-words`, `lexicon.unexplained-abbreviation` land
+  under `docs/src/fr/rules/` using the locked template from
+  `sentence-too-long` (sections `Ce que cette règle signale` /
+  `En bref` / `Détection` / `Paramètres` / `Exemples` /
+  `Faux positifs connus` / `Neutralisation` / `Voir aussi`,
+  FR-first example ordering when bilingual examples exist).
+  `SUMMARY.md` and `fr/rules/index.md` now link these pages
+  locally instead of pointing back to the EN versions. Guides
+  (`suppression`, `configuration`, `scoring`) still cross-link
+  via `../../` to EN until FR guide translations land. Remaining:
+  20 per-rule FR pages + FR guide translations.
+
 ### Fixed
 
-- **Markdown parser — list-item content is now visible to all rules
+- **[2026-05-01] Markdown parser — list-item content is now visible to all rules
   (F129).** A long-standing parser blindspot silently dropped
   list-item text from every paragraph-level rule (all 17 in v0.1)
   whenever pulldown-cmark emitted a *tight* list — single bullet, or
@@ -447,7 +481,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   pages (suppression directives), ~15 % project-vocabulary
   whitelist gaps (e.g. SHA in `lucid-lint.toml`). Cleanup pass on
   the new diagnostics tracked separately.
-- **Reading-demonstrator chips now use button-toggle semantics
+
+- **[2026-05-01] Reading-demonstrator chips now use button-toggle semantics
   (F35b).** The chips on the Introduction (EN + FR) page declared
   `role="radiogroup"` / `role="radio"` / `aria-checked`, but the
   JavaScript only bound `click` handlers — arrow-key traversal,
@@ -460,7 +495,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **F92 sub-task — stale FR backlog reconciled.** All 13 FR pages
+- **[2026-05-01] CHANGELOG and ROADMAP format restructure.** `## [Unreleased]`
+  entries now carry an explicit `[YYYY-MM-DD]` date prefix, sorted
+  descending within each subsection, so AI tooling and humans can scan
+  recency without `git blame`. ROADMAP gains a unified **Feature
+  catalog** table (filtered to 🔴 Next + 🚧 In-progress) replacing the
+  former "Active work (🔴 Next)" tables — narrative sections remain
+  the source of truth, the catalog is a derived index. Version detail
+  sections inverted to newest-first (v0.4 → v0.3 → v0.2.x → v0.2 →
+  v0.1) so the active and upcoming cycles surface above shipped
+  history. "Status as of" header refreshed to 2026-05-01.
+- **[2026-05-01] F92 sub-task — stale FR backlog reconciled.** All 13 FR pages
   reported stale by `check_lang_staleness.py` brought back to fresh.
   Twelve were cosmetic drift only (the F105/F105b references-section
   sweep, the F35b/F35c a11y fix, and the `line-length-wide` author-
@@ -479,7 +524,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `--strict`: an FR page whose `en-source-sha` lags its EN
   counterpart now fails the deploy. AGENTS.md updated to reflect
   the flip.
-- **F35c closed as audit false-positive.** The 2026-04-22 F35 audit
+
+- **[2026-05-01] F35c closed as audit false-positive.** The 2026-04-22 F35 audit
   flagged `.lucid-stance__idea` as losing its colour tint under
   `prefers-reduced-motion`. Re-audit on 2026-05-01 confirmed no
   reduced-motion rule touches the tint: the global reset zeroes
@@ -489,7 +535,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   palette). The original audit conflated `forced-colors: active`
   with `prefers-reduced-motion: reduce`. No code change; ROADMAP
   entry and accessibility known-limitation bullet updated.
-- **`structure.excessive-commas` and `structure.long-enumeration` —
+
+- **[2026-05-01] `structure.excessive-commas` and `structure.long-enumeration` —
   `plus`-closed enumerations recognised (F22 v0.3 second tranche).**
   The shared enumeration detector now accepts `plus` as an honorary
   Oxford terminator alongside `and` / `or` / `et` / `ou`. A run like
@@ -501,7 +548,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   prevents `…, and X, plus we did Y` from being folded into a single
   run. Bare-list (`Rules touched: A, B, C`) and interleaved-
   parenthetical shapes remain deferred to a later F22 slice.
-- **`structure.excessive-commas` and `structure.long-enumeration` —
+
+- **[2026-05-01] `structure.excessive-commas` and `structure.long-enumeration` —
   rhythmic-relaxation pass (F22 v0.3 slice).** The shared enumeration
   detector now accepts Oxford runs whose segments are 1–4 words each,
   provided the run is rhythmically regular: spread (max − min word
@@ -518,23 +566,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   verbatim, so existing detection cannot regress. Future tightening
   of the 5-item / spread-2 / clause-onset thresholds tracked under F22
   for a 0.3.x slice if dogfood surfaces a false positive.
-- **`structure.line-length-wide` is now author-break-aware.** The rule
-  used to fire on any paragraph whose joined text exceeded the
-  per-profile ceiling, including soft-wrapped Markdown prose. That
-  conflated source mechanics with rendered width — WCAG 1.4.8 (the
-  rule's stated grounding) targets the rendered line, but the
-  Markdown parser collapses soft breaks to spaces, so a normal
-  multi-sentence paragraph written as one source line was being
-  measured as if the renderer would never reflow it. The rule now
-  only fires on paragraphs that carry an authorial line break:
-  Markdown hard breaks (`<br>` or two trailing spaces) and explicit
-  newlines in plain-text input. Soft-wrapped Markdown paragraphs are
-  exempt regardless of length — pair with
-  `structure.paragraph-too-long` to bound paragraph density.
-  Surfaced by dogfood on the FR rule pages, where 60+ false positives
-  were being emitted on prose that mdBook reflows correctly. Docs,
-  RULES.md, and unit tests updated accordingly.
-- **Markdown parser now treats `<br>` as an authorial line break (F126).**
+
+- **[2026-04-30] Markdown parser now treats `<br>` as an authorial line break (F126).**
   Pulldown-cmark emits `<br>` as `Event::InlineHtml`, not as
   `Event::HardBreak`, so the original author-break-aware fix above
   silently dropped `<br>` and the rule did not fire on long lines
@@ -552,22 +585,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `table_cell_text_is_out_of_scope` — list items and GFM table cells
   are not emitted as paragraphs today, and the rule is silent on
   over-length content inside them.
-- **Two library-code `.expect()` calls dropped.**
-  `consecutive-long-sentences` and `all-caps-shouting` now use
-  idiomatic `if let` / `Option::filter` patterns instead of panic
-  paths. The invariants were infallible by construction but the panic
-  paths were cognitive overhead per AGENTS.md ("No `unwrap()` /
-  `expect()` in library code"). The remaining
-  `NonZeroU32::new(LITERAL).expect` sites stay — they collapse to
-  compile-time-checkable invariants.
-- **`scoring::compute` category-cost cast now asserts the clamp
-  invariant in debug builds.** Replaces the bare `#[allow(
-  clippy::cast_possible_truncation, …)]` with an explicit safety
-  contract comment plus `debug_assert!(normalized.is_finite() &&
-  (0.0..=cap).contains(&normalized))`, so any future edit that
-  loosens the `.min(cap).max(0.0)` clamp trips tests before it can
-  produce silently-wrong scores.
-- **`detect_language` single-pass, alloc-light hot path (F102).**
+
+- **[2026-04-29] `structure.line-length-wide` is now author-break-aware.** The rule
+  used to fire on any paragraph whose joined text exceeded the
+  per-profile ceiling, including soft-wrapped Markdown prose. That
+  conflated source mechanics with rendered width — WCAG 1.4.8 (the
+  rule's stated grounding) targets the rendered line, but the
+  Markdown parser collapses soft breaks to spaces, so a normal
+  multi-sentence paragraph written as one source line was being
+  measured as if the renderer would never reflow it. The rule now
+  only fires on paragraphs that carry an authorial line break:
+  Markdown hard breaks (`<br>` or two trailing spaces) and explicit
+  newlines in plain-text input. Soft-wrapped Markdown paragraphs are
+  exempt regardless of length — pair with
+  `structure.paragraph-too-long` to bound paragraph density.
+  Surfaced by dogfood on the FR rule pages, where 60+ false positives
+  were being emitted on prose that mdBook reflows correctly. Docs,
+  RULES.md, and unit tests updated accordingly.
+
+- **[2026-04-25] `detect_language` single-pass, alloc-light hot path (F102).**
   The stop-words ratio scan no longer materialises two intermediate
   vectors (`Vec<&str>` of words + `Vec<String>` of lowercased forms)
   and no longer iterates the lowercased vector twice (once per
@@ -582,7 +618,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   cannot touch. Same session refuted F93 + F94 — the previously
   suspected hot spots accounted for under 0.1 % combined; ROADMAP
   entries closed with the profile evidence.
-- **Sentence splitting moved into the parser phase (F103).**
+
+- **[2026-04-25] Sentence splitting moved into the parser phase (F103).**
   `Paragraph::new` now calls `split_sentences` once at construction
   and the result lives on the paragraph as a public `sentences:
   Vec<Sentence>` field. The eight rules that previously re-ran the
@@ -601,6 +638,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the long EN devdoc input, which closes the stream-2 perf arc
   (F95–F96 hygiene shipped earlier today; F93/F94 refuted by
   profile; F102 + F103 measured wins).
+
+- **[2026-04-24] Two library-code `.expect()` calls dropped.**
+  `consecutive-long-sentences` and `all-caps-shouting` now use
+  idiomatic `if let` / `Option::filter` patterns instead of panic
+  paths. The invariants were infallible by construction but the panic
+  paths were cognitive overhead per AGENTS.md ("No `unwrap()` /
+  `expect()` in library code"). The remaining
+  `NonZeroU32::new(LITERAL).expect` sites stay — they collapse to
+  compile-time-checkable invariants.
+
+- **[2026-04-24] `scoring::compute` category-cost cast now asserts the clamp
+  invariant in debug builds.** Replaces the bare `#[allow(
+  clippy::cast_possible_truncation, …)]` with an explicit safety
+  contract comment plus `debug_assert!(normalized.is_finite() &&
+  (0.0..=cap).contains(&normalized))`, so any future edit that
+  loosens the `.min(cap).max(0.0)` clamp trips tests before it can
+  produce silently-wrong scores.
 
 ## [0.2.2] — 2026-04-23
 
