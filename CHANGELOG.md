@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **docs.rs landing-page banner.** `src/lib.rs` now opens with a short
+  banner pointing readers to the mdBook guide
+  (<https://bastien-gallay.github.io/lucid-lint>), the rule catalogue
+  (`RULES.md`), and the source repository, plus a one-sentence note
+  framing docs.rs as the *Rust API reference*, not the user guide.
+  Docs.rs always builds rustdoc from the published crate, so this only
+  appears on <https://docs.rs/lucid-lint> after the next `cargo publish`
+  (i.e. the next `v*` tag). Mention this in release notes when bumping
+  0.2.x. Deferred polish items (`[package.metadata.docs.rs]`, logo +
+  favicon, per-entry-point doctests, `cargo public-api` audit) are
+  filed as F129 – F132 in `ROADMAP.md` under
+  *Docs.rs / API reference polish*.
 - **F25 — next-tier FR translations (architecture + contributing).**
   Three new FR pages land: `fr/architecture/overview.md` (pipeline
   diagram, key types, design principles, module layout),
