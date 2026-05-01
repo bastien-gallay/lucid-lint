@@ -16,6 +16,9 @@ on:
       - '.github/workflows/action-smoke.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   smoke:
     name: lint via local action (${{ matrix.os }})
