@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **F25 — first FR guide pages (slice A).** `docs/src/fr/guide/`
+  now exists with two translations: `installation.md` (FALC-targeted
+  prose, four installation routes, audit-before-running guidance,
+  version-pin recipe) and `quick-start.md` (single-file / multi-file
+  / directory / stdin / Pandoc / profile / format / exit-codes
+  walk-through). `SUMMARY.md` gains a new `Premiers pas`
+  draft-chapter group under `Version française`. Both pages are
+  stamped with the F92 sub-task `en-source-sha` HTML comment so
+  they enter the docs-lang-staleness gate as fresh. FR
+  pair-completeness now 33 / 42 (down from 9 untranslated EN guide
+  pages to 6: `profiles`, `conditions`, `configuration`, `scoring`,
+  `suppression`, `ci-integration`).
 - **F92 sub-task — FR content-staleness gate.** Every FR page under
   `docs/src/fr/` now carries an `en-source-sha` HTML-comment stamp on
   its first line (`<!-- en-source-sha: 5e24f614… -->`) recording the
