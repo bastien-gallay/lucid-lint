@@ -6,10 +6,12 @@
 
 **Status as of 2026-05-01:** v0.1 shipped 2026-04-20 (17 rules). v0.2.0
 shipped 2026-04-22 (25 rules + hybrid scoring + SARIF + condition tags),
-v0.2.1 + v0.2.2 shipped 2026-04-23. The **v0.2.x patch cycle is active**:
+v0.2.1 + v0.2.2 shipped 2026-04-23, v0.2.3 shipped 2026-04-29
+(`structure.line-length-wide` author-break-aware + encoding hygiene
+[F110](#f110)/[F111](#f111)/[F112](#f112) + correctness wins). The **v0.2.x patch cycle is active**:
 [F25](#f25) closed 2026-05-01 (FR pair-completeness 41/41); the FR
 content-staleness gate is live in `--strict` since 2026-05-01;
-[F35b](#f35b)/[F35c](#f35c), [F104](#f104), [F105](#f105), [F107](#f107), [F110](#f110)–[F112](#f112), [F123](#f123) all shipped. v0.3 is
+[F35b](#f35b)/[F35c](#f35c), [F104](#f104), [F105](#f105), [F107](#f107), [F123](#f123) all shipped. v0.3 is
 scoped but not started; v0.4 is a horizon bet list.
 
 ## Legend
@@ -44,7 +46,8 @@ need to answer "what's next?" or "what's the 0.3 shape?" in a glance.
 | v0.2.0 | ✅ Released 2026-04-22 | Yes (rule-id harmonisation) | Hybrid scoring ([F14](#f14)), SARIF ([F32](#f32)), condition tags ([F71](#f71)/[F72](#f72)), 8 new rules (25 total), [F10](#f10) EN/FR auto-formula |
 | v0.2.1 | ✅ Released 2026-04-23 | No | Localhost 404.html fix, 3rd per-rule TOML override, fixtures pipeline, TTY GIFs, v0.1/v0.2 prose sweep |
 | v0.2.2 | ✅ Released 2026-04-23 | No | FR `syntax.nested-negation` pair-based counting |
-| **v0.2.x** | 🚧 **In progress** | No | FR translations ([F25](#f25) ✅ closed 2026-05-01 — per-rule 25/25 + guides 8/8 + architecture 2/2 + contributing), responsive ([F34](#f34)), P2 a11y ([F35b](#f35b) — [F35c](#f35c) closed 2026-05-01 as audit false-positive), [F84](#f84) part 2, perf ([F102](#f102)/[F103](#f103) — [F93](#f93)/[F94](#f94) refuted by profile 2026-04-25), hygiene ([F95](#f95)/[F96](#f96)), [F15](#f15) project roll-up, adoption channels ([F110](#f110)/[F111](#f111)/[F112](#f112)) |
+| v0.2.3 | ✅ Released 2026-04-29 | No | `structure.line-length-wide` author-break-aware (60+ FR FPs killed), encoding hygiene at the engine boundary ([F110](#f110)/[F111](#f111)/[F112](#f112) — UTF-8 BOM strip + NFC normalisation), strict whitelist validation, library `expect()` removal, scoring clamp invariant |
+| **v0.2.x** | 🚧 **In progress** | No | FR translations ([F25](#f25) ✅ closed 2026-05-01), responsive ([F34](#f34)), [F30](#f30) rule-mention linking, [F84](#f84) part 2, [F15](#f15) project roll-up |
 | **v0.3** | ☐ Scoped | **Yes** | [F22](#f22) v0.3 slice, [F10](#f10) remainder, 5 condition-tag rules ([F46](#f46)/[F49](#f49)/[F51](#f51)/[F53](#f53)/[F57](#f57)) |
 | v0.4 | ☐ Horizon | Varies | LLM plugin ([F16](#f16)), alternative formats ([F5](#f5)–[F8](#f8)), feedback-driven items |
 
@@ -85,12 +88,13 @@ excluded.
 |---|---|---|---|---|---|
 | Rules (refinement) | 1 ([F22](#f22) follow-up) | 2 ([F10](#f10), [F22](#f22)) | — | [F1](#f1), [F13](#f13), [F24](#f24) | [F2](#f2), [F3](#f3) |
 | New rules | — | 5 ([F46](#f46), [F49](#f49), [F51](#f51), [F53](#f53), [F57](#f57)) | [F65](#f65)–[F69](#f69), [F63](#f63) | [F58](#f58), [F59](#f59), [F60](#f60), [F61](#f61) | [F64](#f64), [F70](#f70) |
-| Architecture / scoring | 1 ([F15](#f15)) | — | [F38](#f38), [F41](#f41) | [F17](#f17), [F38](#f38), [F39](#f39), [F40](#f40) | [F41](#f41) |
-| Docs site (bilingual / content / theming / reading) | 3 ([F25](#f25), [F30](#f30), [F34](#f34), [F35b](#f35b)) | — | — | [F36](#f36), [F43](#f43), [F44](#f44), [F73](#f73), [F89](#f89), [F90](#f90)/[F91](#f91) | — |
+| Architecture / scoring | 1 ([F15](#f15)) | 1 ([F129](#f129)) | [F38](#f38), [F41](#f41) | [F17](#f17), [F38](#f38), [F39](#f39), [F40](#f40) | [F41](#f41) |
+| Docs site (bilingual / content / theming / reading) | 2 ([F30](#f30), [F34](#f34)) | — | — | [F36](#f36), [F43](#f43), [F44](#f44), [F73](#f73), [F89](#f89), [F90](#f90)/[F91](#f91) | — |
+| Docs.rs polish | — | 4 ([F133](#f133)–[F136](#f136)) | — | — | — |
 | Example-text fixtures | 1 ([F84](#f84) part 2) | — | [F85](#f85), [F86](#f86) | [F81](#f81), [F82](#f82), [F83](#f83) | [F86](#f86) |
-| Performance / hygiene | — | [F97](#f97) | — | — | — |
-| Adoption channels | 3 ([F110](#f110), [F111](#f111), [F112](#f112)) | — | [F118](#f118) (conference talk) | [F113](#f113), [F114](#f114), [F115](#f115), [F116](#f116), [F117](#f117), [F119](#f119), [F120](#f120) | — |
-| Suppression / config | — | [F97](#f97) | — | [F20](#f20), [F21](#f21) | — |
+| Performance / hygiene | — | — | — | [F97](#f97) | — |
+| Adoption channels | — | 2 ([F114](#f114), [F124](#f124)) | [F118](#f118) (conference talk) | [F113](#f113), [F115](#f115), [F116](#f116), [F117](#f117), [F119](#f119), [F120](#f120) | — |
+| Suppression / config | — | — | — | [F20](#f20), [F21](#f21), [F97](#f97) | — |
 | Formats | — | — | [F5](#f5)–[F8](#f8) (single pick) | [F5](#f5)–[F8](#f8) | — |
 | Ecosystem interop | — | [F76](#f76) | — | [F76](#f76) | — |
 | Plugins / NLP / LLM | — | [F75](#f75) (Should) | [F16](#f16), [F75](#f75) | [F75](#f75) | [F16](#f16) |
