@@ -1,4 +1,4 @@
-<!-- en-source-sha: 5e24f614b0378a6ff57d9f497d052361e2cfcec3 -->
+<!-- en-source-sha: 9e6be0c432915d364d877b302e70186928303088 -->
 # `structure.sentence-too-long`
 
 *Phrase trop longue.*

@@ -1,4 +1,4 @@
-<!-- en-source-sha: e3d59a57e55ff6172e68e297a7057b2c8d54dbe4 -->
+<!-- en-source-sha: 9e6be0c432915d364d877b302e70186928303088 -->
 # `structure.deep-subordination`
 
 *Subordination profonde.*
