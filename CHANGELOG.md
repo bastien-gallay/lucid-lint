@@ -38,6 +38,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   F112: regression fixtures for bare `\r` line endings (classic Mac)
   and zero-width characters (`U+200B/200C/200D`) inside words pin the
   observed behaviour so it can't drift.
+- **F84 part 2 — dyscalculia + aphasia load-bearing slots closed.**
+  Three new `redistribution: public_ok` entries land under
+  `examples/public/`: MedlinePlus Aphasia (~995 words, NLM/NIH public
+  domain), MedlinePlus Medical Encyclopedia "Mathematics disorder /
+  developmental dyscalculia" (~482 words, NLM/NIH public domain), and
+  Mon Parcours Handicap "L'aphasie, un handicap invisible et méconnu"
+  (~886 words, Etalab Licence Ouverte 2.0). All three are first
+  dedicated condition-primary entries — existing entries only carried
+  `aphasia` as a secondary tag, and `dyscalculia` had no source at
+  all. Coverage snapshot in `examples/texts.md`: `condition
+  dyscalculia × EN` lifts to `1` (was `—`), `aphasia × EN` rises to
+  `6` (was `5`), `aphasia × FR` to `2` (was `1`); public total `32 of
+  62` entries (was `29 of 59`). The `gaps:` note in `texts.yaml`
+  rewritten to record both closures with date and rationale.
+
 - **Three US-federal public-domain ADHD sources (F84 part 2 progress).**
   `examples/texts.yaml` gains the NIMH ADHD topic page (`mixed` shape,
   ~780 words), CDC About ADHD (`good`, ~920 words) and CDC Treatment of

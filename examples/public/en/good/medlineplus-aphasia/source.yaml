@@ -1,0 +1,31 @@
+url: https://medlineplus.gov/aphasia.html
+title: MedlinePlus — Aphasia
+type: gov_guide
+polarity: good_example
+languages:
+- en
+redistribution: public_ok
+license_details: US federal government work — public domain in the US (NLM/NIH copyright
+  policy at https://www.nlm.nih.gov/web_policies.html states "Most of the information
+  on the NLM Web site is in the public domain. There are no restrictions on its use.").
+  Operated by the National Library of Medicine, an NIH component.
+markdownable: 4
+rules_relevant:
+- readability.score
+- structure.sentence-too-long
+- lexicon.jargon-undefined
+- lexicon.unexplained-abbreviation
+conditions:
+- aphasia
+- non-native
+- general
+bilingual_parallel: false
+fetched_at: '2026-05-01T12:08:42+00:00'
+fetch_method: http_get
+raw_file: raw.html
+raw_sha256: 41f102e829b89db0f9bb8cf24b63eb0f40ad595916a7878e40771c4fc0c63113
+clean_file: clean.html
+clean_sha256: ef228ce5ff25685c06482b19a6ae1396629859ebfeaf7aec2ebc99911eb3de93
+md_content_sha256: c6eabe40fd71d25e147ba3f13bd133bdd098ebcb954632ea2c7cad45e274519d
+converted_at: '2026-05-01T12:10:21+00:00'
+md_backend: pandoc

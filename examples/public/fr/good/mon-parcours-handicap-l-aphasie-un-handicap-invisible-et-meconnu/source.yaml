@@ -1,0 +1,29 @@
+url: https://www.monparcourshandicap.gouv.fr/actualite/laphasie-un-handicap-invisible-et-meconnu
+title: Mon Parcours Handicap — L'aphasie, un handicap invisible et méconnu
+type: gov_guide
+polarity: good_example
+languages:
+- fr
+redistribution: public_ok
+license_details: Licence Ouverte 2.0 / Etalab (site footer states "Sauf mention contraire,
+  tous les contenus de ce site sont sous licence etalab-2.0") — reuse with attribution.
+markdownable: 4
+rules_relevant:
+- readability.score
+- structure.sentence-too-long
+- structure.paragraph-too-long
+- lexicon.jargon-undefined
+conditions:
+- aphasia
+- non-native
+- general
+bilingual_parallel: false
+fetched_at: '2026-05-01T12:08:44+00:00'
+fetch_method: http_get
+raw_file: raw.html
+raw_sha256: 7667d540524ebafd78909acda27027384a8ba49bea559c2a9c44d7521a765c26
+clean_file: clean.html
+clean_sha256: 4c2b5627a5a94d28a0daf216e4fb1e8112a5c835e58b4700f2d3d684bcbcdbec
+md_content_sha256: 1b3879ca0b79c4c1ca40ec06d8c2427fda0053695d8a98f8f61eb2e6c8ce18a9
+converted_at: '2026-05-01T12:10:21+00:00'
+md_backend: pandoc

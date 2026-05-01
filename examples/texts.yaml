@@ -386,6 +386,66 @@ sources:
     notes: ~700 words; second-person guidance register — accommodation/management angle that the corpus didn't previously have under `adhd`.
 
 
+  - url: https://medlineplus.gov/aphasia.html
+    title: MedlinePlus — Aphasia
+    description: US National Library of Medicine (NIH) plain-language explainer on aphasia — definition, types, causes, diagnosis, treatment.
+    type: gov_guide
+    polarity: good_example
+    rules_relevant: [readability.score, structure.sentence-too-long, lexicon.jargon-undefined, lexicon.unexplained-abbreviation]
+    conditions: [aphasia, non-native, general]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [documentation, example, corpus]
+    has_explanations: false
+    license_or_access: open
+    redistribution: public_ok
+    license_details: US federal government work — public domain in the US (NLM/NIH copyright policy at https://www.nlm.nih.gov/web_policies.html states "Most of the information on the NLM Web site is in the public domain. There are no restrictions on its use."). Operated by the National Library of Medicine, an NIH component.
+    markdownable: 4
+    notes: ~2.5k words; first dedicated aphasia-primary entry (was only secondary tag on multi-condition entries). Closes the `aphasia × EN` load-bearing slot from F84 part 2.
+
+
+  - url: https://medlineplus.gov/ency/article/001534.htm
+    title: MedlinePlus Medical Encyclopedia — Mathematics disorder (dyscalculia)
+    description: US NLM/NIH encyclopedia article on developmental dyscalculia — symptoms, causes, treatment, prognosis.
+    type: gov_guide
+    polarity: good_example
+    rules_relevant: [readability.score, structure.sentence-too-long, lexicon.jargon-undefined]
+    conditions: [dyscalculia, non-native, general]
+    languages: [en]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [documentation, example]
+    has_explanations: false
+    license_or_access: open
+    redistribution: public_ok
+    license_details: US federal government work — public domain in the US (NLM/NIH copyright policy, see Aphasia entry). Encyclopedia content sourced from A.D.A.M. is co-distributed under the same NLM public-access terms.
+    markdownable: 4
+    notes: ~450 words; tight clinical-explainer prose. First dedicated dyscalculia-primary entry — closes the `dyscalculia × EN` load-bearing slot from F84 part 2 (gaps note "no solid dyscalculia-specific corpus found" no longer holds).
+
+
+  - url: https://www.monparcourshandicap.gouv.fr/actualite/laphasie-un-handicap-invisible-et-meconnu
+    title: Mon Parcours Handicap — L'aphasie, un handicap invisible et méconnu
+    description: French disability-rights portal long-form explainer on aphasia — definition, communication strategies for relatives, link to speech-therapy support.
+    type: gov_guide
+    polarity: good_example
+    rules_relevant: [readability.score, structure.sentence-too-long, structure.paragraph-too-long, lexicon.jargon-undefined]
+    conditions: [aphasia, non-native, general]
+    languages: [fr]
+    bilingual_parallel: false
+    interest: high
+    confidence: high
+    use_case: [documentation, example, corpus]
+    has_explanations: false
+    license_or_access: open
+    redistribution: public_ok
+    license_details: Licence Ouverte 2.0 / Etalab (site footer states "Sauf mention contraire, tous les contenus de ce site sont sous licence etalab-2.0") — reuse with attribution.
+    markdownable: 4
+    notes: ~1.2k words; bolded key-concept format with practical second-person guidance for entourage. Closes the `aphasia × FR` load-bearing slot from F84 part 2.
+
+
   # ── Bad-example corpora (dense legal / admin prose) ─────────────────────
   - url: https://eur-lex.europa.eu/
     title: EUR-Lex legal corpus
@@ -665,7 +725,7 @@ sources:
 # ── Known gaps ────────────────────────────────────────────────────────────
 
 gaps:
-  - No solid dyscalculia-specific corpus found; only `structure.mixed-numeric-format`-adjacent WCAG notes.
-  - Aphasia-specific French samples beyond SPF/HAS are thin (partially closed by Mon Parcours Handicap FALC fact sheets, Etalab 2.0).
+  - Dyscalculia-specific corpus closed 2026-05-01 (F84 part 2): MedlinePlus encyclopedia "Mathematics disorder" (~450 words, NLM/NIH public domain) is the first dedicated dyscalculia-primary entry. Coverage remains thin compared to dyslexia (only one source), but the load-bearing slot is no longer empty.
+  - Aphasia-specific corpus closed 2026-05-01 (F84 part 2): MedlinePlus aphasia explainer (~2.5k words, NLM/NIH public domain) covers EN; Mon Parcours Handicap "L'aphasie, un handicap invisible et méconnu" (~1.2k words, Etalab 2.0) covers FR. Both are first dedicated aphasia-primary entries (existing entries only carried `aphasia` as a secondary tag).
   - No ADHD-specific *before/after* prose pairs found; evidence base is mostly layout. Condition-explainer prose is now covered by the NIMH and CDC public-domain pages (F84 part 2, 2026-04-27).
   - No open legal/EULA dataset with expert plain-language annotations at scale (ToSDR has uneven coverage).
