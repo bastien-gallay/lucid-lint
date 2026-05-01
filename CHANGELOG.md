@@ -19,8 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (i.e. the next `v*` tag). Mention this in release notes when bumping
   0.2.x. Deferred polish items (`[package.metadata.docs.rs]`, logo +
   favicon, per-entry-point doctests, `cargo public-api` audit) are
-  filed as F129 – F132 in `ROADMAP.md` under
-  *Docs.rs / API reference polish*.
+  filed as F133 – F136 in `ROADMAP.md` under
+  *Docs.rs / API reference polish* (renumbered from F129–F132 after
+  F129 was claimed in parallel by the parser tight-list correctness
+  fix below).
 - **F25 — next-tier FR translations (architecture + contributing).**
   Three new FR pages land: `fr/architecture/overview.md` (pipeline
   diagram, key types, design principles, module layout),
@@ -434,10 +436,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   third-tranche dogfood metric: the same plus-closed enumeration in
   a tight bullet was silent, in a loose bullet fired three rules.
   Five new parser unit tests pin tight + loose + nested + empty +
-  body-prose contracts. Dogfood impact: ~425 new diagnostics on our
-  own docs (CHANGELOG, ROADMAP, RULES, README, mdBook pages) —
-  every one a real signal the linter was previously missing.
-  Cleanup pass on the new diagnostics tracked separately.
+  body-prose contracts. Dogfood impact: 520 → 858 diagnostics on our
+  own docs (+338 net, across CHANGELOG, ROADMAP, RULES, AGENTS,
+  mdBook pages) — every one a real signal the linter was previously
+  missing. The merged commit body in `cba387d` cites "~425" from a
+  measurement artefact (stash-based baseline that was actually
+  post-fix-vs-post-fix because the fix was already committed); 338
+  is the right number. Cleanup mix: ~60 % genuine sentence/bullet
+  rewrites, ~25 % self-referential false positives on rule-doc
+  pages (suppression directives), ~15 % project-vocabulary
+  whitelist gaps (e.g. SHA in `lucid-lint.toml`). Cleanup pass on
+  the new diagnostics tracked separately.
 - **Reading-demonstrator chips now use button-toggle semantics
   (F35b).** The chips on the Introduction (EN + FR) page declared
   `role="radiogroup"` / `role="radio"` / `aria-checked`, but the
