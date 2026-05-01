@@ -2,11 +2,13 @@
 
 > Future rules, refinements, and platform extensions tracked from v0.1 onwards.
 
-**Status as of 2026-04-24:** v0.1 shipped 2026-04-20 (17 rules). v0.2.0
-must-ship bundle shipped 2026-04-22 (25 rules + hybrid scoring + SARIF +
-condition tags). v0.2.1 shipped 2026-04-23 and v0.2.2 shipped 2026-04-23
-(FR nested-negation pair counter). The **v0.2.x patch cycle is active**;
-v0.3 is scoped but not started; v0.4 is a horizon bet list.
+**Status as of 2026-05-01:** v0.1 shipped 2026-04-20 (17 rules). v0.2.0
+shipped 2026-04-22 (25 rules + hybrid scoring + SARIF + condition tags),
+v0.2.1 + v0.2.2 shipped 2026-04-23. The **v0.2.x patch cycle is active**:
+F25 closed 2026-05-01 (FR pair-completeness 41/41); the FR
+content-staleness gate is live in `--strict` since 2026-05-01;
+F35b/F35c, F104, F105, F107, F110–F112, F123 all shipped. v0.3 is
+scoped but not started; v0.4 is a horizon bet list.
 
 ## Legend
 
@@ -44,45 +46,33 @@ need to answer "what's next?" or "what's the 0.3 shape?" in a glance.
 | **v0.3** | ☐ Scoped | **Yes** | F22 v0.3 slice, F10 remainder, 5 condition-tag rules (F46/F49/F51/F53/F57) |
 | v0.4 | ☐ Horizon | Varies | LLM plugin (F16), alternative formats (F5–F8), feedback-driven items |
 
-### Active work (🔴 Next)
+### Feature catalog (active work)
 
-Items actively queued — flattened across every topic table below so you
-don't have to scan. Grouped by version for planning; each row links to
-the authoritative entry in its topic section.
+> Filtered to 🔴 Next + 🚧 In-progress. The narrative sections later
+> in this file are the source of truth; this catalog is a derived
+> index, hand-maintained alongside the narrative. If you spot drift,
+> the narrative wins.
+>
+> Sort: target version (current cycle first) → status (🚧 in-progress
+> before ☐ next) → F-ID.
 
-**v0.2.x (patch cycle — no breaking changes):**
-
-| ID | Topic | Item |
-|---|---|---|
-| F15 | Architecture | Project-level scoring roll-up (per-file + summary) |
-| F22 | Rules refinement | Parenthesised-list slice shipped; next slice deferred to 0.3 |
-| F25 | Docs — bilingual | ✅ Closed 2026-05-01 — FR per-rule 25/25 + guides 8/8 + architecture 2/2 + contributing; pair-completeness 41/41 (only `roadmap.md` remains intentionally asymmetric) |
-| F30 | Docs — content | Rule-mention linking pass |
-| F34 | Docs — reading prefs | Responsive / mobile adaptation |
-| F35b | Docs — reading prefs | Drop `role="radiogroup"` on reading chips (P2 a11y) |
-| F84 | Example-text fixtures | Part 2 — redistributable replacements |
-| F104 | Docs — site | Per-category sidebar grouping in `SUMMARY.md` |
-| F105 | Docs — content | Consolidated references page (cited sources, one click) |
-| F107 | Docs — bilingual | FR rule labels (page subtitle + index gloss) |
-| F110 | Encoding — input | Strip the UTF-8 BOM at read |
-| F111 | Encoding — input | Normalise input to NFC before linting (NFC vs NFD) |
-| F112 | Encoding — tests | Lone-CR + zero-width-char regression fixtures |
-| F123 | Distribution | ✅ Curl-pipe-sh + PowerShell installers documented in README + `docs/src/guide/installation.md` (cargo-dist installers were enabled since the initial scaffold; the gap was documentation) |
-
-**v0.3 (breaking boundary):**
-
-| ID | Topic | Item |
-|---|---|---|
-| F10 | Rules refinement | SMOG / Dale-Chall / Scolarius / `--readability-verbose` |
-| F22 | Rules refinement | v0.3 slice (3–4-word Oxford, non-Oxford, interleaved) |
-| F129 | Architecture | Markdown parser emits paragraphs for tight list items (correctness fix) |
-| F46 | New rules (v0.3) | `lexicon.homophone-density` (slip-flag: FR corpus > 2 d → 0.3.x) |
-| F49 | New rules (v0.3) | `structure.italic-span-long` |
-| F51 | New rules (v0.3) | `structure.number-run` |
-| F53 | New rules (v0.3) | `readability.large-number-unanchored` |
-| F57 | New rules (v0.3) | `syntax.parenthetical-depth` |
-| F114 | Adoption channels | GitHub Action — composite, v0.3 first cut emits `::warning::`; SARIF via codeql-action in v0.4 |
-| F124 | Adoption channels | npm wrapper (`@lucid-lint/cli-{platform}` `optionalDependencies` pattern) |
+| ID | Topic | Status | Target | Summary |
+|---|---|---|---|---|
+| F22 | Rules refinement | 🚧 | v0.2.x → v0.3 | Parenthesised-list (Oxford ✅; non-Oxford + interleaved deferred to v0.3 slice) |
+| F84 | Example fixtures | 🚧 | v0.2.x | Part 2 — redistributable replacements (3/N closed 2026-05-01) |
+| F15 | Architecture | ☐ | v0.2.x | Project-level scoring roll-up (per-file + summary) |
+| F30 | Docs — content | ☐ | v0.2.x | Rule-mention linking pass across guide-prose pages |
+| F34 | Docs — reading prefs | ☐ | v0.2.x | Responsive / mobile adaptation |
+| F114 | Adoption channels | 🚧 | v0.3 | GitHub Action — composite scaffold internal; v0.3 first cut emits `::warning::` |
+| F10 | Rules refinement | ☐ | v0.3 | SMOG / Dale-Chall / Scolarius / `--readability-verbose` |
+| F129 | Architecture | ☐ | v0.3 | Markdown parser emits paragraphs for tight list items (correctness) |
+| F46 | New rules (v0.3) | ☐ | v0.3 | `lexicon.homophone-density` (slip-flag: FR corpus > 2 d → 0.3.x) |
+| F49 | New rules (v0.3) | ☐ | v0.3 | `structure.italic-span-long` |
+| F51 | New rules (v0.3) | ☐ | v0.3 | `structure.number-run` |
+| F53 | New rules (v0.3) | ☐ | v0.3 | `readability.large-number-unanchored` |
+| F57 | New rules (v0.3) | ☐ | v0.3 | `syntax.parenthetical-depth` |
+| F124 | Adoption channels | ☐ | v0.3 | npm wrapper (`@lucid-lint/cli-{platform}` `optionalDependencies` pattern) |
+| F133–F136 | Docs.rs polish | ☐ | v0.3 | `[package.metadata.docs.rs]`, logo + favicon, doctests, `cargo public-api` audit |
 
 ### Topic heatmap
 
@@ -120,60 +110,205 @@ excluded.
 
 ---
 
-## v0.1 — Released 2026-04-20
+## v0.4 — horizon (bets, not commitments)
 
-Shipped in the tag: all 17 rules across 5 phases, the minimal inline-disable directive, and the mdBook documentation site (Lucid light / Lucid dark themes, Atkinson Hyperlegible Next / Literata / Commit Mono / OpenDyslexic typography layer, reading-preferences demonstrator, accessibility page, EN/FR header switch with v0.2 FR-stub). See [`CHANGELOG.md`](CHANGELOG.md) for the full release notes.
+Routed 2026-04-24 in `.personal/brainstorm/20260424-next-cycles.md`.
+Each bet lists the **signal that unlocks it**, so horizon items don't
+drift into Must by tenure alone. No commitments; this is "what could
+be true in ~6 months if 0.2 and 0.3 land cleanly".
 
-### Rules (17 / 17) ✅
+| Bet | Unlock signal |
+|---|---|
+| F16 — `lucid-lint-llm` plugin | ≥ 2 concrete LLM-as-Judge rules designed on paper; deterministic-core base stable enough that non-determinism is a clear opt-in |
+| F5 / F6 / F7 / F8 — alternative formats (AsciiDoc / HTML / .docx / pandoc bridge) | External user requests; pick the single format with most pull and ship it alone, not the set |
+| F85 + F86 — fixture coverage maps + auto-discovery | Referential has stabilised (F84 part 2 done) and rule set stops churning |
+| F63 — vocabulary-rarity | Lexique.org + COCA frequency lexicons built and licence-cleared |
+| F65 – F69 — remaining condition-tag rules | F46 / F49 / F51 / F53 / F57 validated in the wild at 0.3 |
+| F38 — section-level scoring | Document + project level proven; users ask "which H2 is the problem?" |
+| F41 — reading-time unit | Validated heuristic exists; companion metrics (comfort, fatigue, understandability) defined |
+| F12 — score-evolution dashboard | CI users explicitly ask for trend view (not delta — delta is F73-dx / `--compare`) |
+| F76 — interop suppression (if not shipped in 0.3) | A second rule joins `deeply-nested-lists` as a markdownlint overlap |
+| F74 — rule-discovery corpus mining | Student / intern resource available; separate research track |
+| LSP server | Editor demand visible (Cursor / VSCode issues); would change the deployment story |
+| F70 / F64 — research-track rules | Only if someone codes them for fun |
+| **F101 — top 3 items from first-10-external-users feedback (TBD)** | 0.2.0 ships and ≥ 10 non-maintainer users exist — placeholder reserved so the horizon isn't 100 % maintainer bets (renumbered from F98 post-collision with stream-2 cargo-mutants) |
 
-#### Phase 1 — Deterministic structural rules
+**Deliberately off the 0.4 list:**
 
-| Status | Rule | Notes |
-|---|---|---|
-| ✅ | `structure.paragraph-too-long` | Sentence-count + word-count thresholds per profile (`src/rules/paragraph_too_long.rs`) |
-| ✅ | `structure.deeply-nested-lists` | Flags list items nested beyond profile depth (`src/rules/deeply_nested_lists.rs`) |
-| ✅ | `structure.heading-jump` | Walks section depths, flags jumps > +1 level (`src/rules/heading_jump.rs`) |
+- F39 / F40 letter grade + traffic light — routed to 0.3 Should; if
+  they slip they go to 0.3.x, not 0.4.
+- Full F29 numeric codes — parked until a rename actually happens.
+- F2, F3 speculative rule refinements — stay speculative until a
+  concrete dogfood case surfaces.
+- F17 per-family sub-scores — category sub-scores (F14) already ship;
+  unclear what "family" adds beyond that.
 
-#### Phase 2 — Simple text rules
+---
 
-| Status | Rule | Notes |
-|---|---|---|
-| ✅ | `structure.sentence-too-long` | Reference implementation — template for the 15 others (`src/rules/sentence_too_long.rs`) |
-| ✅ | `structure.excessive-commas` | Per-profile comma-per-sentence threshold (`src/rules/excessive_commas.rs`) |
-| ✅ | `rhythm.consecutive-long-sentences` | Intra-paragraph streak of long sentences (`src/rules/consecutive_long_sentences.rs`) |
+## v0.3+ — Advanced plugins
 
-#### Phase 3 — Lexical rules with word lists
+### LLM-enhanced detection
 
-| Status | Rule | Notes |
-|---|---|---|
-| ✅ | `lexicon.weasel-words` | Per-language phrase list, word-boundary match (`src/rules/weasel_words.rs`) |
-| ✅ | `lexicon.unexplained-abbreviation` | Pattern-based (v0.1); definition-awareness tracked as F9 (`src/rules/unexplained_abbreviation.rs`) |
-| ✅ | `lexicon.jargon-undefined` | Pattern-based, profile-activated category lists (`src/rules/jargon_undefined.rs`) |
-| ✅ | `lexicon.excessive-nominalization` | Per-sentence suffix-based density check (`src/rules/excessive_nominalization.rs`) |
-| ✅ | `rhythm.repetitive-connectors` | Sliding-window connector frequency, one diagnostic per cluster (`src/rules/repetitive_connectors.rs`) |
+| ID | Item | Priority | Origin |
+|---|---|---|---|
+| F16 | `lucid-lint-llm` plugin (LLM-as-Judge rules) | 🟢 Speculative | Research on existing tools |
 
-#### Phase 4 — Global metric
+The plugin would add rules like `unclear-antecedent-semantic` that use an LLM to detect semantic ambiguities the pattern-based heuristics miss.
 
-| Status | Rule | Notes |
-|---|---|---|
-| ✅ | `readability.score` | Per-document Flesch-Kincaid grade; info under threshold, warning above (`src/rules/readability_score.rs`) |
+Disabled by default due to non-determinism, API cost, and latency incompatible with pre-commit hooks.
 
-#### Phase 5 — Heuristic rules (hardest)
+### Advanced NLP
 
-| Status | Rule | Notes |
-|---|---|---|
-| ✅ | `structure.long-enumeration` | Shared enumeration detector with `structure.excessive-commas`; suggests list conversion (`src/rules/long_enumeration.rs`, `src/rules/enumeration.rs`) |
-| ✅ | `structure.deep-subordination` | Counts subordinators between strong-punct breaks; skips pronoun enumerations (`src/rules/deep_subordination.rs`) |
-| ✅ | `syntax.passive-voice` | Heuristic `be/être`+past-participle detector; POS-based detection remains a `lucid-lint-nlp` plugin candidate (`src/rules/passive_voice.rs`) |
-| ✅ | `syntax.unclear-antecedent` | Info-level heuristic: bare demonstrative + verb, or paragraph-start personal pronoun (`src/rules/unclear_antecedent.rs`) |
-| ✅ | `lexicon.low-lexical-diversity` | Sliding-window TTR over non-stopword content tokens (`src/rules/low_lexical_diversity.rs`) |
+| ID | Item | Priority | Origin |
+|---|---|---|---|
+| F75 | `lucid-lint-nlp` plugin specification and scaffolding (Python subprocess or WASM-based). Replaces heuristic rules with POS- / dependency-tree- / anaphora-backed precise versions. **Ship only when the first plugin rule is concretely scheduled** — scaffolding-without-consumer is the red flag from AGENTS.md directive #1 (2026-04-24 brainstorm-next-cycles). | 🟡 Later | Rule-system-growth brainstorm (2026-04-20) |
 
-### Cross-cutting features
+Candidate rules for the plugin:
 
-| Status | Feature | Notes |
-|---|---|---|
-| ✅ | Minimal inline-disable | `<!-- lucid-lint disable-next-line <rule-id> -->` for Markdown inputs, single rule id, optional reason. See [RULES.md → Suppressing diagnostics](RULES.md#suppressing-diagnostics). Block form, config ignores, file-level scope and required `reason=` are tracked as F18–F21 below. |
-| ✅ | Accessibility page in the docs | `docs/src/accessibility.md` covers the WCAG 2.2 AAA bar, the reading-preferences control, typography credits (Atkinson Hyperlegible Next — Braille Institute; OpenDyslexic — Abelardo Gonzalez; Literata — TypeTogether), keyboard shortcuts, and how the site dogfoods the project's mission. Linked from the sidebar and the footer. |
+- POS-based `syntax.passive-voice` detection (replaces v0.1 heuristic)
+- Full anaphora resolution for `syntax.unclear-antecedent`
+- Dependency-tree-based `structure.deep-subordination`
+- Semantic similarity between adjacent sentences (discourse cohesion signal inspired by Coh-Metrix)
+
+### New rules (v0.3 candidates)
+
+Deferred from v0.2 because they require corpus work, lexicon builds, or
+depend on earlier features (F9, F14). Naming uses the provisional
+`category.rule-name` prefix pending F29.
+
+| ID | Rule | Category | Tags | Grounding | Depends on |
+|---|---|---|---|---|---|
+| F46 | `lexicon.homophone-density` | Lexicon | `dyslexia` | BDA (dyslexia) | FR corpus tuning; ships as `info`. Slip-flag (2026-04-24): if FR corpus tuning exceeds ~2 days, slides to 0.3.x |
+| F49 | `structure.italic-span-long` | Structure | `dyslexia` | BDA | — |
+| F51 | `structure.number-run` | Structure | `dyscalculia` | plainlanguage.gov | — |
+| F53 | `readability.large-number-unanchored` | Readability | `dyscalculia`, `general` | CDC CCI | — |
+| F57 | `syntax.parenthetical-depth` | Syntax | `adhd`, `general` | plainlanguage.gov, Hemingway | — |
+| F58 | `syntax.front-loaded-subject-delay` | Syntax | `adhd`, `general` | plainlanguage.gov | FR corpus validation (dislocation FP risk) |
+| F59 | `rhythm.pronoun-density` | Rhythm | `aphasia`, `general` | FALC | — |
+| F60 | `rhythm.topic-shift-cluster` | Rhythm | `adhd`, `general` | Hemingway | May merge into F13 after corpus review |
+| F61 | `lexicon.falc-idiom` | Lexicon | `aphasia`, `non-native` | IFLA, FALC | Curated bilingual idiom lexicon |
+| F63 | `lexicon.vocabulary-rarity` | Lexicon | `non-native`, `general` | — | Frequency lexicon per language (Lexique.org for FR, COCA / Google-Books for EN). Tiered weights: `common` / `context-dependent` / `expert`. LLM-built fallback only. |
+| F65 | `rhythm.forward-reference-heavy` | Rhythm | `adhd`, `general` | Working-memory load | — |
+| F66 | `lexicon.acronym-distance-from-definition` | Lexicon | `adhd`, `non-native` | Memory decay | F9 (definition-aware abbreviation) |
+| F67 | `syntax.complex-tense` | Syntax | `non-native`, `aphasia` | FALC tense restrictions | FR morphology primary; EN lighter |
+| F68 | `syntax.impersonal-voice-heavy` | Syntax | `aphasia` | FALC direct-address rule | — |
+| F69 | `syntax.address-inconsistency` | Syntax | `non-native`, `general` | Register consistency | FR primary (tu / vous); EN weaker (you / one) |
+
+### Developer experience (v0.3)
+
+| ID | Item | Priority | Origin |
+|---|---|---|---|
+| F73 | Differential diagnostics — `--compare=<ref>` CLI mode. Runs against two revisions of the same text(s) and reports score-delta + diagnostic-delta. Pitch: CI/PR comment framing ("this PR adds 2 warnings, removes 5, net −3"), inverting alarm fatigue the way coverage tools do. CLI + JSON + SARIF-run-comparison. No dashboard (that is F12). | 🟡 Later | Rule-system-growth brainstorm (2026-04-20). Depends on F14 stabilising. |
+| F79 | Fancy terminal rendering for `lucid-lint explain` — pipe the bundled markdown through `termimad` (or a custom `pulldown-cmark` + `owo-colors` walker) so headings, tables, code fences, bullets, and inline `code` render with proper typography instead of raw markdown. Ship a toned `Skin` that matches the existing warning-yellow / info-cyan palette rather than termimad's magenta defaults — the brand direction is calm, typographic, not "rich CLI". Defer past v0.2 so the `check` output polish (F?) lands first. | 🟡 Later | TTY-output critique (2026-04-22) |
+
+### Ecosystem interop
+
+Motivation: lucid-lint and Markdown-syntax linters (markdownlint, Vale,
+proselint, textlint) can flag the same line from different angles.
+Cognitive-load rules that happen to share a substrate with a structural
+check should stay shipped in core — users without markdownlint, users
+who disabled the matching markdownlint rule, and users feeding
+non-Markdown input (plain text, .docx via F7, HTML via F6) all rely on
+lucid-lint for that coverage. The pain point is editor LSP sessions
+where two servers report the same span with different severities and
+different wording, not CLI pipelines where tools run sequentially.
+
+Scope audit at 2026-04-20: after the `structure.heading-jump` reframing (cognitive
+"comprehension cliff" at skip ≥ 2 levels, distinct from MD001's strict
++1 rule), **`structure.deeply-nested-lists` is the only lucid-lint rule that
+remains functionally equivalent to a markdownlint rule (MD007)**. The
+mechanism below is designed to scale — Vale, proselint, textlint
+overlaps are likely as the rule set grows — rather than to solve a
+single-rule problem.
+
+| ID | Item | Priority | Origin |
+|---|---|---|---|
+| F77 | ✅ Shipped in v0.2 — `main.rs` now auto-discovers `lucid-lint.toml` walking up from the CWD (stopping at the nearest `.git` boundary) and applies `[default].profile`, `[default].conditions`, `[scoring]` via `ScoringFileConfig::into_scoring_config`, and `[rules.readability-score].formula`. New `--config <path>` flag overrides discovery. Precedence: built-in profile defaults → TOML → CLI flags. Per-rule TOML overrides beyond `readability.score` extend rule-by-rule as each `Config` gains `Deserialize`. See [`docs/src/guide/configuration.md`](docs/src/guide/configuration.md). | — | F11 follow-up (2026-04-21) |
+| F76 | Interop suppression mechanism. Rules declare overlapping external linter rules in their metadata (e.g. `Rule::external_overlaps() -> &[(Linter, &'static str)]`, enum `Linter::Markdownlint \| Vale \| Proselint \| Textlint`). Users opt in via `[interop] suppress_when = ["markdownlint"]` in `lucid-lint.toml` (CLI equivalent: `--interop-suppress=markdownlint`); opt-out is default, so coverage never silently drops. When active, affected rules are skipped at emission time with an info-level trace in `--verbose`. Ships CLI + LSP (the LSP path is the real motivator: two servers squiggling the same span with different severities and wording erodes trust in both). Only `structure.deeply-nested-lists` qualifies at time of writing (MD007); framework is designed to scale to future overlaps. Non-goal: detecting whether the external linter is actually installed or configured — the config field is the signal. | 🟡 Later | Markdownlint-overlap scan (2026-04-20) |
+
+### Adoption channels
+
+Filed 2026-04-25 from the adoption-channels brainstorm
+(`.personal/brainstorm/20260425-adoption-channels.md`). The topic is
+"how does `lucid-lint` get adoption without a marketing program?" —
+no paid ads, no PR firm, no communication program. The brainstorm
+inventoried 35 candidates across linter-plugin slots, target OSS
+projects, public initiatives, awesome-list channels, and emergent
+plays; eleven survived MoSCoW routing and land here.
+
+The regulatory tailwind (EAA enforceable since 2025-06-28; RGAA 5
+ships end-2026 with DGCCRF / Arcom sanctions up to 50k€ + renewable)
+shapes the must-list — F110 + F111 lean directly on it. Bilingual
+EN/FR is the differentiator that makes the FR-government channel
+viable.
+
+| ID | Item | Priority | Origin |
+|---|---|---|---|
+| F110 | **Vale style pack — subset of rules → `vale-cli/packages` topic.** Map only the rules that fit Vale's `existence` / `substitution` / `occurrence` checks (target list: `lexicon.weasel-words`, `lexicon.redundant-intensifier`, `lexicon.jargon-undefined`, `lexicon.unexplained-abbreviation`, `lexicon.all-caps-shouting` — plus a couple thresholded `structure` rules if Vale's `conditional` extends cleanly). The cognitive-load core (sentence-too-long thresholds, `structure.deep-subordination`, scoring engine, FALC profile) stays standalone-only. Pack is **generated** from the rule registry (~50 lines of Rust emitting Vale YAML) — zero hand-maintenance, regenerated per release. Each rule's Vale `link:` field points to `docs/src/rules/<id>.md` so curiosity about gaps surfaces the standalone tool. Pack README opens with: *"This is a subset of `lucid-lint` for Vale users. For sentence-shape, paragraph rhythm, scoring and the FALC profile, use `lucid-lint` standalone — see `[link]`."* The Vale pack is intentionally a "trailer." Risks (discovery dilution, identity blur, maintenance drag) all fall on the README + per-rule link surfaces; not cannibalisation — Vale users are a new audience, not poached existing users. | 🔴 Next | Adoption-channels brainstorm 2026-04-25 |
+| F111 | **DINUM submission to `accessibilité.numerique.gouv.fr` resources page.** Bilingual EN/FR + cognitive a11y + RGAA-friendly profile is a clean fit for the FR government's recommended-tools surface. Submission packet: project URL, README in FR, RGAA mapping table (which `lucid-lint` rules cite which RGAA criteria), `--profile=falc` walkthrough, screenshots of `score:` summary line. Wait on a public-sector inbox cadence is fine; effort is upstream of waiting (~half day). Coincides with RGAA 5 ship + sanctions starting end-2026 — channel leverage peaks in Q4 2026 / Q1 2027. | 🔴 Next | Adoption-channels brainstorm 2026-04-25 |
+| F112 | **Three awesome-list PRs in one sitting** — `brunopulis/awesome-a11y`, `yowainwright/awesome-writing-tools`, `rust-unofficial/awesome-rust`. One-shot, ~half day total. Standard credibility + discovery move; cheapest pick on the list. Skip `awesome-plaintext` and the smaller a11y forks unless the bigger three reject (then iterate). | 🔴 Next | Adoption-channels brainstorm 2026-04-25 |
+| F113 | **Free audit-and-PR play on one famous OSS doc.** Pick ONE prominent target, run `lucid-lint --profile=public`, open a careful, well-explained PR with diffs and rule citations. Suggested first targets: Rust async-book (small, dev-focused, EN), `plainlanguage.gov` GitHub repo (meta-perfect — they already preach plain language, so the bar is "did our tool find anything they missed?"), or one CNCF doc site (Prometheus, Linkerd) for the cloud-native audience. Repeatable pattern; once one lands, the second halves. Side-benefit: stress-tests our rules on real prose — F25 dogfooding extends here. | 🟡 Later | Adoption-channels brainstorm 2026-04-25 |
+| F114 | **GitHub Action in Marketplace** (promoted to 🔴 Next, targeted at v0.3 from 2026-04-27 Block E recon — early-adoption feedback channel). Verified peer shape: both `astral-sh/ruff-action` and `biomejs/setup-biome` are thin **composite actions** (yaml-only) that download the prebuilt binary from upstream Releases, add it to `PATH`, optionally run it. Composite > Docker container for sub-second cold start; pure JS action avoided (no Node runtime needed). Proposed contract: `uses: lucid-lint/lucid-lint-action@v1` with `with:` inputs `version` (default `latest`), `paths`, `profile` (`falc` / `dev-doc` / `public`), `format` (`tty` / `json` / `sarif`), `min-score`. v0.3 first cut emits `::warning file=…,line=…::` workflow commands for inline PR annotations; v0.4 swaps to SARIF upload via `github/codeql-action/upload-sarif` once the SARIF output stabilises, feeding GitHub Code Scanning natively. Risk: a composite action coupled to `cargo-dist` release-tarball naming — any rename breaks consumers, so pin the manifest contract. **Internal scaffold landed 2026-04-28** — `action.yml` at the repo root implements the locked input contract (`version`, `paths`, `profile`, `format`, `min-score`, plus `working-directory` and passthrough `args`); a smoke workflow (`.github/workflows/action-smoke.yml`) exercises it on Linux / macOS / Windows runners against this repo's own `docs/src/`. Not yet published, not yet `v1`-tagged, not yet listed in the Marketplace. Bake-in plan: dogfood the contract internally for 2–3 weeks, revise inputs that don't survive contact with reality, then split out to a dedicated `bastien-gallay/lucid-lint-action` repo (the canonical ruff / biome pattern) and tag `v1` alongside the v0.3 release. v0.3 first cut still emits `::warning::`; SARIF upload deferred to v0.4 behind F32. | 🔴 Next | Adoption-channels brainstorm 2026-04-25 + Block E recon 2026-04-27 + scaffold 2026-04-28 |
+| F115 | **FALC-readiness guide page** — new docs page `docs/src/guide/falc-readiness.md` (FR mirror at `docs/src/fr/guide/falc-readiness.md`) explaining how `lucid-lint --profile=falc` maps to the Inclusion Europe European Easy-to-Read standards. Cite the European Easy-to-Read logo program (logo use is free if conditions met: document follows the standards + at least one person with intellectual disability validated readability). **Do not claim certification** — claim *readiness*. The guide drives qualified traffic from disability-federation networks (UNAPEI, Inclusion Europe, etc.). | 🟡 Later | Adoption-channels brainstorm 2026-04-25 |
+| F116 | **mdbook-lint coexistence guide.** Short page in our docs (and a one-liner cross-PR to mdbook-lint's README) explaining "use both": mdbook-lint = markdown structure, `lucid-lint` = prose / cognitive load. Different niches, complementary. Free, opportunistic. | 🟢 Could | Adoption-channels brainstorm 2026-04-25 |
+| F117 | **W3C Cognitive and Learning Disabilities Accessibility Task Force (COGA) tools survey submission.** Submit `lucid-lint` next time COGA refreshes its public tools list. High credibility, slow cadence, low effort once the submission template is identified. | 🟢 Could | Adoption-channels brainstorm 2026-04-25 |
+| F118 | **Conference talk submission.** Targets: Write the Docs (Portland or Australia), RustNation 2027, EuroRust 2026, A11y Camp. CFP-driven, variable effort. The "from samply profile to 12% perf win" arc from 2026-04-25 plus the bilingual-cognitive-a11y angle is talk-shaped. | 🟢 Could | Adoption-channels brainstorm 2026-04-25 |
+| F119 | **Mastodon / Bluesky cadence.** Modest (1–2 posts/week), tag accessibility + tech-writing communities. Cheap, ongoing; effective when paired with F113 audit-PR landings or F110 pack release as anchors. | 🟢 Could | Adoption-channels brainstorm 2026-04-25 |
+| F120 | **Pre-commit hook listing in `pre-commit/pre-commit` registry.** Fires once `--check` mode is stable across our CLI surface (currently most surfaces use `--format=json` and exit codes; hook-friendly summary + fast-fail mode is the prerequisite). | 🟢 Could | Adoption-channels brainstorm 2026-04-25 |
+| F122 | **WASM playground for in-browser linting.** Peer pattern (ruff `play.ruff.rs`, biome `biomejs.dev/playground`): single-page React/Preact + Vite app driving a Monaco editor, with a dedicated `*_wasm` Rust crate built via `wasm-pack` (ruff publishes `ruff_wasm`; biome publishes `@biomejs/wasm-web` from `biome_wasm`). Source layout: a `playground/` workspace at repo root with `wasm/` and `web/` sub-trees. Hosting: Cloudflare Pages or GitHub Pages on a subdomain (e.g. `play.lucid-lint.dev`). Proposed shape for `lucid-lint`: `crates/lucid-lint-wasm` exposing `lint(text, lang, profile) -> Diagnostic[]` via `wasm-bindgen`; tiny Vite+Preact UI; estimated 300–600 kB gzipped given our deterministic core (no network, no LLM). Phase: **v0.4+** — the surface needs its own brainstorm before scoping (UX shape, share-link encoding, persistence, mobile experience, contribution channel) and is best framed as a traction / acquisition lever once v0.3 distribution is in place. Risks: (1) bundle-size cliff if `regex` + `unicode-segmentation` push past 1 MB; (2) ongoing maintenance of a JS surface that can drift from CLI behaviour. | 🟢 Speculative | 2026-04-27 Block E recon |
+| F123 | ✅ Shipped 2026-04-28 — curl-pipe-sh + PowerShell one-liners are surfaced in `README.md` and `docs/src/guide/installation.md`. **The cargo-dist installer flip itself was a no-op** — `installers = ["shell", "powershell"]` has been in `Cargo.toml` `[workspace.metadata.dist]` since the initial scaffold (`d153ad8`), so v0.1.1 / v0.2.0 / v0.2.1 / v0.2.2 have all been attaching `lucid-lint-installer.sh` and `lucid-lint-installer.ps1` to their GitHub Releases. Yesterday's Block E recon mis-filed F123 as a config flip; today's reconnaissance confirmed the actual gap was discoverability. Documentation now covers both one-liners (Linux / macOS / WSL via `curl … \| sh`; Windows via PowerShell `irm \| iex`), the `--check` / audit-before-running pattern (download to a file, `less`/`notepad`, then execute), version pinning (`releases/download/v<version>/…` instead of `releases/latest/…`), and how each installer drops the binary on `$PATH`. The `cargo install` and source-build routes stay alongside as fallbacks. README's stale "Once released to crates.io" lead-in dropped. Vanity `sh.lucid-lint.dev` redirect remains a v0.5 concern. | — | 2026-04-27 Block E recon |
+| F124 | **npm wrapper with platform `optionalDependencies`** — promoted to 🔴 Next, targeted at v0.3 (early-adoption feedback channel for the JS-toolchain audience: Prettier / ESLint / Husky / package.json scripts users). Canonical pattern verified on the npm registry: biome (`@biomejs/biome` 2.4.13) and dprint (0.54.0) both publish a thin root package whose `optionalDependencies` lists one sub-package per target; npm resolves only the matching platform; root `bin` shim execs the binary; dprint additionally runs a `postinstall` `install.cjs` as fallback. Proposed shape: root `lucid-lint` (~10 kB) + five platform-specific `@lucid-lint/cli-{aarch64-apple-darwin, x86_64-apple-darwin, x86_64-unknown-linux-gnu, x86_64-unknown-linux-musl, x86_64-pc-windows-msvc}`. Version stays in lockstep with the Rust crate; release workflow gains an `npm publish --provenance` step using OIDC (biome already does this). Risks: (1) 5+ packages per release multiply publish-failure surface — release workflow needs all-or-nothing semantics; (2) npm registry outages would block JS users — document fallback to direct binary download (F123). | 🔴 Next | 2026-04-27 Block E recon |
+| F125 | **Homebrew distribution (own tap → core).** macOS-first audiences (writers, designers, docs teams) reach for `brew install` before `cargo`. Path is well-trodden: ship a tap on `<org>/homebrew-tap` immediately, graduate to `homebrew-core` once eligibility is met (current acceptable-formula policy needs a manual cross-check on `homebrew/brew docs/Acceptable-Formulae.md` — sandboxed during Block E recon; the old "75 stars" line was removed but maintainers still gate on adoption signal). Implementation: enable `cargo-dist`'s `homebrew` installer — it generates a Ruby formula referencing the same release tarballs we already build (`aarch64-apple-darwin`, `x86_64-apple-darwin`, plus Linux bottles) and opens a PR against our tap on each tag. Bottle building runs free on `macos-latest` runners. v0.4 launches the tap; `homebrew-core` submission deferred to v0.5+ behind real adoption signal. Risks: (1) tap fragmentation if we never graduate to core; (2) core review can take weeks. | 🟡 Later | 2026-04-27 Block E recon |
+
+**Watch-only (filed in brainstorm, not in ROADMAP):**
+mkdocs / Docusaurus / VitePress / Astro Starlight plugins — YAGNI
+until first user asks. "FALC-ready" badge program parked behind F115
+(needs Inclusion Europe coordination first; do not squat on their
+logo). Hacker News "Show HN" parked until at least one of
+F110 / F111 / F113 has landed an anchor. Co-authored academic letter
+parked indefinitely (long ROI, low control). Public-sector
+procurement frameworks (UGAP) parked — way too early for the project.
+
+### Research track
+
+Bets that don't commit to a ship date. Tracked to ensure they're not
+forgotten.
+
+| ID | Item | Priority | Origin |
+|---|---|---|---|
+| F64 | `structure.paragraph-landmark-density` — reprise-points for attention-fragile readers. Research needed to define "landmark" (bold / italic / headers / list-starts / code spans?). | 🟢 Speculative | Rule-system-growth brainstorm (2026-04-20) |
+| F70 | `structure.lede-buried` — journalistic inverted-pyramid check. Strong candidate for a future `lucid-lint-journalism` plugin rather than core. | 🟢 Speculative | Rule-system-growth brainstorm (2026-04-20) |
+| F74 | Rule-discovery corpus project — mine writer-heavy git histories for patterns that authors repeatedly rewrite. Source of evidence-grounded rule proposals. Intern / student project scale. | 🟢 Speculative | Rule-system-growth brainstorm (2026-04-20) |
+
+Additional research directions captured for posterity but not yet ID'd:
+
+- **Reader-model scoring** — tiny local model predicts processing time
+  and accuracy per paragraph; output is a cognitive-load heatmap.
+  Deterministic at inference, data-hungry at training.
+- **TTS / screen-reader prosody** rules — detect prosody breakdown
+  (mid-sentence acronyms, awkward punctuation cadence). Needs a TTS
+  corpus.
+- **Cross-document terminology drift** — same concept named three ways
+  across a corpus ("user" / "customer" / "client"). Requires
+  multi-file analysis infrastructure; performance implications.
+- **Eye-tracking corpus collaboration** — partnership with a reading
+  lab to ground thresholds in behavioural data.
+- **LSP server** — live diagnostics in editors; same core, different
+  frontend.
+- **`--fix` / quickfix suggestions** — safe rules only (e.g.
+  `structure.long-enumeration` → concrete list skeleton). Controversial for
+  prose; needs guardrails.
+- **`lucid-lint baseline`** — record per-project medians; rules flag
+  regressions rather than absolutes (ESLint-style).
+- **Profile composition** (`extends = "falc"`) — reduce duplication
+  across projects.
+- **Community rule-pack registry** — cargo-style publication of domain
+  packs (medical, legal, edu, journalism).
+- **`lucid-lint-style` plugin** — adverb overuse, show-don't-tell, and
+  other aesthetic rules excluded from core by design.
+- **`lucid-lint-a11y` plugin** — alternative home for `a11y-markup`-
+  tagged rules if the tag proves insufficient to separate them from
+  prose rules.
 
 ---
 
@@ -538,205 +673,60 @@ v0.1 ships the minimal inline-disable directive (see brainstorm
 
 ---
 
-## v0.3+ — Advanced plugins
+## v0.1 — Released 2026-04-20
 
-### LLM-enhanced detection
+Shipped in the tag: all 17 rules across 5 phases, the minimal inline-disable directive, and the mdBook documentation site (Lucid light / Lucid dark themes, Atkinson Hyperlegible Next / Literata / Commit Mono / OpenDyslexic typography layer, reading-preferences demonstrator, accessibility page, EN/FR header switch with v0.2 FR-stub). See [`CHANGELOG.md`](CHANGELOG.md) for the full release notes.
 
-| ID | Item | Priority | Origin |
-|---|---|---|---|
-| F16 | `lucid-lint-llm` plugin (LLM-as-Judge rules) | 🟢 Speculative | Research on existing tools |
+### Rules (17 / 17) ✅
 
-The plugin would add rules like `unclear-antecedent-semantic` that use an LLM to detect semantic ambiguities the pattern-based heuristics miss.
+#### Phase 1 — Deterministic structural rules
 
-Disabled by default due to non-determinism, API cost, and latency incompatible with pre-commit hooks.
+| Status | Rule | Notes |
+|---|---|---|
+| ✅ | `structure.paragraph-too-long` | Sentence-count + word-count thresholds per profile (`src/rules/paragraph_too_long.rs`) |
+| ✅ | `structure.deeply-nested-lists` | Flags list items nested beyond profile depth (`src/rules/deeply_nested_lists.rs`) |
+| ✅ | `structure.heading-jump` | Walks section depths, flags jumps > +1 level (`src/rules/heading_jump.rs`) |
 
-### Advanced NLP
+#### Phase 2 — Simple text rules
 
-| ID | Item | Priority | Origin |
-|---|---|---|---|
-| F75 | `lucid-lint-nlp` plugin specification and scaffolding (Python subprocess or WASM-based). Replaces heuristic rules with POS- / dependency-tree- / anaphora-backed precise versions. **Ship only when the first plugin rule is concretely scheduled** — scaffolding-without-consumer is the red flag from AGENTS.md directive #1 (2026-04-24 brainstorm-next-cycles). | 🟡 Later | Rule-system-growth brainstorm (2026-04-20) |
+| Status | Rule | Notes |
+|---|---|---|
+| ✅ | `structure.sentence-too-long` | Reference implementation — template for the 15 others (`src/rules/sentence_too_long.rs`) |
+| ✅ | `structure.excessive-commas` | Per-profile comma-per-sentence threshold (`src/rules/excessive_commas.rs`) |
+| ✅ | `rhythm.consecutive-long-sentences` | Intra-paragraph streak of long sentences (`src/rules/consecutive_long_sentences.rs`) |
 
-Candidate rules for the plugin:
+#### Phase 3 — Lexical rules with word lists
 
-- POS-based `syntax.passive-voice` detection (replaces v0.1 heuristic)
-- Full anaphora resolution for `syntax.unclear-antecedent`
-- Dependency-tree-based `structure.deep-subordination`
-- Semantic similarity between adjacent sentences (discourse cohesion signal inspired by Coh-Metrix)
+| Status | Rule | Notes |
+|---|---|---|
+| ✅ | `lexicon.weasel-words` | Per-language phrase list, word-boundary match (`src/rules/weasel_words.rs`) |
+| ✅ | `lexicon.unexplained-abbreviation` | Pattern-based (v0.1); definition-awareness tracked as F9 (`src/rules/unexplained_abbreviation.rs`) |
+| ✅ | `lexicon.jargon-undefined` | Pattern-based, profile-activated category lists (`src/rules/jargon_undefined.rs`) |
+| ✅ | `lexicon.excessive-nominalization` | Per-sentence suffix-based density check (`src/rules/excessive_nominalization.rs`) |
+| ✅ | `rhythm.repetitive-connectors` | Sliding-window connector frequency, one diagnostic per cluster (`src/rules/repetitive_connectors.rs`) |
 
-### New rules (v0.3 candidates)
+#### Phase 4 — Global metric
 
-Deferred from v0.2 because they require corpus work, lexicon builds, or
-depend on earlier features (F9, F14). Naming uses the provisional
-`category.rule-name` prefix pending F29.
+| Status | Rule | Notes |
+|---|---|---|
+| ✅ | `readability.score` | Per-document Flesch-Kincaid grade; info under threshold, warning above (`src/rules/readability_score.rs`) |
 
-| ID | Rule | Category | Tags | Grounding | Depends on |
-|---|---|---|---|---|---|
-| F46 | `lexicon.homophone-density` | Lexicon | `dyslexia` | BDA (dyslexia) | FR corpus tuning; ships as `info`. Slip-flag (2026-04-24): if FR corpus tuning exceeds ~2 days, slides to 0.3.x |
-| F49 | `structure.italic-span-long` | Structure | `dyslexia` | BDA | — |
-| F51 | `structure.number-run` | Structure | `dyscalculia` | plainlanguage.gov | — |
-| F53 | `readability.large-number-unanchored` | Readability | `dyscalculia`, `general` | CDC CCI | — |
-| F57 | `syntax.parenthetical-depth` | Syntax | `adhd`, `general` | plainlanguage.gov, Hemingway | — |
-| F58 | `syntax.front-loaded-subject-delay` | Syntax | `adhd`, `general` | plainlanguage.gov | FR corpus validation (dislocation FP risk) |
-| F59 | `rhythm.pronoun-density` | Rhythm | `aphasia`, `general` | FALC | — |
-| F60 | `rhythm.topic-shift-cluster` | Rhythm | `adhd`, `general` | Hemingway | May merge into F13 after corpus review |
-| F61 | `lexicon.falc-idiom` | Lexicon | `aphasia`, `non-native` | IFLA, FALC | Curated bilingual idiom lexicon |
-| F63 | `lexicon.vocabulary-rarity` | Lexicon | `non-native`, `general` | — | Frequency lexicon per language (Lexique.org for FR, COCA / Google-Books for EN). Tiered weights: `common` / `context-dependent` / `expert`. LLM-built fallback only. |
-| F65 | `rhythm.forward-reference-heavy` | Rhythm | `adhd`, `general` | Working-memory load | — |
-| F66 | `lexicon.acronym-distance-from-definition` | Lexicon | `adhd`, `non-native` | Memory decay | F9 (definition-aware abbreviation) |
-| F67 | `syntax.complex-tense` | Syntax | `non-native`, `aphasia` | FALC tense restrictions | FR morphology primary; EN lighter |
-| F68 | `syntax.impersonal-voice-heavy` | Syntax | `aphasia` | FALC direct-address rule | — |
-| F69 | `syntax.address-inconsistency` | Syntax | `non-native`, `general` | Register consistency | FR primary (tu / vous); EN weaker (you / one) |
+#### Phase 5 — Heuristic rules (hardest)
 
-### Developer experience (v0.3)
+| Status | Rule | Notes |
+|---|---|---|
+| ✅ | `structure.long-enumeration` | Shared enumeration detector with `structure.excessive-commas`; suggests list conversion (`src/rules/long_enumeration.rs`, `src/rules/enumeration.rs`) |
+| ✅ | `structure.deep-subordination` | Counts subordinators between strong-punct breaks; skips pronoun enumerations (`src/rules/deep_subordination.rs`) |
+| ✅ | `syntax.passive-voice` | Heuristic `be/être`+past-participle detector; POS-based detection remains a `lucid-lint-nlp` plugin candidate (`src/rules/passive_voice.rs`) |
+| ✅ | `syntax.unclear-antecedent` | Info-level heuristic: bare demonstrative + verb, or paragraph-start personal pronoun (`src/rules/unclear_antecedent.rs`) |
+| ✅ | `lexicon.low-lexical-diversity` | Sliding-window TTR over non-stopword content tokens (`src/rules/low_lexical_diversity.rs`) |
 
-| ID | Item | Priority | Origin |
-|---|---|---|---|
-| F73 | Differential diagnostics — `--compare=<ref>` CLI mode. Runs against two revisions of the same text(s) and reports score-delta + diagnostic-delta. Pitch: CI/PR comment framing ("this PR adds 2 warnings, removes 5, net −3"), inverting alarm fatigue the way coverage tools do. CLI + JSON + SARIF-run-comparison. No dashboard (that is F12). | 🟡 Later | Rule-system-growth brainstorm (2026-04-20). Depends on F14 stabilising. |
-| F79 | Fancy terminal rendering for `lucid-lint explain` — pipe the bundled markdown through `termimad` (or a custom `pulldown-cmark` + `owo-colors` walker) so headings, tables, code fences, bullets, and inline `code` render with proper typography instead of raw markdown. Ship a toned `Skin` that matches the existing warning-yellow / info-cyan palette rather than termimad's magenta defaults — the brand direction is calm, typographic, not "rich CLI". Defer past v0.2 so the `check` output polish (F?) lands first. | 🟡 Later | TTY-output critique (2026-04-22) |
+### Cross-cutting features
 
-### Ecosystem interop
-
-Motivation: lucid-lint and Markdown-syntax linters (markdownlint, Vale,
-proselint, textlint) can flag the same line from different angles.
-Cognitive-load rules that happen to share a substrate with a structural
-check should stay shipped in core — users without markdownlint, users
-who disabled the matching markdownlint rule, and users feeding
-non-Markdown input (plain text, .docx via F7, HTML via F6) all rely on
-lucid-lint for that coverage. The pain point is editor LSP sessions
-where two servers report the same span with different severities and
-different wording, not CLI pipelines where tools run sequentially.
-
-Scope audit at 2026-04-20: after the `structure.heading-jump` reframing (cognitive
-"comprehension cliff" at skip ≥ 2 levels, distinct from MD001's strict
-+1 rule), **`structure.deeply-nested-lists` is the only lucid-lint rule that
-remains functionally equivalent to a markdownlint rule (MD007)**. The
-mechanism below is designed to scale — Vale, proselint, textlint
-overlaps are likely as the rule set grows — rather than to solve a
-single-rule problem.
-
-| ID | Item | Priority | Origin |
-|---|---|---|---|
-| F77 | ✅ Shipped in v0.2 — `main.rs` now auto-discovers `lucid-lint.toml` walking up from the CWD (stopping at the nearest `.git` boundary) and applies `[default].profile`, `[default].conditions`, `[scoring]` via `ScoringFileConfig::into_scoring_config`, and `[rules.readability-score].formula`. New `--config <path>` flag overrides discovery. Precedence: built-in profile defaults → TOML → CLI flags. Per-rule TOML overrides beyond `readability.score` extend rule-by-rule as each `Config` gains `Deserialize`. See [`docs/src/guide/configuration.md`](docs/src/guide/configuration.md). | — | F11 follow-up (2026-04-21) |
-| F76 | Interop suppression mechanism. Rules declare overlapping external linter rules in their metadata (e.g. `Rule::external_overlaps() -> &[(Linter, &'static str)]`, enum `Linter::Markdownlint \| Vale \| Proselint \| Textlint`). Users opt in via `[interop] suppress_when = ["markdownlint"]` in `lucid-lint.toml` (CLI equivalent: `--interop-suppress=markdownlint`); opt-out is default, so coverage never silently drops. When active, affected rules are skipped at emission time with an info-level trace in `--verbose`. Ships CLI + LSP (the LSP path is the real motivator: two servers squiggling the same span with different severities and wording erodes trust in both). Only `structure.deeply-nested-lists` qualifies at time of writing (MD007); framework is designed to scale to future overlaps. Non-goal: detecting whether the external linter is actually installed or configured — the config field is the signal. | 🟡 Later | Markdownlint-overlap scan (2026-04-20) |
-
-### Adoption channels
-
-Filed 2026-04-25 from the adoption-channels brainstorm
-(`.personal/brainstorm/20260425-adoption-channels.md`). The topic is
-"how does `lucid-lint` get adoption without a marketing program?" —
-no paid ads, no PR firm, no communication program. The brainstorm
-inventoried 35 candidates across linter-plugin slots, target OSS
-projects, public initiatives, awesome-list channels, and emergent
-plays; eleven survived MoSCoW routing and land here.
-
-The regulatory tailwind (EAA enforceable since 2025-06-28; RGAA 5
-ships end-2026 with DGCCRF / Arcom sanctions up to 50k€ + renewable)
-shapes the must-list — F110 + F111 lean directly on it. Bilingual
-EN/FR is the differentiator that makes the FR-government channel
-viable.
-
-| ID | Item | Priority | Origin |
-|---|---|---|---|
-| F110 | **Vale style pack — subset of rules → `vale-cli/packages` topic.** Map only the rules that fit Vale's `existence` / `substitution` / `occurrence` checks (target list: `lexicon.weasel-words`, `lexicon.redundant-intensifier`, `lexicon.jargon-undefined`, `lexicon.unexplained-abbreviation`, `lexicon.all-caps-shouting` — plus a couple thresholded `structure` rules if Vale's `conditional` extends cleanly). The cognitive-load core (sentence-too-long thresholds, `structure.deep-subordination`, scoring engine, FALC profile) stays standalone-only. Pack is **generated** from the rule registry (~50 lines of Rust emitting Vale YAML) — zero hand-maintenance, regenerated per release. Each rule's Vale `link:` field points to `docs/src/rules/<id>.md` so curiosity about gaps surfaces the standalone tool. Pack README opens with: *"This is a subset of `lucid-lint` for Vale users. For sentence-shape, paragraph rhythm, scoring and the FALC profile, use `lucid-lint` standalone — see `[link]`."* The Vale pack is intentionally a "trailer." Risks (discovery dilution, identity blur, maintenance drag) all fall on the README + per-rule link surfaces; not cannibalisation — Vale users are a new audience, not poached existing users. | 🔴 Next | Adoption-channels brainstorm 2026-04-25 |
-| F111 | **DINUM submission to `accessibilité.numerique.gouv.fr` resources page.** Bilingual EN/FR + cognitive a11y + RGAA-friendly profile is a clean fit for the FR government's recommended-tools surface. Submission packet: project URL, README in FR, RGAA mapping table (which `lucid-lint` rules cite which RGAA criteria), `--profile=falc` walkthrough, screenshots of `score:` summary line. Wait on a public-sector inbox cadence is fine; effort is upstream of waiting (~half day). Coincides with RGAA 5 ship + sanctions starting end-2026 — channel leverage peaks in Q4 2026 / Q1 2027. | 🔴 Next | Adoption-channels brainstorm 2026-04-25 |
-| F112 | **Three awesome-list PRs in one sitting** — `brunopulis/awesome-a11y`, `yowainwright/awesome-writing-tools`, `rust-unofficial/awesome-rust`. One-shot, ~half day total. Standard credibility + discovery move; cheapest pick on the list. Skip `awesome-plaintext` and the smaller a11y forks unless the bigger three reject (then iterate). | 🔴 Next | Adoption-channels brainstorm 2026-04-25 |
-| F113 | **Free audit-and-PR play on one famous OSS doc.** Pick ONE prominent target, run `lucid-lint --profile=public`, open a careful, well-explained PR with diffs and rule citations. Suggested first targets: Rust async-book (small, dev-focused, EN), `plainlanguage.gov` GitHub repo (meta-perfect — they already preach plain language, so the bar is "did our tool find anything they missed?"), or one CNCF doc site (Prometheus, Linkerd) for the cloud-native audience. Repeatable pattern; once one lands, the second halves. Side-benefit: stress-tests our rules on real prose — F25 dogfooding extends here. | 🟡 Later | Adoption-channels brainstorm 2026-04-25 |
-| F114 | **GitHub Action in Marketplace** (promoted to 🔴 Next, targeted at v0.3 from 2026-04-27 Block E recon — early-adoption feedback channel). Verified peer shape: both `astral-sh/ruff-action` and `biomejs/setup-biome` are thin **composite actions** (yaml-only) that download the prebuilt binary from upstream Releases, add it to `PATH`, optionally run it. Composite > Docker container for sub-second cold start; pure JS action avoided (no Node runtime needed). Proposed contract: `uses: lucid-lint/lucid-lint-action@v1` with `with:` inputs `version` (default `latest`), `paths`, `profile` (`falc` / `dev-doc` / `public`), `format` (`tty` / `json` / `sarif`), `min-score`. v0.3 first cut emits `::warning file=…,line=…::` workflow commands for inline PR annotations; v0.4 swaps to SARIF upload via `github/codeql-action/upload-sarif` once the SARIF output stabilises, feeding GitHub Code Scanning natively. Risk: a composite action coupled to `cargo-dist` release-tarball naming — any rename breaks consumers, so pin the manifest contract. **Internal scaffold landed 2026-04-28** — `action.yml` at the repo root implements the locked input contract (`version`, `paths`, `profile`, `format`, `min-score`, plus `working-directory` and passthrough `args`); a smoke workflow (`.github/workflows/action-smoke.yml`) exercises it on Linux / macOS / Windows runners against this repo's own `docs/src/`. Not yet published, not yet `v1`-tagged, not yet listed in the Marketplace. Bake-in plan: dogfood the contract internally for 2–3 weeks, revise inputs that don't survive contact with reality, then split out to a dedicated `bastien-gallay/lucid-lint-action` repo (the canonical ruff / biome pattern) and tag `v1` alongside the v0.3 release. v0.3 first cut still emits `::warning::`; SARIF upload deferred to v0.4 behind F32. | 🔴 Next | Adoption-channels brainstorm 2026-04-25 + Block E recon 2026-04-27 + scaffold 2026-04-28 |
-| F115 | **FALC-readiness guide page** — new docs page `docs/src/guide/falc-readiness.md` (FR mirror at `docs/src/fr/guide/falc-readiness.md`) explaining how `lucid-lint --profile=falc` maps to the Inclusion Europe European Easy-to-Read standards. Cite the European Easy-to-Read logo program (logo use is free if conditions met: document follows the standards + at least one person with intellectual disability validated readability). **Do not claim certification** — claim *readiness*. The guide drives qualified traffic from disability-federation networks (UNAPEI, Inclusion Europe, etc.). | 🟡 Later | Adoption-channels brainstorm 2026-04-25 |
-| F116 | **mdbook-lint coexistence guide.** Short page in our docs (and a one-liner cross-PR to mdbook-lint's README) explaining "use both": mdbook-lint = markdown structure, `lucid-lint` = prose / cognitive load. Different niches, complementary. Free, opportunistic. | 🟢 Could | Adoption-channels brainstorm 2026-04-25 |
-| F117 | **W3C Cognitive and Learning Disabilities Accessibility Task Force (COGA) tools survey submission.** Submit `lucid-lint` next time COGA refreshes its public tools list. High credibility, slow cadence, low effort once the submission template is identified. | 🟢 Could | Adoption-channels brainstorm 2026-04-25 |
-| F118 | **Conference talk submission.** Targets: Write the Docs (Portland or Australia), RustNation 2027, EuroRust 2026, A11y Camp. CFP-driven, variable effort. The "from samply profile to 12% perf win" arc from 2026-04-25 plus the bilingual-cognitive-a11y angle is talk-shaped. | 🟢 Could | Adoption-channels brainstorm 2026-04-25 |
-| F119 | **Mastodon / Bluesky cadence.** Modest (1–2 posts/week), tag accessibility + tech-writing communities. Cheap, ongoing; effective when paired with F113 audit-PR landings or F110 pack release as anchors. | 🟢 Could | Adoption-channels brainstorm 2026-04-25 |
-| F120 | **Pre-commit hook listing in `pre-commit/pre-commit` registry.** Fires once `--check` mode is stable across our CLI surface (currently most surfaces use `--format=json` and exit codes; hook-friendly summary + fast-fail mode is the prerequisite). | 🟢 Could | Adoption-channels brainstorm 2026-04-25 |
-| F122 | **WASM playground for in-browser linting.** Peer pattern (ruff `play.ruff.rs`, biome `biomejs.dev/playground`): single-page React/Preact + Vite app driving a Monaco editor, with a dedicated `*_wasm` Rust crate built via `wasm-pack` (ruff publishes `ruff_wasm`; biome publishes `@biomejs/wasm-web` from `biome_wasm`). Source layout: a `playground/` workspace at repo root with `wasm/` and `web/` sub-trees. Hosting: Cloudflare Pages or GitHub Pages on a subdomain (e.g. `play.lucid-lint.dev`). Proposed shape for `lucid-lint`: `crates/lucid-lint-wasm` exposing `lint(text, lang, profile) -> Diagnostic[]` via `wasm-bindgen`; tiny Vite+Preact UI; estimated 300–600 kB gzipped given our deterministic core (no network, no LLM). Phase: **v0.4+** — the surface needs its own brainstorm before scoping (UX shape, share-link encoding, persistence, mobile experience, contribution channel) and is best framed as a traction / acquisition lever once v0.3 distribution is in place. Risks: (1) bundle-size cliff if `regex` + `unicode-segmentation` push past 1 MB; (2) ongoing maintenance of a JS surface that can drift from CLI behaviour. | 🟢 Speculative | 2026-04-27 Block E recon |
-| F123 | ✅ Shipped 2026-04-28 — curl-pipe-sh + PowerShell one-liners are surfaced in `README.md` and `docs/src/guide/installation.md`. **The cargo-dist installer flip itself was a no-op** — `installers = ["shell", "powershell"]` has been in `Cargo.toml` `[workspace.metadata.dist]` since the initial scaffold (`d153ad8`), so v0.1.1 / v0.2.0 / v0.2.1 / v0.2.2 have all been attaching `lucid-lint-installer.sh` and `lucid-lint-installer.ps1` to their GitHub Releases. Yesterday's Block E recon mis-filed F123 as a config flip; today's reconnaissance confirmed the actual gap was discoverability. Documentation now covers both one-liners (Linux / macOS / WSL via `curl … \| sh`; Windows via PowerShell `irm \| iex`), the `--check` / audit-before-running pattern (download to a file, `less`/`notepad`, then execute), version pinning (`releases/download/v<version>/…` instead of `releases/latest/…`), and how each installer drops the binary on `$PATH`. The `cargo install` and source-build routes stay alongside as fallbacks. README's stale "Once released to crates.io" lead-in dropped. Vanity `sh.lucid-lint.dev` redirect remains a v0.5 concern. | — | 2026-04-27 Block E recon |
-| F124 | **npm wrapper with platform `optionalDependencies`** — promoted to 🔴 Next, targeted at v0.3 (early-adoption feedback channel for the JS-toolchain audience: Prettier / ESLint / Husky / package.json scripts users). Canonical pattern verified on the npm registry: biome (`@biomejs/biome` 2.4.13) and dprint (0.54.0) both publish a thin root package whose `optionalDependencies` lists one sub-package per target; npm resolves only the matching platform; root `bin` shim execs the binary; dprint additionally runs a `postinstall` `install.cjs` as fallback. Proposed shape: root `lucid-lint` (~10 kB) + five platform-specific `@lucid-lint/cli-{aarch64-apple-darwin, x86_64-apple-darwin, x86_64-unknown-linux-gnu, x86_64-unknown-linux-musl, x86_64-pc-windows-msvc}`. Version stays in lockstep with the Rust crate; release workflow gains an `npm publish --provenance` step using OIDC (biome already does this). Risks: (1) 5+ packages per release multiply publish-failure surface — release workflow needs all-or-nothing semantics; (2) npm registry outages would block JS users — document fallback to direct binary download (F123). | 🔴 Next | 2026-04-27 Block E recon |
-| F125 | **Homebrew distribution (own tap → core).** macOS-first audiences (writers, designers, docs teams) reach for `brew install` before `cargo`. Path is well-trodden: ship a tap on `<org>/homebrew-tap` immediately, graduate to `homebrew-core` once eligibility is met (current acceptable-formula policy needs a manual cross-check on `homebrew/brew docs/Acceptable-Formulae.md` — sandboxed during Block E recon; the old "75 stars" line was removed but maintainers still gate on adoption signal). Implementation: enable `cargo-dist`'s `homebrew` installer — it generates a Ruby formula referencing the same release tarballs we already build (`aarch64-apple-darwin`, `x86_64-apple-darwin`, plus Linux bottles) and opens a PR against our tap on each tag. Bottle building runs free on `macos-latest` runners. v0.4 launches the tap; `homebrew-core` submission deferred to v0.5+ behind real adoption signal. Risks: (1) tap fragmentation if we never graduate to core; (2) core review can take weeks. | 🟡 Later | 2026-04-27 Block E recon |
-
-**Watch-only (filed in brainstorm, not in ROADMAP):**
-mkdocs / Docusaurus / VitePress / Astro Starlight plugins — YAGNI
-until first user asks. "FALC-ready" badge program parked behind F115
-(needs Inclusion Europe coordination first; do not squat on their
-logo). Hacker News "Show HN" parked until at least one of
-F110 / F111 / F113 has landed an anchor. Co-authored academic letter
-parked indefinitely (long ROI, low control). Public-sector
-procurement frameworks (UGAP) parked — way too early for the project.
-
-### Research track
-
-Bets that don't commit to a ship date. Tracked to ensure they're not
-forgotten.
-
-| ID | Item | Priority | Origin |
-|---|---|---|---|
-| F64 | `structure.paragraph-landmark-density` — reprise-points for attention-fragile readers. Research needed to define "landmark" (bold / italic / headers / list-starts / code spans?). | 🟢 Speculative | Rule-system-growth brainstorm (2026-04-20) |
-| F70 | `structure.lede-buried` — journalistic inverted-pyramid check. Strong candidate for a future `lucid-lint-journalism` plugin rather than core. | 🟢 Speculative | Rule-system-growth brainstorm (2026-04-20) |
-| F74 | Rule-discovery corpus project — mine writer-heavy git histories for patterns that authors repeatedly rewrite. Source of evidence-grounded rule proposals. Intern / student project scale. | 🟢 Speculative | Rule-system-growth brainstorm (2026-04-20) |
-
-Additional research directions captured for posterity but not yet ID'd:
-
-- **Reader-model scoring** — tiny local model predicts processing time
-  and accuracy per paragraph; output is a cognitive-load heatmap.
-  Deterministic at inference, data-hungry at training.
-- **TTS / screen-reader prosody** rules — detect prosody breakdown
-  (mid-sentence acronyms, awkward punctuation cadence). Needs a TTS
-  corpus.
-- **Cross-document terminology drift** — same concept named three ways
-  across a corpus ("user" / "customer" / "client"). Requires
-  multi-file analysis infrastructure; performance implications.
-- **Eye-tracking corpus collaboration** — partnership with a reading
-  lab to ground thresholds in behavioural data.
-- **LSP server** — live diagnostics in editors; same core, different
-  frontend.
-- **`--fix` / quickfix suggestions** — safe rules only (e.g.
-  `structure.long-enumeration` → concrete list skeleton). Controversial for
-  prose; needs guardrails.
-- **`lucid-lint baseline`** — record per-project medians; rules flag
-  regressions rather than absolutes (ESLint-style).
-- **Profile composition** (`extends = "falc"`) — reduce duplication
-  across projects.
-- **Community rule-pack registry** — cargo-style publication of domain
-  packs (medical, legal, edu, journalism).
-- **`lucid-lint-style` plugin** — adverb overuse, show-don't-tell, and
-  other aesthetic rules excluded from core by design.
-- **`lucid-lint-a11y` plugin** — alternative home for `a11y-markup`-
-  tagged rules if the tag proves insufficient to separate them from
-  prose rules.
-
----
-
-## v0.4 — horizon (bets, not commitments)
-
-Routed 2026-04-24 in `.personal/brainstorm/20260424-next-cycles.md`.
-Each bet lists the **signal that unlocks it**, so horizon items don't
-drift into Must by tenure alone. No commitments; this is "what could
-be true in ~6 months if 0.2 and 0.3 land cleanly".
-
-| Bet | Unlock signal |
-|---|---|
-| F16 — `lucid-lint-llm` plugin | ≥ 2 concrete LLM-as-Judge rules designed on paper; deterministic-core base stable enough that non-determinism is a clear opt-in |
-| F5 / F6 / F7 / F8 — alternative formats (AsciiDoc / HTML / .docx / pandoc bridge) | External user requests; pick the single format with most pull and ship it alone, not the set |
-| F85 + F86 — fixture coverage maps + auto-discovery | Referential has stabilised (F84 part 2 done) and rule set stops churning |
-| F63 — vocabulary-rarity | Lexique.org + COCA frequency lexicons built and licence-cleared |
-| F65 – F69 — remaining condition-tag rules | F46 / F49 / F51 / F53 / F57 validated in the wild at 0.3 |
-| F38 — section-level scoring | Document + project level proven; users ask "which H2 is the problem?" |
-| F41 — reading-time unit | Validated heuristic exists; companion metrics (comfort, fatigue, understandability) defined |
-| F12 — score-evolution dashboard | CI users explicitly ask for trend view (not delta — delta is F73-dx / `--compare`) |
-| F76 — interop suppression (if not shipped in 0.3) | A second rule joins `deeply-nested-lists` as a markdownlint overlap |
-| F74 — rule-discovery corpus mining | Student / intern resource available; separate research track |
-| LSP server | Editor demand visible (Cursor / VSCode issues); would change the deployment story |
-| F70 / F64 — research-track rules | Only if someone codes them for fun |
-| **F101 — top 3 items from first-10-external-users feedback (TBD)** | 0.2.0 ships and ≥ 10 non-maintainer users exist — placeholder reserved so the horizon isn't 100 % maintainer bets (renumbered from F98 post-collision with stream-2 cargo-mutants) |
-
-**Deliberately off the 0.4 list:**
-
-- F39 / F40 letter grade + traffic light — routed to 0.3 Should; if
-  they slip they go to 0.3.x, not 0.4.
-- Full F29 numeric codes — parked until a rename actually happens.
-- F2, F3 speculative rule refinements — stay speculative until a
-  concrete dogfood case surfaces.
-- F17 per-family sub-scores — category sub-scores (F14) already ship;
-  unclear what "family" adds beyond that.
+| Status | Feature | Notes |
+|---|---|---|
+| ✅ | Minimal inline-disable | `<!-- lucid-lint disable-next-line <rule-id> -->` for Markdown inputs, single rule id, optional reason. See [RULES.md → Suppressing diagnostics](RULES.md#suppressing-diagnostics). Block form, config ignores, file-level scope and required `reason=` are tracked as F18–F21 below. |
+| ✅ | Accessibility page in the docs | `docs/src/accessibility.md` covers the WCAG 2.2 AAA bar, the reading-preferences control, typography credits (Atkinson Hyperlegible Next — Braille Institute; OpenDyslexic — Abelardo Gonzalez; Literata — TypeTogether), keyboard shortcuts, and how the site dogfoods the project's mission. Linked from the sidebar and the footer. |
 
 ---
 
