@@ -681,13 +681,13 @@ html[lang="fr"] .chapter li.part-title:not(:has(+ li.chapter-item span > a[href^
   border-color: var(--links);
   color: var(--links);
 }
-.reading-demo__chip[aria-checked="true"] {
+.reading-demo__chip[aria-pressed="true"] {
   background: var(--links);
   color: var(--bg);
   border-color: var(--links);
   cursor: default;
 }
-.reading-demo__chip[aria-checked="true"] .reading-demo__default {
+.reading-demo__chip[aria-pressed="true"] .reading-demo__default {
   background: var(--bg);
   color: var(--lucid-fog);
 }

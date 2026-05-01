@@ -337,7 +337,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   unreachable in normal flow; initial values overwritten by the
   first slide step) — documented in the F108 / F109 ROADMAP rows.
 
+### Fixed
+
+- **Reading-demonstrator chips now use button-toggle semantics
+  (F35b).** The chips on the Introduction (EN + FR) page declared
+  `role="radiogroup"` / `role="radio"` / `aria-checked`, but the
+  JavaScript only bound `click` handlers — arrow-key traversal,
+  required by the radio-group ARIA contract, was missing. Switched
+  to plain `<button>` elements with `aria-pressed` (the chips are
+  preset toggles, not radios), updated `lucid-layout.css` selectors
+  from `[aria-checked="true"]` to `[aria-pressed="true"]`, and
+  updated `lucid-navigation.js` to set `aria-pressed` on chip
+  selection. Drops a P2 finding from the 2026-04-22 F35 audit.
+
 ### Changed
+
+- **F35c closed as audit false-positive.** The 2026-04-22 F35 audit
+  flagged `.lucid-stance__idea` as losing its colour tint under
+  `prefers-reduced-motion`. Re-audit on 2026-05-01 confirmed no
+  reduced-motion rule touches the tint: the global reset zeroes
+  animation/transition durations only, and the only rule that
+  strips `background-color` is `@media (forced-colors: active)`,
+  which is intentional (Windows High Contrast users get the OS
+  palette). The original audit conflated `forced-colors: active`
+  with `prefers-reduced-motion: reduce`. No code change; ROADMAP
+  entry and accessibility known-limitation bullet updated.
 
 - **`structure.line-length-wide` is now author-break-aware.** The rule
   used to fire on any paragraph whose joined text exceeded the
