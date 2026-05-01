@@ -41,13 +41,13 @@ Acceptable commit shapes:
 
 Five properties to optimise for, in roughly this order:
 
-| Property | One-liner | Smell when violated |
-|---|---|---|
-| **Composable** | Plays well with others; small surface, no surprises. | "I have to mock half the world to test this." |
-| **Unix philosophy** | Does one thing well. | Module/trait with `and` in its purpose statement. |
-| **Predictable** | Behaves as expected; no hidden state, no spooky action. | "Works on my machine" / order-dependent tests. |
-| **Idiomatic** | Reads like the language and the codebase. | Reviewer says "this is clever" with a sigh. |
-| **Domain-based** | Names match the user's vocabulary. | Generic `Manager`/`Helper`/`Util` names. |
+| Property            | One-liner                                               | Smell when violated                               |
+| ------------------- | ------------------------------------------------------- | ------------------------------------------------- |
+| **Composable**      | Plays well with others; small surface, no surprises.    | "I have to mock half the world to test this."     |
+| **Unix philosophy** | Does one thing well.                                    | Module/trait with `and` in its purpose statement. |
+| **Predictable**     | Behaves as expected; no hidden state, no spooky action. | "Works on my machine" / order-dependent tests.    |
+| **Idiomatic**       | Reads like the language and the codebase.               | Reviewer says "this is clever" with a sigh.       |
+| **Domain-based**    | Names match the user's vocabulary.                      | Generic `Manager`/`Helper`/`Util` names.          |
 
 ### C — Composable
 
@@ -156,11 +156,36 @@ The standard Red → Green → Refactor loop, with a deliberate **Reflect** beat
    ┌──────────┐
    │ REFLECT  │   Pause. Ask:
    │          │     • What did this cycle teach me?
-   │          │     • What surprised me?
-   │          │     • Is the *next* test on my list still the right one?
+   │          │     • What surprised me (red took longer? green was
+   │          │       trivial? refactor revealed a missing concept)?
+   │          │     • Is the *next* test on my list still the right
+   │          │       one, or did this cycle change the plan?
+   │          │     • Is there a test I should retire because it now
+   │          │       overlaps with a stronger one?
+   │          │     • Did I learn a domain rule worth pinning in
+   │          │       another test, separate from the one I just
+   │          │       wrote?
    │          │   Update the test list. Then loop.
    └────┬─────┘
+        │
+        ▼
+       (next test)
 ```
+
+Reflect rules:
+
+- **Reflect is short.** A minute, sometimes thirty seconds. If it becomes a meeting, do it asynchronously between cycles.
+- **Reflect updates the plan, not the code.** If reflection reveals code that should change, that's the *next* RED test, not an edit you smuggle into the current cycle.
+- **Reflect after Green-but-no-Refactor cycles too.** "There was nothing to clean" is itself a signal — either the design is good or you're not looking hard enough.
+- **Always surface findings to the user with a recommendation.** Every reflection that produces a finding (a new test worth pinning, a surprise that suggests a missing concept, a smell you noticed) gets a one-line decision prompt: *"apply now / add to today / add to the roadmap / forget it"*. Do not silently carry findings forward and do not silently apply them.
+
+  Recommend the best move per the principles, and say *why* in one short clause. Heuristics:
+  - **Apply now** — the finding closes a still-open hole from the cycle just finished, the fix is small, and skipping it would leave the work half-done. (e.g. forward contract test landed → reverse test is ~30 LOC → apply now closes the lesson.)
+  - **Add to today** — same-session work, but it would derail the current task; better as the next discrete cycle.
+  - **Add to the roadmap** — useful but not on the critical path; capturing it here so it's not lost.
+  - **Forget it** — speculative, low-leverage, or you're not sure it's real. Recording every passing thought is its own debt.
+
+  Default leans toward *apply now* when the finding is small and directly tied to the cycle that surfaced it (Tidy First: keep the diff coherent). Lean toward *roadmap* when the finding is larger than the cycle it interrupted (CUPID-Composable: don't bundle unrelated work).
 
 **Testing in `lucid-lint`**:
 
