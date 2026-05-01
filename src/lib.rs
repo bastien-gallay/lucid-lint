@@ -3,6 +3,16 @@
 //! A cognitive accessibility linter for prose. Built on cognitive load research.
 //! Bilingual EN/FR. CI-native.
 //!
+//! **User documentation lives outside docs.rs:**
+//!
+//! - 📖 **Guide & rules reference** — <https://bastien-gallay.github.io/lucid-lint>
+//! - 📋 **Rule catalogue** — <https://github.com/bastien-gallay/lucid-lint/blob/main/RULES.md>
+//! - 🛠 **Source & issues** — <https://github.com/bastien-gallay/lucid-lint>
+//!
+//! This page (docs.rs) documents the Rust API for embedding `lucid-lint` as a
+//! library. For CLI usage, configuration profiles, and the rule taxonomy, follow
+//! the links above.
+//!
 //! ## Quick overview
 //!
 //! - [`config`] — profiles and rule configuration

@@ -436,6 +436,17 @@ below close the remaining rough edges.
 |---|---|---|---|
 | F4 | `code-block-without-lang` rule | 🟡 Later | Rule 8 dropped from v0.1, candidate for `lucid-lint-docs` plugin |
 
+### Docs.rs / API reference polish
+
+Polish items for the auto-generated rustdoc surface at <https://docs.rs/lucid-lint>. The crate-level banner pointing readers to the mdBook + repo + RULES.md was added 2026-05-01 (`src/lib.rs`); module-level `//!` headers are already in place and `#![warn(missing_docs)]` is satisfied. Items below are deferred extras.
+
+| ID | Item | Priority | Origin |
+|---|---|---|---|
+| F129 | `[package.metadata.docs.rs]` block in `Cargo.toml`. Pin the toolchain and feature set docs.rs builds with; add `rustdoc-args = ["--cfg", "docsrs"]` so any future feature-gated items can carry `#[cfg_attr(docsrs, doc(cfg(feature = "x")))]` and render the "available with feature X" badge. Cheap, lands the day a real feature flag is introduced. | 🟢 Speculative (0.2.x or 0.3) | 2026-05-01 docs.rs polish discussion |
+| F130 | Logo + favicon on docs.rs via `#![doc(html_logo_url = "…")]` and `#![doc(html_favicon_url = "…")]` at crate root. Reuses an asset hosted under the repo's raw URL. Tiny visual identity win on the docs.rs landing page. | 🟢 Speculative (0.2.x) | 2026-05-01 docs.rs polish discussion |
+| F131 | One runnable doctest per major entry point (`Engine::with_profile`, `Engine::lint_str`, `Report` field access, key `Profile` variants). `///` blocks render as code samples on docs.rs *and* run under `cargo test --doc`, so they cannot rot. ~5 lines each. Lifts the API page from "list of names" to self-explanatory reference. | 🟡 Later (0.3) | 2026-05-01 docs.rs polish discussion |
+| F132 | Public-API audit with `cargo public-api`: surface candidates that should carry `#[doc(hidden)]` (re-exports for macros, internal helpers leaked via `pub`) so the rustdoc index reflects the *intended* surface, not the *current* surface. Pair with a CI gate later if the surface becomes load-bearing for SemVer. | 🟡 Later (0.3) | 2026-05-01 docs.rs polish discussion |
+
 ### Docs site — bilingual
 
 | ID | Item | Priority | Origin |
