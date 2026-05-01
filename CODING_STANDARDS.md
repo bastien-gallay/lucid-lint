@@ -1,10 +1,53 @@
 # Coding Standards
 
-This document describes the design principles and code conventions applied in `lucid-lint`. The guidance here exists to shape contributions and to keep the codebase coherent as it grows.
+This file is the working agreement for code in this repo. It is meant to be re-read on a slow day, not skimmed once. Four pillars, in the order you usually apply them:
 
-## Design principles
+1. **Tidy First** — separate behaviour changes from clean-ups.
+2. **CUPID & YAGNI** — properties to aim for in design and refactoring.
+3. **TDD (Red → Green → Refactor → Reflect)** — the loop that keeps the above honest.
+4. **Clean Code** — local taste rules that survive automation.
 
-The house framework is **CUPID** (Composable, Unix philosophy, Predictable, Idiomatic, Domain-based — Dan North's five properties of "joyful" code). Five properties, one anti-speculation rule.
+Repo-specific rules in `AGENTS.md` take precedence when they collide.
+
+---
+
+## 1. Tidy First (Kent Beck)
+
+> *Make the change easy, then make the easy change.*
+
+Behaviour changes and structural changes are **two different commits**.
+
+- **Tidying** — renames, extractions, dead-code removal, reformatting, splitting a long function, adding a missing test that pins existing behaviour. Never alters observable output.
+- **Behaviour change** — the actual feature, fix, or contract change.
+
+Rules of thumb:
+
+- If the diff to add a feature feels too big, stop. Tidy the surrounding code first (in its own commit), then come back. The feature commit shrinks.
+- Tests that pin existing behaviour are **Must-have**, not Could-have. Land them *before* the behaviour change. The point of pinning is to make the behaviour change reviewable as a small, intentional diff.
+- If a tidy ends up changing observable behaviour, it wasn't a tidy. Revert and split.
+
+Acceptable commit shapes:
+
+```text
+✅  refactor(rules): extract check_bounds helper        (tidy)
+    feat(rules): add structure.sentence-too-long        (behaviour)
+
+❌  feat(rules): add sentence-too-long + cleanup
+```
+
+---
+
+## 2. CUPID & YAGNI
+
+Five properties to optimise for, in roughly this order:
+
+| Property | One-liner | Smell when violated |
+|---|---|---|
+| **Composable** | Plays well with others; small surface, no surprises. | "I have to mock half the world to test this." |
+| **Unix philosophy** | Does one thing well. | Module/trait with `and` in its purpose statement. |
+| **Predictable** | Behaves as expected; no hidden state, no spooky action. | "Works on my machine" / order-dependent tests. |
+| **Idiomatic** | Reads like the language and the codebase. | Reviewer says "this is clever" with a sigh. |
+| **Domain-based** | Names match the user's vocabulary. | Generic `Manager`/`Helper`/`Util` names. |
 
 ### C — Composable
 
@@ -83,43 +126,74 @@ CUPID describes what good code *is*; YAGNI protects against building what you do
 
 When a refactor toward CUPID would require speculative work, stop and wait for the second use case.
 
-## Code conventions
+---
 
-### Module layout
+## 3. TDD with a fourth step — Reflect
 
+The standard Red → Green → Refactor loop, with a deliberate **Reflect** beat at the end of each cycle. The reflect step is what keeps the loop from grinding out lots of small green tests that don't add up to a coherent design.
+
+```text
+   ┌──────────┐
+   │   RED    │   Write the smallest failing test that names the
+   │          │   behaviour you want. Run it. Confirm it fails for
+   │          │   the right reason (not a typo, not an import).
+   └────┬─────┘
+        │
+        ▼
+   ┌──────────┐
+   │  GREEN   │   Write the least code that makes the test pass.
+   │          │   Ugly is fine here. Don't generalise yet.
+   └────┬─────┘
+        │
+        ▼
+   ┌──────────┐
+   │ REFACTOR │   With the test green, clean up — names, duplication,
+   │          │   shape. Tests stay green between every keystroke.
+   │          │   This is a TIDY (see §1); commit it separately.
+   └────┬─────┘
+        │
+        ▼
+   ┌──────────┐
+   │ REFLECT  │   Pause. Ask:
+   │          │     • What did this cycle teach me?
+   │          │     • What surprised me?
+   │          │     • Is the *next* test on my list still the right one?
+   │          │   Update the test list. Then loop.
+   └────┬─────┘
 ```
-src/
-├── lib.rs                  # Library crate root
-├── main.rs                 # Binary crate entry point
-├── cli.rs                  # CLI argument parsing
-├── config/                 # Configuration loading and profiles
-├── parser/                 # Input parsing (Markdown, plain text)
-├── language/               # Language detection and language-specific data
-├── rules/                  # Individual rule implementations
-│   ├── mod.rs              # Rule registry and trait
-│   └── <rule_name>.rs      # One file per rule
-└── output/                 # Output formatters (TTY, JSON, SARIF)
-```
 
-### Naming
+**Testing in `lucid-lint`**:
 
-- Types: `PascalCase`
-- Functions and variables: `snake_case`
-- Constants: `SCREAMING_SNAKE_CASE`
-- Rule IDs: `kebab-case` (`structure.sentence-too-long`)
-- Files: `snake_case.rs`
+- **Unit tests** live in the same file, under `#[cfg(test)] mod tests`. Every rule needs at least 3: positive case, negative case, edge case.
+- **Integration tests** live in `tests/`.
+- **Snapshot tests** use `insta` and live alongside their target. Every rule has at least 1 snapshot test. Parser logic has snapshot tests for representative Markdown features.
+- **Fixtures** live in `tests/corpus/{en,fr}/`.
 
-### Error handling
+---
 
-- Use `thiserror` for library error types.
-- Use `anyhow` in binary code for terminal error handling.
-- Never `unwrap()` or `expect()` in library code unless a panic is genuinely unreachable and commented.
+## 4. Clean Code
 
-### Documentation
+Local taste rules. None of these are absolute; they exist to be broken *on purpose*, not by accident.
 
-- Every public item has a doc comment.
-- Doc comments start with a one-line summary, followed by details and examples.
-- Link to related items with intra-doc links.
+### Names
+
+- A name should let a reader skip the implementation. If they have to read the body to understand the name, rename it.
+- Domain words beat generic ones.
+- Boolean names read as predicates: `is_stale`, `has_today`, `should_carry`. Not `flag`, not `status` (unless it's an enum).
+- Types: `PascalCase`, Functions/vars: `snake_case`, Constants: `SCREAMING_SNAKE_CASE`, Rule IDs: `kebab-case`, Files: `snake_case.rs`.
+
+### Functions
+
+- One purpose per function. If you'd need "and" to describe it, split.
+- Short by default — long when the alternative is a tangle of helpers no one will read in order.
+- Arguments: 0–3 is fine; 4+ wants a struct or builder pattern.
+- No flag arguments that change *what* the function does. `do(x, dry_run: bool)` is fine (toggles a side-effect); `do(x, mode: Mode)` is usually two functions.
+
+### Comments & Documentation
+
+- Default to **no inline comments**. Code says *what*; commit messages and PR descriptions say *why*.
+- Write an inline comment only when the *why* is non-obvious from the code: a hidden constraint, a surprising invariant, a workaround for a specific bug.
+- Every public item has a doc comment (starting with a one-line summary, followed by details and examples, using intra-doc links).
 
 ```rust
 /// Configuration for a single lint rule.
@@ -127,39 +201,19 @@ src/
 /// Rules are configured via [`RuleConfig`], which is typically loaded
 /// from a [`Profile`] preset and optionally overridden by the user's
 /// `lucid-lint.toml` file.
-///
-/// # Examples
-///
-/// ```
-/// use lucid_lint::config::{RuleConfig, Profile};
-/// let config = RuleConfig::for_profile(Profile::Public);
-/// ```
 pub struct RuleConfig {
     // ...
 }
 ```
 
-### Testing
+### Errors
 
-- **Unit tests** live in the same file, under `#[cfg(test)] mod tests`.
-- **Integration tests** live in `tests/`.
-- **Snapshot tests** use `insta` and live alongside their target.
-- **Fixtures** live in `tests/corpus/{en,fr}/`.
+- Validate at boundaries (CLI args, file I/O). Trust internal callers.
+- Fail loudly and early. A silent fallback is a future bug report.
+- Exit codes matter for the CLI: `0` ok, `1` operational failure, `2` user error.
+- Use `thiserror` for library error types, and `anyhow` in binary code for terminal error handling.
 
-Aim for:
-
-- Every rule has at least 3 unit tests: positive case, negative case, edge case.
-- Every rule has at least 1 snapshot test.
-- Parser logic has snapshot tests for representative Markdown features.
-
-### Clippy
-
-We run `clippy` with `-W clippy::pedantic -W clippy::nursery`, then selectively allow noisy lints in `clippy.toml` or at the item level.
-
-Goals:
-
-- Prefer compiler feedback over stylistic nitpicks.
-- Not every `pedantic` warning needs to be fixed, but every one should be considered.
+---
 
 ## Commit style
 
@@ -185,18 +239,42 @@ Types:
 
 Breaking changes include `BREAKING CHANGE:` in the footer or `!` after the type.
 
-## Toolchain policy
+---
 
-- `rust-toolchain.toml` pins `channel = "stable"`. Do NOT pin a specific
-  Rust minor version here — a frozen pin silently ages and third-party
-  actions (e.g. `rustsec/audit-check`, `peaceiris/actions-mdbook` when
-  running `cargo doc`) will fail as their ecosystem moves forward.
-- `Cargo.toml` declares `rust-version` as the MSRV. The CI `msrv` job
-  MUST match this exact value. Bumping MSRV requires a dedicated commit
-  updating both places together.
-- Jobs that invoke `cargo` in CI MUST install a toolchain explicitly via
-  `dtolnay/rust-toolchain@master`. Don't rely on the runner's
-  preinstalled Rust — it drifts without warning.
+## Toolchain & Layout
+
+### Module layout
+
+```
+src/
+├── lib.rs                  # Library crate root
+├── main.rs                 # Binary crate entry point
+├── cli.rs                  # CLI argument parsing
+├── config/                 # Configuration loading and profiles
+├── parser/                 # Input parsing (Markdown, plain text)
+├── language/               # Language detection and language-specific data
+├── rules/                  # Individual rule implementations
+│   ├── mod.rs              # Rule registry and trait
+│   └── <rule_name>.rs      # One file per rule
+└── output/                 # Output formatters (TTY, JSON, SARIF)
+```
+
+### Toolchain policy
+
+- `rust-toolchain.toml` pins `channel = "stable"`. Do NOT pin a specific Rust minor version here.
+- `Cargo.toml` declares `rust-version` as the MSRV. The CI `msrv` job MUST match this exact value. Bumping MSRV requires a dedicated commit updating both places together.
+- Jobs that invoke `cargo` in CI MUST install a toolchain explicitly via `dtolnay/rust-toolchain@master`.
+
+### Clippy
+
+We run `clippy` with `-W clippy::pedantic -W clippy::nursery`, then selectively allow noisy lints in `clippy.toml` or at the item level.
+
+Goals:
+
+- Prefer compiler feedback over stylistic nitpicks.
+- Not every `pedantic` warning needs to be fixed, but every one should be considered.
+
+---
 
 ## Review mindset
 
