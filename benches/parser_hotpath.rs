@@ -15,7 +15,9 @@
 
 #![allow(missing_docs)]
 
-use criterion::{black_box, criterion_group, criterion_main, Criterion, Throughput};
+use std::hint::black_box;
+
+use criterion::{criterion_group, criterion_main, Criterion, Throughput};
 
 use lucid_lint::parser::{parse_markdown, split_sentences};
 use lucid_lint::types::SourceFile;
