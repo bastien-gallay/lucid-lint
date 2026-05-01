@@ -42,12 +42,19 @@ entre parenthèses équilibrées) — les deux décomptes sont agnostiques
 
 ## Faux positifs connus
 
-Les listes de tokens parenthésées `(A, B, C, …)` sont désormais
-décomptées (première tranche de F22). Les faux positifs restants
-viennent surtout des listes séparées par virgules avec des items de
-3 mots et plus (`as long as`, `as soon as`) et des listes non-Oxford
-ou fermées par « plus » ; ils sont suivis sous **[F22](../../roadmap.md)**
-dans la [feuille de route](../../roadmap.md) pour une tranche v0.3.
+<aside class="since-version" aria-label="Nouveauté en v0.2.x">
+
+<span class="since-version__tag">Depuis v0.2.x</span> — Les listes de
+tokens parenthésées `(A, B, C, …)` ne comptent plus dans le total de
+virgules ([F22](../../roadmap.md), première tranche).
+
+</aside>
+
+Les faux positifs restants viennent surtout des listes séparées par
+virgules avec des items de 3 mots et plus (`as long as`, `as soon as`)
+et des listes non-Oxford ou fermées par « plus » ; ils sont suivis
+sous **[F22](../../roadmap.md)** dans la [feuille de route](../../roadmap.md)
+pour une tranche v0.3.
 
 ## Neutralisation
 

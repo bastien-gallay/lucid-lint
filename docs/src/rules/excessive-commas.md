@@ -28,7 +28,15 @@ Count commas per sentence, report those above `max_commas`.
 
 ## Known false positives
 
-Parenthesised token lists `(A, B, C, …)` are now discounted (F22 first slice). Remaining false positives mostly come from bare comma-separated lists with 3+-word items (`as long as`, `as soon as`) and non-Oxford or "plus"-closed lists; these are tracked as **[F22](../roadmap.md)** in the [roadmap](../roadmap.md) for a v0.3 slice.
+<aside class="since-version" aria-label="New in v0.2.x">
+
+<span class="since-version__tag">Since v0.2.x</span> — Parenthesised token
+lists `(A, B, C, …)` no longer count toward the comma total
+([F22](../roadmap.md), first slice).
+
+</aside>
+
+Remaining false positives mostly come from bare comma-separated lists with 3+-word items (`as long as`, `as soon as`) and non-Oxford or "plus"-closed lists; these are tracked as **[F22](../roadmap.md)** in the [roadmap](../roadmap.md) for a v0.3 slice.
 
 ## Suppression
 
