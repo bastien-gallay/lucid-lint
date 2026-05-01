@@ -404,6 +404,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Markdown parser — list-item content is now visible to all rules
+  (F129).** A long-standing parser blindspot silently dropped
+  list-item text from every paragraph-level rule (all 17 in v0.1)
+  whenever pulldown-cmark emitted a *tight* list — single bullet, or
+  bullets without separating blank lines. Loose lists (multiple
+  bullets, blank lines between them) wrapped item content in
+  `Tag::Paragraph` events and were visible; tight lists fired text
+  events directly inside `Tag::Item` and the parser only buffered
+  text under `in_heading || in_paragraph`, so the content went into
+  the void. The parser now synthesizes a paragraph for each tight-
+  list item span; loose-list paragraphs continue to flow through the
+  normal path. Both shapes carry a new `Paragraph.from_list_item`
+  flag. `structure.line-length-wide` (per its F126 contract) skips
+  list-item-derived paragraphs because rendered list items wrap in a
+  narrower column than body prose. Discovered while verifying F22's
+  third-tranche dogfood metric: the same plus-closed enumeration in
+  a tight bullet was silent, in a loose bullet fired three rules.
+  Five new parser unit tests pin tight + loose + nested + empty +
+  body-prose contracts. Dogfood impact: ~425 new diagnostics on our
+  own docs (CHANGELOG, ROADMAP, RULES, README, mdBook pages) —
+  every one a real signal the linter was previously missing.
+  Cleanup pass on the new diagnostics tracked separately.
 - **Reading-demonstrator chips now use button-toggle semantics
   (F35b).** The chips on the Introduction (EN + FR) page declared
   `role="radiogroup"` / `role="radio"` / `aria-checked`, but the

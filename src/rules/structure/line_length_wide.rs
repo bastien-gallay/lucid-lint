@@ -95,6 +95,15 @@ impl Rule for LineLengthWide {
         let mut diagnostics = Vec::new();
 
         for (paragraph, section_title) in document.paragraphs_with_section() {
+            // List-item content renders inside a narrower column than
+            // body prose — the body-prose column-width threshold WCAG
+            // 1.4.8 targets does not apply. Skip list-item-derived
+            // paragraphs (since F129; before that the parser silently
+            // dropped tight-list items and this rule was tight-list
+            // blind by accident).
+            if paragraph.from_list_item {
+                continue;
+            }
             // Soft-wrapped Markdown paragraphs collapse to a single logical
             // line at parse time (soft breaks → spaces). Treating that
             // joined text as one giant "line" measures source mechanics,
@@ -278,15 +287,19 @@ mod tests {
 
     #[test]
     fn list_item_text_is_out_of_scope() {
-        // Parser contract (src/parser/markdown.rs): list-item content is
-        // not emitted as a paragraph, so over-length list items are out
-        // of scope by construction. Pin this — a future parser change
-        // that starts emitting list items as paragraphs would need to
-        // revisit how this rule treats them (rendered list items wrap
-        // inside a narrower column than body prose).
+        // List-item content renders inside a narrower column than body
+        // prose; this rule (which targets the body-prose column WCAG
+        // 1.4.8 cares about) skips list-item-derived paragraphs. Since
+        // F129 the parser DOES emit those paragraphs (so other rules
+        // can see them) — the rule's body-prose-only contract is
+        // enforced via `paragraph.from_list_item` instead. Both list
+        // shapes (loose with multiple items, tight with one) must
+        // remain silent for this rule.
         let long = "a".repeat(200);
-        let md = format!("Lead-in paragraph.\n\n- {long}\n- short item\n");
-        assert!(lint_md(&md, Profile::Public).is_empty());
+        let loose_md = format!("Lead-in paragraph.\n\n- {long}\n- short item\n");
+        assert!(lint_md(&loose_md, Profile::Public).is_empty());
+        let tight_md = format!("Lead-in paragraph.\n\n- {long}\n");
+        assert!(lint_md(&tight_md, Profile::Public).is_empty());
     }
 
     #[test]

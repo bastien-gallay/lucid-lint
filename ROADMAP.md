@@ -75,6 +75,7 @@ the authoritative entry in its topic section.
 |---|---|---|
 | F10 | Rules refinement | SMOG / Dale-Chall / Scolarius / `--readability-verbose` |
 | F22 | Rules refinement | v0.3 slice (3–4-word Oxford, non-Oxford, interleaved) |
+| F129 | Architecture | Markdown parser emits paragraphs for tight list items (correctness fix) |
 | F46 | New rules (v0.3) | `lexicon.homophone-density` (slip-flag: FR corpus > 2 d → 0.3.x) |
 | F49 | New rules (v0.3) | `structure.italic-span-long` |
 | F51 | New rules (v0.3) | `structure.number-run` |
@@ -290,6 +291,7 @@ section below.
 | F40 | Traffic-light (🔴🟡🟢) + pass/fail margin in the TTY output — promote when CI users ask for a stronger glance signal than the number alone. | 🟡 Later | F14 `brainstorm/20260420-score-semantics.md` |
 | F41 | Reading-time-seconds as an alternative score unit — ties score to concrete user outcome. Requires validated heuristic + companion metrics (comfort, fatigue, understandability) so the time unit doesn't monopolize the read. | 🟢 Speculative | F14 `brainstorm/20260420-score-semantics.md` |
 | F71 | ✅ Shipped in v0.2 — `ConditionTag` enum (fixed 7-variant ontology: `a11y-markup`, `dyslexia`, `dyscalculia`, `aphasia`, `adhd`, `non-native`, `general`) plus `Rule::condition_tags()` trait method (default `&[General]`). All 17 v0.2 rules are `general`; future tagged rules (F48, F55, F56) opt in by overriding. See [`docs/src/guide/conditions.md`](docs/src/guide/conditions.md). | — | Rule-system-growth brainstorm (2026-04-20) |
+| F129 | **Markdown parser — emit paragraphs for tight list items (correctness fix).** Discovered 2026-05-01 while verifying the F22 third-tranche dogfood metric: the same bullet content that triggers `excessive-commas` / `dense-punctuation-burst` / `readability.score` in a *loose* list (multiple items separated by blank lines) is silent in a *tight* list (single item, or items without separating blank lines). Root cause: `pulldown-cmark` only emits `Tag::Paragraph` events for items in loose lists; tight-list text events fire directly inside `Tag::Item`. The parser at `src/parser/markdown.rs` only buffers text inside heading or paragraph contexts, so tight-list content goes into the void and every paragraph-level rule (all 17 in v0.1) inherits the blindspot. Same pre-existing limitation flagged in F126 for `structure.line-length-wide` — F129 resolves it once for every rule. Fix: synthesize a paragraph for each list-item span when no `Tag::Paragraph` event fires inside it. Expected dogfood impact: many CHANGELOG / release-note / README bullets become newly visible to rules — some genuine new diagnostics, some snapshot updates. | 🔴 Next | F22 third-tranche verification (2026-05-01) |
 | F72 | ✅ Shipped in v0.2 — `[default] conditions = [...]` config field and `--conditions` CLI flag (comma-separated). Filter semantics: rules tagged `general` always run; tagged-only rules run iff their tags intersect the active list. Profiles unchanged; FALC retains its regulatory meaning. See [`docs/src/guide/conditions.md`](docs/src/guide/conditions.md). | — | Rule-system-growth brainstorm (2026-04-20) |
 
 ### Encoding / input handling

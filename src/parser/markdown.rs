@@ -36,7 +36,18 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
     let mut in_heading: Option<HeadingLevel> = None;
     let mut in_paragraph = false;
     let mut in_code = false;
-    let mut in_list_item = false;
+    // Depth of the current list-item context. > 0 while we are between
+    // `Tag::Start(Item)` and the matching `Tag::End(Item)`. Tracked as a
+    // depth (not a bool) so a nested item still counts as "inside an item"
+    // even after its parent's text has emitted a paragraph.
+    let mut list_item_depth: u32 = 0;
+    // Line where the most recent `Tag::Start(Item)` opened, awaiting a
+    // decision on whether pulldown-cmark will emit a `Tag::Paragraph`
+    // wrapper (loose list) or fire content events directly (tight list).
+    // Cleared on the first event after Item start: if it's a Paragraph
+    // start we let pulldown drive; otherwise we synthesize a paragraph
+    // for the item's inline content.
+    let mut pending_item_start: Option<u32> = None;
     let mut buf = String::new();
     let mut paragraph_start_line: u32 = 1;
 
@@ -53,10 +64,36 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
                 directives.push(Directive::new(rule_id, target_line));
             }
         }
+        // Resolve pending tight-list-item paragraph synthesis. In a
+        // loose list pulldown-cmark wraps item content in `Tag::Paragraph`
+        // — the normal paragraph machinery handles it. In a tight list
+        // (single item, or items without separating blank lines) it fires
+        // content events directly inside `Tag::Item`; synthesize a
+        // paragraph so all paragraph-level rules see the content.
+        if let Some(line) = pending_item_start {
+            match &event {
+                Event::Start(Tag::Paragraph | Tag::Item | Tag::List(_))
+                | Event::End(TagEnd::Item | TagEnd::List(_)) => {
+                    // Loose-list (Paragraph), empty item, or sub-list-only
+                    // item. Nothing to synthesize.
+                    pending_item_start = None;
+                },
+                _ => {
+                    // Tight-list path: synthesize a paragraph anchored
+                    // at the item's start line. `from_list_item` is
+                    // derived from `list_item_depth` at finish time.
+                    in_paragraph = true;
+                    paragraph_start_line = line;
+                    buf.clear();
+                    pending_item_start = None;
+                },
+            }
+        }
         match event {
             Event::Start(Tag::Heading { level, .. }) => {
                 finish_paragraph(
                     &mut in_paragraph,
+                    list_item_depth,
                     &mut buf,
                     &mut current_paragraphs,
                     paragraph_start_line,
@@ -87,6 +124,7 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
             Event::End(TagEnd::Paragraph) => {
                 finish_paragraph(
                     &mut in_paragraph,
+                    list_item_depth,
                     &mut buf,
                     &mut current_paragraphs,
                     paragraph_start_line,
@@ -99,17 +137,37 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
                 list_depth = list_depth.saturating_sub(1);
             },
             Event::Start(Tag::Item) => {
-                in_list_item = true;
-                list_items.push(ListItem::new(
-                    list_depth.max(1),
-                    offset_to_line(text, range.start),
-                ));
-                // List items are not treated as paragraphs in v0.1: they don't
-                // contribute to paragraph-level rules. However their text could
-                // still feed sentence-level rules in a future iteration.
+                // Finish any in-flight paragraph (e.g. the parent item's
+                // inline text when a nested list begins) before opening
+                // a fresh item context.
+                finish_paragraph(
+                    &mut in_paragraph,
+                    list_item_depth,
+                    &mut buf,
+                    &mut current_paragraphs,
+                    paragraph_start_line,
+                );
+                list_item_depth = list_item_depth.saturating_add(1);
+                let item_line = offset_to_line(text, range.start);
+                list_items.push(ListItem::new(list_depth.max(1), item_line));
+                // Defer the tight-vs-loose decision to the next event.
+                // See the lookahead block at the top of the for-loop.
+                pending_item_start = Some(item_line);
             },
             Event::End(TagEnd::Item) => {
-                in_list_item = false;
+                // Close any synthetic (tight-list) paragraph the item
+                // opened. Loose-list paragraphs were already finished by
+                // their own `Tag::End(Paragraph)`, so this is a no-op
+                // when `in_paragraph` is already false.
+                finish_paragraph(
+                    &mut in_paragraph,
+                    list_item_depth,
+                    &mut buf,
+                    &mut current_paragraphs,
+                    paragraph_start_line,
+                );
+                list_item_depth = list_item_depth.saturating_sub(1);
+                pending_item_start = None;
             },
             Event::Start(Tag::CodeBlock(_)) => {
                 in_code = true;
@@ -173,13 +231,10 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
             _ => {},
         }
     }
-    // `in_list_item` is currently tracked but not yet consumed by a rule;
-    // we keep the flag wired so future list-aware rules can rely on it.
-    let _ = in_list_item;
-
     // Flush any remaining content.
     finish_paragraph(
         &mut in_paragraph,
+        list_item_depth,
         &mut buf,
         &mut current_paragraphs,
         paragraph_start_line,
@@ -314,6 +369,7 @@ fn is_valid_rule_id(s: &str) -> bool {
 
 fn finish_paragraph(
     in_paragraph: &mut bool,
+    list_item_depth: u32,
     buf: &mut String,
     paragraphs: &mut Vec<Paragraph>,
     start_line: u32,
@@ -323,7 +379,12 @@ fn finish_paragraph(
     }
     let text = buf.trim().to_string();
     if !text.is_empty() {
-        paragraphs.push(Paragraph::new(text, start_line));
+        let para = if list_item_depth > 0 {
+            Paragraph::from_list_item(text, start_line)
+        } else {
+            Paragraph::new(text, start_line)
+        };
+        paragraphs.push(para);
     }
     buf.clear();
     *in_paragraph = false;
@@ -579,6 +640,90 @@ mod tests {
                   <!-- lucid-lint-enable -->\n";
         let doc = parse_markdown(md, SourceFile::Anonymous);
         assert!(doc.directives.is_empty());
+    }
+
+    // ---- F129: list-item paragraphs ----
+
+    #[test]
+    fn tight_list_item_emits_a_paragraph() {
+        // Single-bullet (tight) list. Pulldown-cmark fires Text events
+        // directly inside Tag::Item without a wrapping Tag::Paragraph;
+        // the parser must synthesize one so paragraph-level rules see
+        // the content.
+        let md = "- One bullet, five commas: a, b, c, d, e, f.\n";
+        let doc = parse_markdown(md, SourceFile::Anonymous);
+        let paras: Vec<_> = doc
+            .sections
+            .iter()
+            .flat_map(|s| s.paragraphs.iter())
+            .collect();
+        assert_eq!(paras.len(), 1, "got {paras:?}");
+        assert!(paras[0].text.contains("five commas"));
+        assert!(paras[0].from_list_item);
+    }
+
+    #[test]
+    fn loose_list_item_paragraphs_are_marked_from_list_item() {
+        // Two bullets with a blank line between them — pulldown-cmark
+        // wraps each item content in Tag::Paragraph (loose list). The
+        // resulting paragraphs must carry the same `from_list_item`
+        // marker as the synthesized tight ones, so list-aware rules
+        // behave identically across both shapes.
+        let md = "- First item, comma-heavy: a, b, c, d, e.\n\n\
+                  - Second item, also comma-heavy: f, g, h, i, j.\n";
+        let doc = parse_markdown(md, SourceFile::Anonymous);
+        let paras: Vec<_> = doc
+            .sections
+            .iter()
+            .flat_map(|s| s.paragraphs.iter())
+            .collect();
+        assert_eq!(paras.len(), 2);
+        assert!(paras.iter().all(|p| p.from_list_item));
+    }
+
+    #[test]
+    fn body_paragraphs_are_not_marked_from_list_item() {
+        let md = "A regular body paragraph.\n\nAnother one.\n";
+        let doc = parse_markdown(md, SourceFile::Anonymous);
+        let paras: Vec<_> = doc
+            .sections
+            .iter()
+            .flat_map(|s| s.paragraphs.iter())
+            .collect();
+        assert_eq!(paras.len(), 2);
+        assert!(paras.iter().all(|p| !p.from_list_item));
+    }
+
+    #[test]
+    fn nested_list_emits_one_paragraph_per_item() {
+        // Outer item has its own inline text; inner item also has its
+        // own. Each must materialise as its own paragraph (not merged).
+        let md = "- outer item, with three commas: a, b, c.\n  \
+                  - inner item, also three: d, e, f.\n";
+        let doc = parse_markdown(md, SourceFile::Anonymous);
+        let paras: Vec<_> = doc
+            .sections
+            .iter()
+            .flat_map(|s| s.paragraphs.iter())
+            .collect();
+        assert_eq!(paras.len(), 2, "got {paras:?}");
+        assert!(paras.iter().all(|p| p.from_list_item));
+        assert!(paras[0].text.contains("outer item"));
+        assert!(paras[1].text.contains("inner item"));
+    }
+
+    #[test]
+    fn empty_list_item_produces_no_paragraph() {
+        let md = "- \n- still empty\n";
+        let doc = parse_markdown(md, SourceFile::Anonymous);
+        let paras: Vec<_> = doc
+            .sections
+            .iter()
+            .flat_map(|s| s.paragraphs.iter())
+            .collect();
+        // Only the second item carries text.
+        assert_eq!(paras.len(), 1);
+        assert!(paras[0].text.contains("still empty"));
     }
 
     #[test]
