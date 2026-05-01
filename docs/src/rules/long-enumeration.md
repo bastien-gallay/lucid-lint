@@ -16,7 +16,7 @@ Inline prose enumerations that would be clearer as a bulleted list — 5+ comma-
 
 ## Detection
 
-Sequence of `min_items` or more short comma-separated segments ending with `, et` / `, ou` / `, and` / `, or` (Oxford comma optional). Shared detector also informs [`structure.excessive-commas`](./excessive-commas.md).
+Sequence of `min_items` or more short comma-separated segments ending with `, and` / `, or` / `, plus` / `, et` / `, ou` (Oxford comma optional). Shared detector also informs [`structure.excessive-commas`](./excessive-commas.md).
 
 <aside class="since-version" aria-label="New in v0.3">
 
@@ -27,6 +27,18 @@ like `Each rule has a dedicated page below with category, severity,
 default weight, thresholds per profile, examples, and suppression
 guidance.` now surface as bullet-list candidates
 ([F22](../roadmap.md), second slice).
+
+</aside>
+
+<aside class="since-version" aria-label="New in v0.3">
+
+<span class="since-version__tag">Since v0.3</span> — `plus` joins
+`and` / `or` / `et` / `ou` as a recognised list terminator. A list
+like `profile, format, min-score, plus working-directory and args`
+is now seen as a 4-item enumeration (still below the `min_items = 5`
+default — but a longer plus-closed run will surface as a bullet-list
+candidate). Same connector word in EN and FR
+([F22](../roadmap.md), third slice).
 
 </aside>
 

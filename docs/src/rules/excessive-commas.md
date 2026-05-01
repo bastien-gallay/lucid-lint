@@ -18,7 +18,7 @@ Sentences whose comma count exceeds a per-profile ceiling. The comma is the most
 
 Count commas per sentence, report those above `max_commas`.
 
-**Interaction.** When [`structure.long-enumeration`](./long-enumeration.md) fires on the same sentence, this rule is suppressed for that sentence to avoid double-reporting. The shared enumeration detector discounts Oxford-style enumeration commas (3+ short items, plus a relaxed rhythmic pass for 1–4-word items — see "Known false positives" below) and commas inside `(A, B, C, …)` parenthesised token lists (3+ short comma-separated segments inside balanced parens) — all language-agnostic.
+**Interaction.** When [`structure.long-enumeration`](./long-enumeration.md) fires on the same sentence, this rule is suppressed for that sentence to avoid double-reporting. The shared enumeration detector discounts Oxford-style enumeration commas (3+ short items, plus a relaxed rhythmic pass for 1–4-word items, plus runs closed by `plus` as well as `and` / `or` — see "Known false positives" below) and commas inside `(A, B, C, …)` parenthesised token lists (3+ short comma-separated segments inside balanced parens) — all language-agnostic.
 
 ## Parameters
 
@@ -47,7 +47,17 @@ nearest clause boundary ([F22](../roadmap.md), second slice).
 
 </aside>
 
-Remaining false positives mostly come from non-Oxford or "plus"-closed lists and Oxford runs interrupted by an interleaved parenthetical; these are tracked as **[F22](../roadmap.md)** in the [roadmap](../roadmap.md) for further v0.3 sub-slices.
+<aside class="since-version" aria-label="New in v0.3">
+
+<span class="since-version__tag">Since v0.3</span> — `plus` is now
+recognised as an Oxford-style terminator alongside `and` / `or` /
+`et` / `ou`, so a list like `profile, format, min-score, plus
+working-directory and args` is detected and discounted. Same
+connector word in both EN and FR ([F22](../roadmap.md), third slice).
+
+</aside>
+
+Remaining false positives mostly come from bare lists with no terminal connector (e.g. `Rules touched: A, B, C`) and Oxford runs interrupted by an interleaved parenthetical; these are tracked as **[F22](../roadmap.md)** in the [roadmap](../roadmap.md) for further v0.3 sub-slices.
 
 ## Suppression
 

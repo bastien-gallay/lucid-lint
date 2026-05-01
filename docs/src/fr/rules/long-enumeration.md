@@ -1,4 +1,4 @@
-<!-- en-source-sha: 1eb7d48f3dc779a906e509fb196fe187a43d6ce9 -->
+<!-- en-source-sha: 2828290d5979b5b3de13b246a03583d89172866b -->
 # `structure.long-enumeration`
 
 *Énumération trop longue.*
@@ -22,8 +22,8 @@ par un coordinateur (`et`, `ou`, `and`, `or`).
 ## Détection
 
 Séquence de `min_items` segments courts ou plus, séparés par des
-virgules, terminée par `, et` / `, ou` / `, and` / `, or` (virgule
-Oxford facultative). Le détecteur partagé alimente également
+virgules, terminée par `, and` / `, or` / `, plus` / `, et` / `, ou`
+(virgule Oxford facultative). Le détecteur partagé alimente également
 [`structure.excessive-commas`](../../rules/excessive-commas.md).
 
 <aside class="since-version" aria-label="Nouveauté en v0.3">
@@ -36,6 +36,18 @@ frontière de proposition à l'intérieur). Des phrases comme
 défaut, seuils par profil, exemples, et neutralisation.` ressortent
 maintenant comme candidates à une liste à puces
 ([F22](../../roadmap.md), seconde tranche).
+
+</aside>
+
+<aside class="since-version" aria-label="Nouveauté en v0.3">
+
+<span class="since-version__tag">Depuis v0.3</span> — `plus` rejoint
+`and` / `or` / `et` / `ou` parmi les terminateurs reconnus. Une liste
+comme `profile, format, min-score, plus working-directory and args`
+est désormais vue comme une énumération de 4 items (encore en
+dessous du défaut `min_items = 5` — mais une liste plus longue close
+par `plus` ressortira comme candidate à une liste à puces). Même mot
+connecteur en EN et FR ([F22](../../roadmap.md), troisième tranche).
 
 </aside>
 
