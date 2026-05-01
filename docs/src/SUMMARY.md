@@ -62,6 +62,15 @@
 # Version française
 
 - [Introduction](./fr/index.md)
+- [Premiers pas]()
+  - [Installation](./fr/guide/installation.md)
+  - [Démarrage rapide](./fr/guide/quick-start.md)
+  - [Profils](./fr/guide/profiles.md)
+  - [Conditions](./fr/guide/conditions.md)
+  - [Configuration](./fr/guide/configuration.md)
+  - [Score](./fr/guide/scoring.md)
+  - [Neutralisation des diagnostics](./fr/guide/suppression.md)
+  - [Intégration CI](./fr/guide/ci-integration.md)
 - [Référence des règles](./fr/rules/index.md)
   - [Structure]()
     - [`structure.sentence-too-long`](./fr/rules/sentence-too-long.md)

@@ -1,3 +1,4 @@
+<!-- en-source-sha: 1eb7d48f3dc779a906e509fb196fe187a43d6ce9 -->
 # `structure.long-enumeration`
 
 *Énumération trop longue.*
@@ -95,7 +96,7 @@ chaque terme inline s'aligne avec sa puce.
 
 ## Neutralisation
 
-Voir [Neutraliser des diagnostics](../../guide/suppression.md) (page
+Voir [Neutralisation des diagnostics](../../guide/suppression.md) (page
 EN pour l'instant).
 
 ## Références

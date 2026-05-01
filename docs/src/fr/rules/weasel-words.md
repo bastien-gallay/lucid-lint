@@ -1,3 +1,4 @@
+<!-- en-source-sha: a3e9313b09cbd0cb92944f71695df4f1f8ac27dd -->
 # `lexicon.weasel-words`
 
 *Mots évasifs.*
@@ -66,7 +67,7 @@ opter hors de la règle.
 Utiliser `<!-- lucid-lint disable-next-line lexicon.weasel-words -->`
 quand le mot fuyant est intentionnel (citation, référence légitime à
 un sous-ensemble, méta-discussion). Voir
-[Neutraliser des diagnostics](../../guide/suppression.md) (page EN
+[Neutralisation des diagnostics](../../guide/suppression.md) (page EN
 pour l'instant).
 
 ## Références

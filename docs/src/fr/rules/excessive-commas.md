@@ -1,3 +1,4 @@
+<!-- en-source-sha: 1eb7d48f3dc779a906e509fb196fe187a43d6ce9 -->
 # `structure.excessive-commas`
 
 *Virgules en excès.*
@@ -71,7 +72,7 @@ sous-tranches v0.3.
 
 ## Neutralisation
 
-Voir [Neutraliser des diagnostics](../../guide/suppression.md) (page
+Voir [Neutralisation des diagnostics](../../guide/suppression.md) (page
 EN pour l'instant).
 
 ## Voir aussi

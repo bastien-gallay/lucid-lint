@@ -1,3 +1,4 @@
+<!-- en-source-sha: 69f4624777150fb219be85d99459d3e6ac107015 -->
 # `syntax.nested-negation`
 
 *Négations imbriquées.*
@@ -100,7 +101,7 @@ Trois négations (`not`, `nothing`, `never`).
 
 ## Neutralisation
 
-Voir [Neutraliser des diagnostics](../../guide/suppression.md) (page
+Voir [Neutralisation des diagnostics](../../guide/suppression.md) (page
 EN pour l'instant).
 
 ## Voir aussi

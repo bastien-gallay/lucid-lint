@@ -1,3 +1,4 @@
+<!-- en-source-sha: 9e6be0c432915d364d877b302e70186928303088 -->
 # `syntax.conditional-stacking`
 
 *Empilement de conditions.*
@@ -100,7 +101,7 @@ l'instant) quand la lecture temporelle est sans ambiguïté.
 
 ## Neutralisation
 
-Voir [Neutraliser des diagnostics](../../guide/suppression.md) (page
+Voir [Neutralisation des diagnostics](../../guide/suppression.md) (page
 EN pour l'instant).
 
 ## Voir aussi

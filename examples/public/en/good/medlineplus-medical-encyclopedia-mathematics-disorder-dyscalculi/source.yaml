@@ -1,0 +1,29 @@
+url: https://medlineplus.gov/ency/article/001534.htm
+title: MedlinePlus Medical Encyclopedia — Mathematics disorder (dyscalculia)
+type: gov_guide
+polarity: good_example
+languages:
+- en
+redistribution: public_ok
+license_details: US federal government work — public domain in the US (NLM/NIH copyright
+  policy, see Aphasia entry). Encyclopedia content sourced from A.D.A.M. is co-distributed
+  under the same NLM public-access terms.
+markdownable: 4
+rules_relevant:
+- readability.score
+- structure.sentence-too-long
+- lexicon.jargon-undefined
+conditions:
+- dyscalculia
+- non-native
+- general
+bilingual_parallel: false
+fetched_at: '2026-05-01T12:08:43+00:00'
+fetch_method: http_get
+raw_file: raw.html
+raw_sha256: ae905b1a80b39ce75868800aa98d3344ec85862f043251c3a8f583d6153aaa4c
+clean_file: clean.html
+clean_sha256: 7791493f2cc2a21fedb3376f4a8f965cdfcfe831230d32c79308480b92464f98
+md_content_sha256: edfa0cc3bac7ab3e43ec343253c5a108578a559c49f5f111f16261ca97ac1e65
+converted_at: '2026-05-01T12:10:22+00:00'
+md_backend: pandoc

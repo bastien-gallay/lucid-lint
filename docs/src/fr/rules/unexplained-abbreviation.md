@@ -1,3 +1,4 @@
+<!-- en-source-sha: a3e9313b09cbd0cb92944f71695df4f1f8ac27dd -->
 # `lexicon.unexplained-abbreviation`
 
 *Abréviations non explicitées.*
@@ -81,7 +82,7 @@ remplacent.
 
 ## Neutralisation
 
-Voir [Neutraliser des diagnostics](../../guide/suppression.md) (page
+Voir [Neutralisation des diagnostics](../../guide/suppression.md) (page
 EN pour l'instant).
 
 ## Voir aussi

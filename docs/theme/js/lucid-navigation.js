@@ -301,7 +301,7 @@ const LUCID_COPY = {
   // ---- 6. Reading demonstrator -----------------------------
   // Two markups supported:
   //  (a) Legacy 3-card:  .reading-demo__apply[data-apply]   (button per card)
-  //  (b) Chip-selector:  .reading-demo__chip[data-apply]    (radio chips)
+  //  (b) Chip-selector:  .reading-demo__chip[data-apply]    (toggle chips)
   // In (b) the single preview swaps font + label to match the
   // selected chip; persistence + toast behavior is shared.
   (function demonstrator() {
@@ -321,7 +321,7 @@ const LUCID_COPY = {
         localStorage.setItem('lucidLintReading', JSON.stringify(next));
       } catch (e) { /* silent */ }
       legacyButtons.forEach((b) => b.setAttribute('aria-pressed', b.dataset.apply === preset ? 'true' : 'false'));
-      chips.forEach((c) => c.setAttribute('aria-checked', c.dataset.apply === preset ? 'true' : 'false'));
+      chips.forEach((c) => c.setAttribute('aria-pressed', c.dataset.apply === preset ? 'true' : 'false'));
       if (preview) preview.setAttribute('data-demo', preset);
       if (previewLabel) previewLabel.textContent = t.demoFontLabels[preset] || previewLabel.textContent;
       showToast(t.demoUsed + t.demoFontLabels[preset], preset);
@@ -334,7 +334,7 @@ const LUCID_COPY = {
       if (presetName) b.setAttribute('aria-label', t.demoUsePrefix + presetName);
     });
     chips.forEach((c) => {
-      c.setAttribute('aria-checked', c.dataset.apply === current ? 'true' : 'false');
+      c.setAttribute('aria-pressed', c.dataset.apply === current ? 'true' : 'false');
       const presetName = t.demoFontLabels[c.dataset.apply];
       if (presetName) c.setAttribute('aria-label', t.demoUsePrefix + presetName);
     });

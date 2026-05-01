@@ -9,6 +9,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **F25 — FR guide pages, Block C complete (8 / 8).** `docs/src/fr/guide/`
+  now ships all eight guide translations. Slices A + B (earlier today)
+  landed `installation.md`, `quick-start.md`, `profiles.md`, and
+  `suppression.md`. Slice C adds `conditions.md` (fixed ontology of
+  condition tags, filtering rules, FALC interaction note),
+  `configuration.md` (file layout, sections, precedence, discovery,
+  `exclude`, `[[ignore]]`, per-rule overrides), `scoring.md` (hybrid
+  model, five categories, computation, TTY + JSON output, `--min-score`
+  gate, weight tuning, deferred decorations), and `ci-integration.md`
+  (GitHub Actions, pre-commit, reviewdog, SARIF code scanning, exit-code
+  control, score gating). `SUMMARY.md` `Premiers pas` group now lists
+  all eight children. All four new pages are stamped with the F92
+  sub-task `en-source-sha` HTML comment. FR pair-completeness now
+  39 / 42 — only three EN-only pages remain (architecture overview,
+  design-decisions, contributing). Block C now closed.
+- **F92 sub-task — FR content-staleness gate.** Every FR page under
+  `docs/src/fr/` now carries an `en-source-sha` HTML-comment stamp on
+  its first line (`<!-- en-source-sha: 5e24f614… -->`) recording the
+  EN counterpart's commit SHA at translation time. New
+  `scripts/check_lang_staleness.py` walks every FR page, compares the
+  stored SHA to the EN counterpart's current last-touching commit
+  (`git log -n1 --pretty=%H -- <EN counterpart>`), and reports stale
+  pages on stderr. Soft mode (default) exits 0 — wired into PR
+  `ci.yml` and `main` `docs-deploy.yml` as informational. Strict mode
+  (`--strict` / `STRICT=1`) exits 1 on any stale or missing-stamp
+  page, intended as the `main`-branch CI gate once the existing stale
+  backlog clears. Wired as `just docs-lang-staleness`.
+  `scripts/backfill_en_source_sha.py` (one-shot) stamped the 29
+  pre-existing FR pages by resolving each FR page's introducing
+  commit and taking the EN counterpart's last commit at-or-before
+  that point. `AGENTS.md` documents the stamp shape and asymmetric
+  exemptions; `scripts/check_lang_staleness.py::ASYMMETRIC_FR_PAGES`
+  is the single source of truth for FR pages with no EN twin (today:
+  `fr/roadmap.md` only). HTML-comment shape was chosen over YAML
+  front-matter because mdBook does not strip front-matter — `---`
+  renders as `<hr>` and the body as text; HTML comments pass through
+  unchanged. F92 ROADMAP entry extended with the sub-task summary.
 - **GitHub Action composite scaffold (F114, internal).** New
   `action.yml` at the repo root wraps the `cargo-dist` release tarball
   in a composite GitHub Action with five inputs (`version`, `paths`,
@@ -38,6 +75,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   F112: regression fixtures for bare `\r` line endings (classic Mac)
   and zero-width characters (`U+200B/200C/200D`) inside words pin the
   observed behaviour so it can't drift.
+- **F84 part 2 — dyscalculia + aphasia load-bearing slots closed.**
+  Three new `redistribution: public_ok` entries land under
+  `examples/public/`: MedlinePlus Aphasia (~995 words, NLM/NIH public
+  domain), MedlinePlus Medical Encyclopedia "Mathematics disorder /
+  developmental dyscalculia" (~482 words, NLM/NIH public domain), and
+  Mon Parcours Handicap "L'aphasie, un handicap invisible et méconnu"
+  (~886 words, Etalab Licence Ouverte 2.0). All three are first
+  dedicated condition-primary entries — existing entries only carried
+  `aphasia` as a secondary tag, and `dyscalculia` had no source at
+  all. Coverage snapshot in `examples/texts.md`: `condition
+  dyscalculia × EN` lifts to `1` (was `—`), `aphasia × EN` rises to
+  `6` (was `5`), `aphasia × FR` to `2` (was `1`); public total `32 of
+  62` entries (was `29 of 59`). The `gaps:` note in `texts.yaml`
+  rewritten to record both closures with date and rationale.
+
 - **Three US-federal public-domain ADHD sources (F84 part 2 progress).**
   `examples/texts.yaml` gains the NIMH ADHD topic page (`mixed` shape,
   ~780 words), CDC About ADHD (`good`, ~920 words) and CDC Treatment of
@@ -337,8 +389,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   unreachable in normal flow; initial values overwritten by the
   first slide step) — documented in the F108 / F109 ROADMAP rows.
 
+### Fixed
+
+- **Reading-demonstrator chips now use button-toggle semantics
+  (F35b).** The chips on the Introduction (EN + FR) page declared
+  `role="radiogroup"` / `role="radio"` / `aria-checked`, but the
+  JavaScript only bound `click` handlers — arrow-key traversal,
+  required by the radio-group ARIA contract, was missing. Switched
+  to plain `<button>` elements with `aria-pressed` (the chips are
+  preset toggles, not radios), updated `lucid-layout.css` selectors
+  from `[aria-checked="true"]` to `[aria-pressed="true"]`, and
+  updated `lucid-navigation.js` to set `aria-pressed` on chip
+  selection. Drops a P2 finding from the 2026-04-22 F35 audit.
+
 ### Changed
 
+- **F35c closed as audit false-positive.** The 2026-04-22 F35 audit
+  flagged `.lucid-stance__idea` as losing its colour tint under
+  `prefers-reduced-motion`. Re-audit on 2026-05-01 confirmed no
+  reduced-motion rule touches the tint: the global reset zeroes
+  animation/transition durations only, and the only rule that
+  strips `background-color` is `@media (forced-colors: active)`,
+  which is intentional (Windows High Contrast users get the OS
+  palette). The original audit conflated `forced-colors: active`
+  with `prefers-reduced-motion: reduce`. No code change; ROADMAP
+  entry and accessibility known-limitation bullet updated.
 - **`structure.excessive-commas` and `structure.long-enumeration` —
   rhythmic-relaxation pass (F22 v0.3 slice).** The shared enumeration
   detector now accepts Oxford runs whose segments are 1–4 words each,

@@ -157,6 +157,20 @@ docs-build: sync-roadmap
 docs-lang-check: docs-build
     python3 scripts/sync_lang_counterparts.py --check
 
+# Compare each FR page's `en-source-sha` front-matter to the EN
+# counterpart's current last-touching commit (F92 sub-task). Soft by
+# default — reports drift, exits 0. Pass `STRICT=1` for the `main`-branch
+# CI gate (exit 1 on stale or missing-stamp pages).
+[group('docs')]
+docs-lang-staleness:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [[ "${STRICT:-0}" = "1" ]]; then
+        python3 scripts/check_lang_staleness.py --strict
+    else
+        python3 scripts/check_lang_staleness.py
+    fi
+
 # Serve docs locally with hot reload.
 #
 # Pinned to port 3010 instead of mdbook's default 3000 — the latter

@@ -1,3 +1,4 @@
+<!-- en-source-sha: 9594202969efbf001af153da9d37f18bb0786e18 -->
 # `structure.deeply-nested-lists`
 
 *Listes trop imbriquées.*
@@ -52,7 +53,7 @@ des titres.
 
 ## Neutralisation
 
-Voir [Neutraliser des diagnostics](../../guide/suppression.md) (page
+Voir [Neutralisation des diagnostics](../../guide/suppression.md) (page
 EN pour l'instant).
 
 ## Références

@@ -1,3 +1,4 @@
+<!-- en-source-sha: 54981efa05dc99bddc513454e37bef6b8e25f04f -->
 # Références
 
 > Sources académiques, normatives et pratiques qui fondent la conception de `lucid-lint`.

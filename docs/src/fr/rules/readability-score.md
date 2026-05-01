@@ -1,3 +1,4 @@
+<!-- en-source-sha: a3e9313b09cbd0cb92944f71695df4f1f8ac27dd -->
 # `readability.score`
 
 *Score de lisibilité.*

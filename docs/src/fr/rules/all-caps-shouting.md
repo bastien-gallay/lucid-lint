@@ -1,3 +1,4 @@
+<!-- en-source-sha: 8400741a215a89c5e49eeff68e7194d9c643b350 -->
 # `lexicon.all-caps-shouting`
 
 *Majuscules criardes.*
@@ -96,7 +97,7 @@ restructurer la phrase.
 
 ## Neutralisation
 
-Voir [Neutraliser des diagnostics](../../guide/suppression.md) (page
+Voir [Neutralisation des diagnostics](../../guide/suppression.md) (page
 EN pour l'instant).
 
 ## Voir aussi
