@@ -1,3 +1,4 @@
+<!-- en-source-sha: 9594202969efbf001af153da9d37f18bb0786e18 -->
 # `structure.mixed-numeric-format`
 
 *Formats numériques mixtes.*

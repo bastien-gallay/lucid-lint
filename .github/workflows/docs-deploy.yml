@@ -43,6 +43,12 @@ jobs:
         # — F25 backlog, not a gate.
         run: python3 scripts/sync_lang_counterparts.py --check
 
+      - name: FR content-staleness check (F92 sub-task)
+        # Soft on `main` until the 17 already-stale pages from the
+        # 2026-04-27 references-section sweep (F105/F105b) are
+        # reconciled. Flip to `--strict` once the backlog clears.
+        run: python3 scripts/check_lang_staleness.py
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 

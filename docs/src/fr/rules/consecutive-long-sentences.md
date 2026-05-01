@@ -1,3 +1,4 @@
+<!-- en-source-sha: 80459a267e6baf6a1c076a5e5e3d1fb3ddf8d8b8 -->
 # `rhythm.consecutive-long-sentences`
 
 *Phrases longues consécutives.*

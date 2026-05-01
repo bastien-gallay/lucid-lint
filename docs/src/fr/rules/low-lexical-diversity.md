@@ -1,3 +1,4 @@
+<!-- en-source-sha: 8400741a215a89c5e49eeff68e7194d9c643b350 -->
 # `lexicon.low-lexical-diversity`
 
 *Diversité lexicale faible.*

@@ -1,3 +1,4 @@
+<!-- en-source-sha: 3dbafc6a8549974088e2c425e4509e41fc7311ad -->
 # `rhythm.repetitive-connectors`
 
 *Répétition de connecteurs.*

@@ -1,3 +1,4 @@
+<!-- en-source-sha: 7fd1aca2e72b0dbed3b66f6e2f522afe51ebb77d -->
 <svg class="lucid-landing__mark" viewBox="0 0 120 36" aria-hidden="true" focusable="false">
   <title>loupe lucid-lint</title>
   <circle cx="18" cy="18" r="12" fill="none" stroke="currentColor" stroke-width="2.25"/>

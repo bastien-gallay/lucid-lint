@@ -1,3 +1,4 @@
+<!-- en-source-sha: 3afe9b59984a266abbd99dc06f8925aa474bca95 -->
 # `lexicon.unexplained-abbreviation`
 
 *Abréviations non explicitées.*

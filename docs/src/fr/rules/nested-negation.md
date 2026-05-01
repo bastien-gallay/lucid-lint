@@ -1,3 +1,4 @@
+<!-- en-source-sha: 69f4624777150fb219be85d99459d3e6ac107015 -->
 # `syntax.nested-negation`
 
 *Négations imbriquées.*

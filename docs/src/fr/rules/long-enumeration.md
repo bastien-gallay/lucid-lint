@@ -1,3 +1,4 @@
+<!-- en-source-sha: 5e24f614b0378a6ff57d9f497d052361e2cfcec3 -->
 # `structure.long-enumeration`
 
 *Énumération trop longue.*

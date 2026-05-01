@@ -9,6 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **F92 sub-task — FR content-staleness gate.** Every FR page under
+  `docs/src/fr/` now carries an `en-source-sha` HTML-comment stamp on
+  its first line (`<!-- en-source-sha: 5e24f614… -->`) recording the
+  EN counterpart's commit SHA at translation time. New
+  `scripts/check_lang_staleness.py` walks every FR page, compares the
+  stored SHA to the EN counterpart's current last-touching commit
+  (`git log -n1 --pretty=%H -- <EN counterpart>`), and reports stale
+  pages on stderr. Soft mode (default) exits 0 — wired into PR
+  `ci.yml` and `main` `docs-deploy.yml` as informational. Strict mode
+  (`--strict` / `STRICT=1`) exits 1 on any stale or missing-stamp
+  page, intended as the `main`-branch CI gate once the existing stale
+  backlog clears. Wired as `just docs-lang-staleness`.
+  `scripts/backfill_en_source_sha.py` (one-shot) stamped the 29
+  pre-existing FR pages by resolving each FR page's introducing
+  commit and taking the EN counterpart's last commit at-or-before
+  that point. `AGENTS.md` documents the stamp shape and asymmetric
+  exemptions; `scripts/check_lang_staleness.py::ASYMMETRIC_FR_PAGES`
+  is the single source of truth for FR pages with no EN twin (today:
+  `fr/roadmap.md` only). HTML-comment shape was chosen over YAML
+  front-matter because mdBook does not strip front-matter — `---`
+  renders as `<hr>` and the body as text; HTML comments pass through
+  unchanged. F92 ROADMAP entry extended with the sub-task summary.
 - **GitHub Action composite scaffold (F114, internal).** New
   `action.yml` at the repo root wraps the `cargo-dist` release tarball
   in a composite GitHub Action with five inputs (`version`, `paths`,
