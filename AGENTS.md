@@ -127,3 +127,15 @@ Commits and reviews carry identifiers, flags, and logic that fight FALC threshol
 Code blocks, file paths, identifiers, command names, flag names, quoted tool output, and error messages stay verbatim. The profile applies to the prose around them.
 
 This is a soft target, not a lint gate. When a rule would force unclear or misleading phrasing on technical content, break the rule.
+
+### Structuring the reply
+
+Chat replies in this repo are scannable and actionable, not wall-of-text.
+
+- **Always commit to a pick** when offering options. One or two reasons, not a debate. Don't end on a bare "which do you want?".
+- **Visual aids for anything complex.** ASCII diagrams, tables, bold inline emphasis. A table beats three parallel paragraphs.
+- **Long paragraphs become bullets or tables.** Three short bullets read faster than one dense sentence.
+- **Long replies get an emoji-titled section per topic and a one-line TL;DR right before the call to action** (the question or next step). Skip both for short factual answers — don't manufacture a TL;DR for a one-liner.
+- **Code, file paths, identifiers, command names, and quoted output stay verbatim.** The strict profile does not apply to them.
+
+This applies to chat replies only. Commit messages, PR descriptions, and code review stay on the `dev-doc` profile per the table above.

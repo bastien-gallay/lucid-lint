@@ -139,6 +139,7 @@ be true in ~6 months if 0.2 and 0.3 land cleanly".
 | LSP server | Editor demand visible (Cursor / VSCode issues); would change the deployment story |
 | [F70](#f70) / [F64](#f64) — research-track rules | Only if someone codes them for fun |
 | <a id="f101"></a>**[F101](#f101) — top 3 items from first-10-external-users feedback (TBD)** | 0.2.0 ships and ≥ 10 non-maintainer users exist — placeholder reserved so the horizon isn't 100 % maintainer bets (renumbered from [F98](#f98) post-collision with stream-2 cargo-mutants) |
+| <a id="f140"></a>**[F140](#f140) — metaphor / analogy / comparison detection (NLP or LLM plugin).** Cognitive-load grounded: figurative language costs extra inference for tired readers, aphasia, L2 readers, and is a known axis for ASD (currently out of v0.2/v0.3 scope). Belongs in `lucid-lint-nlp` ([F75](#f75)) or `lucid-lint-llm` ([F16](#f16)) — non-deterministic, so plugin-only per prime directive #4. Bilingual-viable concern: idiomatic FR vs EN metaphors don't map; FR + EN paths need separate corpora at proposal time. | Either NLP or LLM plugin scaffolding lands AND a dogfood / external case surfaces a missed metaphor that confused a reader |
 
 **Deliberately off the 0.4 list:**
 
