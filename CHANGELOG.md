@@ -495,6 +495,18 @@ released-version block.
 
 ### Changed
 
+- **[2026-05-02] F92 sub-task fully closed — PR-side staleness gate flipped to `--strict`.**
+  `.github/workflows/ci.yml` now runs `python3 scripts/check_lang_staleness.py
+  --strict` on every PR. Any FR page whose `en-source-sha` stamp lags its EN
+  counterpart's last-touching commit fails the build. Pair-locks F92's
+  filename-parity gate (catches *missing* FR pages) with the sub-task's
+  content-SHA gate (catches *stale* FR pages); both surfaces — `main` (via
+  `docs-deploy.yml`, since 2026-05-01) and PRs (via `ci.yml`, since today) —
+  are now strict-gated. Comment in `ci.yml` updated to reflect the flip.
+  ROADMAP `Status as of` header bumped to 2026-05-02; F92 narrative records
+  the second-surface flip and the sub-task status moves from `🔴 Next` to
+  `✅ Closed 2026-05-02`.
+
 - **[2026-05-01] CHANGELOG and ROADMAP format restructure.** `## [Unreleased]`
   entries now carry an explicit `[YYYY-MM-DD]` date prefix, sorted
   descending within each subsection, so AI tooling and humans can scan
