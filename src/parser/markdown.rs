@@ -484,6 +484,17 @@ fn finish_paragraph(
 /// trailing [`Inline::Text`] node when possible. Keeps the inline tree
 /// from accumulating tiny adjacent text nodes from soft breaks and
 /// multi-event runs.
+///
+/// **Defensive empty-stack early-return.** Callers all gate on
+/// `lazy_inline_active`, which is only ever set true after the first
+/// frame is pushed onto `inline_stack`. The empty-stack early-return
+/// is therefore unreachable under correct usage — but it is *also*
+/// the reason `cargo-mutants` reports the surrounding
+/// `&& lazy_inline_active` guards in callers as survivors: mutating
+/// them to `||` is a no-op precisely because this function falls
+/// through silently. Keeping the defense costs one branch and makes
+/// the function safe to call from any future code path that hasn't
+/// yet established the lazy-build invariant; do not remove it.
 fn push_inline_text(inline_stack: &mut [Vec<Inline>], s: &str) {
     if s.is_empty() {
         return;
