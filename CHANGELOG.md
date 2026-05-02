@@ -15,6 +15,34 @@ released-version block.
 
 ### Added
 
+- **[2026-05-02] F143 — inline AST layer over pulldown-cmark
+  (lazy-build).** New `Inline` enum and `EmphasisSpan` struct on
+  `crate::parser`, plus a `Paragraph.inline: Vec<Inline>` field
+  populated during the existing Markdown event walk. The variant set
+  is intentionally narrow (`Text` + `Emphasis` only) — `Strong`,
+  `Link`, `Code`, footnotes, and task-list markers continue to flatten
+  into `Paragraph.text` until a rule actually needs them.
+  **Lazy-build contract:** `inline.is_empty()` is the canonical "no
+  spans worth modeling" signal; the tree is only constructed when an
+  emphasis event fires inside a paragraph, so emphasis-free paragraphs
+  (the common case in real documents) don't double-allocate against
+  `Paragraph.text`. When non-empty, `flatten(inline) == text`
+  byte-for-byte. Plain-text input keeps an empty inline vec.
+  Substrate-only change: no rule consumes the new field yet; F49
+  (`structure.italic-span-long`, cohort lead) lands on top in a
+  follow-up PR. Decision routed via a parser-substrate brainstorm
+  (`.personal/brainstorm/20260502-parser-substrate-choice.md`) —
+  pulldown-cmark stays the engine (perf-pillar preserved); the new
+  layer is the *domain model* the rules walk.
+  **Pre-merge gate (all green):** 5 proptest properties × 256 cases
+  (flatten invariant, no-emphasis-absence, emphasis subset, position
+  fidelity, plain-text empty inline, plus the lazy-build emptiness
+  contract); 10 `insta` golden snapshots covering EN + FR fixtures
+  including accented-character column counting; 1 mutation-driven
+  regression test pinning the heading-leak contract; bench-gated at
+  +0.34 % on `parse_markdown/en_long` vs the pre-F143 baseline (well
+  under the 5 % gate).
+
 - **[2026-05-02] F139 — experimental rule status substrate.** New
   `Status::{Stable, Experimental}` enum on the `Rule` trait (default
   `Stable`), paired with a `filter_by_experimental` step that drops

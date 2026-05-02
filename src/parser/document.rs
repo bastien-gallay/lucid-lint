@@ -132,6 +132,22 @@ pub struct Paragraph {
     /// instead of re-running [`split_sentences`] per rule.
     pub sentences: Vec<Sentence>,
 
+    /// Typed inline tree for this paragraph (F143 substrate).
+    ///
+    /// **Contract (lazy-build).** This field is **empty** when the
+    /// paragraph contained no emphasis (the common case in real
+    /// documents); rules that want to know "no spans worth modeling
+    /// here" simply check `inline.is_empty()`. When *non-empty*, the
+    /// tree faithfully mirrors [`Self::text`]: recursively flattening
+    /// it (concatenating `Text` payloads + descending into `Emphasis`
+    /// children) reproduces the visible-text string byte-for-byte.
+    /// Empty for plain-text input regardless.
+    ///
+    /// Today only [`Inline::Text`] and [`Inline::Emphasis`] are
+    /// produced — the enum is intentionally narrow until a second
+    /// rule demands more (Strong / Link / Code etc).
+    pub inline: Vec<Inline>,
+
     /// `true` when the paragraph was extracted from a list-item span (tight
     /// or loose). Rules that target body-prose width (e.g.
     /// `structure.line-length-wide`) skip these because a rendered list item
@@ -143,24 +159,82 @@ impl Paragraph {
     /// Create a new body paragraph and split it into sentences.
     #[must_use]
     pub fn new(text: String, start_line: u32) -> Self {
-        Self::with_origin(text, start_line, false)
+        Self::with_origin(text, start_line, false, Vec::new())
     }
 
     /// Create a new paragraph derived from a list-item span.
     #[must_use]
     pub fn from_list_item(text: String, start_line: u32) -> Self {
-        Self::with_origin(text, start_line, true)
+        Self::with_origin(text, start_line, true, Vec::new())
     }
 
-    fn with_origin(text: String, start_line: u32, from_list_item: bool) -> Self {
+    /// Create a new body paragraph with a captured inline tree (F143).
+    #[must_use]
+    pub fn with_inline(text: String, start_line: u32, inline: Vec<Inline>) -> Self {
+        Self::with_origin(text, start_line, false, inline)
+    }
+
+    /// Create a new list-item paragraph with a captured inline tree (F143).
+    #[must_use]
+    pub fn from_list_item_with_inline(text: String, start_line: u32, inline: Vec<Inline>) -> Self {
+        Self::with_origin(text, start_line, true, inline)
+    }
+
+    fn with_origin(
+        text: String,
+        start_line: u32,
+        from_list_item: bool,
+        inline: Vec<Inline>,
+    ) -> Self {
         let sentences = split_sentences(&text, start_line, 1);
         Self {
             text,
             start_line,
             sentences,
+            inline,
             from_list_item,
         }
     }
+}
+
+/// A typed node in the paragraph-level inline tree (F143 substrate).
+///
+/// Captured at parse time from the Markdown event stream so rules that
+/// need *structural* inline information — emphasis-span boundaries,
+/// future strong / link / code spans — can walk a typed model instead
+/// of regex-scanning the flattened paragraph text.
+///
+/// **Variant set is intentionally narrow.** Today only [`Inline::Text`]
+/// and [`Inline::Emphasis`] are produced. Strong, Link, Code, footnotes,
+/// and task-list markers all flatten into [`Inline::Text`] until a rule
+/// actually needs them. Widen the enum *when a second rule demands it*,
+/// not preemptively.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Inline {
+    /// Plain prose text. May contain spaces and authorial newlines
+    /// (from soft / hard breaks) the same way [`Paragraph::text`] does.
+    Text(String),
+    /// An italic / `*…*` / `_…_` span. Carries its own children so
+    /// nested emphasis (e.g. `*foo *bar* baz*`) round-trips faithfully.
+    Emphasis(EmphasisSpan),
+}
+
+/// An emphasis (italic) span captured during parsing (F143).
+///
+/// Position fields point at the *opening* `*` / `_` in the source, so
+/// rules emitting diagnostics on the span can land their squiggle on
+/// the visible delimiter rather than an arbitrary column inside the
+/// paragraph.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct EmphasisSpan {
+    /// Inline children. Recursive so nested emphasis is preserved.
+    pub children: Vec<Inline>,
+
+    /// 1-based source line of the opening delimiter.
+    pub start_line: u32,
+
+    /// 1-based source column of the opening delimiter (within `start_line`).
+    pub start_column: u32,
 }
 
 /// A sentence extracted from a paragraph.

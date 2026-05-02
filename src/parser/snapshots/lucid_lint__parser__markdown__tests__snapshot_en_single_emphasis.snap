@@ -1,0 +1,25 @@
+---
+source: src/parser/markdown.rs
+expression: trees
+---
+[
+    [
+        Text(
+            "Some ",
+        ),
+        Emphasis(
+            EmphasisSpan {
+                children: [
+                    Text(
+                        "italic words",
+                    ),
+                ],
+                start_line: 1,
+                start_column: 6,
+            },
+        ),
+        Text(
+            " in the middle of prose.",
+        ),
+    ],
+]

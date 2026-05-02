@@ -1,0 +1,25 @@
+---
+source: src/parser/markdown.rs
+expression: trees
+---
+[
+    [
+        Text(
+            "bullet with ",
+        ),
+        Emphasis(
+            EmphasisSpan {
+                children: [
+                    Text(
+                        "italic phrase",
+                    ),
+                ],
+                start_line: 1,
+                start_column: 15,
+            },
+        ),
+        Text(
+            " inside.",
+        ),
+    ],
+]

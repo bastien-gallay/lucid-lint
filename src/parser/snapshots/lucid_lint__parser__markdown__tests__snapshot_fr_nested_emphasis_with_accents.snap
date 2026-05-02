@@ -1,0 +1,39 @@
+---
+source: src/parser/markdown.rs
+expression: trees
+---
+[
+    [
+        Text(
+            "Élève ",
+        ),
+        Emphasis(
+            EmphasisSpan {
+                children: [
+                    Text(
+                        "attentif ",
+                    ),
+                    Emphasis(
+                        EmphasisSpan {
+                            children: [
+                                Text(
+                                    "très",
+                                ),
+                            ],
+                            start_line: 1,
+                            start_column: 17,
+                        },
+                    ),
+                    Text(
+                        " concentré",
+                    ),
+                ],
+                start_line: 1,
+                start_column: 7,
+            },
+        ),
+        Text(
+            " ici.",
+        ),
+    ],
+]
