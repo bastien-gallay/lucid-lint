@@ -11,9 +11,9 @@
 //! ([F46](../../../ROADMAP.md#f46) / [F49](../../../ROADMAP.md#f49) /
 //! [F51](../../../ROADMAP.md#f51) / [F53](../../../ROADMAP.md#f53) /
 //! [F57](../../../ROADMAP.md#f57)). Ships as
-//! [`Status::Experimental`](crate::rules::Status::Experimental) in
-//! v0.2.x via the [F139](../../../ROADMAP.md#f139) substrate; flips
-//! to `Stable` at the v0.3 cut.
+//! [`Status::Experimental`] in v0.2.x via the
+//! [F139](../../../ROADMAP.md#f139) substrate; flips to `Stable` at
+//! the v0.3 cut.
 //!
 //! Reads `Paragraph.inline` (the [F143](../../../ROADMAP.md#f143)
 //! inline-AST substrate). The lazy-build contract — empty inline

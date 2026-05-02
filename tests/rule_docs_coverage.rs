@@ -218,6 +218,22 @@ fn changed_rules_appear_in_changelog_unreleased() {
         .lines()
         .filter_map(|path| {
             let p = Path::new(path);
+            // Only Rust sources are rules. Insta snapshot files
+            // (`*.snap` under `snapshots/`) and other non-source
+            // changes in the rules tree must not be parsed as rule
+            // ids — the file stem of a snapshot has the shape
+            // `lucid_lint__rules__structure__<rule>__tests__<test>`,
+            // which would otherwise produce nonsensical "rule ids"
+            // like `lucid-lint--rules--structure--…`.
+            if p.extension().and_then(|e| e.to_str()) != Some("rs") {
+                return None;
+            }
+            // Skip files inside any `snapshots/` directory (defensive:
+            // covers test-side fixtures that happen to live as `.rs`
+            // alongside snapshots).
+            if p.components().any(|c| c.as_os_str() == "snapshots") {
+                return None;
+            }
             let stem = p.file_stem()?.to_str()?;
             if stem == "mod" || stem == "enumeration" {
                 return None;
