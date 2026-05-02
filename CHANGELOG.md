@@ -15,6 +15,27 @@ released-version block.
 
 ### Added
 
+- **[2026-05-02] F49 — `structure.italic-span-long` (experimental,
+  cohort lead).** New rule that flags italic spans whose word count
+  exceeds a configurable threshold. Grounding: British Dyslexia
+  Association style guide — slanted glyphs degrade letter-shape
+  recognition for dyslexic readers, so emphasis should stay short.
+  Ships as `Status::Experimental` (off by default) via the F139
+  substrate; opt in with `--experimental structure.italic-span-long`
+  or `[experimental] enabled = ["structure.italic-span-long"]` in
+  `lucid-lint.toml`. Tagged `dyslexia` (F71): runs only when
+  `--conditions` includes `dyslexia`. Profile thresholds:
+  `dev-doc` 12 / `public` 8 / `falc` 5 words. Consumes the F143
+  inline-AST substrate — first rule on top of it. Diagnostic location
+  points at the opening delimiter so editor squiggles land on the
+  visible `*` / `_`. EN + FR docs pages, full unit-test coverage
+  (multiple emphases, profile thresholds, code-block exclusion,
+  tight-list-item interaction with F129, nested emphasis, FR input,
+  short-circuit on emphasis-free paragraphs via the F143 lazy-build
+  contract), insta snapshot. Cohort lead for the v0.3 condition-tag
+  rules cohort (F46 / F49 / F51 / F53 / F57); flips to `Stable` at
+  the v0.3 cut alongside its siblings.
+
 - **[2026-05-02] F143 — inline AST layer over pulldown-cmark
   (lazy-build).** New `Inline` enum and `EmphasisSpan` struct on
   `crate::parser`, plus a `Paragraph.inline: Vec<Inline>` field

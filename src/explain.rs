@@ -62,6 +62,7 @@ pub(crate) const RULE_DOCS: &[(&str, &str, &str)] = &[
     doc!("structure.deeply-nested-lists", "deeply-nested-lists"),
     doc!("structure.excessive-commas", "excessive-commas"),
     doc!("structure.heading-jump", "heading-jump"),
+    doc!("structure.italic-span-long", "italic-span-long"),
     doc!("structure.line-length-wide", "line-length-wide"),
     doc!("structure.long-enumeration", "long-enumeration"),
     doc!("structure.mixed-numeric-format", "mixed-numeric-format"),

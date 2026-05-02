@@ -39,6 +39,7 @@ pub use structure::deep_subordination::DeepSubordination;
 pub use structure::deeply_nested_lists::DeeplyNestedLists;
 pub use structure::excessive_commas::ExcessiveCommas;
 pub use structure::heading_jump::HeadingJump;
+pub use structure::italic_span_long::ItalicSpanLong;
 pub use structure::line_length_wide::LineLengthWide;
 pub use structure::long_enumeration::LongEnumeration;
 pub use structure::mixed_numeric_format::MixedNumericFormat;
@@ -257,6 +258,9 @@ pub fn default_rules(profile: Profile) -> Vec<Box<dyn Rule>> {
         Box::new(RedundantIntensifier::for_profile(profile)),
         Box::new(DensePunctuationBurst::for_profile(profile)),
         Box::new(ConsonantCluster::for_profile(profile)),
+        // F143-substrate cohort lead. Ships as Status::Experimental
+        // in v0.2.x via F139; flips to Stable at v0.3 cut.
+        Box::new(ItalicSpanLong::for_profile(profile)),
     ]
 }
 
@@ -271,11 +275,20 @@ mod tests {
     }
 
     #[test]
-    fn every_default_rule_is_tagged_general() {
+    fn every_stable_default_rule_is_tagged_general() {
+        // v0.2 baseline: every Stable rule shipped with the General
+        // condition tag (always-active under default conditions).
+        // Experimental rules (F139 cohort, starting with F49) are
+        // condition-tag-targeted and intentionally exempt — they ship
+        // off-by-default via the experimental opt-in and gate further
+        // on the user's active conditions.
         for rule in default_rules(Profile::Public) {
+            if rule.status() == Status::Experimental {
+                continue;
+            }
             assert!(
                 rule.condition_tags().contains(&ConditionTag::General),
-                "rule `{}` is missing the `general` condition tag (v0.2 baseline)",
+                "Stable rule `{}` is missing the `general` condition tag (v0.2 baseline)",
                 rule.id()
             );
         }
@@ -288,19 +301,29 @@ mod tests {
     }
 
     #[test]
-    fn every_default_rule_is_stable() {
-        // F139: until the v0.3 cohort lands on the experimental
-        // substrate, no shipped rule is Experimental. Once the cohort
-        // arrives, this test should be removed (it would be a guard
-        // against a regression that no longer exists).
-        for rule in default_rules(Profile::Public) {
-            assert_eq!(
-                rule.status(),
-                Status::Stable,
-                "rule `{}` is Experimental but no v0.2.x rule should be (yet)",
-                rule.id()
+    fn experimental_cohort_is_tracked() {
+        // Replaces the pre-cohort `every_default_rule_is_stable`
+        // guard. F49 (`structure.italic-span-long`) is the cohort
+        // lead; F46 / F51 / F53 / F57 follow on the same substrate.
+        // At v0.3 cut, every entry here flips to Stable and this
+        // test loosens (or is removed). Until then, this guards
+        // against accidentally graduating one of them too early.
+        let experimental: std::collections::BTreeSet<&str> =
+            experimental_rule_ids().iter().copied().collect();
+        let expected = ["structure.italic-span-long"];
+        for id in &expected {
+            assert!(
+                experimental.contains(id),
+                "expected `{id}` to ship as Experimental in v0.2.x; got {experimental:?}"
             );
         }
+        // Catches accidentally graduating an experimental rule
+        // before the v0.3 cut without updating this list.
+        assert_eq!(
+            experimental.len(),
+            expected.len(),
+            "experimental cohort drifted; got {experimental:?}, expected {expected:?}"
+        );
     }
 
     #[test]
@@ -327,16 +350,19 @@ mod tests {
 
     #[test]
     fn filter_by_experimental_keeps_all_stable_when_off() {
-        // No fake experimental rules exist yet — the v0.2 default set
-        // is all Stable, so the filter is a no-op.
+        // With F49 (cohort lead) shipping as Experimental, the
+        // default registry has 26 rules; the no-opt-in filter strips
+        // F49 → 25 Stable rules remain.
         let kept = filter_by_experimental(default_rules(Profile::Public), &ExperimentalOptIn::None);
         assert_eq!(kept.len(), 25);
     }
 
-    /// Bench substrate against a synthetic experimental rule, since no
-    /// real rule is `Status::Experimental` until the v0.3 cohort lands.
-    /// Once F49 ships on this substrate, the corpus snapshot for that
-    /// rule replaces this fixture as the end-to-end proof.
+    /// Synthetic experimental rule retained alongside F49 to give the
+    /// substrate's filter tests a *known-isolated* fixture: F49 lives
+    /// in `default_rules`, so a "wildcard keeps all" assertion that
+    /// only references the real registry would conflate F49 + future
+    /// cohort siblings with the substrate semantics. `FakeExperimental`
+    /// lets the substrate be tested in isolation from cohort drift.
     struct FakeExperimental;
 
     impl Rule for FakeExperimental {
@@ -361,33 +387,44 @@ mod tests {
 
     #[test]
     fn filter_by_experimental_strips_experimental_when_off() {
+        // Registry holds the 26 default rules (25 Stable + F49
+        // Experimental) plus FakeExperimental = 27 total. With the
+        // opt-in off, both Experimental rules are stripped → 25.
         let kept =
             filter_by_experimental(registry_with_fake_experimental(), &ExperimentalOptIn::None);
         assert_eq!(
             kept.len(),
             25,
-            "experimental rule must be filtered out by default"
+            "experimental rules must be filtered out by default"
         );
         assert!(kept.iter().all(|r| r.id() != "structure.fake-experimental"));
+        assert!(kept.iter().all(|r| r.id() != "structure.italic-span-long"));
     }
 
     #[test]
     fn filter_by_experimental_keeps_experimental_under_wildcard() {
+        // Wildcard keeps all 27 rules in the registry: 25 Stable +
+        // F49 (real Experimental) + FakeExperimental.
         let kept =
             filter_by_experimental(registry_with_fake_experimental(), &ExperimentalOptIn::All);
-        assert_eq!(kept.len(), 26);
+        assert_eq!(kept.len(), 27);
         assert!(kept.iter().any(|r| r.id() == "structure.fake-experimental"));
+        assert!(kept.iter().any(|r| r.id() == "structure.italic-span-long"));
     }
 
     #[test]
     fn filter_by_experimental_keeps_only_opted_in_ids() {
+        // Opt-in includes the synthetic id only — F49 stays
+        // filtered out because it isn't on the list. Result: 25
+        // Stable + FakeExperimental = 26.
         let opt_in = ExperimentalOptIn::from_selectors(["structure.fake-experimental"]);
         let kept = filter_by_experimental(registry_with_fake_experimental(), &opt_in);
         assert_eq!(kept.len(), 26);
         assert!(kept.iter().any(|r| r.id() == "structure.fake-experimental"));
+        assert!(kept.iter().all(|r| r.id() != "structure.italic-span-long"));
 
-        // A different id in the opt-in set leaves the experimental rule
-        // filtered out.
+        // A different id in the opt-in set leaves both experimental
+        // rules filtered out.
         let other = ExperimentalOptIn::from_selectors(["structure.does-not-exist"]);
         let kept = filter_by_experimental(registry_with_fake_experimental(), &other);
         assert_eq!(kept.len(), 25);
