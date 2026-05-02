@@ -15,6 +15,23 @@ released-version block.
 
 ### Added
 
+- **[2026-05-02] F143 — inline AST layer over pulldown-cmark.** New
+  `Inline` enum and `EmphasisSpan` struct on `crate::parser`, plus a
+  `Paragraph.inline: Vec<Inline>` field captured during the existing
+  Markdown event walk. The variant set is intentionally narrow today
+  (`Text` + `Emphasis` only) — `Strong`, `Link`, `Code`, footnotes, and
+  task-list markers continue to flatten into the paragraph's text
+  string until a rule actually needs them. Plain-text input keeps an
+  empty inline vec. Substrate-only change: no rule consumes the new
+  field yet; F49 (`structure.italic-span-long`, cohort lead) lands on
+  top in a follow-up. Decision routed via a parser-substrate
+  brainstorm (`.personal/brainstorm/20260502-parser-substrate-choice.md`)
+  — pulldown-cmark stays the engine (perf-pillar preserved); the new
+  layer is the *domain model* the rules walk. 11 new parser tests
+  cover round-tripping, nesting, code-block exclusion, tight-list-item
+  capture, multi-line position fidelity, and the
+  inline-tree ↔ paragraph-text invariant.
+
 - **[2026-05-02] F139 — experimental rule status substrate.** New
   `Status::{Stable, Experimental}` enum on the `Rule` trait (default
   `Stable`), paired with a `filter_by_experimental` step that drops

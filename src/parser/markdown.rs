@@ -5,12 +5,17 @@
 //! - Inline code
 //! - HTML blocks
 //!
-//! Emphasis, strong, and inline links have their visible text preserved but
-//! their Markdown markup stripped.
+//! Strong (`**…**`) and inline links have their visible text preserved but
+//! their Markdown markup stripped from [`Paragraph::text`]. Emphasis
+//! (`*…*` / `_…_`) is also flattened into the visible-text string, *and*
+//! captured structurally as [`Inline::Emphasis`] nodes on
+//! [`Paragraph::inline`] (F143 substrate) — so rules that need span
+//! boundaries (e.g. `structure.italic-span-long`) can walk a typed inline
+//! tree without re-parsing.
 
 use pulldown_cmark::{Event, HeadingLevel, Options, Parser, Tag, TagEnd};
 
-use super::document::{Directive, Document, ListItem, Paragraph, Section};
+use super::document::{Directive, Document, EmphasisSpan, Inline, ListItem, Paragraph, Section};
 use crate::types::SourceFile;
 
 /// Parse a Markdown text into a [`Document`].
@@ -50,6 +55,14 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
     let mut pending_item_start: Option<u32> = None;
     let mut buf = String::new();
     let mut paragraph_start_line: u32 = 1;
+    // Inline tree (F143): a stack of children-vectors. The bottom
+    // frame is the paragraph-level inline list; each open emphasis
+    // span pushes another frame. Empty when no paragraph is in flight.
+    let mut inline_stack: Vec<Vec<Inline>> = Vec::new();
+    // Source positions (line, column) of currently-open emphasis spans,
+    // popped when their `End(Emphasis)` fires so the resulting
+    // [`EmphasisSpan`] carries the opening-delimiter location.
+    let mut emphasis_opens: Vec<(u32, u32)> = Vec::new();
 
     let offsets: Vec<(Event, std::ops::Range<usize>)> =
         Parser::new_ext(text, options).into_offset_iter().collect();
@@ -85,6 +98,9 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
                     in_paragraph = true;
                     paragraph_start_line = line;
                     buf.clear();
+                    inline_stack.clear();
+                    inline_stack.push(Vec::new());
+                    emphasis_opens.clear();
                     pending_item_start = None;
                 },
             }
@@ -95,6 +111,7 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
                     &mut in_paragraph,
                     list_item_depth,
                     &mut buf,
+                    &mut inline_stack,
                     &mut current_paragraphs,
                     paragraph_start_line,
                 );
@@ -119,6 +136,9 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
             Event::Start(Tag::Paragraph) => {
                 in_paragraph = true;
                 buf.clear();
+                inline_stack.clear();
+                inline_stack.push(Vec::new());
+                emphasis_opens.clear();
                 paragraph_start_line = offset_to_line(text, range.start);
             },
             Event::End(TagEnd::Paragraph) => {
@@ -126,6 +146,7 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
                     &mut in_paragraph,
                     list_item_depth,
                     &mut buf,
+                    &mut inline_stack,
                     &mut current_paragraphs,
                     paragraph_start_line,
                 );
@@ -144,6 +165,7 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
                     &mut in_paragraph,
                     list_item_depth,
                     &mut buf,
+                    &mut inline_stack,
                     &mut current_paragraphs,
                     paragraph_start_line,
                 );
@@ -163,6 +185,7 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
                     &mut in_paragraph,
                     list_item_depth,
                     &mut buf,
+                    &mut inline_stack,
                     &mut current_paragraphs,
                     paragraph_start_line,
                 );
@@ -178,6 +201,25 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
             Event::Code(_) => {
                 // Inline code: skip contents.
             },
+            Event::Start(Tag::Emphasis) if in_paragraph => {
+                let (line, col) = offset_to_line_col(text, range.start);
+                emphasis_opens.push((line, col));
+                inline_stack.push(Vec::new());
+            },
+            Event::End(TagEnd::Emphasis) if in_paragraph => {
+                if let Some(children) = inline_stack.pop() {
+                    let (start_line, start_column) =
+                        emphasis_opens.pop().unwrap_or((paragraph_start_line, 1));
+                    let span = EmphasisSpan {
+                        children,
+                        start_line,
+                        start_column,
+                    };
+                    if let Some(parent) = inline_stack.last_mut() {
+                        parent.push(Inline::Emphasis(span));
+                    }
+                }
+            },
             Event::Html(s) | Event::InlineHtml(s) => {
                 // `<br>` is an authorial line break the renderer respects;
                 // map it to `\n` so paragraph-level rules that care about
@@ -186,6 +228,9 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
                 // carrying suppression directives flow through unchanged.
                 if (in_heading.is_some() || in_paragraph) && html_is_br_tag(&s) {
                     buf.push('\n');
+                    if in_paragraph {
+                        push_inline_text(&mut inline_stack, "\n");
+                    }
                 }
                 let block_line = offset_to_line(text, range.start);
                 for (parsed, line) in parse_all_directives_in_html(&s, block_line) {
@@ -221,12 +266,21 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
                 if in_heading.is_some() || in_paragraph {
                     buf.push_str(&s);
                 }
+                if in_paragraph {
+                    push_inline_text(&mut inline_stack, &s);
+                }
             },
             Event::SoftBreak if in_heading.is_some() || in_paragraph => {
                 buf.push(' ');
+                if in_paragraph {
+                    push_inline_text(&mut inline_stack, " ");
+                }
             },
             Event::HardBreak if in_heading.is_some() || in_paragraph => {
                 buf.push('\n');
+                if in_paragraph {
+                    push_inline_text(&mut inline_stack, "\n");
+                }
             },
             _ => {},
         }
@@ -236,6 +290,7 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
         &mut in_paragraph,
         list_item_depth,
         &mut buf,
+        &mut inline_stack,
         &mut current_paragraphs,
         paragraph_start_line,
     );
@@ -371,6 +426,7 @@ fn finish_paragraph(
     in_paragraph: &mut bool,
     list_item_depth: u32,
     buf: &mut String,
+    inline_stack: &mut Vec<Vec<Inline>>,
     paragraphs: &mut Vec<Paragraph>,
     start_line: u32,
 ) {
@@ -378,16 +434,59 @@ fn finish_paragraph(
         return;
     }
     let text = buf.trim().to_string();
+    // Drop any open inline frames first (defensive: an unclosed
+    // emphasis would otherwise leave orphan frames on the stack for
+    // the next paragraph). Collapse them into the bottom frame so the
+    // visible text and the inline tree stay in sync.
+    while inline_stack.len() > 1 {
+        let frame = inline_stack.pop().unwrap_or_default();
+        if let Some(parent) = inline_stack.last_mut() {
+            parent.extend(frame);
+        }
+    }
+    let inline = inline_stack.pop().unwrap_or_default();
     if !text.is_empty() {
         let para = if list_item_depth > 0 {
-            Paragraph::from_list_item(text, start_line)
+            Paragraph::from_list_item_with_inline(text, start_line, inline)
         } else {
-            Paragraph::new(text, start_line)
+            Paragraph::with_inline(text, start_line, inline)
         };
         paragraphs.push(para);
     }
     buf.clear();
     *in_paragraph = false;
+}
+
+/// Append plain text to the current inline frame, merging with the
+/// trailing [`Inline::Text`] node when possible. Keeps the inline tree
+/// from accumulating tiny adjacent text nodes from soft breaks and
+/// multi-event runs.
+fn push_inline_text(inline_stack: &mut [Vec<Inline>], s: &str) {
+    if s.is_empty() {
+        return;
+    }
+    let Some(frame) = inline_stack.last_mut() else {
+        return;
+    };
+    if let Some(Inline::Text(existing)) = frame.last_mut() {
+        existing.push_str(s);
+    } else {
+        frame.push(Inline::Text(s.to_string()));
+    }
+}
+
+/// 1-based (line, column) for a byte offset. Column counts characters
+/// (not bytes) within the line, matching the project's existing
+/// approximate-column convention used for diagnostic positions.
+fn offset_to_line_col(text: &str, offset: usize) -> (u32, u32) {
+    let capped = offset.min(text.len());
+    let line_start = text.as_bytes()[..capped]
+        .iter()
+        .rposition(|&b| b == b'\n')
+        .map_or(0, |p| p + 1);
+    let line = offset_to_line(text, capped);
+    let col = text[line_start..capped].chars().count() + 1;
+    (line, u32::try_from(col).unwrap_or(u32::MAX))
 }
 
 fn finish_section(
@@ -738,5 +837,195 @@ mod tests {
         assert_eq!(lines.len(), 3);
         // We trust line numbering to be monotonically increasing.
         assert!(lines[0] <= lines[1] && lines[1] <= lines[2]);
+    }
+
+    // ---- F143: inline AST capture ----
+
+    fn paragraph_inline(md: &str) -> Vec<Inline> {
+        let doc = parse_markdown(md, SourceFile::Anonymous);
+        doc.sections
+            .into_iter()
+            .flat_map(|s| s.paragraphs)
+            .next()
+            .map(|p| p.inline)
+            .unwrap_or_default()
+    }
+
+    #[test]
+    fn paragraph_without_emphasis_is_a_single_text_node() {
+        let inline = paragraph_inline("Plain prose, nothing fancy.");
+        assert_eq!(
+            inline,
+            vec![Inline::Text("Plain prose, nothing fancy.".to_string())]
+        );
+    }
+
+    #[test]
+    fn emphasis_span_is_captured() {
+        let inline = paragraph_inline("Some *italic words* in the middle.");
+        assert_eq!(inline.len(), 3, "got {inline:?}");
+        assert_eq!(inline[0], Inline::Text("Some ".to_string()));
+        let span = match &inline[1] {
+            Inline::Emphasis(s) => s,
+            Inline::Text(t) => unreachable!("expected Emphasis at index 1, got Text({t:?})"),
+        };
+        assert_eq!(
+            span.children,
+            vec![Inline::Text("italic words".to_string())]
+        );
+        assert_eq!(span.start_line, 1);
+        // Column points at the opening `*` (1-based, char-counted).
+        assert_eq!(span.start_column, 6);
+        assert_eq!(inline[2], Inline::Text(" in the middle.".to_string()));
+    }
+
+    #[test]
+    fn underscore_emphasis_is_captured_too() {
+        let inline = paragraph_inline("An _underscore italic_ here.");
+        let has_emphasis = inline
+            .iter()
+            .any(|n| matches!(n, Inline::Emphasis(s) if s.children == vec![Inline::Text("underscore italic".to_string())]));
+        assert!(has_emphasis, "got {inline:?}");
+    }
+
+    #[test]
+    fn strong_does_not_create_an_emphasis_node() {
+        // F143 substrate is intentionally narrow: only Text + Emphasis
+        // are modeled today. Strong (**bold**) flattens into Text until
+        // a rule actually needs it.
+        let inline = paragraph_inline("Some **bold words** here.");
+        assert!(
+            inline.iter().all(|n| !matches!(n, Inline::Emphasis(_))),
+            "got {inline:?}"
+        );
+        let flat: String = inline
+            .iter()
+            .map(|n| match n {
+                Inline::Text(t) => t.clone(),
+                Inline::Emphasis(_) => String::new(),
+            })
+            .collect();
+        assert_eq!(flat, "Some bold words here.");
+    }
+
+    #[test]
+    fn nested_emphasis_is_preserved() {
+        // Outer `*…*` contains an inner `_…_`. Nested emphasis should
+        // round-trip with both spans visible in the tree.
+        let inline = paragraph_inline("Outer *one _two_ three* end.");
+        let outer = inline
+            .iter()
+            .find_map(|n| match n {
+                Inline::Emphasis(s) => Some(s),
+                Inline::Text(_) => None,
+            })
+            .expect("outer emphasis present");
+        let inner = outer
+            .children
+            .iter()
+            .find_map(|n| match n {
+                Inline::Emphasis(s) => Some(s),
+                Inline::Text(_) => None,
+            })
+            .expect("inner emphasis present");
+        assert_eq!(inner.children, vec![Inline::Text("two".to_string())]);
+    }
+
+    #[test]
+    fn multiple_emphases_in_one_paragraph_are_all_captured() {
+        let inline = paragraph_inline("First *one* then *two* then *three*.");
+        let count = inline
+            .iter()
+            .filter(|n| matches!(n, Inline::Emphasis(_)))
+            .count();
+        assert_eq!(count, 3, "got {inline:?}");
+    }
+
+    #[test]
+    fn emphasis_in_code_block_does_not_appear_in_inline_tree() {
+        // Code fences are excluded from paragraph buffers; the inline
+        // tree must inherit that exclusion.
+        let md = "Before.\n\n```\nignored *not italic*\n```\n\nAfter.";
+        let doc = parse_markdown(md, SourceFile::Anonymous);
+        for para in doc.sections.iter().flat_map(|s| s.paragraphs.iter()) {
+            assert!(
+                para.inline
+                    .iter()
+                    .all(|n| !matches!(n, Inline::Emphasis(_))),
+                "code-block emphasis leaked into {para:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn inline_tree_is_empty_for_plain_text_input() {
+        // `parse_plain` does not capture an inline tree — Markdown
+        // semantics do not apply. The field should default to empty.
+        let doc = super::super::parse_plain("A plain *paragraph* of text.", SourceFile::Anonymous);
+        let para = &doc.sections[0].paragraphs[0];
+        assert!(para.inline.is_empty(), "got {:?}", para.inline);
+    }
+
+    #[test]
+    fn inline_tree_text_concatenation_matches_paragraph_text() {
+        // Round-trip invariant: flattening the inline tree (text +
+        // children of emphasis, recursively) should reproduce the
+        // paragraph's `text` field. Lets future rules trust the tree
+        // and the string in lock-step.
+        fn flatten(nodes: &[Inline], out: &mut String) {
+            for node in nodes {
+                match node {
+                    Inline::Text(t) => out.push_str(t),
+                    Inline::Emphasis(span) => flatten(&span.children, out),
+                }
+            }
+        }
+        let md = "Before *italic with _nested_ inside* and after.";
+        let doc = parse_markdown(md, SourceFile::Anonymous);
+        let para = &doc.sections[0].paragraphs[0];
+        let mut flat = String::new();
+        flatten(&para.inline, &mut flat);
+        assert_eq!(flat, para.text, "tree {:?}", para.inline);
+    }
+
+    #[test]
+    fn emphasis_position_points_at_opening_delimiter_on_later_line() {
+        // Multi-line paragraph: the opening `*` of the emphasis is on
+        // line 3 (after a blank line + a setup line). Confirm the
+        // captured `start_line` matches and column counts from the
+        // line start.
+        let md = "Intro paragraph.\n\nFollow-up paragraph with *important* word.\n";
+        let doc = parse_markdown(md, SourceFile::Anonymous);
+        let span = doc
+            .sections
+            .iter()
+            .flat_map(|s| s.paragraphs.iter())
+            .flat_map(|p| p.inline.iter())
+            .find_map(|n| match n {
+                Inline::Emphasis(s) => Some(s),
+                Inline::Text(_) => None,
+            })
+            .expect("emphasis present");
+        assert_eq!(span.start_line, 3);
+        // "Follow-up paragraph with " is 25 chars; opening `*` at col 26.
+        assert_eq!(span.start_column, 26);
+    }
+
+    #[test]
+    fn emphasis_inside_tight_list_item_is_captured() {
+        // F129's tight-list paragraph synthesis must also seed the
+        // inline-stack frame, otherwise emphasis in a single-bullet
+        // list goes unmodeled.
+        let md = "- bullet with *italic phrase* inside.\n";
+        let doc = parse_markdown(md, SourceFile::Anonymous);
+        let para = doc
+            .sections
+            .iter()
+            .flat_map(|s| s.paragraphs.iter())
+            .next()
+            .expect("paragraph synthesized");
+        assert!(para.from_list_item);
+        let has_emphasis = para.inline.iter().any(|n| matches!(n, Inline::Emphasis(_)));
+        assert!(has_emphasis, "got {:?}", para.inline);
     }
 }
