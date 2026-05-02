@@ -1,0 +1,30 @@
+---
+source: src/parser/markdown.rs
+expression: trees
+---
+[
+    [
+        Text(
+            "Before italics.",
+        ),
+    ],
+    [
+        Text(
+            "After ",
+        ),
+        Emphasis(
+            EmphasisSpan {
+                children: [
+                    Text(
+                        "real italics",
+                    ),
+                ],
+                start_line: 7,
+                start_column: 7,
+            },
+        ),
+        Text(
+            " end.",
+        ),
+    ],
+]

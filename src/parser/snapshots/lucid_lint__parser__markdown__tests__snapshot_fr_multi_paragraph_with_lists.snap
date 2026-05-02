@@ -1,0 +1,65 @@
+---
+source: src/parser/markdown.rs
+expression: trees
+---
+[
+    [
+        Text(
+            "Paragraphe simple.",
+        ),
+    ],
+    [
+        Text(
+            "item avec ",
+        ),
+        Emphasis(
+            EmphasisSpan {
+                children: [
+                    Text(
+                        "italique court",
+                    ),
+                ],
+                start_line: 3,
+                start_column: 13,
+            },
+        ),
+        Text(
+            " ici",
+        ),
+    ],
+    [
+        Text(
+            "autre item avec gras et ",
+        ),
+        Emphasis(
+            EmphasisSpan {
+                children: [
+                    Text(
+                        "souligné",
+                    ),
+                ],
+                start_line: 4,
+                start_column: 31,
+            },
+        ),
+    ],
+    [
+        Text(
+            "Conclusion en ",
+        ),
+        Emphasis(
+            EmphasisSpan {
+                children: [
+                    Text(
+                        "italique final",
+                    ),
+                ],
+                start_line: 6,
+                start_column: 15,
+            },
+        ),
+        Text(
+            ".",
+        ),
+    ],
+]

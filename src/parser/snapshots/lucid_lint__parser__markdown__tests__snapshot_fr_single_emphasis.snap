@@ -1,0 +1,25 @@
+---
+source: src/parser/markdown.rs
+expression: trees
+---
+[
+    [
+        Text(
+            "Une phrase avec ",
+        ),
+        Emphasis(
+            EmphasisSpan {
+                children: [
+                    Text(
+                        "des mots en italique",
+                    ),
+                ],
+                start_line: 1,
+                start_column: 17,
+            },
+        ),
+        Text(
+            " au milieu.",
+        ),
+    ],
+]

@@ -1190,6 +1190,154 @@ mod tests {
         }
     }
 
+    // ---- F143 golden-fixture snapshots ----
+    //
+    // Locked in on path A. After the lazy-build refactor (path B),
+    // these must match byte-for-byte — that's the fixture-level
+    // equivalence check. Property tests guarantee invariant
+    // preservation; these guarantee node-boundary preservation.
+    //
+    // Bilingual corpus (EN + FR) since the substrate is language-
+    // agnostic and AGENTS.md §6.4 mandates bilingual coverage.
+    // Debug-snapshot avoids the serde::Serialize derive on Inline
+    // (production type stays minimal).
+
+    fn snapshot_inline(md: &str) -> Vec<Vec<Inline>> {
+        parse_markdown(md, SourceFile::Anonymous)
+            .sections
+            .into_iter()
+            .flat_map(|s| s.paragraphs)
+            .map(|p| p.inline)
+            .collect()
+    }
+
+    #[test]
+    fn snapshot_en_plain_paragraph() {
+        // Baseline: no emphasis, no Markdown decoration. Inline tree
+        // collapses to a single Text node containing the paragraph
+        // verbatim. Sets the "common case" reference.
+        let trees = snapshot_inline("Plain prose, nothing fancy here.");
+        insta::assert_debug_snapshot!(trees);
+    }
+
+    #[test]
+    fn snapshot_en_single_emphasis() {
+        let trees = snapshot_inline("Some *italic words* in the middle of prose.");
+        insta::assert_debug_snapshot!(trees);
+    }
+
+    #[test]
+    fn snapshot_en_strong_does_not_create_emphasis() {
+        // Path A flattens **bold** into Text. Path B must do the same
+        // (the substrate's narrow-by-design contract).
+        let trees = snapshot_inline("A line with **strong words** but no italic.");
+        insta::assert_debug_snapshot!(trees);
+    }
+
+    #[test]
+    fn snapshot_en_multi_paragraph_mixed() {
+        // Three paragraphs: plain → emphasis → strong + emphasis.
+        // Pins paragraph-boundary state reset (no inline-stack
+        // bleed-through across paragraphs).
+        let md = "First paragraph, plain.\n\n\
+                  Second has *italic* in it.\n\n\
+                  Third has **bold** and *italic both*.";
+        let trees = snapshot_inline(md);
+        insta::assert_debug_snapshot!(trees);
+    }
+
+    #[test]
+    fn snapshot_en_nested_emphasis() {
+        // Outer asterisk wraps inner underscore. Tree round-trips
+        // both spans with nested children.
+        let trees = snapshot_inline("Outer *one _two_ three* end.");
+        insta::assert_debug_snapshot!(trees);
+    }
+
+    #[test]
+    fn snapshot_en_tight_list_item_with_emphasis() {
+        // F129 synthesis path + F143 capture combined.
+        let trees = snapshot_inline("- bullet with *italic phrase* inside.\n");
+        insta::assert_debug_snapshot!(trees);
+    }
+
+    #[test]
+    fn snapshot_en_code_block_excluded() {
+        // Emphasis inside a fenced code block must not appear in any
+        // paragraph's inline tree.
+        let md = "Before italics.\n\n\
+                  ```\n\
+                  not *italic* here\n\
+                  ```\n\n\
+                  After *real italics* end.";
+        let trees = snapshot_inline(md);
+        insta::assert_debug_snapshot!(trees);
+    }
+
+    #[test]
+    fn snapshot_fr_single_emphasis() {
+        // FR mirror of the single-emphasis case. The substrate is
+        // language-agnostic; the snapshot proves it.
+        let trees = snapshot_inline("Une phrase avec *des mots en italique* au milieu.");
+        insta::assert_debug_snapshot!(trees);
+    }
+
+    #[test]
+    fn snapshot_fr_nested_emphasis_with_accents() {
+        // Accented characters touch the column-counting path
+        // (offset_to_line_col uses chars().count(), not bytes).
+        // Locks the FR positions in too.
+        let trees = snapshot_inline("Élève *attentif _très_ concentré* ici.");
+        insta::assert_debug_snapshot!(trees);
+    }
+
+    #[test]
+    fn snapshot_fr_multi_paragraph_with_lists() {
+        let md = "Paragraphe simple.\n\n\
+                  - item avec *italique court* ici\n\
+                  - autre item avec **gras** et _souligné_\n\n\
+                  Conclusion en *italique final*.";
+        let trees = snapshot_inline(md);
+        insta::assert_debug_snapshot!(trees);
+    }
+
+    #[test]
+    fn emphasis_inside_heading_does_not_bleed_into_next_paragraph() {
+        // Mutation-test gap (cargo-mutants 2026-05-02 on path A):
+        // `Event::Start/End(Emphasis) if in_paragraph` survived its
+        // guard-removal mutation because the inline-stack cleanup on
+        // every `Tag::Paragraph` start papered over heading-leaked
+        // frames. Path B (lazy build) may change the cleanup shape,
+        // so pin the contract directly: emphasis events fired inside
+        // a heading must not affect the next paragraph's inline tree.
+        let md = "# Heading with *italic title*\n\nA body paragraph, no emphasis here.";
+        let doc = parse_markdown(md, SourceFile::Anonymous);
+        let para = doc
+            .sections
+            .iter()
+            .flat_map(|s| s.paragraphs.iter())
+            .next()
+            .expect("body paragraph present");
+        assert_eq!(para.text, "A body paragraph, no emphasis here.");
+        assert!(
+            para.inline
+                .iter()
+                .all(|n| !matches!(n, Inline::Emphasis(_))),
+            "heading emphasis leaked into body paragraph: {:?}",
+            para.inline
+        );
+        // Stronger: the body paragraph's tree is exactly one Text
+        // node containing the visible string verbatim. Catches the
+        // mutation that pushes phantom frames the cleanup later
+        // discards but a lazy-build path might preserve.
+        assert_eq!(
+            para.inline,
+            vec![Inline::Text(
+                "A body paragraph, no emphasis here.".to_string()
+            )]
+        );
+    }
+
     #[test]
     fn emphasis_inside_tight_list_item_is_captured() {
         // F129's tight-list paragraph synthesis must also seed the

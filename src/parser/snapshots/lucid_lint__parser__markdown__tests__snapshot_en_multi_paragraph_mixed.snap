@@ -1,0 +1,49 @@
+---
+source: src/parser/markdown.rs
+expression: trees
+---
+[
+    [
+        Text(
+            "First paragraph, plain.",
+        ),
+    ],
+    [
+        Text(
+            "Second has ",
+        ),
+        Emphasis(
+            EmphasisSpan {
+                children: [
+                    Text(
+                        "italic",
+                    ),
+                ],
+                start_line: 3,
+                start_column: 12,
+            },
+        ),
+        Text(
+            " in it.",
+        ),
+    ],
+    [
+        Text(
+            "Third has bold and ",
+        ),
+        Emphasis(
+            EmphasisSpan {
+                children: [
+                    Text(
+                        "italic both",
+                    ),
+                ],
+                start_line: 5,
+                start_column: 24,
+            },
+        ),
+        Text(
+            ".",
+        ),
+    ],
+]

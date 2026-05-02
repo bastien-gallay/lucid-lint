@@ -1,0 +1,11 @@
+---
+source: src/parser/markdown.rs
+expression: trees
+---
+[
+    [
+        Text(
+            "Plain prose, nothing fancy here.",
+        ),
+    ],
+]
