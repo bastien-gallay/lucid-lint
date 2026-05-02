@@ -55,10 +55,19 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
     let mut pending_item_start: Option<u32> = None;
     let mut buf = String::new();
     let mut paragraph_start_line: u32 = 1;
-    // Inline tree (F143): a stack of children-vectors. The bottom
-    // frame is the paragraph-level inline list; each open emphasis
-    // span pushes another frame. Empty when no paragraph is in flight.
+    // Inline tree (F143, lazy-build path B): a stack of children-vectors,
+    // *only* allocated when the first emphasis fires inside a paragraph.
+    // For the common case (no emphasis), the stack stays empty and the
+    // paragraph ships with `inline: Vec::new()` — no double-allocation
+    // alongside `buf`. The bottom frame, when present, is the paragraph-
+    // level inline list; each open emphasis span pushes another frame.
     let mut inline_stack: Vec<Vec<Inline>> = Vec::new();
+    // Whether the current paragraph has seen at least one emphasis
+    // event. Drives lazy initialisation of `inline_stack`: stays false
+    // for emphasis-free paragraphs (the bench-relevant common case),
+    // flips true on the first `Tag::Emphasis` start and stays true
+    // until paragraph end.
+    let mut lazy_inline_active = false;
     // Source positions (line, column) of currently-open emphasis spans,
     // popped when their `End(Emphasis)` fires so the resulting
     // [`EmphasisSpan`] carries the opening-delimiter location.
@@ -99,7 +108,7 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
                     paragraph_start_line = line;
                     buf.clear();
                     inline_stack.clear();
-                    inline_stack.push(Vec::new());
+                    lazy_inline_active = false;
                     emphasis_opens.clear();
                     pending_item_start = None;
                 },
@@ -137,7 +146,7 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
                 in_paragraph = true;
                 buf.clear();
                 inline_stack.clear();
-                inline_stack.push(Vec::new());
+                lazy_inline_active = false;
                 emphasis_opens.clear();
                 paragraph_start_line = offset_to_line(text, range.start);
             },
@@ -202,6 +211,20 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
                 // Inline code: skip contents.
             },
             Event::Start(Tag::Emphasis) if in_paragraph => {
+                if !lazy_inline_active {
+                    // First emphasis in this paragraph: rewind and
+                    // commit the visible-text prefix (everything in
+                    // `buf` so far) as a single Text node, then enter
+                    // lazy mode for the rest of the paragraph. Empty
+                    // prefix (paragraph opens with emphasis) → no
+                    // prefix node, just an empty bottom frame.
+                    let mut bottom = Vec::with_capacity(2);
+                    if !buf.is_empty() {
+                        bottom.push(Inline::Text(buf.clone()));
+                    }
+                    inline_stack.push(bottom);
+                    lazy_inline_active = true;
+                }
                 let (line, col) = offset_to_line_col(text, range.start);
                 emphasis_opens.push((line, col));
                 inline_stack.push(Vec::new());
@@ -228,7 +251,7 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
                 // carrying suppression directives flow through unchanged.
                 if (in_heading.is_some() || in_paragraph) && html_is_br_tag(&s) {
                     buf.push('\n');
-                    if in_paragraph {
+                    if in_paragraph && lazy_inline_active {
                         push_inline_text(&mut inline_stack, "\n");
                     }
                 }
@@ -266,19 +289,19 @@ pub fn parse_markdown(text: &str, source: SourceFile) -> Document {
                 if in_heading.is_some() || in_paragraph {
                     buf.push_str(&s);
                 }
-                if in_paragraph {
+                if in_paragraph && lazy_inline_active {
                     push_inline_text(&mut inline_stack, &s);
                 }
             },
             Event::SoftBreak if in_heading.is_some() || in_paragraph => {
                 buf.push(' ');
-                if in_paragraph {
+                if in_paragraph && lazy_inline_active {
                     push_inline_text(&mut inline_stack, " ");
                 }
             },
             Event::HardBreak if in_heading.is_some() || in_paragraph => {
                 buf.push('\n');
-                if in_paragraph {
+                if in_paragraph && lazy_inline_active {
                     push_inline_text(&mut inline_stack, "\n");
                 }
             },
@@ -852,12 +875,12 @@ mod tests {
     }
 
     #[test]
-    fn paragraph_without_emphasis_is_a_single_text_node() {
+    fn paragraph_without_emphasis_has_empty_inline() {
+        // F143 lazy-build (path B): paragraphs with no emphasis ship
+        // with `inline: Vec::new()`. Rules wanting to know "no spans
+        // worth modeling" check `inline.is_empty()`.
         let inline = paragraph_inline("Plain prose, nothing fancy.");
-        assert_eq!(
-            inline,
-            vec![Inline::Text("Plain prose, nothing fancy.".to_string())]
-        );
+        assert!(inline.is_empty(), "got {inline:?}");
     }
 
     #[test]
@@ -891,21 +914,17 @@ mod tests {
     #[test]
     fn strong_does_not_create_an_emphasis_node() {
         // F143 substrate is intentionally narrow: only Text + Emphasis
-        // are modeled today. Strong (**bold**) flattens into Text until
-        // a rule actually needs it.
+        // are modeled today. Strong (**bold**) flattens into Text and,
+        // because no `Tag::Emphasis` event fires, the lazy-build path
+        // (B) leaves `inline` empty altogether.
         let inline = paragraph_inline("Some **bold words** here.");
         assert!(
             inline.iter().all(|n| !matches!(n, Inline::Emphasis(_))),
             "got {inline:?}"
         );
-        let flat: String = inline
-            .iter()
-            .map(|n| match n {
-                Inline::Text(t) => t.clone(),
-                Inline::Emphasis(_) => String::new(),
-            })
-            .collect();
-        assert_eq!(flat, "Some bold words here.");
+        // Path B contract: emphasis-free paragraphs (strong-only,
+        // link-only, plain) ship with `inline.is_empty()`.
+        assert!(inline.is_empty(), "got {inline:?}");
     }
 
     #[test]
@@ -1072,18 +1091,52 @@ mod tests {
             ..proptest::prelude::ProptestConfig::default()
         })]
 
-        // P1 — flatten invariant. Recursively flattening the inline
-        // tree must reproduce the paragraph's `text` field. Load-bearing:
-        // rules walking `inline` and rules walking `text` must agree on
-        // what the paragraph says.
+        // P1 — flatten invariant (path B contract). When the inline
+        // tree is non-empty (i.e. emphasis was captured for this
+        // paragraph), recursively flattening it must reproduce the
+        // paragraph's `text` field. An empty inline tree is the
+        // lazy-build path's "no spans worth modeling" signal and is
+        // exempt from the flatten check — rules wanting paragraph
+        // text walk `text` directly in that case. Load-bearing for
+        // the condition that holds: rules walking `inline` and rules
+        // walking `text` agree whenever both have content.
         #[test]
         fn prop_flatten_inline_equals_paragraph_text(
             input in proptest_md_input()
         ) {
             let doc = parse_markdown(&input, SourceFile::Anonymous);
             for para in doc.sections.iter().flat_map(|s| s.paragraphs.iter()) {
-                let flat = flatten_to_string(&para.inline);
-                proptest::prop_assert_eq!(&flat, &para.text);
+                if !para.inline.is_empty() {
+                    let flat = flatten_to_string(&para.inline);
+                    proptest::prop_assert_eq!(&flat, &para.text);
+                }
+            }
+        }
+
+        // P1b — lazy-build emptiness contract (new with path B). The
+        // inline tree is empty *exactly when* the paragraph contained
+        // no emphasis. Catches the regression where lazy-build leaves
+        // an empty bottom frame for an emphasis-free paragraph (which
+        // would still satisfy P1 but break the "is_empty == no spans"
+        // contract F49 relies on).
+        #[test]
+        fn prop_inline_empty_iff_no_emphasis(
+            input in proptest_md_input()
+        ) {
+            let doc = parse_markdown(&input, SourceFile::Anonymous);
+            for para in doc.sections.iter().flat_map(|s| s.paragraphs.iter()) {
+                let has_emphasis_in_tree = para
+                    .inline
+                    .iter()
+                    .any(|n| matches!(n, Inline::Emphasis(_)));
+                proptest::prop_assert_eq!(
+                    !para.inline.is_empty(),
+                    has_emphasis_in_tree,
+                    "para.inline non-emptiness {} disagrees with emphasis presence {} for text {:?}",
+                    !para.inline.is_empty(),
+                    has_emphasis_in_tree,
+                    para.text
+                );
             }
         }
 
@@ -1307,9 +1360,11 @@ mod tests {
         // `Event::Start/End(Emphasis) if in_paragraph` survived its
         // guard-removal mutation because the inline-stack cleanup on
         // every `Tag::Paragraph` start papered over heading-leaked
-        // frames. Path B (lazy build) may change the cleanup shape,
-        // so pin the contract directly: emphasis events fired inside
-        // a heading must not affect the next paragraph's inline tree.
+        // frames. Path B's lazy-build flips the contract: emphasis-
+        // free paragraphs ship with `inline.is_empty()`. The leak
+        // would manifest as the body paragraph carrying a stale
+        // `Emphasis` frame from the heading, which would fail this
+        // assertion.
         let md = "# Heading with *italic title*\n\nA body paragraph, no emphasis here.";
         let doc = parse_markdown(md, SourceFile::Anonymous);
         let para = doc
@@ -1319,22 +1374,13 @@ mod tests {
             .next()
             .expect("body paragraph present");
         assert_eq!(para.text, "A body paragraph, no emphasis here.");
+        // Strongest available assertion under path B: the body
+        // paragraph carries no inline tree at all — no emphasis
+        // captured, lazy-build never activated.
         assert!(
-            para.inline
-                .iter()
-                .all(|n| !matches!(n, Inline::Emphasis(_))),
+            para.inline.is_empty(),
             "heading emphasis leaked into body paragraph: {:?}",
             para.inline
-        );
-        // Stronger: the body paragraph's tree is exactly one Text
-        // node containing the visible string verbatim. Catches the
-        // mutation that pushes phantom frames the cleanup later
-        // discards but a lazy-build path might preserve.
-        assert_eq!(
-            para.inline,
-            vec![Inline::Text(
-                "A body paragraph, no emphasis here.".to_string()
-            )]
         );
     }
 

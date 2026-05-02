@@ -132,11 +132,20 @@ pub struct Paragraph {
     /// instead of re-running [`split_sentences`] per rule.
     pub sentences: Vec<Sentence>,
 
-    /// Typed inline tree for this paragraph (F143 substrate). Populated
-    /// from the Markdown parser; empty for plain-text input. Today only
-    /// the [`Inline::Text`] and [`Inline::Emphasis`] variants are
-    /// produced — the enum is intentionally narrow until a second rule
-    /// demands more (Strong / Link / Code etc).
+    /// Typed inline tree for this paragraph (F143 substrate).
+    ///
+    /// **Contract (lazy-build).** This field is **empty** when the
+    /// paragraph contained no emphasis (the common case in real
+    /// documents); rules that want to know "no spans worth modeling
+    /// here" simply check `inline.is_empty()`. When *non-empty*, the
+    /// tree faithfully mirrors [`Self::text`]: recursively flattening
+    /// it (concatenating `Text` payloads + descending into `Emphasis`
+    /// children) reproduces the visible-text string byte-for-byte.
+    /// Empty for plain-text input regardless.
+    ///
+    /// Today only [`Inline::Text`] and [`Inline::Emphasis`] are
+    /// produced — the enum is intentionally narrow until a second
+    /// rule demands more (Strong / Link / Code etc).
     pub inline: Vec<Inline>,
 
     /// `true` when the paragraph was extracted from a list-item span (tight

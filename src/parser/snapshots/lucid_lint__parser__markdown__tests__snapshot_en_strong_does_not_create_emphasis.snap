@@ -3,9 +3,5 @@ source: src/parser/markdown.rs
 expression: trees
 ---
 [
-    [
-        Text(
-            "A line with strong words but no italic.",
-        ),
-    ],
+    [],
 ]

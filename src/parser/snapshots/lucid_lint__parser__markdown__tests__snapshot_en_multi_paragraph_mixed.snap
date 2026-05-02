@@ -3,11 +3,7 @@ source: src/parser/markdown.rs
 expression: trees
 ---
 [
-    [
-        Text(
-            "First paragraph, plain.",
-        ),
-    ],
+    [],
     [
         Text(
             "Second has ",
