@@ -12,8 +12,12 @@ v0.2.1 + v0.2.2 shipped 2026-04-23, v0.2.3 shipped 2026-04-29
 [F25](#f25) closed 2026-05-01 (FR pair-completeness 41/41); the FR
 content-staleness gate is `--strict` on `main` since 2026-05-01 and
 on PRs since 2026-05-02 ([F92](#f92) sub-task fully closed);
-[F35b](#f35b)/[F35c](#f35c), [F104](#f104), [F105](#f105), [F107](#f107), [F123](#f123) all shipped. v0.3 is
-scoped but not started; v0.4 is a horizon bet list.
+[F35b](#f35b)/[F35c](#f35c), [F104](#f104), [F105](#f105), [F107](#f107), [F123](#f123) all shipped.
+**v0.3 strategy locked 2026-05-02:** the breaking change is the 5-rule
+cohort ([F46](#f46) / [F49](#f49) / [F51](#f51) / [F53](#f53) / [F57](#f57)) flipping from default-off to
+default-on. Each rule ships in v0.2.x as `Experimental` via the [F139](#f139)
+substrate — visible, opt-in for dogfooding, no score regression — then
+flips to `Stable` at the v0.3 cut. v0.4 is a horizon bet list.
 
 ## Legend
 
@@ -66,6 +70,7 @@ need to answer "what's next?" or "what's the 0.3 shape?" in a glance.
 |---|---|---|---|---|
 | <a id="f22"></a>[F22](#f22) | Rules refinement | 🚧 | v0.2.x → v0.3 | Parenthesised-list (Oxford ✅; non-Oxford + interleaved deferred to v0.3 slice) |
 | <a id="f84"></a>[F84](#f84) | Example fixtures | 🚧 | v0.2.x | Part 2 — redistributable replacements (3/N closed 2026-05-01) |
+| [F139](#f139) | Architecture | ☐ | v0.2.x | Experimental rule status substrate — gates the v0.3 cohort, opens dogfood window |
 | <a id="f15"></a>[F15](#f15) | Architecture | ☐ | v0.2.x | Project-level scoring roll-up (per-file + summary) |
 | <a id="f30"></a>[F30](#f30) | Docs — content | ☐ | v0.2.x | Rule-mention linking pass across guide-prose pages |
 | <a id="f34"></a>[F34](#f34) | Docs — reading prefs | ☐ | v0.2.x | Responsive / mobile adaptation |
@@ -185,11 +190,11 @@ depend on earlier features ([F9](#f9), [F14](#f14)). Naming uses the provisional
 
 | ID | Rule | Category | Tags | Grounding | Depends on |
 |---|---|---|---|---|---|
-| [F46](#f46) | `lexicon.homophone-density` | Lexicon | `dyslexia` | BDA (dyslexia) | FR corpus tuning; ships as `info`. Slip-flag (2026-04-24): if FR corpus tuning exceeds ~2 days, slides to 0.3.x |
-| [F49](#f49) | `structure.italic-span-long` | Structure | `dyslexia` | BDA | — |
-| [F51](#f51) | `structure.number-run` | Structure | `dyscalculia` | plainlanguage.gov | — |
-| [F53](#f53) | `readability.large-number-unanchored` | Readability | `dyscalculia`, `general` | CDC CCI | — |
-| [F57](#f57) | `syntax.parenthetical-depth` | Syntax | `adhd`, `general` | plainlanguage.gov, Hemingway | — |
+| [F46](#f46) | `lexicon.homophone-density` | Lexicon | `dyslexia` | BDA (dyslexia) | FR corpus tuning; ships as `info`. Slip-flag (2026-04-24): if FR corpus tuning exceeds ~2 days, slides to 0.3.x. Ships as `Experimental` in v0.2.x via [F139](#f139); flips to `Stable` at v0.3 cut. |
+| [F49](#f49) | `structure.italic-span-long` | Structure | `dyslexia` | BDA | Cohort lead (2026-05-02) — first rule on the [F139](#f139) substrate. Ships as `Experimental` in v0.2.x; flips to `Stable` at v0.3 cut. |
+| [F51](#f51) | `structure.number-run` | Structure | `dyscalculia` | plainlanguage.gov | Ships as `Experimental` in v0.2.x via [F139](#f139); flips to `Stable` at v0.3 cut. |
+| [F53](#f53) | `readability.large-number-unanchored` | Readability | `dyscalculia`, `general` | CDC CCI | Ships as `Experimental` in v0.2.x via [F139](#f139); flips to `Stable` at v0.3 cut. |
+| [F57](#f57) | `syntax.parenthetical-depth` | Syntax | `adhd`, `general` | plainlanguage.gov, Hemingway | Ships as `Experimental` in v0.2.x via [F139](#f139); flips to `Stable` at v0.3 cut. |
 | <a id="f58"></a>[F58](#f58) | `syntax.front-loaded-subject-delay` | Syntax | `adhd`, `general` | plainlanguage.gov | FR corpus validation (dislocation FP risk) |
 | <a id="f59"></a>[F59](#f59) | `rhythm.pronoun-density` | Rhythm | `aphasia`, `general` | FALC | — |
 | <a id="f60"></a>[F60](#f60) | `rhythm.topic-shift-cluster` | Rhythm | `adhd`, `general` | Hemingway | May merge into [F13](#f13) after corpus review |
@@ -364,6 +369,7 @@ routing decision.
 | <a id="f35b"></a>[F35b](#f35b) | Docs — reading prefs | Drop `role="radiogroup"` on reading chips (P2 a11y) |
 | [F84](#f84) part 2 | Example-text fixtures | Redistributable replacements for load-bearing slots |
 | [F137](#f137) | Adoption channels | Vale style pack (subset of rules → `vale-cli/packages` topic) |
+| [F139](#f139) | Architecture | Experimental rule status substrate — gates v0.3 cohort, opens dogfood window |
 
 #### Should — ships as the next patch absorbs it
 
@@ -422,6 +428,7 @@ section below.
 | <a id="f71"></a>[F71](#f71) | ✅ Shipped in v0.2 — `ConditionTag` enum (fixed 7-variant ontology: `a11y-markup`, `dyslexia`, `dyscalculia`, `aphasia`, `adhd`, `non-native`, `general`) plus `Rule::condition_tags()` trait method (default `&[General]`). All 17 v0.2 rules are `general`; future tagged rules ([F48](#f48), [F55](#f55), [F56](#f56)) opt in by overriding. See [`docs/src/guide/conditions.md`](./guide/conditions.md). | — | Rule-system-growth brainstorm (2026-04-20) |
 | [F129](#f129) | **Markdown parser — emit paragraphs for tight list items (correctness fix).** Discovered 2026-05-01 while verifying the [F22](#f22) third-tranche dogfood metric: the same bullet content that triggers `excessive-commas` / `dense-punctuation-burst` / `readability.score` in a *loose* list (multiple items separated by blank lines) is silent in a *tight* list (single item, or items without separating blank lines). Root cause: `pulldown-cmark` only emits `Tag::Paragraph` events for items in loose lists; tight-list text events fire directly inside `Tag::Item`. The parser at `src/parser/markdown.rs` only buffers text inside heading or paragraph contexts, so tight-list content goes into the void and every paragraph-level rule (all 17 in v0.1) inherits the blindspot. Same pre-existing limitation flagged in [F126](#f126) for `structure.line-length-wide` — [F129](#f129) resolves it once for every rule. Fix: synthesize a paragraph for each list-item span when no `Tag::Paragraph` event fires inside it. Expected dogfood impact: many CHANGELOG / release-note / README bullets become newly visible to rules — some genuine new diagnostics, some snapshot updates. | 🔴 Next | [F22](#f22) third-tranche verification (2026-05-01) |
 | <a id="f72"></a>[F72](#f72) | ✅ Shipped in v0.2 — `[default] conditions = [...]` config field and `--conditions` CLI flag (comma-separated). Filter semantics: rules tagged `general` always run; tagged-only rules run iff their tags intersect the active list. Profiles unchanged; FALC retains its regulatory meaning. See [`docs/src/guide/conditions.md`](./guide/conditions.md). | — | Rule-system-growth brainstorm (2026-04-20) |
+| <a id="f139"></a>[F139](#f139) | **Experimental rule status — registry substrate for the v0.3 cohort.** Routed 2026-05-02 (`.personal/brainstorm/20260502-v03-breaking-change.md`). Soft-breaking changes (new default-active rules) are the SemVer-major signal for linters; lucid-lint has 5 such rules queued for v0.3 ([F46](#f46) / [F49](#f49) / [F51](#f51) / [F53](#f53) / [F57](#f57)). Rather than smear 5 score regressions across v0.2.x patches *or* hold all 5 until a single v0.3 cut, this entry adds a **rule lifecycle status** (`Stable` / `Experimental`) and ships the cohort in v0.2.x as `Experimental` (off by default). Users — including this repo's own dogfood loop on adjacent projects — opt in via a `[experimental]` config section (`enabled = ["structure.italic-span-long", …]` or `enabled = "*"`) or `--experimental <id>` CLI flag. v0.3's breaking change is then a single-line per rule (`Status::Experimental` → `Status::Stable`) plus a CHANGELOG cohort entry. **Why this shape, not per-rule `default = false` knobs:** `Status` is one concept that maps to a known industry pattern (clippy `nursery`, biome `nursery`, ESLint experimental rules, rust `#[unstable]`); per-rule booleans would add five toggles for the same concept and pre-figure no lifecycle. **Minimal viable substrate (resist gold-plating):** `Status` enum on the `Rule` trait (default `Stable`); `default_rules()` filters `Experimental` unless config opts in; `[experimental]` TOML section parsing; `--experimental` CLI flag (multi-occur + `*`); experimental tagging visible in `--list-rules` output; one snapshot test for the experimental-off vs experimental-on diff. **No** rule-group / preset / category-toggle machinery yet — the biome-style `recommendedRules` preset is filed as a v0.4 question. Estimated effort: half a day for the substrate, then one line per rule once F49 / F51 / F53 / F57 ship on top of it. F46 keeps its original FR-corpus slip-flag (independent of the experimental status). | 🔴 Next | 2026-05-02 v0.3 breaking-change brainstorm; user-proposed dogfood window |
 
 ### Encoding / input handling
 
