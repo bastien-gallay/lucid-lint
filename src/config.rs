@@ -99,6 +99,23 @@ pub struct Config {
     /// ```
     #[serde(default, rename = "ignore")]
     pub ignores: Vec<IgnoreSpec>,
+
+    /// Opt-in selector for [`crate::rules::Status::Experimental`] rules
+    /// (F139). When omitted, no experimental rule runs. Two shapes:
+    ///
+    /// ```toml
+    /// [experimental]
+    /// enabled = ["structure.italic-span-long", "structure.number-run"]
+    /// ```
+    ///
+    /// or, to opt in to every experimental rule at once:
+    ///
+    /// ```toml
+    /// [experimental]
+    /// enabled = "*"
+    /// ```
+    #[serde(default)]
+    pub experimental: ExperimentalConfig,
 }
 
 impl Config {
@@ -371,6 +388,71 @@ impl ScoringFileConfig {
             category_max: self.category_max.unwrap_or(defaults.category_max),
             category_cap: self.category_cap.unwrap_or(defaults.category_cap),
             weight_overrides: self.weights,
+        }
+    }
+}
+
+/// `[experimental]` table in `lucid-lint.toml` (F139).
+///
+/// Accepts either a list of rule ids or the literal `"*"` for "all
+/// experimental rules". An absent table means no experimental rule
+/// runs — the default contract.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct ExperimentalConfig {
+    /// Opt-in selector: list of rule ids, or the literal `"*"`.
+    #[serde(default)]
+    pub enabled: ExperimentalEnabled,
+}
+
+impl ExperimentalConfig {
+    /// Materialize into a runtime [`crate::rules::ExperimentalOptIn`].
+    #[must_use]
+    pub fn into_opt_in(self) -> crate::rules::ExperimentalOptIn {
+        match self.enabled {
+            ExperimentalEnabled::Wildcard(_) => crate::rules::ExperimentalOptIn::All,
+            ExperimentalEnabled::List(ids) => crate::rules::ExperimentalOptIn::from_selectors(ids),
+        }
+    }
+}
+
+/// The two accepted shapes of `[experimental].enabled`: an array of ids
+/// or the wildcard string `"*"`.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum ExperimentalEnabled {
+    /// Wildcard — every experimental rule runs.
+    Wildcard(WildcardStar),
+    /// List of rule ids to opt in to (empty list = none).
+    List(Vec<String>),
+}
+
+impl Default for ExperimentalEnabled {
+    fn default() -> Self {
+        Self::List(Vec::new())
+    }
+}
+
+/// Type-level marker for the literal string `"*"`. Serde round-trips it
+/// as a plain string so `enabled = "*"` deserializes into
+/// [`ExperimentalEnabled::Wildcard`] via the untagged enum.
+#[derive(Debug, Clone)]
+pub struct WildcardStar;
+
+impl Serialize for WildcardStar {
+    fn serialize<S: serde::Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
+        s.serialize_str("*")
+    }
+}
+
+impl<'de> Deserialize<'de> for WildcardStar {
+    fn deserialize<D: serde::Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
+        let s = String::deserialize(d)?;
+        if s == "*" {
+            Ok(Self)
+        } else {
+            Err(serde::de::Error::custom(format!(
+                "[experimental].enabled must be either an array of rule ids or the string \"*\", got {s:?}"
+            )))
         }
     }
 }
@@ -812,6 +894,72 @@ formula = 42
             config.readability_formula(),
             Err(ConfigError::Parse(_))
         ));
+    }
+
+    #[test]
+    fn experimental_defaults_to_none_when_unset() {
+        let config = Config::from_toml_str("").unwrap();
+        let opt_in = config.experimental.into_opt_in();
+        assert!(matches!(opt_in, crate::rules::ExperimentalOptIn::None));
+    }
+
+    #[test]
+    fn experimental_parses_id_list() {
+        let config = Config::from_toml_str(
+            r#"
+[experimental]
+enabled = ["structure.italic-span-long", "structure.number-run"]
+"#,
+        )
+        .unwrap();
+        let opt_in = config.experimental.into_opt_in();
+        let crate::rules::ExperimentalOptIn::Ids(ids) = opt_in else {
+            unreachable!("expected Ids variant from a non-empty enabled list")
+        };
+        assert!(ids.contains("structure.italic-span-long"));
+        assert!(ids.contains("structure.number-run"));
+        assert_eq!(ids.len(), 2);
+    }
+
+    #[test]
+    fn experimental_parses_wildcard() {
+        let config = Config::from_toml_str(
+            r#"
+[experimental]
+enabled = "*"
+"#,
+        )
+        .unwrap();
+        let opt_in = config.experimental.into_opt_in();
+        assert!(matches!(opt_in, crate::rules::ExperimentalOptIn::All));
+    }
+
+    #[test]
+    fn experimental_rejects_arbitrary_string() {
+        // Only the literal "*" is accepted as the string form — typo
+        // guard so users see a clear error instead of a silent no-op.
+        assert!(matches!(
+            Config::from_toml_str(
+                r#"
+[experimental]
+enabled = "all"
+"#,
+            ),
+            Err(ConfigError::Parse(_))
+        ));
+    }
+
+    #[test]
+    fn experimental_empty_list_is_none() {
+        let config = Config::from_toml_str(
+            r#"
+[experimental]
+enabled = []
+"#,
+        )
+        .unwrap();
+        let opt_in = config.experimental.into_opt_in();
+        assert!(matches!(opt_in, crate::rules::ExperimentalOptIn::None));
     }
 
     #[test]

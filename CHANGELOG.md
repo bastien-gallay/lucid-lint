@@ -15,6 +15,23 @@ released-version block.
 
 ### Added
 
+- **[2026-05-02] F139 — experimental rule status substrate.** New
+  `Status::{Stable, Experimental}` enum on the `Rule` trait (default
+  `Stable`), paired with a `filter_by_experimental` step that drops
+  experimental rules from the active set unless the user opts in.
+  Two opt-in surfaces: `[experimental] enabled = ["…", "…"]` (or
+  `enabled = "*"`) in `lucid-lint.toml`, and `--experimental <id>`
+  on the CLI (repeatable, comma-separated, accepts `*`). CLI and
+  TOML are additive; a wildcard on either side wins. The
+  `lucid-lint explain --list-verbose` output now annotates
+  experimental rules with a `[experimental]` tag so the cohort is
+  discoverable. `--list` stays clean for grep. No rule ships as
+  `Experimental` yet — this is the substrate for the v0.3 cohort
+  (F46 / F49 / F51 / F53 / F57), which will flip to `Stable` at the
+  v0.3 cut. The end-to-end snapshot lands with F49 (cohort lead);
+  the substrate itself is covered by unit tests in `src/rules/mod.rs`
+  using a synthetic experimental rule.
+
 - **[2026-05-01] docs.rs landing-page banner.** `src/lib.rs` now opens with a short
   banner pointing readers to the mdBook guide
   (<https://bastien-gallay.github.io/lucid-lint>), the rule catalogue

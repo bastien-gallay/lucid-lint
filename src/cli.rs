@@ -181,6 +181,21 @@ pub(crate) struct CheckArgs {
     #[arg(long, value_delimiter = ',', value_name = "GLOB")]
     pub(crate) exclude: Vec<String>,
 
+    /// Opt in to one or more [`Status::Experimental`] rules (F139).
+    ///
+    /// Repeatable and comma-separated. Pass a rule id (e.g.
+    /// `--experimental structure.italic-span-long`) to enable a single
+    /// experimental rule, or the literal `*` (e.g.
+    /// `--experimental '*'`) to enable every experimental rule at once.
+    /// Merged with `[experimental].enabled` from `lucid-lint.toml`;
+    /// CLI and TOML are additive (a `*` on either side wins).
+    ///
+    /// Experimental rules are part of the registry but skipped by
+    /// default — they ship for dogfooding while they stabilize, then
+    /// promote to `Stable` in a future release.
+    #[arg(long, value_delimiter = ',', value_name = "RULE_ID")]
+    pub(crate) experimental: Vec<String>,
+
     /// Readability formula choice (F11).
     ///
     /// `auto` (default) selects Flesch-Kincaid for EN documents and
@@ -389,6 +404,50 @@ mod tests {
             ),
             Command::Explain(_) => unreachable!("expected Check, got Explain"),
         }
+    }
+
+    #[test]
+    fn experimental_flag_collects_repeats_and_csv() {
+        let args = Cli::try_parse_from([
+            "lucid-lint",
+            "check",
+            "--experimental",
+            "structure.italic-span-long,structure.number-run",
+            "--experimental",
+            "syntax.parenthetical-depth",
+            "file.md",
+        ])
+        .unwrap();
+        let Command::Check(a) = args.command else {
+            unreachable!()
+        };
+        assert_eq!(
+            a.experimental,
+            vec![
+                "structure.italic-span-long".to_string(),
+                "structure.number-run".to_string(),
+                "syntax.parenthetical-depth".to_string(),
+            ]
+        );
+    }
+
+    #[test]
+    fn experimental_flag_accepts_wildcard() {
+        let args =
+            Cli::try_parse_from(["lucid-lint", "check", "--experimental", "*", "file.md"]).unwrap();
+        let Command::Check(a) = args.command else {
+            unreachable!()
+        };
+        assert_eq!(a.experimental, vec!["*".to_string()]);
+    }
+
+    #[test]
+    fn experimental_flag_defaults_empty() {
+        let args = Cli::try_parse_from(["lucid-lint", "check", "file.md"]).unwrap();
+        let Command::Check(a) = args.command else {
+            unreachable!()
+        };
+        assert!(a.experimental.is_empty());
     }
 
     #[test]
