@@ -1,0 +1,14 @@
+---
+source: src/rules/structure/italic_span_long.rs
+expression: diags
+---
+- rule_id: structure.italic-span-long
+  severity: warning
+  location:
+    file: "<input>"
+    line: 3
+    column: 6
+    length: 48
+  section: ~
+  message: Italic span is 10 words long (maximum 8). Long italic runs strain dyslexic readers; consider shortening the emphasized phrase or removing the italics.
+  weight: 1
