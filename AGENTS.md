@@ -75,6 +75,7 @@ Rules may carry condition tags (F71) from a fixed ontology — see [RULES.md](RU
 - **Rule IDs**: `category.rule-name` in kebab-case. Prefix matches the `src/rules/` subdir, name matches the filename. Struct is `PascalCase` of the name half. Example: `structure.sentence-too-long` → `src/rules/structure/sentence_too_long.rs` → `struct SentenceTooLong`. Reference rule: that file.
 - **Config**: global `lucid-lint.toml`; per-rule `[rules.<rule-id>]`; profiles (`dev-doc`, `public`, `falc`) preset every threshold at once.
 - **Output**: human TTY by default with a `score:` summary (v0.2+); `--format=json` is the stable schema (`version = 2`, carries `score`, `category_scores`, per-diagnostic `weight` — see `docs/src/guide/scoring.md`); SARIF v2.1.0 planned.
+- **ROADMAP feature IDs**: new entries use `F-<kebab-slug>` (e.g. `F-roadmap-slug-ids`). Legacy `F<number>` IDs (F1–F146) are unchanged. Slugs are coined locally — no central counter, no reservation. Slug uniqueness is enforced by [`tests/roadmap_id_uniqueness.rs`](tests/roadmap_id_uniqueness.rs) (runs offline in `cargo test`, re-runs in CI as a backstop). Anchors use `<a id="f-<slug>"></a>` on first definition. The `F-` prefix is optional in branch names and commit subjects — prefer plain `feat/<slug>` for branches and scope syntax (`feat(parser): ...`) for commits.
 
 ## Definition of "done"
 
