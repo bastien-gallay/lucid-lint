@@ -13,7 +13,9 @@ use crate::parser::{parse_markdown, parse_plain, word_count};
 use crate::rules::lexicon::unexplained_abbreviation::{self, UnexplainedAbbreviation};
 use crate::rules::readability::score::{self, FormulaChoice, ReadabilityScore};
 use crate::rules::structure::excessive_commas::{self, ExcessiveCommas};
-use crate::rules::{default_rules, filter_by_conditions, Rule};
+use crate::rules::{
+    default_rules, filter_by_conditions, filter_by_experimental, ExperimentalOptIn, Rule,
+};
 use crate::scoring::{self, Scorecard, ScoringConfig};
 use crate::types::{Diagnostic, Language, SourceFile};
 
@@ -57,9 +59,31 @@ impl Engine {
     /// `conditions` (F71 + F72).
     #[must_use]
     pub fn with_profile_and_conditions(profile: Profile, conditions: &[ConditionTag]) -> Self {
+        Self::with_profile_conditions_and_experimental(
+            profile,
+            conditions,
+            &ExperimentalOptIn::None,
+        )
+    }
+
+    /// Build an engine with the F71/F72 condition filter and the F139
+    /// experimental opt-in applied together.
+    ///
+    /// Filtering order: experimental first (drops [`crate::rules::Status::Experimental`]
+    /// rules the user did not opt in to), then conditions. Order is
+    /// observably equivalent — both filters are pure subset operations
+    /// — but experimental-first keeps the cardinality cheaper.
+    #[must_use]
+    pub fn with_profile_conditions_and_experimental(
+        profile: Profile,
+        conditions: &[ConditionTag],
+        experimental: &ExperimentalOptIn,
+    ) -> Self {
+        let rules = filter_by_experimental(default_rules(profile), experimental);
+        let rules = filter_by_conditions(rules, conditions);
         Self {
             profile,
-            rules: filter_by_conditions(default_rules(profile), conditions),
+            rules,
             scoring_config: ScoringConfig::default(),
         }
     }
