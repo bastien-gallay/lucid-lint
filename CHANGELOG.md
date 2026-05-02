@@ -15,6 +15,23 @@ released-version block.
 
 ### Added
 
+- **[2026-05-02] F-roadmap-slug-ids — ROADMAP feature IDs adopt
+  `F-<kebab-slug>` form for new entries.** First entry under the new
+  convention is this one. Numeric `F<n>` IDs (F1–F146) are unchanged
+  — no migration. Slugs are coined locally with no central counter or
+  reservation; the only coordination is a slug-uniqueness invariant
+  enforced by `tests/roadmap_id_uniqueness.rs` (runs offline in
+  `cargo test`, re-runs in CI as a backstop). The test parses
+  `ROADMAP.md` + `CHANGELOG.md` and asserts (1) every
+  `<a id="f-<slug>"></a>` definition site is unique per file, (2)
+  every slug starts with an ASCII letter so it cannot shadow the
+  legacy `F<number>` namespace, and (3) every `[F-<slug>](#f-<slug>)`
+  reference resolves to a definition. The `F-` prefix becomes optional
+  in branch names and commit subjects — branches use plain feature
+  slugs (`feat/<slug>`) and commits use scope syntax. Routed
+  2026-05-02 in
+  `.personal/brainstorm/20260502-roadmap-id-attribution.md`.
+
 - **[2026-05-02] F49 — `structure.italic-span-long` (experimental,
   cohort lead).** New rule that flags italic spans whose word count
   exceeds a configurable threshold. Grounding: British Dyslexia
