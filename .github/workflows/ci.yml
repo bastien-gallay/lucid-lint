@@ -101,12 +101,13 @@ jobs:
       - name: Build mdBook
         run: cd docs && mdbook build
       - name: FR content-staleness check (F92 sub-task)
-        # Soft on PRs: reports drift on stderr, exits 0. Compares each
-        # FR page's `en-source-sha` front-matter to the EN counterpart's
-        # current last-touching commit. Strict mode is wired separately
-        # on `main` via docs-deploy.yml once the existing stale backlog
-        # is reconciled.
-        run: python3 scripts/check_lang_staleness.py
+        # Strict on PRs since 2026-05-02: any FR page whose
+        # `en-source-sha` stamp lags its EN counterpart's last-touching
+        # commit fails the build. The initial stale backlog was
+        # reconciled in commit 438fa48b (2026-05-01); main has been
+        # `--strict` via docs-deploy.yml since the same date. Pair-locks
+        # filename parity (F92) with content parity (F92 sub-task).
+        run: python3 scripts/check_lang_staleness.py --strict
       - name: Build rustdoc
         run: cargo doc --all-features --no-deps --workspace
         env:
