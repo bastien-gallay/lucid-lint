@@ -1011,6 +1011,185 @@ mod tests {
         assert_eq!(span.start_column, 26);
     }
 
+    // ---- F143 property tests ----
+    //
+    // These run before *and* after the lazy-build refactor (path B).
+    // They pin invariants any correct inline-capture implementation
+    // must satisfy, regardless of whether the tree is built eagerly
+    // or lazily, and regardless of node-boundary choices the
+    // implementation makes.
+
+    fn flatten(nodes: &[Inline], out: &mut String) {
+        for node in nodes {
+            match node {
+                Inline::Text(t) => out.push_str(t),
+                Inline::Emphasis(span) => flatten(&span.children, out),
+            }
+        }
+    }
+
+    fn flatten_to_string(nodes: &[Inline]) -> String {
+        let mut s = String::new();
+        flatten(nodes, &mut s);
+        s
+    }
+
+    /// Generate Markdown-ish input with optional emphasis spans
+    /// sprinkled into prose. Alphabet constrained to ASCII
+    /// alphanumerics + spaces so generated text rarely interacts with
+    /// other Markdown constructs (headings, lists, code) — this
+    /// strategy targets the inline-capture path specifically.
+    fn proptest_md_input() -> impl proptest::strategy::Strategy<Value = String> {
+        use proptest::prelude::*;
+        prop::collection::vec(proptest_segment(), 1..6).prop_map(|segs| segs.join(" "))
+    }
+
+    fn proptest_segment() -> impl proptest::strategy::Strategy<Value = String> {
+        use proptest::prelude::*;
+        prop_oneof![
+            // Plain word run.
+            "[a-z]{1,8}( [a-z]{1,8}){0,5}".prop_map(String::from),
+            // Asterisk-delimited emphasis.
+            "[a-z]{1,8}( [a-z]{1,8}){0,3}".prop_map(|s| format!("*{s}*")),
+            // Underscore-delimited emphasis.
+            "[a-z]{1,8}( [a-z]{1,8}){0,3}".prop_map(|s| format!("_{s}_")),
+        ]
+    }
+
+    fn proptest_plain_text() -> impl proptest::strategy::Strategy<Value = String> {
+        use proptest::prelude::*;
+        // No emphasis delimiters at all — for properties that quantify
+        // over delimiter-free input (P2, P5).
+        "[a-z ]{0,80}".prop_map(String::from)
+    }
+
+    proptest::proptest! {
+        // Bound case count to keep the test run snappy; 256 is plenty
+        // to catch the regressions we care about (allocation-shape
+        // changes, node-boundary drift).
+        #![proptest_config(proptest::prelude::ProptestConfig {
+            cases: 256,
+            ..proptest::prelude::ProptestConfig::default()
+        })]
+
+        // P1 — flatten invariant. Recursively flattening the inline
+        // tree must reproduce the paragraph's `text` field. Load-bearing:
+        // rules walking `inline` and rules walking `text` must agree on
+        // what the paragraph says.
+        #[test]
+        fn prop_flatten_inline_equals_paragraph_text(
+            input in proptest_md_input()
+        ) {
+            let doc = parse_markdown(&input, SourceFile::Anonymous);
+            for para in doc.sections.iter().flat_map(|s| s.paragraphs.iter()) {
+                let flat = flatten_to_string(&para.inline);
+                proptest::prop_assert_eq!(&flat, &para.text);
+            }
+        }
+
+        // P2 — no-emphasis absence. Input without `*` or `_` must
+        // produce no `Inline::Emphasis` node. Catches false-positive
+        // emphasis capture (e.g. emitting Emphasis from Strong / Link).
+        #[test]
+        fn prop_no_delimiters_implies_no_emphasis(
+            input in proptest_plain_text()
+        ) {
+            proptest::prop_assume!(!input.contains('*') && !input.contains('_'));
+            let doc = parse_markdown(&input, SourceFile::Anonymous);
+            for para in doc.sections.iter().flat_map(|s| s.paragraphs.iter()) {
+                let any_emphasis = para
+                    .inline
+                    .iter()
+                    .any(|n| matches!(n, Inline::Emphasis(_)));
+                proptest::prop_assert!(!any_emphasis, "got {:?}", para.inline);
+            }
+        }
+
+        // P3 — emphasis subset. Every emphasis span's flattened text
+        // must appear as a contiguous substring of the parent
+        // paragraph. Catches inline-tree drift where emphasis children
+        // acquire or lose characters relative to the visible text.
+        #[test]
+        fn prop_emphasis_text_is_substring_of_paragraph(
+            input in proptest_md_input()
+        ) {
+            for para in parse_markdown(&input, SourceFile::Anonymous)
+                .sections
+                .iter()
+                .flat_map(|s| s.paragraphs.iter())
+            {
+                for node in &para.inline {
+                    if let Inline::Emphasis(span) = node {
+                        let inner = flatten_to_string(&span.children);
+                        if !inner.is_empty() {
+                            proptest::prop_assert!(
+                                para.text.contains(&inner),
+                                "emphasis {:?} not in paragraph {:?}",
+                                inner,
+                                para.text
+                            );
+                        }
+                    }
+                }
+            }
+        }
+
+        // P4 — emphasis position fidelity. Every captured emphasis
+        // `start_line` must fall within the paragraph's line range.
+        // Catches off-by-one errors and stale positions leaking
+        // across paragraph boundaries.
+        #[test]
+        fn prop_emphasis_position_within_paragraph(
+            input in proptest_md_input()
+        ) {
+            for para in parse_markdown(&input, SourceFile::Anonymous)
+                .sections
+                .iter()
+                .flat_map(|s| s.paragraphs.iter())
+            {
+                let nl = u32::try_from(para.text.matches('\n').count())
+                    .unwrap_or(u32::MAX);
+                let max_line = para.start_line.saturating_add(nl);
+                for node in &para.inline {
+                    if let Inline::Emphasis(span) = node {
+                        proptest::prop_assert!(
+                            span.start_line >= para.start_line
+                                && span.start_line <= max_line,
+                            "span line {} outside [{}, {}] for para {:?}",
+                            span.start_line,
+                            para.start_line,
+                            max_line,
+                            para.text
+                        );
+                        proptest::prop_assert!(
+                            span.start_column >= 1,
+                            "span column {} is not 1-based",
+                            span.start_column
+                        );
+                    }
+                }
+            }
+        }
+
+        // P5 — plain-text empty inline. `parse_plain` never produces
+        // an inline tree, regardless of input shape. Pins the
+        // contract that Markdown semantics do not bleed into the
+        // plain-text path.
+        #[test]
+        fn prop_parse_plain_has_empty_inline(
+            input in proptest_plain_text()
+        ) {
+            let doc = super::super::parse_plain(&input, SourceFile::Anonymous);
+            for para in doc.sections.iter().flat_map(|s| s.paragraphs.iter()) {
+                proptest::prop_assert!(
+                    para.inline.is_empty(),
+                    "got {:?}",
+                    para.inline
+                );
+            }
+        }
+    }
+
     #[test]
     fn emphasis_inside_tight_list_item_is_captured() {
         // F129's tight-list paragraph synthesis must also seed the
