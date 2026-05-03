@@ -1,4 +1,4 @@
-<!-- en-source-sha: 3afe9b59984a266abbd99dc06f8925aa474bca95 -->
+<!-- en-source-sha: 9734c2ef32fda846e0965ee502c2a2f5ccb84ff1 -->
 # Score
 
 v0.2 ajoute un **modèle hybride de score** par-dessus les diagnostics existants. Chaque exécution répond désormais à deux questions à la fois :

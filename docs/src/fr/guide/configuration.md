@@ -1,4 +1,4 @@
-<!-- en-source-sha: 3afe9b59984a266abbd99dc06f8925aa474bca95 -->
+<!-- en-source-sha: 9734c2ef32fda846e0965ee502c2a2f5ccb84ff1 -->
 # Configuration
 
 `lucid-lint` se configure par un fichier `lucid-lint.toml` à la racine du projet (facultatif) et par des options en ligne de commande (qui priment sur le fichier).

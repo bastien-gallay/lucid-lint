@@ -1,4 +1,4 @@
-<!-- en-source-sha: 8400741a215a89c5e49eeff68e7194d9c643b350 -->
+<!-- en-source-sha: 9734c2ef32fda846e0965ee502c2a2f5ccb84ff1 -->
 # `lexicon.excessive-nominalization`
 
 *Nominalisations en excès.*
