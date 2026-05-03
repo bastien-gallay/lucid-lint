@@ -137,6 +137,39 @@ pub static INTENSIFIERS: &[&str] = &[
     "hyper",
 ];
 
+/// French homophone groups (lowercased).
+///
+/// Each inner slice lists orthographic variants that share (or near-share)
+/// pronunciation. Used by the `lexicon.homophone-density` rule to flag
+/// paragraphs where homophones cluster: dyslexic and aphasic readers
+/// decode phonologically and must spell-disambiguate in context, which
+/// raises cognitive load (BDA Dyslexia Style Guide; FALC orthographic
+/// clarity guidelines).
+///
+/// Groups lean toward content-word pairs whose orthographic confusion
+/// genuinely disrupts meaning (`amande` / `amende`, `cours` / `court`).
+/// Ultra-frequent function-word homophones (`et` / `est`, `a` / `à`,
+/// `ou` / `où`) are intentionally **excluded**: they appear in nearly
+/// every sentence and would push baseline density past every threshold,
+/// drowning out the signal the rule is meant to catch.
+pub static HOMOPHONE_GROUPS_FR: &[&[&str]] = &[
+    &["cour", "cours", "court"],
+    &["foi", "foie", "fois"],
+    &["pause", "pose"],
+    &["tâche", "tache"],
+    &["amande", "amende"],
+    &["censé", "sensé"],
+    &["pain", "pin", "peint"],
+    &["vert", "verre", "vers", "ver"],
+    &["saint", "sein", "sain"],
+    &["maître", "mètre", "mettre"],
+    &["ancre", "encre"],
+    &["balai", "ballet"],
+    &["compte", "conte", "comte"],
+    &["voie", "voix", "voit"],
+    &["mer", "mère", "maire"],
+];
+
 /// French spelled-out cardinal numerals (lowercased).
 ///
 /// Used by the `mixed-numeric-format` rule to detect a sentence that
