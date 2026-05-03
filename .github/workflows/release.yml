@@ -22,10 +22,21 @@ jobs:
           fetch-depth: 0
 
       - name: Install cargo-dist
+        # SHA-pinned per OpenSSF Scorecard (PinnedDependenciesID): download
+        # the installer, verify its SHA256, then run it. Bumping cargo-dist
+        # means updating both CARGO_DIST_VERSION and CARGO_DIST_INSTALLER_SHA256.
+        env:
+          CARGO_DIST_VERSION: 0.25.1
+          CARGO_DIST_INSTALLER_SHA256: dc739fe6744bea196ac1f25e5216e97567064625a3b1743e90f5e8eae4994b2d
         run: |
-          curl --proto '=https' --tlsv1.2 -LsSf \
-            https://github.com/axodotdev/cargo-dist/releases/download/v0.25.1/cargo-dist-installer.sh \
-            | sh
+          set -euo pipefail
+          installer="$(mktemp)"
+          curl --proto '=https' --tlsv1.2 -fsSL \
+            "https://github.com/axodotdev/cargo-dist/releases/download/v${CARGO_DIST_VERSION}/cargo-dist-installer.sh" \
+            -o "${installer}"
+          echo "${CARGO_DIST_INSTALLER_SHA256}  ${installer}" | sha256sum -c -
+          sh "${installer}"
+          rm -f "${installer}"
 
       - id: release
         name: Plan release
