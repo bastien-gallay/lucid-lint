@@ -8,7 +8,7 @@
 > `[experimental] enabled = ["structure.italic-span-long"]` dans
 > `lucid-lint.toml`. Passe à `Stable` au moment du tag v0.3 dans le
 > cadre de la cohorte
-> [F139](https://github.com/bastien-gallay/lucid-lint/blob/main/ROADMAP.md#f139).
+> [F-experimental-rule-status](https://github.com/bastien-gallay/lucid-lint/blob/main/ROADMAP.md#f-experimental-rule-status).
 > Voir [Conditions](../guide/conditions.md) pour le tag `dyslexia` qui
 > gouverne cette règle selon les conditions actives.
 
@@ -95,7 +95,7 @@ Une *phrase volontairement longue en italique que la règle signalerait normalem
 ## Voir aussi
 
 - [Conditions](../guide/conditions.md) — le tag `dyslexia` qui gouverne cette règle.
-- [F139 — statut expérimental des règles](https://github.com/bastien-gallay/lucid-lint/blob/main/ROADMAP.md#f139) — substrat qui permet à cette règle d'arriver en v0.2.x sans affecter les scores par défaut.
+- [F-experimental-rule-status — statut expérimental des règles](https://github.com/bastien-gallay/lucid-lint/blob/main/ROADMAP.md#f-experimental-rule-status) — substrat qui permet à cette règle d'arriver en v0.2.x sans affecter les scores par défaut.
 - [F143 — couche AST inline](https://github.com/bastien-gallay/lucid-lint/blob/main/ROADMAP.md#f143) — substrat qui expose les bornes des spans d'emphase à cette règle.
 
 ## Références

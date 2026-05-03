@@ -121,7 +121,7 @@ La configuration TOML est branchée règle par règle, à mesure que chaque `Con
 formula = "kandel-moles"  # ou "flesch-kincaid", "auto"
 ```
 
-Fixe la formule de lisibilité, quelle que soit la langue détectée. `auto` (défaut) garde la sélection par langue de F10.
+Fixe la formule de lisibilité, quelle que soit la langue détectée. `auto` (défaut) garde la sélection par langue de [F-readability-formulas-extra](../roadmap.md#f-readability-formulas-extra).
 
 ### `[rules.unexplained-abbreviation]`
 

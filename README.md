@@ -6,7 +6,7 @@
 [![Crates.io](https://img.shields.io/crates/v/lucid-lint.svg)](https://crates.io/crates/lucid-lint)
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
 
-**Status:** v0.2.3 (2026-04-24) — patch cycle on the v0.2 line. 25 deterministic rules, bilingual EN / FR, hybrid scoring. Experimental-rule substrate (F139) landed 2026-05-02; the v0.3 cohort ships behind `--experimental` until the v0.3 cut. Pre-1.0 — breaking changes remain possible between minor versions. Current backlog: [ROADMAP.md — v0.2 / v0.2.x](ROADMAP.md#v02--v02x--must-ship-shipped-patch-cycle-in-progress).
+**Status:** v0.2.3 (2026-04-24) — patch cycle on the v0.2 line. 25 deterministic rules, bilingual EN / FR, hybrid scoring. Experimental-rule substrate ([F-experimental-rule-status](ROADMAP.md#f-experimental-rule-status)) landed 2026-05-02; the v0.3 cohort ships behind `--experimental` until the v0.3 cut. Pre-1.0 — breaking changes remain possible between minor versions. Current backlog: [ROADMAP.md — v0.2 / v0.2.x](ROADMAP.md#v02--v02x--must-ship-shipped-patch-cycle-in-progress).
 
 ![lucid-lint linting its own demo file — five diagnostics clustered by rule, followed by a score block with five sparkline bars and an `explain` hint line](docs/src/assets/tty/hero.gif)
 

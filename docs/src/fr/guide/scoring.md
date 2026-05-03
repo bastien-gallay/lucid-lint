@@ -156,6 +156,6 @@ Le brainstorm qui a façonné [F14](../roadmap.md) (voir [`brainstorm/20260420-s
 
 - **Notes en lettres (A–F)** — suivi par [F-score-letter-grade](../roadmap.md#f-score-letter-grade). Promu si les nombres semblent bruyants ou difficiles à comparer entre documents.
 - **Affichage feu tricolore + marge réussite/échec** — suivi par [F-score-traffic-light](../roadmap.md#f-score-traffic-light). Promu si les utilisateurs CI demandent un signal d'un coup d'œil plus fort.
-- **Secondes de lecture comme unité alternative** — suivi par [F41](../roadmap.md). Demande une heuristique validée et des métriques compagnes (confort, fatigue), pour ne pas monopoliser la lecture.
-- **Sous-scores par section** — suivi par [F38](../roadmap.md). Une fois les agrégats document + projet éprouvés sur le terrain.
+- **Secondes de lecture comme unité alternative** — suivi par [F-reading-time-score](../roadmap.md#f-reading-time-score). Demande une heuristique validée et des métriques compagnes (confort, fatigue), pour ne pas monopoliser la lecture.
+- **Sous-scores par section** — suivi par [F-section-scoring](../roadmap.md#f-section-scoring). Une fois les agrégats document + projet éprouvés sur le terrain.
 - **Agrégat multi-fichiers au niveau projet** — suivi par [F-project-scoring-rollup](../roadmap.md#f-project-scoring-rollup). En v0.2, la CLI traite tous les chemins passés comme un seul document pour le score.

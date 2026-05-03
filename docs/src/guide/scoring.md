@@ -200,10 +200,10 @@ requires them:
   noisy or hard to compare across documents.
 - **Traffic-light + pass/fail margin display** — tracked as [F-score-traffic-light](../roadmap.md#f-score-traffic-light).
   Promoted if CI users ask for a stronger glance signal.
-- **Reading-time-seconds as alternative unit** — tracked as [F41](../roadmap.md). Needs a
+- **Reading-time-seconds as alternative unit** — tracked as [F-reading-time-score](../roadmap.md#f-reading-time-score). Needs a
   validated heuristic plus companion metrics (comfort, fatigue) so it
   doesn't monopolize the read.
-- **Section-level sub-scores** — tracked as [F38](../roadmap.md). Once document + project
+- **Section-level sub-scores** — tracked as [F-section-scoring](../roadmap.md#f-section-scoring). Once document + project
   roll-ups are proven in the wild.
 - **Project-level multi-file roll-up** — tracked as [F-project-scoring-rollup](../roadmap.md#f-project-scoring-rollup). The CLI in v0.2
   treats all passed paths as a single document for scoring purposes.
