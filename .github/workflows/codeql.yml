@@ -20,8 +20,6 @@ on:
 
 permissions:
   contents: read
-  security-events: write   # upload SARIF to code-scanning
-  actions: read            # required for private repos; harmless on public
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -31,6 +29,10 @@ jobs:
   analyze:
     name: Analyze (Rust)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write   # upload SARIF to code-scanning
+      actions: read            # required for private repos; harmless on public
 
     steps:
       - name: Checkout
