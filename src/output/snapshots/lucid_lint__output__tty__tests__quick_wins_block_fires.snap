@@ -1,0 +1,34 @@
+---
+source: src/output/tty.rs
+expression: out
+---
+warning notes.md · 3 · [lexicon.unexplained-abbreviation]
+        Acronym "HTTP" is not defined on first use.
+  1:1
+  2:1
+  3:1
+warning intro.md:1:1 Acronym "HTTP" is not defined on first use. [lexicon.unexplained-abbreviation]
+warning intro.md · 10 · [structure.sentence-too-long]
+        Sentence is 25 words long (maximum 22).
+  10:1
+  11:1
+  12:1
+  13:1
+  14:1
+  15:1
+  16:1
+  17:1
+  18:1
+  19:1
+
+summary: 14 warnings.
+→ run 'lucid-lint explain <rule-id>' — seen here: lexicon.unexplained-abbreviation, structure.sentence-too-long
+→ add "HTTP" to [rules.lexicon.unexplained-abbreviation].whitelist (4 hits suppressed)
+→ structure.sentence-too-long dominates intro.md (10 hits) — see https://bastien-gallay.github.io/lucid-lint/rules/structure.sentence-too-long
+────────────────────────────────────────────────────────────
+score: 73/100
+       structure    █▎░░░  5/20
+       rhythm       █████  20/20
+       lexicon      ██░░░  8/20
+       syntax       █████  20/20
+       readability  █████  20/20
