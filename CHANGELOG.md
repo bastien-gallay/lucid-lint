@@ -15,6 +15,23 @@ released-version block.
 
 ### Added
 
+- **[2026-05-03] F-report-quick-wins — TTY report quick-wins block.**
+  New `output::quick_wins` module renders an actionable-hint block
+  after the diagnostic list on the TTY surface, with two seed shapes
+  grounded in dogfood patterns: (1) **acronym whitelist hint** — ≥ 3
+  occurrences of `lexicon.unexplained-abbreviation` sharing one token
+  surface `→ add "X" to [rules.lexicon.unexplained-abbreviation].whitelist
+  (N hits suppressed)`, top 3 tokens by count; (2) **single-rule
+  hot-spot hint** — a rule firing ≥ 10 times in one file surfaces
+  `→ <rule-id> dominates <file> (N hits) — see <docs URL>`. The
+  acronym path suppresses a hot-spot hint for the same `(file,
+  unexplained-abbreviation)` pair so the more actionable advice wins.
+  Block caps at ≤ 5 lines. Non-breaking, TTY only in v0.2.x; JSON /
+  SARIF stay structural until a CI consumer asks. Filed under a new
+  "Reporting / DX" topic in ROADMAP. Routed from Block C of
+  `.personal/2026-05-03-today.md` (originally surfaced in the
+  2026-05-02 deferred buffer).
+
 - **[2026-05-03] Numeric `F<n>` reference link-rot guard.** Extends
   `tests/roadmap_id_uniqueness.rs` with a fourth invariant:
   `[F<n>](#f<n>)` references (digits, optional single-letter suffix

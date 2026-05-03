@@ -12,6 +12,7 @@ use crate::scoring::Scorecard;
 use crate::types::Diagnostic;
 
 pub mod json;
+mod quick_wins;
 pub mod sarif;
 pub mod tty;
 
