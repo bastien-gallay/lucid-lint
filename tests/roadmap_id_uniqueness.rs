@@ -1,12 +1,16 @@
 //! F-roadmap-slug-ids: enforce slug-as-ID uniqueness in ROADMAP + CHANGELOG.
 //!
-//! Three invariants:
+//! Four invariants:
 //! 1. Every `F-<slug>` definition site (`<a id="f-<slug>"></a>`) appears
 //!    at most once per source file.
 //! 2. Slugs are kebab-case and start with an ASCII letter — guarantees
 //!    the slug body cannot collide with the legacy `F<number>` namespace.
 //! 3. Every reference `[F-<slug>](#f-<slug>)` matches text-to-anchor and
 //!    resolves to a definition site in the same file.
+//! 4. Every legacy reference `[F<n>](#f<n>)` (digits, optional single-letter
+//!    suffix like `F35a`) resolves to a `<a id="f<n>"></a>` definition site
+//!    in the same file. Catches link rot when a numeric ID is renamed to a
+//!    slug but a stale reference is left behind.
 
 #![allow(clippy::panic)] // Test panics on I/O / convention violations are intentional.
 
@@ -128,6 +132,46 @@ fn slugs_use_kebab_form_starting_with_letter() {
     }
 }
 
+/// Pull every `<a id="f<digits>[<letter>]"></a>` numeric-anchor body.
+/// Excludes slug anchors (which start with `f-`).
+fn numeric_definitions(body: &str) -> Vec<String> {
+    let needle = "<a id=\"f";
+    body.match_indices(needle)
+        .filter_map(|(i, _)| {
+            let after = &body[i + needle.len()..];
+            if !after.chars().next()?.is_ascii_digit() {
+                return None;
+            }
+            after.find('"').map(|end| after[..end].to_string())
+        })
+        .collect()
+}
+
+/// Pull every `[F<n>](#f<n>)` reference; returns `(text, anchor)` pairs.
+/// Excludes slug references (which start with `[F-`).
+fn numeric_references(body: &str) -> Vec<(String, String)> {
+    let needle = "[F";
+    body.match_indices(needle)
+        .filter_map(|(i, _)| {
+            let after = &body[i + needle.len()..];
+            if !after.chars().next()?.is_ascii_digit() {
+                return None;
+            }
+            let text_end = after.find(']')?;
+            let rest = &after[text_end + 1..];
+            let anchor_part = rest.strip_prefix("(#f")?;
+            if !anchor_part.chars().next()?.is_ascii_digit() {
+                return None;
+            }
+            let anchor_end = anchor_part.find(')')?;
+            Some((
+                after[..text_end].to_lowercase(),
+                anchor_part[..anchor_end].to_string(),
+            ))
+        })
+        .collect()
+}
+
 #[test]
 fn slug_references_resolve_to_local_definitions() {
     for source in SOURCES {
@@ -141,6 +185,24 @@ fn slug_references_resolve_to_local_definitions() {
             assert!(
                 defs.contains(&anchor),
                 "in {source}: `[F-{text}](#f-{anchor})` has no `<a id=\"f-{anchor}\"></a>` definition site",
+            );
+        }
+    }
+}
+
+#[test]
+fn numeric_references_resolve_to_local_definitions() {
+    for source in SOURCES {
+        let body = strip_code(&read(source));
+        let defs: HashSet<String> = numeric_definitions(&body).into_iter().collect();
+        for (text, anchor) in numeric_references(&body) {
+            assert_eq!(
+                text, anchor,
+                "in {source}: `[F{text}]` text does not match `#f{anchor}` anchor",
+            );
+            assert!(
+                defs.contains(&anchor),
+                "in {source}: `[F{text}](#f{anchor})` has no `<a id=\"f{anchor}\"></a>` definition site",
             );
         }
     }
