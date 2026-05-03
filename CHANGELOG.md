@@ -13,6 +13,46 @@ released-version block.
 
 ## [Unreleased]
 
+### Added
+
+- **[2026-05-03] F-repo-config-hardening closed — GitHub repo
+  config hardening pass complete.** Tag ruleset on `v*` pattern
+  created today (block deletion + force-push, *Active*; covers
+  all 7 release tags v0.1.0 → v0.2.4) — protects the
+  tag-triggered crates.io publish flow. Audit of the remaining
+  5 routed items found them already shipped via earlier
+  hardening passes that didn't surface to the ROADMAP:
+  `.github/dependabot.yml` (cargo + github-actions, weekly,
+  grouped); Actions pinned-SHA required (`sha_pinning_required:
+  true`); secret scanning + push protection; private
+  vulnerability reporting; CodeQL via the Advanced-setup
+  workflow (`.github/workflows/codeql.yml`, weekly Rust scan,
+  29 rules, 0 open alerts at last run). ROADMAP entry now
+  carries a retro footnote on the routed-vs-actual gap, with
+  the lesson for future "GH Settings hardening" entries —
+  verify state via `gh api` before drafting the checklist; the
+  repo's actual posture had drifted past the assumed baseline.
+  Heads-up filed but not actioned: the legacy `main-protection`
+  *branch* ruleset shows `enforcement: disabled` in the API
+  listing — intent unclear, verify before relying on it.
+
+- **[2026-05-03] F-report-quick-wins — TTY report quick-wins block.**
+  New `output::quick_wins` module renders an actionable-hint block
+  after the diagnostic list on the TTY surface, with two seed shapes
+  grounded in dogfood patterns: (1) **acronym whitelist hint** — ≥ 3
+  occurrences of `lexicon.unexplained-abbreviation` sharing one token
+  surface `→ add "X" to [rules.lexicon.unexplained-abbreviation].whitelist
+  (N hits suppressed)`, top 3 tokens by count; (2) **single-rule
+  hot-spot hint** — a rule firing ≥ 10 times in one file surfaces
+  `→ <rule-id> dominates <file> (N hits) — see <docs URL>`. The
+  acronym path suppresses a hot-spot hint for the same `(file,
+  unexplained-abbreviation)` pair so the more actionable advice wins.
+  Block caps at ≤ 5 lines. Non-breaking, TTY only in v0.2.x; JSON /
+  SARIF stay structural until a CI consumer asks. Filed under a new
+  "Reporting / DX" topic in ROADMAP. Routed from Block C of
+  `.personal/2026-05-03-today.md` (originally surfaced in the
+  2026-05-02 deferred buffer).
+
 ## [0.2.4] — 2026-05-03
 
 ### Added

@@ -8,6 +8,7 @@ use std::fmt::Write;
 
 use owo_colors::{OwoColorize, Stream};
 
+use super::quick_wins;
 use crate::explain::DOCS_BASE;
 use crate::scoring::{Score, Scorecard};
 use crate::types::{Diagnostic, Severity, SourceFile};
@@ -171,6 +172,9 @@ fn render_diagnostics_block(diagnostics: &[Diagnostic], options: TtyOptions) -> 
                 "{}",
                 explain_hint_line(diagnostics, options.color_mode)
             );
+        }
+        for hint in quick_wins::hints(diagnostics) {
+            let _ = writeln!(out, "{}", dim(&format!("→ {hint}"), options.color_mode));
         }
     }
     out
@@ -998,5 +1002,65 @@ mod tests {
         let bold_wrapped = score_fragment_bold(s, ColorMode::Never);
         assert!(bold_wrapped.contains(&plain));
         assert!(bold_wrapped.contains("71/100"));
+    }
+
+    fn unexplained(file: SourceFile, line: u32, token: &str) -> Diagnostic {
+        let length = u32::try_from(token.chars().count()).unwrap_or(0);
+        Diagnostic::new(
+            "lexicon.unexplained-abbreviation",
+            Severity::Warning,
+            Location::new(file, line, 1, length),
+            format!("Acronym \"{token}\" is not defined on first use."),
+        )
+    }
+
+    fn long_sentence(file: SourceFile, line: u32) -> Diagnostic {
+        Diagnostic::new(
+            "structure.sentence-too-long",
+            Severity::Warning,
+            Location::new(file, line, 1, 30),
+            "Sentence is 25 words long (maximum 22).",
+        )
+    }
+
+    #[test]
+    fn quick_wins_block_fires_for_acronym_and_hotspot_paths() {
+        let path = SourceFile::Path(std::path::PathBuf::from("notes.md"));
+        let other = SourceFile::Path(std::path::PathBuf::from("intro.md"));
+        let mut diags = Vec::new();
+        // Acronym hint: HTTP appears 4 times across two files.
+        for line in 1..=3 {
+            diags.push(unexplained(path.clone(), line, "HTTP"));
+        }
+        diags.push(unexplained(other.clone(), 1, "HTTP"));
+        // Hot-spot hint: structure.sentence-too-long fires 10 times in intro.md.
+        for line in 10..20 {
+            diags.push(long_sentence(other.clone(), line));
+        }
+        let out = render(&diags, &card(&diags), TtyOptions::new(ColorMode::Never));
+        insta::assert_snapshot!("quick_wins_block_fires", out);
+    }
+
+    #[test]
+    fn quick_wins_block_silent_below_thresholds() {
+        let path = SourceFile::Path(std::path::PathBuf::from("notes.md"));
+        let mut diags = Vec::new();
+        // Two acronym hits — under the 3-hit threshold.
+        diags.push(unexplained(path.clone(), 1, "HTTP"));
+        diags.push(unexplained(path.clone(), 2, "HTTP"));
+        // Three sentence-too-long — under the 10-hit hot-spot threshold.
+        for line in 10..13 {
+            diags.push(long_sentence(path.clone(), line));
+        }
+        let out = render(&diags, &card(&diags), TtyOptions::new(ColorMode::Never));
+        assert!(
+            !out.contains("→ add \""),
+            "no acronym hint expected:\n{out}"
+        );
+        assert!(
+            !out.contains("dominates"),
+            "no hot-spot hint expected:\n{out}"
+        );
+        insta::assert_snapshot!("quick_wins_block_silent", out);
     }
 }
