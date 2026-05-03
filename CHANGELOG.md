@@ -25,6 +25,19 @@ released-version block.
   exist today, so the guard fires only on real link rot introduced
   by future renames.
 
+- **[2026-05-03] ROADMAP feature-split strategy documented in
+  AGENTS.md.** When a feature splits into work that ships on
+  independent timelines, sub-slugs follow the
+  `<parent-slug>-<descriptor>` form (e.g.
+  `F-fix-mode-redundant-intensifier` under `F-fix-mode`); the
+  parent stays as the umbrella narrative entry with cross-refs
+  to children. Default remains **not splitting** — keep one
+  ROADMAP row with a checklist; sub-IDs earn their cost only
+  when items ship independently, get cited externally, or get
+  prioritised separately in MoSCoW. Legacy letter-suffix splits
+  (`F35a` / `F35b` / `F78b` / `F105b`) are grandfathered; the
+  letter-suffix form is closed for new entries.
+
 - **[2026-05-02] F-roadmap-slug-ids — ROADMAP feature IDs adopt
   `F-<kebab-slug>` form for new entries.** First entry under the new
   convention is this one. Numeric `F<n>` IDs (F1–F146) are unchanged
