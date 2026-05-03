@@ -15,6 +15,27 @@ released-version block.
 
 ### Added
 
+- **[2026-05-03] F-repo-config-hardening closed — GitHub repo
+  config hardening pass complete.** Tag ruleset on `v*` pattern
+  created today (block deletion + force-push, *Active*; covers
+  all 7 release tags v0.1.0 → v0.2.4) — protects the
+  tag-triggered crates.io publish flow. Audit of the remaining
+  5 routed items found them already shipped via earlier
+  hardening passes that didn't surface to the ROADMAP:
+  `.github/dependabot.yml` (cargo + github-actions, weekly,
+  grouped); Actions pinned-SHA required (`sha_pinning_required:
+  true`); secret scanning + push protection; private
+  vulnerability reporting; CodeQL via the Advanced-setup
+  workflow (`.github/workflows/codeql.yml`, weekly Rust scan,
+  29 rules, 0 open alerts at last run). ROADMAP entry now
+  carries a retro footnote on the routed-vs-actual gap, with
+  the lesson for future "GH Settings hardening" entries —
+  verify state via `gh api` before drafting the checklist; the
+  repo's actual posture had drifted past the assumed baseline.
+  Heads-up filed but not actioned: the legacy `main-protection`
+  *branch* ruleset shows `enforcement: disabled` in the API
+  listing — intent unclear, verify before relying on it.
+
 - **[2026-05-03] F-report-quick-wins — TTY report quick-wins block.**
   New `output::quick_wins` module renders an actionable-hint block
   after the diagnostic list on the TTY surface, with two seed shapes
