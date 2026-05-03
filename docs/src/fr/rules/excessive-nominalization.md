@@ -1,4 +1,4 @@
-<!-- en-source-sha: 8400741a215a89c5e49eeff68e7194d9c643b350 -->
+<!-- en-source-sha: 9734c2ef32fda846e0965ee502c2a2f5ccb84ff1 -->
 # `lexicon.excessive-nominalization`
 
 *Nominalisations en excès.*
@@ -47,7 +47,7 @@ Le vocabulaire technique (`function`, `implementation`,
 ce qui justifie le seuil relâché de `dev-doc`. Le suffixe `-al` en
 anglais est trop large (il signale `crucial`, `horizontal`,
 `positional` alors qu'il ne s'agit pas de noms abstraits) et reste
-suivi sous **[F24](../roadmap.md)** dans la
+suivi sous **[F-excessive-nominalization-suffix-refine](../roadmap.md#f-excessive-nominalization-suffix-refine)** dans la
 [feuille de route](../roadmap.md).
 
 ## Exemple

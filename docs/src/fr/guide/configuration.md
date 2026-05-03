@@ -1,4 +1,4 @@
-<!-- en-source-sha: 3afe9b59984a266abbd99dc06f8925aa474bca95 -->
+<!-- en-source-sha: 9734c2ef32fda846e0965ee502c2a2f5ccb84ff1 -->
 # Configuration
 
 `lucid-lint` se configure par un fichier `lucid-lint.toml` à la racine du projet (facultatif) et par des options en ligne de commande (qui priment sur le fichier).
@@ -108,7 +108,7 @@ Notes :
 
 - **Portée globale.** Le filtre n'est pas par fichier. Les directives en ligne restent la porte de sortie recommandée pour faire taire ponctuellement en Markdown — utilisez `[[ignore]]` seulement quand une règle est vraiment bruyante sur tout le projet.
 - **Identifiants inconnus tolérés.** Les entrées qui visent des règles disparues sont retirées sans rien dire, donc retirer une règle dans une version future ne casse pas les anciens fichiers.
-- **Champs futurs.** Un champ `reason = "..."` sur chaque entrée est suivi par F20 — quand il arrivera, il sera affiché dans les rapports et exigible par configuration.
+- **Champs futurs.** Un champ `reason = "..."` sur chaque entrée est suivi par [F-suppression-reason-field](../roadmap.md#f-suppression-reason-field) — quand il arrivera, il sera affiché dans les rapports et exigible par configuration.
 
 ## Surcharges par règle
 

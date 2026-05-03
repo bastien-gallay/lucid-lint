@@ -196,14 +196,14 @@ The brainstorm that shaped [F14](../roadmap.md) (see
 kept the model minimal. Decorations promoted only when user feedback
 requires them:
 
-- **Letter grades (A–F)** — tracked as [F39](../roadmap.md). Promoted if the numbers feel
+- **Letter grades (A–F)** — tracked as [F-score-letter-grade](../roadmap.md#f-score-letter-grade). Promoted if the numbers feel
   noisy or hard to compare across documents.
-- **Traffic-light + pass/fail margin display** — tracked as [F40](../roadmap.md).
+- **Traffic-light + pass/fail margin display** — tracked as [F-score-traffic-light](../roadmap.md#f-score-traffic-light).
   Promoted if CI users ask for a stronger glance signal.
 - **Reading-time-seconds as alternative unit** — tracked as [F41](../roadmap.md). Needs a
   validated heuristic plus companion metrics (comfort, fatigue) so it
   doesn't monopolize the read.
 - **Section-level sub-scores** — tracked as [F38](../roadmap.md). Once document + project
   roll-ups are proven in the wild.
-- **Project-level multi-file roll-up** — tracked as [F15](../roadmap.md). The CLI in v0.2
+- **Project-level multi-file roll-up** — tracked as [F-project-scoring-rollup](../roadmap.md#f-project-scoring-rollup). The CLI in v0.2
   treats all passed paths as a single document for scoring purposes.

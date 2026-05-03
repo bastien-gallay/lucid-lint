@@ -12,7 +12,7 @@ A long sentence that is intentional and should not be flagged.
 
 - **Syntax.** HTML comment, one rule id per directive. Multiple line directives may precede the same target line.
 - **Scope.** The next non-blank line in the source.
-- **Optional reason.** `<!-- lucid-lint disable-next-line lexicon.weasel-words reason="quoting the style guide" -->` — surfaced in JSON output; will be *required* via config in a future release (tracked as [F20](../roadmap.md) in the [roadmap](../roadmap.md)).
+- **Optional reason.** `<!-- lucid-lint disable-next-line lexicon.weasel-words reason="quoting the style guide" -->` — surfaced in JSON output; will be *required* via config in a future release (tracked as [F-suppression-reason-field](../roadmap.md#f-suppression-reason-field) in the [roadmap](../roadmap.md)).
 
 ## Block form (v0.2, F18)
 
@@ -29,8 +29,8 @@ Another long sentence in the same scope.
 - **Opening.** `<!-- lucid-lint-disable <rule-id> -->` opens a scope for one rule.
 - **Closing.** `<!-- lucid-lint-enable -->` closes **every** currently-open scope. Passing a rule id (`<!-- lucid-lint-enable <rule-id> -->`) closes only that rule's scope, which lets overlapping disables for different rules nest cleanly.
 - **Scope.** Every line between the two comments (inclusive).
-- **Unterminated disable.** Extends to end-of-document — useful for whole-file opt-outs, but prefer the planned `disable-file` directive ([F21](../roadmap.md)) once it lands.
-- **One rule per comment.** Multi-rule lists are tracked as F21.
+- **Unterminated disable.** Extends to end-of-document — useful for whole-file opt-outs, but prefer the planned `disable-file` directive ([F-suppression-disable-file](../roadmap.md#f-suppression-disable-file)) once it lands.
+- **One rule per comment.** Multi-rule lists are tracked as [F-suppression-disable-file](../roadmap.md#f-suppression-disable-file).
 
 ## Common properties
 
@@ -45,8 +45,8 @@ The following extensions are tracked on the [roadmap](../roadmap.md):
 | ID | Item |
 |---|---|
 | [F19](../roadmap.md) | Config-based ignores (`[[ignore]]` in `lucid-lint.toml`) for `.txt` and stdin inputs |
-| [F20](../roadmap.md) | Optional-then-required `reason="..."` field, surfaced in reports |
-| [F21](../roadmap.md) | File-level directive (`disable-file`) and multi-rule comma lists |
+| [F-suppression-reason-field](../roadmap.md#f-suppression-reason-field) | Optional-then-required `reason="..."` field, surfaced in reports |
+| [F-suppression-disable-file](../roadmap.md#f-suppression-disable-file) | File-level directive (`disable-file`) and multi-rule comma lists |
 
 ## See also
 

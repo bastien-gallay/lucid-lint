@@ -1232,14 +1232,14 @@ Another long sentence in the same scope.
 
 - **Syntax** : `<!-- lucid-lint-disable <rule-id> -->` opens a scope; `<!-- lucid-lint-enable -->` closes every currently-open scope. An optional rule id on `enable` closes only that rule's scope, which lets nested disables overlap for different rules.
 - **Scope** : every line between the two comments (inclusive). An unterminated `disable` extends to the end of the document.
-- **One rule per comment** : multi-rule lists are tracked as F21.
+- **One rule per comment** : multi-rule lists are tracked as `F-suppression-disable-file`.
 
 ### Common properties
 
 - **Applies to** : Markdown only. Plain text and stdin cannot carry comments; config-based ignores (`[[ignore]]` in `lucid-lint.toml`) are planned — see `ROADMAP.md` F19.
 - **Unknown rule ids** : silently ignored.
 
-File-level directives, multi-rule lists, and an optional `reason=` field are tracked as F20–F21 in `ROADMAP.md`.
+File-level directives, multi-rule lists, and an optional `reason=` field are tracked as `F-suppression-reason-field` and `F-suppression-disable-file` in `ROADMAP.md`.
 
 ---
 
