@@ -138,14 +138,14 @@ lucid-lint check --min-score=85 docs/
       that cost low.
     </p>
   </article>
-  <div class="reading-demo__chips" role="radiogroup" aria-label="Reading font">
-    <button type="button" class="reading-demo__chip" data-apply="atkinson" role="radio" aria-checked="true">
+  <div class="reading-demo__chips" role="group" aria-label="Reading font">
+    <button type="button" class="reading-demo__chip" data-apply="atkinson" aria-pressed="true">
       Atkinson <span class="reading-demo__default">default</span>
     </button>
-    <button type="button" class="reading-demo__chip" data-apply="standard" role="radio" aria-checked="false">
+    <button type="button" class="reading-demo__chip" data-apply="standard" aria-pressed="false">
       Standard
     </button>
-    <button type="button" class="reading-demo__chip" data-apply="dyslexic" role="radio" aria-checked="false">
+    <button type="button" class="reading-demo__chip" data-apply="dyslexic" aria-pressed="false">
       OpenDyslexic
     </button>
   </div>

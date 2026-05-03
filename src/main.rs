@@ -13,6 +13,7 @@ use lucid_lint::config::{Config as FileConfig, Profile};
 use lucid_lint::explain;
 use lucid_lint::output::{tty, Format};
 use lucid_lint::rules::readability::score::FormulaChoice;
+use lucid_lint::rules::ExperimentalOptIn;
 use lucid_lint::scoring::{self, ScoringConfig};
 use lucid_lint::{Diagnostic, Engine, Severity};
 
@@ -48,9 +49,17 @@ fn run_explain(args: ExplainArgs) -> ExitCode {
 
     if args.list_verbose {
         let entries = explain::known_ids_with_descriptions(90);
+        let experimental = lucid_lint::rules::experimental_rule_ids();
         let width = entries.iter().map(|(id, _)| id.len()).max().unwrap_or(0);
         for (id, desc) in entries {
-            let _ = writeln!(handle, "  {id:<width$}  {desc}");
+            // F139: mark experimental rules so their opt-in status is
+            // discoverable from the rule listing.
+            let tag = if experimental.contains(id) {
+                " [experimental]"
+            } else {
+                ""
+            };
+            let _ = writeln!(handle, "  {id:<width$}{tag}  {desc}");
         }
         return ExitCode::SUCCESS;
     }
@@ -85,6 +94,7 @@ fn run_check(args: CheckArgs) -> Result<ExitCode> {
     let profile = resolve_profile(args.profile, file_config.as_ref());
     let format: Format = args.format.into();
     let conditions = resolve_conditions(&args.conditions, file_config.as_ref());
+    let experimental = resolve_experimental(&args.experimental, file_config.as_ref());
     let formula = resolve_formula(args.readability_formula, file_config.as_ref())?;
     let scoring_config: ScoringConfig = file_config
         .as_ref()
@@ -105,10 +115,11 @@ fn run_check(args: CheckArgs) -> Result<ExitCode> {
         None => None,
     };
 
-    let mut engine = Engine::with_profile_and_conditions(profile, &conditions)
-        .with_readability_formula(formula)
-        .with_unexplained_whitelist(unexplained_whitelist)
-        .with_scoring_config(scoring_config.clone());
+    let mut engine =
+        Engine::with_profile_conditions_and_experimental(profile, &conditions, &experimental)
+            .with_readability_formula(formula)
+            .with_unexplained_whitelist(unexplained_whitelist)
+            .with_scoring_config(scoring_config.clone());
     if let Some(max) = excessive_commas_max {
         engine = engine.with_excessive_commas_max_commas(max);
     }
@@ -203,6 +214,33 @@ fn resolve_conditions(
     }
     file.map(|c| c.default.conditions.clone())
         .unwrap_or_default()
+}
+
+/// Merge CLI `--experimental` selectors with `[experimental].enabled`
+/// from the discovered config. Both surfaces are additive: a wildcard
+/// on either side promotes the result to [`ExperimentalOptIn::All`];
+/// otherwise the union of rule ids is used.
+fn resolve_experimental(cli: &[String], file: Option<&FileConfig>) -> ExperimentalOptIn {
+    let from_file = file
+        .map(|c| c.experimental.clone().into_opt_in())
+        .unwrap_or_default();
+
+    if matches!(from_file, ExperimentalOptIn::All) || cli.iter().any(|s| s == "*") {
+        return ExperimentalOptIn::All;
+    }
+
+    let mut ids: std::collections::BTreeSet<String> = match from_file {
+        ExperimentalOptIn::Ids(set) => set,
+        ExperimentalOptIn::None | ExperimentalOptIn::All => std::collections::BTreeSet::new(),
+    };
+    for s in cli {
+        ids.insert(s.clone());
+    }
+    if ids.is_empty() {
+        ExperimentalOptIn::None
+    } else {
+        ExperimentalOptIn::Ids(ids)
+    }
 }
 
 fn resolve_formula(

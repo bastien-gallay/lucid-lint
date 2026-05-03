@@ -45,3 +45,10 @@ See [Suppressing diagnostics](../guide/suppression.md).
 - [`lexicon.all-caps-shouting`](./all-caps-shouting.md)
 - [`readability.score`](./readability-score.md)
 - [Conditions](../guide/conditions.md)
+
+## References
+
+- [Seidenberg et al. (1984)](../references.md#seidenberg-1984)
+- [Treiman et al. (2006)](../references.md#treiman-2006)
+
+See [References](../references.md) for the full bibliography.

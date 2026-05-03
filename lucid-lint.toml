@@ -10,7 +10,7 @@
 [default]
 profile = "dev-doc"
 
-[rules.unexplained-abbreviation]
+[rules."lexicon.unexplained-abbreviation"]
 whitelist = [
     # Accessibility standards
     "WCAG",

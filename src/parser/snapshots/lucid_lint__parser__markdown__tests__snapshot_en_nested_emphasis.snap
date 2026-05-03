@@ -1,0 +1,39 @@
+---
+source: src/parser/markdown.rs
+expression: trees
+---
+[
+    [
+        Text(
+            "Outer ",
+        ),
+        Emphasis(
+            EmphasisSpan {
+                children: [
+                    Text(
+                        "one ",
+                    ),
+                    Emphasis(
+                        EmphasisSpan {
+                            children: [
+                                Text(
+                                    "two",
+                                ),
+                            ],
+                            start_line: 1,
+                            start_column: 12,
+                        },
+                    ),
+                    Text(
+                        " three",
+                    ),
+                ],
+                start_line: 1,
+                start_column: 7,
+            },
+        ),
+        Text(
+            " end.",
+        ),
+    ],
+]

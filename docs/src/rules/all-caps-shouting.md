@@ -2,7 +2,17 @@
 
 ## What it flags
 
-Runs of consecutive ALL-CAPS words. ALL-CAPS prose strips the shape cues (ascenders, descenders, x-height contrast) that dyslexic readers rely on to disambiguate words, and it triggers many screen readers to spell out the run letter by letter unless the surrounding markup says otherwise. WCAG 3.1.5 and the BDA Dyslexia Style Guide both recommend lowercase or sentence case for emphasis.
+Runs of consecutive ALL-CAPS words.
+
+ALL-CAPS prose strips the shape cues that dyslexic readers rely on to disambiguate words:
+
+- **Ascenders** — the strokes that rise above the body of letters like `b, d, h, k, l`.
+- **Descenders** — the strokes that drop below the baseline in `g, p, q, y`.
+- **X-height contrast** — the height difference between short letters like `a, e, o` and tall ones like `h, l`.
+
+In all-caps, every letter sits on the same baseline at the same height. The reader loses the silhouette of the word and has to decode letter by letter. ALL-CAPS also triggers many screen readers to spell out the run letter by letter unless the surrounding markup says otherwise.
+
+WCAG 3.1.5 and the BDA Dyslexia Style Guide both recommend lowercase or sentence case for emphasis.
 
 ## At a glance
 
@@ -67,3 +77,11 @@ See [Suppressing diagnostics](../guide/suppression.md).
 
 - [`lexicon.unexplained-abbreviation`](./unexplained-abbreviation.md)
 - [Conditions](../guide/conditions.md)
+
+## References
+
+- [Arditi & Cho (2007)](../references.md#arditi-cho-2007)
+- [Nielsen Norman Group](../references.md#nielsen-norman-allcaps)
+- [Bringhurst (2013)](../references.md#bringhurst-2013)
+
+See [References](../references.md) for the full bibliography.

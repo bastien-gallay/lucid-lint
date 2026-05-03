@@ -1,3 +1,4 @@
+<!-- en-source-sha: 3ed057f90edd778c9113711fd867d52f945cf2d3 -->
 # Accessibilité
 
 > **Traduction en cours.** La page d'accessibilité détaillée est
@@ -18,13 +19,6 @@ Premier audit complet le 2026-04-22 : **17 / 20**, 0 bloquant.
   sont ajoutés par JavaScript en fin de page. Un rendu côté
   serveur via `theme/index.hbs` est prévu
   ([F35a](./roadmap.md)).
-- Les puces du démonstrateur de lecture déclarent un
-  `role="radiogroup"` sans gestion des flèches clavier. Correctif
-  prévu en boutons `aria-pressed`
-  ([F35b](./roadmap.md)).
-- La règle `prefers-reduced-motion` masque actuellement la
-  couleur des idées appariées, pas seulement leur animation. La
-  règle sera scindée ([F35c](./roadmap.md)).
 
 ## Signaler un défaut d'accessibilité
 

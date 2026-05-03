@@ -69,6 +69,42 @@ warning input.md:1:1 Connector "then" appears 4 times within 5 consecutive sente
 
 <!-- lucid-lint-enable -->
 
+### French
+
+Five actions, colour-matched across the rewrite — only the connectors change.
+
+<!-- lucid-lint-disable rhythm.repetitive-connectors -->
+
+**Before** (flagged):
+
+> <span class="lucid-idea" data-idea="1">Nous avons analysé les données.</span> Ensuite <span class="lucid-idea" data-idea="2">nous avons construit le modèle.</span> Ensuite <span class="lucid-idea" data-idea="3">nous avons validé les résultats.</span> Ensuite <span class="lucid-idea" data-idea="4">nous avons publié le rapport.</span> Ensuite <span class="lucid-idea" data-idea="5">nous avons archivé les données brutes.</span>
+
+Quatre *ensuite* en cinq phrases — aucune progression ressentie.
+
+What `lucid-lint check --profile public` reports:
+
+```text
+warning input.md:1:1 Connector "ensuite" appears 4 times within 5 consecutive sentences (max 3). Vary the connector or restructure the passage. [rhythm.repetitive-connectors]
+```
+
+**After** (your rewrite):
+
+> <span class="lucid-idea" data-idea="1">Nous avons analysé les données.</span> À partir de là <span class="lucid-idea" data-idea="2">nous avons construit le modèle.</span> <span class="lucid-idea" data-idea="3">La validation a suivi,</span> et dès que les résultats ont tenu <span class="lucid-idea" data-idea="4">nous avons publié le rapport.</span> <span class="lucid-idea" data-idea="5">Les données brutes ont été archivées en dernier.</span>
+
+<!-- lucid-lint-enable -->
+
 ## Suppression
 
-See [Suppressing diagnostics](../guide/suppression.md).
+See [Suppressing diagnostics](../guide/suppression.md) for the inline and block forms.
+
+## See also
+
+- [`structure.sentence-too-long`](./sentence-too-long.md) — long sentences and connector overuse often co-occur; flagging both surfaces a richer rhythm signal.
+- [Scoring model](../guide/scoring.md) — `rhythm.repetitive-connectors` carries the default weight `1`; the cost is local rather than compounding.
+
+## References
+
+- [Sanders & Noordman (2000)](../references.md#sanders-noordman-2000)
+- [Graesser et al. (2004)](../references.md#graesser-2004)
+
+See [References](../references.md) for the full bibliography.

@@ -13,7 +13,7 @@ use std::sync::LazyLock;
 
 use crate::config::Profile;
 use crate::parser::phrase_search::count_word_bounded;
-use crate::parser::{split_sentences, Document, Sentence};
+use crate::parser::{Document, Sentence};
 use crate::rules::Rule;
 use crate::types::{Diagnostic, Language, Location, Severity, SourceFile};
 
@@ -172,9 +172,9 @@ impl Rule for RepetitiveConnectors {
         }
 
         // Collect every sentence in document order, paired with its section.
-        let mut sentences: Vec<(Sentence, Option<&str>)> = Vec::new();
+        let mut sentences: Vec<(&Sentence, Option<&str>)> = Vec::new();
         for (paragraph, section_title) in document.paragraphs_with_section() {
-            for s in split_sentences(&paragraph.text, paragraph.start_line, 1) {
+            for s in &paragraph.sentences {
                 sentences.push((s, section_title));
             }
         }

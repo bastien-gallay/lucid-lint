@@ -46,3 +46,10 @@ See [Suppressing diagnostics](../guide/suppression.md).
 - [`structure.excessive-commas`](./excessive-commas.md)
 - [`structure.sentence-too-long`](./sentence-too-long.md)
 - [Conditions](../guide/conditions.md)
+
+## References
+
+- [Sweller (1988)](../references.md#sweller-1988)
+- [Gibson (1998)](../references.md#gibson-1998)
+
+See [References](../references.md) for the full bibliography.

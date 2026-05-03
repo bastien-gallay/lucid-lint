@@ -133,7 +133,7 @@ Notes:
   exist are dropped silently, so removing a rule in a future release
   does not break older configs.
 - **Future fields.** A `reason = "..."` field on each entry is
-  tracked as F20 — when it lands it will be surfaced in reports and
+  tracked as [F-suppression-reason-field](../roadmap.md#f-suppression-reason-field) — when it lands it will be surfaced in reports and
   optionally required via config.
 
 ## Per-rule overrides
@@ -147,7 +147,7 @@ TOML-driven config is wired rule-by-rule as each `Config` gains a dedicated acce
 formula = "kandel-moles"  # or "flesch-kincaid", "auto"
 ```
 
-Pins the readability formula regardless of detected language. `auto` (default) preserves the F10 per-language selection.
+Pins the readability formula regardless of detected language. `auto` (default) preserves the [F-readability-formulas-extra](../roadmap.md#f-readability-formulas-extra) per-language selection.
 
 ### `[rules.unexplained-abbreviation]`
 

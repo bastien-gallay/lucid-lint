@@ -10,7 +10,7 @@
 use std::num::NonZeroU32;
 
 use crate::config::Profile;
-use crate::parser::{split_sentences, word_count, Document};
+use crate::parser::{word_count, Document};
 use crate::rules::Rule;
 use crate::types::{Diagnostic, Language, Location, Severity, SourceFile};
 
@@ -75,9 +75,7 @@ impl Rule for ParagraphTooLong {
         document
             .paragraphs_with_section()
             .filter_map(|(paragraph, section_title)| {
-                let sentences =
-                    u32::try_from(split_sentences(&paragraph.text, paragraph.start_line, 1).len())
-                        .unwrap_or(u32::MAX);
+                let sentences = u32::try_from(paragraph.sentences.len()).unwrap_or(u32::MAX);
                 let words = word_count(&paragraph.text);
                 if sentences <= max_sentences && words <= max_words {
                     return None;

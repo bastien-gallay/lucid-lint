@@ -5,7 +5,733 @@ All notable changes to `lucid-lint` are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+Within `## [Unreleased]`, every entry is prefixed with a
+`[YYYY-MM-DD]` date stamp recording when it landed on the branch,
+and entries are sorted **descending by date** within each subsection.
+On release, dates are dropped and entries are folded into the
+released-version block.
+
 ## [Unreleased]
+
+## [0.2.4] — 2026-05-03
+
+### Added
+
+- **Numeric `F<n>` reference link-rot guard.** Extends
+  `tests/roadmap_id_uniqueness.rs` with a fourth invariant:
+  `[F<n>](#f<n>)` references (digits, optional single-letter suffix
+  like `F35a`) must resolve to a `<a id="f<n>"></a>` definition site
+  in the same file. Catches stale numeric refs left behind when a
+  legacy ID is renamed to an `F-<slug>` form during the upcoming
+  ROADMAP slug migration. Test passes 4/4 on `main` — no orphan refs
+  exist today, so the guard fires only on real link rot introduced
+  by future renames.
+
+- **ROADMAP feature-split strategy documented in
+  AGENTS.md.** When a feature splits into work that ships on
+  independent timelines, sub-slugs follow the
+  `<parent-slug>-<descriptor>` form (e.g.
+  `F-fix-mode-redundant-intensifier` under `F-fix-mode`); the
+  parent stays as the umbrella narrative entry with cross-refs
+  to children. Default remains **not splitting** — keep one
+  ROADMAP row with a checklist; sub-IDs earn their cost only
+  when items ship independently, get cited externally, or get
+  prioritised separately in MoSCoW. Legacy letter-suffix splits
+  (`F35a` / `F35b` / `F78b` / `F105b`) are grandfathered; the
+  letter-suffix form is closed for new entries.
+
+- **F-roadmap-slug-ids — ROADMAP feature IDs adopt
+  `F-<kebab-slug>` form for new entries.** First entry under the new
+  convention is this one. Numeric `F<n>` IDs (F1–F146) are unchanged
+  — no migration. Slugs are coined locally with no central counter or
+  reservation; the only coordination is a slug-uniqueness invariant
+  enforced by `tests/roadmap_id_uniqueness.rs` (runs offline in
+  `cargo test`, re-runs in CI as a backstop). The test parses
+  `ROADMAP.md` + `CHANGELOG.md` and asserts (1) every
+  `<a id="f-<slug>"></a>` definition site is unique per file, (2)
+  every slug starts with an ASCII letter so it cannot shadow the
+  legacy `F<number>` namespace, and (3) every `[F-<slug>](#f-<slug>)`
+  reference resolves to a definition. The `F-` prefix becomes optional
+  in branch names and commit subjects — branches use plain feature
+  slugs (`feat/<slug>`) and commits use scope syntax. Routed
+  2026-05-02 in
+  `.personal/brainstorm/20260502-roadmap-id-attribution.md`.
+
+- **F49 — `structure.italic-span-long` (experimental,
+  cohort lead).** New rule that flags italic spans whose word count
+  exceeds a configurable threshold. Grounding: British Dyslexia
+  Association style guide — slanted glyphs degrade letter-shape
+  recognition for dyslexic readers, so emphasis should stay short.
+  Ships as `Status::Experimental` (off by default) via the F139
+  substrate; opt in with `--experimental structure.italic-span-long`
+  or `[experimental] enabled = ["structure.italic-span-long"]` in
+  `lucid-lint.toml`. Tagged `dyslexia` (F71): runs only when
+  `--conditions` includes `dyslexia`. Profile thresholds:
+  `dev-doc` 12 / `public` 8 / `falc` 5 words. Consumes the F143
+  inline-AST substrate — first rule on top of it. Diagnostic location
+  points at the opening delimiter so editor squiggles land on the
+  visible `*` / `_`. EN + FR docs pages, full unit-test coverage
+  (multiple emphases, profile thresholds, code-block exclusion,
+  tight-list-item interaction with F129, nested emphasis, FR input,
+  short-circuit on emphasis-free paragraphs via the F143 lazy-build
+  contract), insta snapshot. Cohort lead for the v0.3 condition-tag
+  rules cohort (F46 / F49 / F51 / F53 / F57); flips to `Stable` at
+  the v0.3 cut alongside its siblings.
+
+- **F143 — inline AST layer over pulldown-cmark
+  (lazy-build).** New `Inline` enum and `EmphasisSpan` struct on
+  `crate::parser`, plus a `Paragraph.inline: Vec<Inline>` field
+  populated during the existing Markdown event walk. The variant set
+  is intentionally narrow (`Text` + `Emphasis` only) — `Strong`,
+  `Link`, `Code`, footnotes, and task-list markers continue to flatten
+  into `Paragraph.text` until a rule actually needs them.
+  **Lazy-build contract:** `inline.is_empty()` is the canonical "no
+  spans worth modeling" signal; the tree is only constructed when an
+  emphasis event fires inside a paragraph, so emphasis-free paragraphs
+  (the common case in real documents) don't double-allocate against
+  `Paragraph.text`. When non-empty, `flatten(inline) == text`
+  byte-for-byte. Plain-text input keeps an empty inline vec.
+  Substrate-only change: no rule consumes the new field yet; F49
+  (`structure.italic-span-long`, cohort lead) lands on top in a
+  follow-up PR. Decision routed via a parser-substrate brainstorm
+  (`.personal/brainstorm/20260502-parser-substrate-choice.md`) —
+  pulldown-cmark stays the engine (perf-pillar preserved); the new
+  layer is the *domain model* the rules walk.
+  **Pre-merge gate (all green):** 5 proptest properties × 256 cases
+  (flatten invariant, no-emphasis-absence, emphasis subset, position
+  fidelity, plain-text empty inline, plus the lazy-build emptiness
+  contract); 10 `insta` golden snapshots covering EN + FR fixtures
+  including accented-character column counting; 1 mutation-driven
+  regression test pinning the heading-leak contract; bench-gated at
+  +0.34 % on `parse_markdown/en_long` vs the pre-F143 baseline (well
+  under the 5 % gate).
+
+- **F139 — experimental rule status substrate.** New
+  `Status::{Stable, Experimental}` enum on the `Rule` trait (default
+  `Stable`), paired with a `filter_by_experimental` step that drops
+  experimental rules from the active set unless the user opts in.
+  Two opt-in surfaces: `[experimental] enabled = ["…", "…"]` (or
+  `enabled = "*"`) in `lucid-lint.toml`, and `--experimental <id>`
+  on the CLI (repeatable, comma-separated, accepts `*`). CLI and
+  TOML are additive; a wildcard on either side wins. The
+  `lucid-lint explain --list-verbose` output now annotates
+  experimental rules with a `[experimental]` tag so the cohort is
+  discoverable. `--list` stays clean for grep. No rule ships as
+  `Experimental` yet — this is the substrate for the v0.3 cohort
+  (F46 / F49 / F51 / F53 / F57), which will flip to `Stable` at the
+  v0.3 cut. The end-to-end snapshot lands with F49 (cohort lead);
+  the substrate itself is covered by unit tests in `src/rules/mod.rs`
+  using a synthetic experimental rule.
+
+- **docs.rs landing-page banner.** `src/lib.rs` now opens with a short
+  banner pointing readers to the mdBook guide
+  (<https://bastien-gallay.github.io/lucid-lint>), the rule catalogue
+  (`RULES.md`), and the source repository, plus a one-sentence note
+  framing docs.rs as the *Rust API reference*, not the user guide.
+  Docs.rs always builds rustdoc from the published crate, so this only
+  appears on <https://docs.rs/lucid-lint> after the next `cargo publish`
+  (i.e. the next `v*` tag). Mention this in release notes when bumping
+  0.2.x. Deferred polish items (`[package.metadata.docs.rs]`, logo +
+  favicon, per-entry-point doctests, `cargo public-api` audit) are
+  filed as F133 – F136 in `ROADMAP.md` under
+  *Docs.rs / API reference polish* (renumbered from F129–F132 after
+  F129 was claimed in parallel by the parser tight-list correctness
+  fix below).
+
+- **F25 — next-tier FR translations (architecture + contributing).**
+  Three new FR pages land: `fr/architecture/overview.md` (pipeline
+  diagram, key types, design principles, module layout),
+  `fr/architecture/design-decisions.md` (linter vs scoring, hybrid
+  scoring rationale, Diagnostic struct, deterministic core, bilingual
+  EN/FR, single readability formula in v0.1, Pandoc strategy, one
+  file per rule, stop-word heuristic, profile presets), and
+  `fr/contributing.md` (TL;DR + welcome list). `SUMMARY.md` gains an
+  `Architecture` draft-chapter group with both children, plus a
+  `Contribuer` entry under `Version française`. All three pages are
+  stamped with the F92 sub-task `en-source-sha` HTML comment. **F25
+  closes**: FR pair-completeness 41 / 41 (all EN pages with FR
+  counterparts; only `roadmap.md` remains intentionally asymmetric).
+
+- **F25 — FR guide pages, Block C complete (8 / 8).** `docs/src/fr/guide/`
+  now ships all eight guide translations. Slices A + B (earlier today)
+  landed `installation.md`, `quick-start.md`, `profiles.md`, and
+  `suppression.md`. Slice C adds `conditions.md` (fixed ontology of
+  condition tags, filtering rules, FALC interaction note),
+  `configuration.md` (file layout, sections, precedence, discovery,
+  `exclude`, `[[ignore]]`, per-rule overrides), `scoring.md` (hybrid
+  model, five categories, computation, TTY + JSON output, `--min-score`
+  gate, weight tuning, deferred decorations), and `ci-integration.md`
+  (GitHub Actions, pre-commit, reviewdog, SARIF code scanning, exit-code
+  control, score gating). `SUMMARY.md` `Premiers pas` group now lists
+  all eight children. All four new pages are stamped with the F92
+  sub-task `en-source-sha` HTML comment. FR pair-completeness now
+  39 / 42 — only three EN-only pages remain (architecture overview,
+  design-decisions, contributing). Block C now closed.
+
+- **F92 sub-task — FR content-staleness gate.** Every FR page under
+  `docs/src/fr/` now carries an `en-source-sha` HTML-comment stamp on
+  its first line (`<!-- en-source-sha: 5e24f614… -->`) recording the
+  EN counterpart's commit SHA at translation time. New
+  `scripts/check_lang_staleness.py` walks every FR page, compares the
+  stored SHA to the EN counterpart's current last-touching commit
+  (`git log -n1 --pretty=%H -- <EN counterpart>`), and reports stale
+  pages on stderr. Soft mode (default) exits 0 — wired into PR
+  `ci.yml` and `main` `docs-deploy.yml` as informational. Strict mode
+  (`--strict` / `STRICT=1`) exits 1 on any stale or missing-stamp
+  page, intended as the `main`-branch CI gate once the existing stale
+  backlog clears. Wired as `just docs-lang-staleness`.
+  `scripts/backfill_en_source_sha.py` (one-shot) stamped the 29
+  pre-existing FR pages by resolving each FR page's introducing
+  commit and taking the EN counterpart's last commit at-or-before
+  that point. `AGENTS.md` documents the stamp shape and asymmetric
+  exemptions; `scripts/check_lang_staleness.py::ASYMMETRIC_FR_PAGES`
+  is the single source of truth for FR pages with no EN twin (today:
+  `fr/roadmap.md` only). HTML-comment shape was chosen over YAML
+  front-matter because mdBook does not strip front-matter — `---`
+  renders as `<hr>` and the body as text; HTML comments pass through
+  unchanged. F92 ROADMAP entry extended with the sub-task summary.
+
+- **F84 part 2 — dyscalculia + aphasia load-bearing slots closed.**
+  Three new `redistribution: public_ok` entries land under
+  `examples/public/`: MedlinePlus Aphasia (~995 words, NLM/NIH public
+  domain), MedlinePlus Medical Encyclopedia "Mathematics disorder /
+  developmental dyscalculia" (~482 words, NLM/NIH public domain), and
+  Mon Parcours Handicap "L'aphasie, un handicap invisible et méconnu"
+  (~886 words, Etalab Licence Ouverte 2.0). All three are first
+  dedicated condition-primary entries — existing entries only carried
+  `aphasia` as a secondary tag, and `dyscalculia` had no source at
+  all. Coverage snapshot in `examples/texts.md`: `condition
+  dyscalculia × EN` lifts to `1` (was `—`), `aphasia × EN` rises to
+  `6` (was `5`), `aphasia × FR` to `2` (was `1`); public total `32 of
+  62` entries (was `29 of 59`). The `gaps:` note in `texts.yaml`
+  rewritten to record both closures with date and rationale.
+
+- **GitHub Action composite scaffold (F114, internal).** New
+  `action.yml` at the repo root wraps the `cargo-dist` release tarball
+  in a composite GitHub Action with five inputs (`version`, `paths`,
+  `profile`, `format`, `min-score`, plus `working-directory` and
+  passthrough `args`). The runner detects its OS/arch
+  (`Linux-X64`, `macOS-X64`, `macOS-ARM64`, `Windows-X64`), downloads
+  the matching tarball/zip from the GitHub release, adds the binary
+  to `$GITHUB_PATH`, then runs `lucid-lint check` with the resolved
+  flags. A companion smoke workflow
+  (`.github/workflows/action-smoke.yml`) exercises the contract on
+  the three runner OSes against this repo's own `docs/src/`,
+  triggered only when `action.yml` or the workflow itself changes.
+  Not yet published to the GitHub Marketplace and not pinned to a
+  stable major — the input shape is allowed to drift until the v0.3
+  cut, when `v1` will be tagged and the action will move to its own
+  `lucid-lint-action` repo per the F114 ROADMAP entry.
+
+- **F123 — install-route documentation surfaces the cargo-dist
+  installers.** `README.md` and `docs/src/guide/installation.md`
+  now lead with the `curl … | sh` (Linux / macOS / WSL) and
+  PowerShell (`irm | iex`) one-liners that ship with every
+  release, document the `--check` / audit-before-running pattern
+  (download to a file, `less`/`notepad`, then execute), explain
+  how to pin a specific version (`releases/download/v<version>/`
+  vs `releases/latest/`), and keep `cargo install` and source-build
+  routes alongside as fallbacks. Stale "Once released to crates.io"
+  lead-in dropped. The cargo-dist `installers = ["shell",
+  "powershell"]` flip itself was a no-op — that config has been
+  in `Cargo.toml` `[workspace.metadata.dist]` since the initial
+  scaffold; v0.1.1 / v0.2.0 / v0.2.1 / v0.2.2 have all been
+  attaching the installer scripts to their GitHub Releases.
+
+- **`lexicon.jargon-undefined` page polish (EN + FR).** Drops the
+  obsolete `(v0.1 simplified)` section qualifier, removes the stale
+  link to F9 (which shipped a different feature — definition-aware
+  acronym detection — not a definition-aware variant of jargon),
+  and replaces the inaccurate Parameters table (which suggested
+  `jargon_lists`/`custom_jargon`/`whitelist` were TOML-configurable)
+  with an honest Configuration section: in v0.2 the active lists
+  are set by the profile and not yet user-overridable from
+  `lucid-lint.toml`, with the gap tracked as **F126**.
+
+- **`lexicon.all-caps-shouting` shape-cue explainer (EN + FR).**
+  The "ascenders / descenders / x-height contrast" parenthetical
+  expands into a teaching paragraph naming representative letters
+  for each cue and explaining why ALL-CAPS flattens the silhouette
+  — closes the implicit-jargon gap surfaced in the
+  FR-translation review.
+
+- **`lexicon.excessive-nominalization` example highlights
+  (EN + FR).** Nominalizations in the "before" line and matching
+  active verbs in the "after" line now wear `lucid-idea` colour
+  spans (1–4) so the rewrite mapping is visible at a glance,
+  matching the convention `lexicon.all-caps-shouting` already
+  uses.
+
+- **`lexicon.low-lexical-diversity` reference cleanup
+  (EN + FR).** Drops the inline `**Reference.** Type-Token Ratio …
+  (Herdan, 1960)` line from the body — the reference is already
+  in the page's References section. (A full-rules pass to
+  normalise this convention is pending.)
+
+- **F126 filed — TOML overrides for `lexicon.jargon-undefined`.**
+  v0.2 has no `[rules."lexicon.jargon-undefined"]` deserializer;
+  the rule's `Config` struct exposes `active_lists` / `custom` /
+  `whitelist` but they're only set through the profile preset.
+  Filed under "Rules refinement" 🟡 Later — same shape as the
+  existing `unexplained-abbreviation` whitelist wiring.
+
+- **Six more FR per-rule pages — `lexicon` category 100 %
+  FR-complete (F25 progress, 13/25 → 19/25).**
+  `lexicon.low-lexical-diversity`, `lexicon.excessive-nominalization`,
+  `lexicon.jargon-undefined`, `lexicon.all-caps-shouting`,
+  `lexicon.redundant-intensifier`, `lexicon.consonant-cluster` land
+  under `docs/src/fr/rules/` against the locked template. The whole
+  `lexicon` category is now FR-complete (8 / 8 rules translated),
+  joining `structure` and `rhythm` at 100 %. `SUMMARY.md` and
+  `fr/rules/index.md` rewired to local FR versions. Remaining: 6
+  per-rule FR pages (syntax 5, readability 1) plus FR guide
+  translations.
+
+- **Three US-federal public-domain ADHD sources (F84 part 2 progress).**
+  `examples/texts.yaml` gains the NIMH ADHD topic page (`mixed` shape,
+  ~780 words), CDC About ADHD (`good`, ~920 words) and CDC Treatment of
+  ADHD (`good`, ~1040 words). All three are public-domain US federal
+  works under 17 USC § 105 with explicit reproduction notices on the
+  agencies' policy pages — quoted verbatim in each entry's
+  `license_details`. Material lands under `examples/public/en/` after
+  `just texts`. Knock-on on the public coverage snapshot in
+  `examples/texts.md`: `condition adhd × EN` lifts to `3` (was `—`),
+  `gov_guide × EN` rises to `6`, and the gitignored load-bearing list
+  drops the `adhd × EN` slot entirely. Remaining load-bearing slots are
+  `dyscalculia × EN` and `aphasia × EN+FR` — both flagged as harder in
+  the existing `gaps:` notes; tackled in a later lap.
+
+- **Two more FR per-rule pages — `rhythm` category 100 %
+  FR-complete (F25 progress, 11/25 → 13/25).**
+  `rhythm.consecutive-long-sentences` and `rhythm.repetitive-connectors`
+  land under `docs/src/fr/rules/` against the locked template. The
+  whole `rhythm` category is now FR-complete (2 / 2 rules
+  translated), joining `structure` at 100 %. Both EN pages were
+  brought up to canonical shape first (Examples + See also added to
+  `consecutive-long-sentences`; FR Examples block added to
+  `repetitive-connectors`). `SUMMARY.md` and `fr/rules/index.md`
+  rewired to local FR versions. Remaining: 12 per-rule FR pages
+  (lexicon 6, syntax 5, readability 1) plus FR guide translations.
+
+- **Per-category sidebar grouping in `SUMMARY.md` (F104).** The
+  rules sidebar is reshaped into 5 collapsible sub-trees
+  (Structure / Rhythm / Lexicon / Syntax / Readability) using mdBook
+  draft-chapter syntax (`- [Title]()`) as non-clickable group
+  headers. The flat 25-row list under "Overview" is replaced by
+  category groups that mirror the per-category table on
+  `rules/index.md` — readers scanning for a rhythm or readability
+  rule no longer wade past 9 structure entries first. The
+  "Version française" block mirrors the same shape (Structure /
+  Rythme / Lexique; Syntaxe and Lisibilité materialise as the FR
+  translations of those categories land). `markdownlint` MD042
+  (no-empty-links) is disabled globally to permit the draft-chapter
+  syntax — same pattern as the pre-existing MD025 carve-out for
+  SUMMARY's required multiple H1s.
+
+- **FR rule labels — page subtitle + index gloss (F107).** The rule
+  ID stays the stable contract (CLI flags, JSON output, config keys,
+  citations), but FR readers now see a human-readable label in two
+  places. Each shipped FR rule page opens with a short italic gloss
+  directly under the H1 (e.g. `*Phrase trop longue.*`); 13 pages
+  updated, the remaining 12 receive theirs alongside translation.
+  `fr/rules/index.md` "Catégories" block reshaped from a single
+  roll-up into 5 per-category sub-tables (Structure / Rythme /
+  Lexique / Syntaxe / Lisibilité), each with a `Règle | Libellé`
+  two-column layout — all 25 rules now carry their FR label even
+  when the page still points to the EN version (marked `(en)`).
+  Sidebar TOC labels stay in EN to keep `SUMMARY.md` single-locale
+  (per-locale split is F90, parked Speculative).
+
+- **References page cross-links + external URLs (F105b).** Per-citation
+  anchors (`<a id="author-year">`) on every entry of `docs/src/references.md`
+  and `docs/src/fr/references.md`, so each rule page now links to the
+  exact citation rather than scrolling. Rule pages gain a `## References`
+  / `## Références` section listing the relevant citations as anchored
+  links back into the references page (25 EN + 13 FR pages). The
+  references page links rule IDs in `→ Relevant to:` lines and the
+  rule → reference summary table to their per-rule mdBook pages,
+  closing the loop in both directions. Verified canonical URLs (DOI,
+  publisher landing page, official archive) are added inline as raw
+  HTML anchors with `rel="nofollow noopener noreferrer" target="_blank"`
+  — `nofollow` so the docs site does not vouch for outside content,
+  `noopener noreferrer` so the new tab is safe from reverse-tabnabbing.
+  Sources without a verifiable canonical URL (Herdan 1960, Quirk 1985,
+  Strunk & White 1999, Bringhurst 2013, Zinsser 2006, Kandel & Moles
+  1958, Inclusion Europe FALC, Nielsen Norman Group all-caps articles)
+  are kept as text-only entries; we prefer no link to a guessed one.
+  External-link visible text reduced to a single `↗` (the repeated
+  "doi.org" / "doi.org" / "doi.org" cadence read as visual noise);
+  the hostname moves to `aria-label` for screen readers and the link
+  carries `class="ref-link"` so a small CSS rule in `lucid-colors.css`
+  mutes it (smaller, fog-coloured, underline only on hover) — it sits
+  next to its citation without competing with the rule-page links.
+  Caveat phrasing unified: EN page now uses "Caveat" everywhere
+  ("Note" / "Honest caveat" merged in); FR uses "Précaution" for the
+  generic uncertainty marker, while keeping "Rectification"
+  (factual correction, distinct) and "À vérifier" (pending
+  verification, distinct).
+  Subsumes the F30 rule-mention linking pass for the references-page
+  surface; wider F30 audit (rule mentions in `docs/src/guide/*` prose
+  pages) stays open.
+
+- **Consolidated references page (F105).** Every academic, normative,
+  and practical source that grounds a rule now lives in the docs
+  site at `docs/src/references.md` (EN, under Project) and
+  `docs/src/fr/references.md` (FR, under Version française). The
+  page preserves the full taxonomy from `examples/REFERENCES.md`:
+  status legend, per-domain sections (Cognitive Load Theory, text
+  cohesion, syntactic complexity, discourse connectors, readability
+  formulas, lexical diversity, negation processing, conditional
+  reasoning, typography, phonological complexity, intensifiers,
+  style guides, numeric formatting, working memory, dyslexia,
+  WCAG/RGAA/FALC/CAN-ASC/EAA normative standards, practical tools)
+  and the rule → reference summary table. `examples/REFERENCES.md`
+  becomes a thin redirect to the docs sources — kept because external
+  citations may already point there. Both rule indexes cross-link
+  to the new page next to the existing `RULES.md` pointer.
+
+- **Six more FR per-rule pages — `structure` category 100 %
+  FR-complete (F25 progress, 5/25 → 11/25).**
+  `structure.paragraph-too-long`, `structure.line-length-wide`,
+  `structure.mixed-numeric-format`, `structure.deeply-nested-lists`,
+  `structure.heading-jump`, `structure.deep-subordination` all land
+  under `docs/src/fr/rules/` against the same locked template. The
+  whole `structure` category is now FR-complete (9 / 9 rules
+  translated). `SUMMARY.md` and `fr/rules/index.md` rewired to point
+  at the local FR versions for the six new pages. Remaining: 14
+  per-rule FR pages (rhythm 2, lexicon 6, syntax 5, readability 1)
+  plus the FR guide translations.
+
+- **`cargo-mutants` baseline + `just mutants` recipe (F98 ✅).**
+  Mutation testing wired in as a dev-tool (no new runtime dep).
+  `just mutants <file>` runs `cargo mutants --file <file> --timeout 60
+  --no-shuffle`; default file is the canonical reference rule
+  (`src/rules/structure/sentence_too_long.rs`). Four-file probe run
+  on 2026-04-25 — `sentence_too_long.rs` 6 / 0 / 4 (caught / missed /
+  unviable, 100 % score), `scoring.rs` 18 / 0 / 2, `engine.rs`
+  5 / 0 / 12, `low_lexical_diversity.rs` 29 / 47 / 5 (36 % score).
+  The canonical rule and the cross-cutting layer (engine + scoring)
+  are well-tested at the mutation level; the lexical-diversity rule
+  has two clear test gaps now filed as F108 (assert the reported
+  ratio in tests — 36 of the 47 misses) and F109 (borderline-cluster
+  fixtures — the remaining 11). Triage methodology: cluster missed
+  mutants by site → one ROADMAP entry per root cause, not per
+  mutant. `mutants.out/` is run-local output and stays gitignored.
+
+- **Four ROADMAP entries from the 2026-04-25 docs UX critique
+  (Block E).** No code today — design lap. F104 per-category
+  sidebar grouping in `SUMMARY.md` (mirror the index-page table
+  shape in the sidebar), F105 consolidated references page (single
+  surface for the 10+ scattered citations: WCAG, RGAA, Sweller,
+  Gibson, Graesser, Coh-Metrix, BDA, IFLA, FALC, plainlanguage.gov,
+  Kandel-Moles), F106 landing-page polish (deferred — `introduction.md`
+  already plays the landing role; revisit when there's a first
+  external consumer), F107 FR rule labels via page subtitle + FR
+  index gloss (rule IDs stay as the stable contract; FR labels
+  earn a visible surface for FR-only readers). Picks documented
+  on the entries.
+
+- **Four ROADMAP entries from the 2026-04-25 encoding-coverage
+  survey (F110 – F113).** No code today — design lap. The test
+  surface covers grapheme clusters (`unicode-segmentation`
+  everywhere), CRLF normalisation, and Latin-1 NFC accented
+  characters. It does **not** cover four real corpus realities:
+  F110 — UTF-8 BOM (Windows-edited Markdown carries a leading
+  `\u{FEFF}` that `read_to_string` does not strip); F111 — NFC vs
+  NFD normalisation (the biggest risk: HashMap-keying rules like
+  `low_lexical_diversity`, `consecutive_long_sentences`,
+  `weasel-words`, the stop-words check in `detect_language` would
+  treat NFC `café` and NFD `café` as different words); F112 —
+  lone-CR (the implemented but untested classic-Mac path) and
+  zero-width characters mid-word; F113 — mixed-script paragraphs
+  (filed Speculative). Out-of-scope and explicitly so: invalid
+  UTF-8 (the type system rejects it at the read boundary) and
+  non-UTF-8 encodings (would violate the deterministic-core prime
+  directive — charset detection is heuristic, users transcode at
+  the file boundary with `iconv` or "save as UTF-8" once). New
+  ROADMAP sub-section "Encoding / input handling" carries the
+  rationale.
+
+- **F84 part 2 — first redistributable replacement (public_ok count
+  +1).** `Mon Parcours Handicap — fiches FALC`
+  (`monparcourshandicap.gouv.fr/aides`) added to
+  `examples/texts.yaml` under the Health-literacy section. French
+  government portal, Easy-to-Read fact sheets on disability
+  benefits (PCH, AAH, complément de ressources, …). Licence is
+  Etalab Open Licence 2.0 (site footer: "Sauf mention contraire,
+  tous les contenus de ce site sont sous licence etalab-2.0"),
+  CC-BY-equivalent — `redistribution: public_ok`. Type
+  `gov_guide`, polarity `good_example`, conditions
+  `[aphasia, non-native, general]`, language FR. Fact sheets are
+  flowing-text PDFs (`markdownable: 2`); still inside the existing
+  CDC-style precedent. The entry is also surfaced in the curated
+  per-section table in `examples/texts.md` under "Easy-read / FALC
+  / dyslexia / aphasia / ADHD". Auto-generated coverage matrix
+  refreshed; the public-side `texts.md` snapshot reflects the new
+  count without leaking local-only state. The "Aphasia-specific
+  French samples beyond SPF/HAS are thin" note in `gaps:` is
+  marked partially closed.
+
+- **F108 + F109 closed — `low_lexical_diversity` mutation score 36 %
+  → 89 %.** Five new tests target the gaps that the F98 baseline
+  surfaced. `reported_ratio_is_minimum_observed_in_cluster` builds a
+  50-W + 100-cache + 50-V fixture so the cluster exits via the
+  non-flush path and the min ratio (0.01) appears mid-slide, not at
+  the anchor — kills 36 of the 47 missed mutants in
+  `ratio_at_anchor_min` (arithmetic shifts in slide-in / slide-out
+  / ratio computation). `flush_path_reports_final_ratio` covers the
+  end-of-document case. `exactly_window_size_tokens_runs_the_check`
+  pins the early-return guard at exactly `tokens.len() == window`.
+  `cluster_starts_at_strict_inequality` and
+  `ratio_exactly_at_threshold_does_not_trigger` use a 49-W +
+  51-cache construction so the single full window has unique = 50
+  → ratio == `min_ratio` exactly: a `< → <=` flip on the trigger
+  would emit, the test asserts none. Remaining 8 missed mutants
+  are equivalent under the current rule logic (defensive guards
+  unreachable in normal flow; initial values overwritten by the
+  first slide step) — documented in the F108 / F109 ROADMAP rows.
+
+- **Parser / engine micro-benchmarks (`benches/parser_hotpath.rs`).**
+  New `criterion` dev-dep and `just bench` recipe cover
+  `split_sentences`, `parse_markdown`, and `Engine::lint_str` over two
+  real tracked corpus files. Gives us a defensible baseline before
+  touching hot-path code — the first exploratory rewrite of the
+  `split_sentences` buffer-reuse pattern came back 48% slower, so the
+  harness already earned its keep by catching the regression before it
+  shipped. Parked the counter-finding on `ROADMAP.md` F93 (tokenizer
+  `Vec<char>` alloc, measured at ~5% ceiling — deferred).
+
+- **`engine::replace_rule` helper (internal).** The three `with_*`
+  config-override builders
+  (`with_readability_formula`, `with_unexplained_whitelist`,
+  `with_excessive_commas_max_commas`) collapsed from three duplicated
+  find-and-replace loops into a single named helper. No behaviour
+  change; three new regression tests lock in the tightening path,
+  whitelist path, and filtered-out no-op contract.
+
+- **Real-world corpus regression anchors.** Three short passages
+  lifted verbatim from `examples/public/` land under
+  `tests/corpus/public/`: a GOV.UK plain-language exemplar
+  (`public`-profile clean), the plainlanguage.gov intro
+  (`public` flags `structure.sentence-too-long`; `falc` also flags
+  `syntax.passive-voice`), and a Vikidia `Accueil` passage
+  (`falc`-profile clean). New `tests/cli.rs` tests shell out with
+  `--format=json`, parse the diagnostics, and pin each expectation
+  so a silent rule-tuning regression on curated real-world prose
+  fails loudly. Machinery reuses the existing `corpus_path` helper
+  — no new fixture format.
+
+- **Four more FR per-rule pages (F25 progress, 1/25 → 5/25).**
+  `structure.excessive-commas`, `structure.long-enumeration`,
+  `lexicon.weasel-words`, `lexicon.unexplained-abbreviation` land
+  under `docs/src/fr/rules/` using the locked template from
+  `sentence-too-long` (sections `Ce que cette règle signale` /
+  `En bref` / `Détection` / `Paramètres` / `Exemples` /
+  `Faux positifs connus` / `Neutralisation` / `Voir aussi`,
+  FR-first example ordering when bilingual examples exist).
+  `SUMMARY.md` and `fr/rules/index.md` now link these pages
+  locally instead of pointing back to the EN versions. Guides
+  (`suppression`, `configuration`, `scoring`) still cross-link
+  via `../../` to EN until FR guide translations land. Remaining:
+  20 per-rule FR pages + FR guide translations.
+
+### Fixed
+
+- **Markdown parser — list-item content is now visible to all rules
+  (F129).** A long-standing parser blindspot silently dropped
+  list-item text from every paragraph-level rule (all 17 in v0.1)
+  whenever pulldown-cmark emitted a *tight* list — single bullet, or
+  bullets without separating blank lines. Loose lists (multiple
+  bullets, blank lines between them) wrapped item content in
+  `Tag::Paragraph` events and were visible; tight lists fired text
+  events directly inside `Tag::Item` and the parser only buffered
+  text under `in_heading || in_paragraph`, so the content went into
+  the void. The parser now synthesizes a paragraph for each tight-
+  list item span; loose-list paragraphs continue to flow through the
+  normal path. Both shapes carry a new `Paragraph.from_list_item`
+  flag. `structure.line-length-wide` (per its F126 contract) skips
+  list-item-derived paragraphs because rendered list items wrap in a
+  narrower column than body prose. Discovered while verifying F22's
+  third-tranche dogfood metric: the same plus-closed enumeration in
+  a tight bullet was silent, in a loose bullet fired three rules.
+  Five new parser unit tests pin tight + loose + nested + empty +
+  body-prose contracts. Dogfood impact: 520 → 858 diagnostics on our
+  own docs (+338 net, across CHANGELOG, ROADMAP, RULES, AGENTS,
+  mdBook pages) — every one a real signal the linter was previously
+  missing. The merged commit body in `cba387d` cites "~425" from a
+  measurement artefact (stash-based baseline that was actually
+  post-fix-vs-post-fix because the fix was already committed); 338
+  is the right number. Cleanup mix: ~60 % genuine sentence/bullet
+  rewrites, ~25 % self-referential false positives on rule-doc
+  pages (suppression directives), ~15 % project-vocabulary
+  whitelist gaps (e.g. SHA in `lucid-lint.toml`). Cleanup pass on
+  the new diagnostics tracked separately.
+
+- **Reading-demonstrator chips now use button-toggle semantics
+  (F35b).** The chips on the Introduction (EN + FR) page declared
+  `role="radiogroup"` / `role="radio"` / `aria-checked`, but the
+  JavaScript only bound `click` handlers — arrow-key traversal,
+  required by the radio-group ARIA contract, was missing. Switched
+  to plain `<button>` elements with `aria-pressed` (the chips are
+  preset toggles, not radios), updated `lucid-layout.css` selectors
+  from `[aria-checked="true"]` to `[aria-pressed="true"]`, and
+  updated `lucid-navigation.js` to set `aria-pressed` on chip
+  selection. Drops a P2 finding from the 2026-04-22 F35 audit.
+
+### Changed
+
+- **ROADMAP slug migration — batches A + B (81 IDs).**
+  Renames every unshipped numeric F-ID to `F-<kebab-slug>` form,
+  completing the migration started by F-roadmap-slug-ids. Batch A
+  (PR #30, 23 IDs) covered the near-term MoSCoW pool; batch B
+  (this entry, 58 IDs) covered the long tail (🟡 Later, 🟢 Speculative,
+  🚧/☐ unshipped, the research backlog, and the lone 🔴 F139 →
+  `F-experimental-rule-status`). Carve-outs stay numeric:
+  grandfathered legacy splits (`F35a`/`F35b`/`F35d`/`F78b`/`F105b`),
+  the v0.3 cohort with active branches (F46, F49, F51, F53, F57,
+  F58 — rename rides each rule's code PR), F143 (in-flight branch),
+  F130/F131/F132 (stale forward-redirects to F134/F135/F136), and
+  every shipped ID (historical record stays as-shipped). All four
+  invariants in `tests/roadmap_id_uniqueness.rs` remain green.
+
+- **F92 sub-task fully closed — PR-side staleness gate flipped to `--strict`.**
+  `.github/workflows/ci.yml` now runs `python3 scripts/check_lang_staleness.py
+  --strict` on every PR. Any FR page whose `en-source-sha` stamp lags its EN
+  counterpart's last-touching commit fails the build. Pair-locks F92's
+  filename-parity gate (catches *missing* FR pages) with the sub-task's
+  content-SHA gate (catches *stale* FR pages); both surfaces — `main` (via
+  `docs-deploy.yml`, since 2026-05-01) and PRs (via `ci.yml`, since today) —
+  are now strict-gated. Comment in `ci.yml` updated to reflect the flip.
+  ROADMAP `Status as of` header bumped to 2026-05-02; F92 narrative records
+  the second-surface flip and the sub-task status moves from `🔴 Next` to
+  `✅ Closed 2026-05-02`.
+
+- **CHANGELOG and ROADMAP format restructure.** `## [Unreleased]`
+  entries now carry an explicit `[YYYY-MM-DD]` date prefix, sorted
+  descending within each subsection, so AI tooling and humans can scan
+  recency without `git blame`. ROADMAP gains a unified **Feature
+  catalog** table (filtered to 🔴 Next + 🚧 In-progress) replacing the
+  former "Active work (🔴 Next)" tables — narrative sections remain
+  the source of truth, the catalog is a derived index. Version detail
+  sections inverted to newest-first (v0.4 → v0.3 → v0.2.x → v0.2 →
+  v0.1) so the active and upcoming cycles surface above shipped
+  history. "Status as of" header refreshed to 2026-05-01.
+- **F92 sub-task — stale FR backlog reconciled.** All 13 FR pages
+  reported stale by `check_lang_staleness.py` brought back to fresh.
+  Twelve were cosmetic drift only (the F105/F105b references-section
+  sweep, the F35b/F35c a11y fix, and the `line-length-wide` author-
+  break-aware fix all touched FR counterparts in the same commits, so
+  the FR content was already in sync — only the `en-source-sha` stamp
+  needed bumping): `accessibility`, `references`, `rules/index`, and 9
+  per-rule pages. One was substantive: `fr/index.md` had three EN-only
+  drifts to port — updated `État du projet` (v0.2 release date,
+  25-rule count, 17 + 8 split, pre-1.0 caveat), added the lead-in
+  sentence + TTY GIF + clean-run text block to `Aperçu` (matches the
+  EN `Quick taste` peak-end demo), and replaced the outdated
+  `Pour aller plus loin` list with the full set of guide links now
+  that F25 closed (also fixed the broken `./rules-index.md` link →
+  `./rules/index.md`). Staleness gate now reports 40 fresh / 0 stale.
+  Same commit flips the `docs-deploy.yml` step from soft to
+  `--strict`: an FR page whose `en-source-sha` lags its EN
+  counterpart now fails the deploy. AGENTS.md updated to reflect
+  the flip.
+
+- **F35c closed as audit false-positive.** The 2026-04-22 F35 audit
+  flagged `.lucid-stance__idea` as losing its colour tint under
+  `prefers-reduced-motion`. Re-audit on 2026-05-01 confirmed no
+  reduced-motion rule touches the tint: the global reset zeroes
+  animation/transition durations only, and the only rule that
+  strips `background-color` is `@media (forced-colors: active)`,
+  which is intentional (Windows High Contrast users get the OS
+  palette). The original audit conflated `forced-colors: active`
+  with `prefers-reduced-motion: reduce`. No code change; ROADMAP
+  entry and accessibility known-limitation bullet updated.
+
+- **`structure.excessive-commas` and `structure.long-enumeration` —
+  `plus`-closed enumerations recognised (F22 v0.3 second tranche).**
+  The shared enumeration detector now accepts `plus` as an honorary
+  Oxford terminator alongside `and` / `or` / `et` / `ou`. A run like
+  `profile, format, min-score, plus working-directory and args` is
+  now detected as a 4-item enumeration; commas inside it are
+  discounted by `excessive-commas`, and `long-enumeration` will flag
+  the 5-item-and-up shapes as bullet-list candidates. Same connector
+  word in EN and FR. The existing connector-stop guard in walk-back
+  prevents `…, and X, plus we did Y` from being folded into a single
+  run. Bare-list (`Rules touched: A, B, C`) and interleaved-
+  parenthetical shapes remain deferred to a later F22 slice.
+
+- **`structure.excessive-commas` and `structure.long-enumeration` —
+  rhythmic-relaxation pass (F22 v0.3 slice).** The shared enumeration
+  detector now accepts Oxford runs whose segments are 1–4 words each,
+  provided the run is rhythmically regular: spread (max − min word
+  count) ≤ 2, with a per-language clause-onset stop list (subject
+  pronouns, common subordinators) that prevents the relaxed walk-back
+  from crossing clause boundaries. Floor for the relaxed pass is 5
+  items — high enough that rhythm alone carries the signal where the
+  tight pass's word-count limit no longer can. Unblocks the F22
+  research §4 deferred targets (corpus #12 / #24 / #25:
+  `category, severity, default weight, parameters per profile, EN/FR
+  examples, and suppression`-shape lists). Dogfood: excessive-commas
+  drops 2 hits; long-enumeration gains 2 (correct: those rhythmic
+  5-item runs are real bullet-list candidates). Tight pass preserved
+  verbatim, so existing detection cannot regress. Future tightening
+  of the 5-item / spread-2 / clause-onset thresholds tracked under F22
+  for a 0.3.x slice if dogfood surfaces a false positive.
+
+- **Markdown parser now treats `<br>` as an authorial line break (F126).**
+  Pulldown-cmark emits `<br>` as `Event::InlineHtml`, not as
+  `Event::HardBreak`, so the original author-break-aware fix above
+  silently dropped `<br>` and the rule did not fire on long lines
+  separated by `<br>` tags — even though the docstring and rule docs
+  already advertised `<br>` as a measured hard break. The parser now
+  pushes a `\n` to `paragraph.text` when it sees `<br>`, `<br/>`, or
+  `<br />` (any case, optional whitespace) inside a paragraph or
+  heading, matching the two-trailing-spaces variant. HTML comments
+  (suppression directives) flow through unchanged. Three new tests
+  pin the behaviour: `<br>`-as-hard-break in the parser, an HTML-
+  comment regression guard, and a `markdown_br_tag_is_checked` rule
+  test that mirrors `markdown_hard_break_is_checked`. Two further
+  tests pin the parser-construction out-of-scope contract for the
+  rule: `list_item_text_is_out_of_scope` and
+  `table_cell_text_is_out_of_scope` — list items and GFM table cells
+  are not emitted as paragraphs today, and the rule is silent on
+  over-length content inside them.
+
+- **`detect_language` single-pass, alloc-light hot path (F102).**
+  The stop-words ratio scan no longer materialises two intermediate
+  vectors (`Vec<&str>` of words + `Vec<String>` of lowercased forms)
+  and no longer iterates the lowercased vector twice (once per
+  language). One pass over `text.unicode_words()` now feeds three
+  scalar counters; `to_lowercase()` is only invoked when the word
+  contains an uppercase character, so pure-ASCII lowercase prose —
+  the common case — pays no allocation. Bench delta on
+  `engine_lint_str/en_long_devdoc` against a fresh `stream2-noisy`
+  baseline: −0.56 % (p = 0.00, ~20 µs). Smaller than the samply
+  profile's 7.5 % inclusive figure suggested because most of the
+  inclusive cost was `unicode_words()` itself, which the rewrite
+  cannot touch. Same session refuted F93 + F94 — the previously
+  suspected hot spots accounted for under 0.1 % combined; ROADMAP
+  entries closed with the profile evidence.
+
+- **Sentence splitting moved into the parser phase (F103).**
+  `Paragraph::new` now calls `split_sentences` once at construction
+  and the result lives on the paragraph as a public `sentences:
+  Vec<Sentence>` field. The eight rules that previously re-ran the
+  split — `consecutive_long_sentences`,
+  `repetitive_connectors`, `excessive_nominalization`,
+  `nested_negation`, `passive_voice`, `unclear_antecedent`,
+  `conditional_stacking`, `paragraph_too_long` — read
+  `&paragraph.sentences` instead. The previous lazy-per-rule pattern
+  predates the rule explosion and silently violated the AGENTS.md
+  "do not re-parse the document per rule" directive once eight rules
+  needed sentences. Bench delta against `stream2-noisy`:
+  `engine_lint_str/en_long_devdoc` −11.58 % (p = 0.00, ~394 µs);
+  `parse_markdown/en_long` +17.67 % (p = 0.00, ~38 µs) — the split
+  cost moved into the parser phase, where it was previously
+  multiplied across rules. Net user-facing path: ~360 µs faster on
+  the long EN devdoc input, which closes the stream-2 perf arc
+  (F95–F96 hygiene shipped earlier today; F93/F94 refuted by
+  profile; F102 + F103 measured wins).
 
 ## [0.2.3] — 2026-04-29
 

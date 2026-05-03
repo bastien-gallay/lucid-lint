@@ -9,7 +9,9 @@ mod markdown;
 pub mod phrase_search;
 mod tokenizer;
 
-pub use document::{Directive, Document, ListItem, Paragraph, Section, Sentence};
+pub use document::{
+    Directive, Document, EmphasisSpan, Inline, ListItem, Paragraph, Section, Sentence,
+};
 pub use markdown::parse_markdown;
 pub use tokenizer::{split_sentences, word_count};
 

@@ -46,3 +46,11 @@ Severity is `info` because the heuristic is approximate — the noise level warr
 ## Suppression
 
 See [Suppressing diagnostics](../guide/suppression.md).
+
+## References
+
+- [Strunk & White (1999)](../references.md#strunk-white-1999)
+- [Gibson (1998)](../references.md#gibson-1998)
+- [Graesser et al. (2004)](../references.md#graesser-2004)
+
+See [References](../references.md) for the full bibliography.

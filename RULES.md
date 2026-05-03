@@ -73,7 +73,7 @@ score is their weighted sum.
 
 | Category | Rules |
 |---|---|
-| `structure` | `structure.sentence-too-long`, `structure.paragraph-too-long`, `structure.deeply-nested-lists`, `structure.heading-jump`, `structure.excessive-commas`, `structure.long-enumeration`, `structure.deep-subordination`, `structure.line-length-wide`, `structure.mixed-numeric-format` |
+| `structure` | `structure.sentence-too-long`, `structure.paragraph-too-long`, `structure.deeply-nested-lists`, `structure.heading-jump`, `structure.excessive-commas`, `structure.long-enumeration`, `structure.deep-subordination`, `structure.line-length-wide`, `structure.mixed-numeric-format`, `structure.italic-span-long` *(experimental, [F-experimental-rule-status](ROADMAP.md#f-experimental-rule-status) cohort)* |
 | `lexicon` | `lexicon.low-lexical-diversity`, `lexicon.excessive-nominalization`, `lexicon.unexplained-abbreviation`, `lexicon.weasel-words`, `lexicon.jargon-undefined`, `lexicon.all-caps-shouting`, `lexicon.redundant-intensifier`, `lexicon.consonant-cluster` |
 | `syntax` | `syntax.passive-voice`, `syntax.unclear-antecedent`, `syntax.nested-negation`, `syntax.conditional-stacking`, `syntax.dense-punctuation-burst` |
 | `rhythm` | `rhythm.consecutive-long-sentences`, `rhythm.repetitive-connectors` |
@@ -1147,7 +1147,7 @@ Readability indices are the historical metric for text complexity. Simple, repro
 
 **Detection (v0.2 — per-language formula)**
 
-The formula is selected by the document's detected language (F10 must-ship slice).
+The formula is selected by the document's detected language ([F-readability-formulas-extra](ROADMAP.md#f-readability-formulas-extra) must-ship slice).
 
 🇬🇧 **Flesch-Kincaid Grade Level** :
 
@@ -1175,7 +1175,7 @@ The result is an ease score on roughly `0..100` (higher = easier), Flesch-style.
 | 12–16 | College |
 | > 16 | Expert |
 
-The `--readability-formula` CLI flag (F11, v0.2) pins a formula regardless of detected language — `auto` (default) keeps the per-language behaviour, `flesch-kincaid` / `kandel-moles` force the respective formula. Additional formulas (`Gunning Fog`, `SMOG`, `Dale-Chall`, `Scolarius`) and multi-formula `--readability-verbose` reports are tracked as F10 should-ship.
+The `--readability-formula` CLI flag (F11, v0.2) pins a formula regardless of detected language — `auto` (default) keeps the per-language behaviour, `flesch-kincaid` / `kandel-moles` force the respective formula. Additional formulas (`Gunning Fog`, `SMOG`, `Dale-Chall`, `Scolarius`) and multi-formula `--readability-verbose` reports are tracked as [F-readability-formulas-extra](ROADMAP.md#f-readability-formulas-extra) should-ship.
 
 **Granularity** : computed per document. One diagnostic per file.
 
@@ -1232,14 +1232,14 @@ Another long sentence in the same scope.
 
 - **Syntax** : `<!-- lucid-lint-disable <rule-id> -->` opens a scope; `<!-- lucid-lint-enable -->` closes every currently-open scope. An optional rule id on `enable` closes only that rule's scope, which lets nested disables overlap for different rules.
 - **Scope** : every line between the two comments (inclusive). An unterminated `disable` extends to the end of the document.
-- **One rule per comment** : multi-rule lists are tracked as F21.
+- **One rule per comment** : multi-rule lists are tracked as `F-suppression-disable-file`.
 
 ### Common properties
 
 - **Applies to** : Markdown only. Plain text and stdin cannot carry comments; config-based ignores (`[[ignore]]` in `lucid-lint.toml`) are planned — see `ROADMAP.md` F19.
 - **Unknown rule ids** : silently ignored.
 
-File-level directives, multi-rule lists, and an optional `reason=` field are tracked as F20–F21 in `ROADMAP.md`.
+File-level directives, multi-rule lists, and an optional `reason=` field are tracked as `F-suppression-reason-field` and `F-suppression-disable-file` in `ROADMAP.md`.
 
 ---
 

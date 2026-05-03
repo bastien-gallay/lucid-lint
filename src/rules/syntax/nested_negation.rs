@@ -34,7 +34,7 @@ use std::num::NonZeroU32;
 use crate::condition::ConditionTag;
 use crate::config::Profile;
 use crate::language::en;
-use crate::parser::{split_sentences, Document};
+use crate::parser::Document;
 use crate::rules::Rule;
 use crate::types::{Diagnostic, Language, Location, Severity, SourceFile};
 
@@ -109,8 +109,7 @@ impl Rule for NestedNegation {
         document
             .paragraphs_with_section()
             .flat_map(|(paragraph, section_title)| {
-                let sentences = split_sentences(&paragraph.text, paragraph.start_line, 1);
-                sentences.into_iter().filter_map(move |sentence| {
+                paragraph.sentences.iter().filter_map(move |sentence| {
                     let count = counter(&sentence.text);
                     if count > max {
                         Some(build_diagnostic(

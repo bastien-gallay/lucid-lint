@@ -1,4 +1,7 @@
+<!-- en-source-sha: 9e6be0c432915d364d877b302e70186928303088 -->
 # `structure.sentence-too-long`
+
+*Phrase trop longue.*
 
 ## Ce que cette règle signale
 
@@ -58,10 +61,18 @@ n'en perd aucune.
 
 ## Neutralisation
 
-Voir [Neutraliser des diagnostics](../../guide/suppression.md) (page
+Voir [Neutralisation des diagnostics](../../guide/suppression.md) (page
 EN pour l'instant) pour les formes en ligne et par bloc.
 
 ## Voir aussi
 
 - [`rhythm.consecutive-long-sentences`](../../rules/consecutive-long-sentences.md) — capture le rythme ; son seuil doit rester inférieur au `max_words` d'ici.
 - [Modèle de score](../../guide/scoring.md) — `structure.sentence-too-long` porte un poids de `2` parce que le coût cognitif se compose avec la longueur.
+
+## Références
+
+- [Sweller (1988)](../references.md#sweller-1988)
+- [Plain Language US (2011)](../references.md#plain-language-us-2011)
+- [CAN-ASC-3.1:2025](../references.md#can-asc-3-1-2025)
+
+Voir [Références](../references.md) pour la bibliographie complète.

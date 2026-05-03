@@ -16,12 +16,7 @@ conditions:
 - dyslexia
 - non-native
 bilingual_parallel: false
-fetched_at: '2026-04-22T21:39:10+00:00'
+fetched_at: '2026-04-27T19:22:32+00:00'
 fetch_method: http_get
 raw_file: raw.html
-raw_sha256: 5b63927e6d67fd1d9558a2a4a1b0befa053761e42c2df04e29f8a3850633251b
-clean_file: clean.html
-clean_sha256: c13fac4f7dfe996bac88df797c4160831c1d1d71cb323c2acf391e9e6741fe68
-md_content_sha256: 57dc67680e6ad8ef64ddd4489649a93ba76d214370faf41e7b60111416305ca8
-converted_at: '2026-04-22T21:40:52+00:00'
-md_backend: pandoc
+raw_sha256: 032df55f96a1de9842f6a9512184bf6c4422f63b761ba5c2702d77c169c1b159

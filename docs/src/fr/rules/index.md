@@ -1,3 +1,4 @@
+<!-- en-source-sha: 54981efa05dc99bddc513454e37bef6b8e25f04f -->
 # Référence des règles
 
 `lucid-lint` livre 25 règles en v0.2 (17 reprises de v0.1, 8 ajouts
@@ -9,12 +10,12 @@ et les consignes de neutralisation.
 
 La référence compacte [`RULES.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/RULES.md)
 reste la vue d'ensemble en un seul fichier, conservée à la racine du
-dépôt.
+dépôt. Les sources académiques et normatives derrière chaque règle
+sont consolidées sur la page [Références](../references.md).
 
-> **Traduction FR en cours.** Seules quelques règles ont leur page
-> dédiée en français pour l'instant ; les autres liens du tableau
-> ci-dessous pointent vers la version anglaise. La progression est
-> suivie dans **F25** sur la [feuille de route](../roadmap.md).
+> **Traduction FR — complète.** Les 25 règles ont chacune leur page
+> dédiée en français (jalon **F25** sur la
+> [feuille de route](../roadmap.md)).
 
 ## Catégories
 
@@ -22,17 +23,64 @@ Chaque règle appartient à exactement une des cinq catégories fixes.
 La taxonomie fait autorité — le [modèle de score](../../guide/scoring.md)
 compose les sous-scores par catégorie dans le score global `X / max`.
 
-| Catégorie | Règles |
+L'identifiant en `kebab-case` (par ex. `structure.sentence-too-long`)
+est le contrat stable utilisé partout : option CLI, sortie JSON, clé
+de configuration, citation dans les docs. Le **libellé FR** ci-dessous
+est un repère humain ; il n'aliase jamais l'identifiant.
+
+### Structure
+
+| Règle | Libellé |
 |---|---|
-| **`structure`** | [`structure.sentence-too-long`](./sentence-too-long.md) · [`structure.paragraph-too-long`](../../rules/paragraph-too-long.md) · [`structure.heading-jump`](../../rules/heading-jump.md) · [`structure.deeply-nested-lists`](../../rules/deeply-nested-lists.md) · [`structure.excessive-commas`](../../rules/excessive-commas.md) · [`structure.long-enumeration`](../../rules/long-enumeration.md) · [`structure.deep-subordination`](../../rules/deep-subordination.md) · [`structure.line-length-wide`](../../rules/line-length-wide.md) · [`structure.mixed-numeric-format`](../../rules/mixed-numeric-format.md) |
-| **`rhythm`** | [`rhythm.consecutive-long-sentences`](../../rules/consecutive-long-sentences.md) · [`rhythm.repetitive-connectors`](../../rules/repetitive-connectors.md) |
-| **`lexicon`** | [`lexicon.low-lexical-diversity`](../../rules/low-lexical-diversity.md) · [`lexicon.excessive-nominalization`](../../rules/excessive-nominalization.md) · [`lexicon.unexplained-abbreviation`](../../rules/unexplained-abbreviation.md) · [`lexicon.weasel-words`](../../rules/weasel-words.md) · [`lexicon.jargon-undefined`](../../rules/jargon-undefined.md) · [`lexicon.all-caps-shouting`](../../rules/all-caps-shouting.md) · [`lexicon.redundant-intensifier`](../../rules/redundant-intensifier.md) · [`lexicon.consonant-cluster`](../../rules/consonant-cluster.md) |
-| **`syntax`** | [`syntax.passive-voice`](../../rules/passive-voice.md) · [`syntax.unclear-antecedent`](../../rules/unclear-antecedent.md) · [`syntax.nested-negation`](../../rules/nested-negation.md) · [`syntax.conditional-stacking`](../../rules/conditional-stacking.md) · [`syntax.dense-punctuation-burst`](../../rules/dense-punctuation-burst.md) |
-| **`readability`** | [`readability.score`](../../rules/readability-score.md) |
+| [`structure.sentence-too-long`](./sentence-too-long.md) | Phrase trop longue |
+| [`structure.paragraph-too-long`](./paragraph-too-long.md) | Paragraphe trop long |
+| [`structure.heading-jump`](./heading-jump.md) | Saut de niveau de titre |
+| [`structure.deeply-nested-lists`](./deeply-nested-lists.md) | Listes trop imbriquées |
+| [`structure.excessive-commas`](./excessive-commas.md) | Virgules en excès |
+| [`structure.long-enumeration`](./long-enumeration.md) | Énumération trop longue |
+| [`structure.deep-subordination`](./deep-subordination.md) | Subordination profonde |
+| [`structure.line-length-wide`](./line-length-wide.md) | Lignes trop larges |
+| [`structure.mixed-numeric-format`](./mixed-numeric-format.md) | Formats numériques mixtes |
+
+### Rythme
+
+| Règle | Libellé |
+|---|---|
+| [`rhythm.consecutive-long-sentences`](./consecutive-long-sentences.md) | Phrases longues consécutives |
+| [`rhythm.repetitive-connectors`](./repetitive-connectors.md) | Répétition de connecteurs |
+
+### Lexique
+
+| Règle | Libellé |
+|---|---|
+| [`lexicon.low-lexical-diversity`](./low-lexical-diversity.md) | Diversité lexicale faible |
+| [`lexicon.excessive-nominalization`](./excessive-nominalization.md) | Nominalisations en excès |
+| [`lexicon.unexplained-abbreviation`](./unexplained-abbreviation.md) | Abréviations non explicitées |
+| [`lexicon.weasel-words`](./weasel-words.md) | Mots évasifs |
+| [`lexicon.jargon-undefined`](./jargon-undefined.md) | Jargon non défini |
+| [`lexicon.all-caps-shouting`](./all-caps-shouting.md) | Majuscules criardes |
+| [`lexicon.redundant-intensifier`](./redundant-intensifier.md) | Intensificateurs redondants |
+| [`lexicon.consonant-cluster`](./consonant-cluster.md) | Amas consonantiques |
+
+### Syntaxe
+
+| Règle | Libellé |
+|---|---|
+| [`syntax.passive-voice`](./passive-voice.md) | Voix passive |
+| [`syntax.unclear-antecedent`](./unclear-antecedent.md) | Antécédent flou |
+| [`syntax.nested-negation`](./nested-negation.md) | Négations imbriquées |
+| [`syntax.conditional-stacking`](./conditional-stacking.md) | Empilement de conditions |
+| [`syntax.dense-punctuation-burst`](./dense-punctuation-burst.md) | Rafale de ponctuation |
+
+### Lisibilité
+
+| Règle | Libellé |
+|---|---|
+| [`readability.score`](./readability-score.md) | Score de lisibilité |
 
 > **Source d'autorité.** La catégorie de chaque règle est déterminée
-> par `Category::for_rule` dans `src/types.rs`. Le tableau ci-dessus
-> reflète cette fonction. Un test de couverture
+> par `Category::for_rule` dans `src/types.rs`. Les tableaux ci-dessus
+> reflètent cette fonction. Un test de couverture
 > (`tests/rule_docs_coverage.rs`) tient les pages par règle, le
 > helper de catégorie et les poids du score synchronisés.
 

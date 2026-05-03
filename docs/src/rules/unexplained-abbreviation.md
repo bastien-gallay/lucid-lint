@@ -42,7 +42,17 @@ A single definition anywhere in the document silences every occurrence of the sa
 
 **Default whitelist (v0.2, narrowed by F31):** the infrastructure stack — `URL, HTML, CSS, JSON, XML, HTTP, HTTPS, UTF, IO, API, CLI, GUI, OS, CPU, RAM, SSD, USB, IDE, SDK, CI, CD` — plus common FR/EN acronyms and RFC 2119 emphasis keywords (`PDF, SMS, GPS, ID, OK, FAQ`, `MUST, SHALL, SHOULD, …`).
 
-**What changed in v0.2:** accessibility standards (`WCAG`, `ARIA`, `RGAA`, …), AI/language-tech initialisms (`LLM`, `NLP`), and engineering-practice acronyms (`YAGNI`, `DRY`, `TDD`, …) are no longer in the shipped baseline. Projects that use these should add them to `[rules.unexplained-abbreviation].whitelist` in `lucid-lint.toml` — see the [configuration guide](../guide/configuration.md#per-rule-overrides).
+<aside class="since-version" aria-label="New in v0.2">
+
+<span class="since-version__tag">Since v0.2</span> — Accessibility
+standards (`WCAG`, `ARIA`, `RGAA`, …), AI/language-tech initialisms
+(`LLM`, `NLP`), and engineering-practice acronyms
+(`YAGNI`, `DRY`, `TDD`, …) are no longer in the shipped baseline.
+Projects that use these should add them to
+`[rules.unexplained-abbreviation].whitelist` in `lucid-lint.toml` — see
+the [configuration guide](../guide/configuration.md#per-rule-overrides).
+
+</aside>
 
 ```toml
 [rules.unexplained-abbreviation]
@@ -58,3 +68,10 @@ See [Suppressing diagnostics](../guide/suppression.md).
 ## See also
 
 - [`lexicon.jargon-undefined`](./jargon-undefined.md) — the content-word equivalent.
+
+## References
+
+- [WCAG 2.1 — 3.1.4](../references.md#wcag-2-1)
+- [CAN-ASC-3.1:2025](../references.md#can-asc-3-1-2025)
+
+See [References](../references.md) for the full bibliography.
