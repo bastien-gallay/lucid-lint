@@ -15,6 +15,16 @@ released-version block.
 
 ### Added
 
+- **[2026-05-03] Numeric `F<n>` reference link-rot guard.** Extends
+  `tests/roadmap_id_uniqueness.rs` with a fourth invariant:
+  `[F<n>](#f<n>)` references (digits, optional single-letter suffix
+  like `F35a`) must resolve to a `<a id="f<n>"></a>` definition site
+  in the same file. Catches stale numeric refs left behind when a
+  legacy ID is renamed to an `F-<slug>` form during the upcoming
+  ROADMAP slug migration. Test passes 4/4 on `main` — no orphan refs
+  exist today, so the guard fires only on real link rot introduced
+  by future renames.
+
 - **[2026-05-02] F-roadmap-slug-ids — ROADMAP feature IDs adopt
   `F-<kebab-slug>` form for new entries.** First entry under the new
   convention is this one. Numeric `F<n>` IDs (F1–F146) are unchanged
