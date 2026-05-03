@@ -28,6 +28,9 @@ Cargo.lock.bak
 !.vscode/extensions.json
 *.iml
 
+# Claude Code working dir (per-clone tooling state)
+.claude/
+
 # Agent-specific working files (not tracked by default)
 .agent/scratch/
 .agent/local.md
