@@ -1,4 +1,4 @@
-<!-- en-source-sha: 9734c2ef32fda846e0965ee502c2a2f5ccb84ff1 -->
+<!-- en-source-sha: 158ff69e11e3510a010b221eb8bf8da0597504d4 -->
 # Configuration
 
 `lucid-lint` se configure par un fichier `lucid-lint.toml` à la racine du projet (facultatif) et par des options en ligne de commande (qui priment sur le fichier).
@@ -121,7 +121,7 @@ La configuration TOML est branchée règle par règle, à mesure que chaque `Con
 formula = "kandel-moles"  # ou "flesch-kincaid", "auto"
 ```
 
-Fixe la formule de lisibilité, quelle que soit la langue détectée. `auto` (défaut) garde la sélection par langue de F10.
+Fixe la formule de lisibilité, quelle que soit la langue détectée. `auto` (défaut) garde la sélection par langue de [F-readability-formulas-extra](../roadmap.md#f-readability-formulas-extra).
 
 ### `[rules.unexplained-abbreviation]`
 

@@ -601,6 +601,20 @@ released-version block.
 
 ### Changed
 
+- **[2026-05-03] ROADMAP slug migration — batches A + B (81 IDs).**
+  Renames every unshipped numeric F-ID to `F-<kebab-slug>` form,
+  completing the migration started by F-roadmap-slug-ids. Batch A
+  (PR #30, 23 IDs) covered the near-term MoSCoW pool; batch B
+  (this entry, 58 IDs) covered the long tail (🟡 Later, 🟢 Speculative,
+  🚧/☐ unshipped, the research backlog, and the lone 🔴 F139 →
+  `F-experimental-rule-status`). Carve-outs stay numeric:
+  grandfathered legacy splits (`F35a`/`F35b`/`F35d`/`F78b`/`F105b`),
+  the v0.3 cohort with active branches (F46, F49, F51, F53, F57,
+  F58 — rename rides each rule's code PR), F143 (in-flight branch),
+  F130/F131/F132 (stale forward-redirects to F134/F135/F136), and
+  every shipped ID (historical record stays as-shipped). All four
+  invariants in `tests/roadmap_id_uniqueness.rs` remain green.
+
 - **[2026-05-02] F92 sub-task fully closed — PR-side staleness gate flipped to `--strict`.**
   `.github/workflows/ci.yml` now runs `python3 scripts/check_lang_staleness.py
   --strict` on every PR. Any FR page whose `en-source-sha` stamp lags its EN

@@ -4,7 +4,7 @@
 > `--experimental structure.italic-span-long` or
 > `[experimental] enabled = ["structure.italic-span-long"]` in
 > `lucid-lint.toml`. Flips to `Stable` at the v0.3 cut as part of the
-> [F139](https://github.com/bastien-gallay/lucid-lint/blob/main/ROADMAP.md#f139)
+> [F-experimental-rule-status](https://github.com/bastien-gallay/lucid-lint/blob/main/ROADMAP.md#f-experimental-rule-status)
 > cohort flip. See [Conditions](../guide/conditions.md) for the
 > `dyslexia` condition tag that gates this rule under user-active
 > conditions.
@@ -92,7 +92,7 @@ A *deliberately long italic span that the rule would normally flag* lives here.
 ## See also
 
 - [Conditions](../guide/conditions.md) — the `dyslexia` tag that gates this rule.
-- [F139 — experimental rule status](https://github.com/bastien-gallay/lucid-lint/blob/main/ROADMAP.md#f139) — substrate that lets this rule ship in v0.2.x without affecting default scores.
+- [F-experimental-rule-status — experimental rule status](https://github.com/bastien-gallay/lucid-lint/blob/main/ROADMAP.md#f-experimental-rule-status) — substrate that lets this rule ship in v0.2.x without affecting default scores.
 - [F143 — inline AST layer](https://github.com/bastien-gallay/lucid-lint/blob/main/ROADMAP.md#f143) — substrate that exposes emphasis-span boundaries to this rule.
 
 ## References

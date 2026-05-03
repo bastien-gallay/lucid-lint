@@ -1,4 +1,4 @@
-<!-- en-source-sha: 9734c2ef32fda846e0965ee502c2a2f5ccb84ff1 -->
+<!-- en-source-sha: 158ff69e11e3510a010b221eb8bf8da0597504d4 -->
 # Décisions de conception
 
 Cette page consigne les décisions de conception prises pendant v0.1 qui méritent d'être revues avant tout changement.
@@ -18,7 +18,7 @@ Cette page consigne les décisions de conception prises pendant v0.1 qui mérite
 - `X / max` plutôt que 0–100 : un maximum arbitraire nous laisse réajuster sans prétendre que le 80 d'aujourd'hui est le 80 de la prochaine version. La compétence `/impeccable` utilise déjà cette convention.
 - 5 catégories figées : ne couplent rien à un renommage de règle ; utilisent l'aide `category_of(rule_id)` déjà décidée en v0.1. Dériver depuis le préfixe (plan B) a été rejeté : il aurait fallu renommer 17 règles rien que pour [F14](../roadmap.md).
 - Trois mécaniques de composition empilées : aucune seule ne couvre tous les modes de défaillance. La densité seule punit les courts documents ; les poids seuls perdent face à une règle qui s'emballe ; les plafonds seuls ne reflètent pas l'ampleur du coût.
-- Notes en lettres, feux tricolores, marge réussite/échec et secondes de lecture ont été coupés du design v0.2 après une analyse à partir des principes de base ([F-score-letter-grade](../roadmap.md#f-score-letter-grade)–[F41](../roadmap.md) dans ROADMAP). Ils dupliquent la fonction-1 (vue d'un coup d'œil) que le nombre remplit déjà.
+- Notes en lettres, feux tricolores, marge réussite/échec et secondes de lecture ont été coupés du design v0.2 après une analyse à partir des principes de base ([F-score-letter-grade](../roadmap.md#f-score-letter-grade)–[F-reading-time-score](../roadmap.md#f-reading-time-score) dans ROADMAP). Ils dupliquent la fonction-1 (vue d'un coup d'œil) que le nombre remplit déjà.
 - L'actionnabilité (fonction-2) est portée par la liste des diagnostics, pas par le score. Les sous-scores peuvent donc se permettre d'être minimaux — [F37](../roadmap.md) veille à ce que les messages de diagnostic tiennent le côté actionnable du contrat.
 
 ## Structure `Diagnostic`

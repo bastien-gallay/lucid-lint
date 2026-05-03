@@ -147,7 +147,7 @@ TOML-driven config is wired rule-by-rule as each `Config` gains a dedicated acce
 formula = "kandel-moles"  # or "flesch-kincaid", "auto"
 ```
 
-Pins the readability formula regardless of detected language. `auto` (default) preserves the F10 per-language selection.
+Pins the readability formula regardless of detected language. `auto` (default) preserves the [F-readability-formulas-extra](../roadmap.md#f-readability-formulas-extra) per-language selection.
 
 ### `[rules.unexplained-abbreviation]`
 
