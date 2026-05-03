@@ -44,6 +44,7 @@ pub(crate) const RULE_DOCS: &[(&str, &str, &str)] = &[
         "lexicon.excessive-nominalization",
         "excessive-nominalization"
     ),
+    doc!("lexicon.homophone-density", "homophone-density"),
     doc!("lexicon.jargon-undefined", "jargon-undefined"),
     doc!("lexicon.low-lexical-diversity", "low-lexical-diversity"),
     doc!("lexicon.redundant-intensifier", "redundant-intensifier"),

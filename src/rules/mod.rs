@@ -27,6 +27,7 @@ pub mod syntax;
 pub use lexicon::all_caps_shouting::AllCapsShouting;
 pub use lexicon::consonant_cluster::ConsonantCluster;
 pub use lexicon::excessive_nominalization::ExcessiveNominalization;
+pub use lexicon::homophone_density::HomophoneDensity;
 pub use lexicon::jargon_undefined::JargonUndefined;
 pub use lexicon::low_lexical_diversity::LowLexicalDiversity;
 pub use lexicon::redundant_intensifier::RedundantIntensifier;
@@ -261,6 +262,9 @@ pub fn default_rules(profile: Profile) -> Vec<Box<dyn Rule>> {
         // F143-substrate cohort lead. Ships as Status::Experimental
         // in v0.2.x via F139; flips to Stable at v0.3 cut.
         Box::new(ItalicSpanLong::for_profile(profile)),
+        // F46 — cohort sibling of F49. Ships as Status::Experimental
+        // in v0.2.x via F139; flips to Stable at v0.3 cut.
+        Box::new(HomophoneDensity::for_profile(profile)),
     ]
 }
 
@@ -310,7 +314,7 @@ mod tests {
         // against accidentally graduating one of them too early.
         let experimental: std::collections::BTreeSet<&str> =
             experimental_rule_ids().iter().copied().collect();
-        let expected = ["structure.italic-span-long"];
+        let expected = ["lexicon.homophone-density", "structure.italic-span-long"];
         for id in &expected {
             assert!(
                 experimental.contains(id),
@@ -387,9 +391,9 @@ mod tests {
 
     #[test]
     fn filter_by_experimental_strips_experimental_when_off() {
-        // Registry holds the 26 default rules (25 Stable + F49
-        // Experimental) plus FakeExperimental = 27 total. With the
-        // opt-in off, both Experimental rules are stripped → 25.
+        // Registry holds the 27 default rules (25 Stable + F49 + F46
+        // Experimental) plus FakeExperimental = 28 total. With the
+        // opt-in off, all three Experimental rules are stripped → 25.
         let kept =
             filter_by_experimental(registry_with_fake_experimental(), &ExperimentalOptIn::None);
         assert_eq!(
@@ -399,31 +403,34 @@ mod tests {
         );
         assert!(kept.iter().all(|r| r.id() != "structure.fake-experimental"));
         assert!(kept.iter().all(|r| r.id() != "structure.italic-span-long"));
+        assert!(kept.iter().all(|r| r.id() != "lexicon.homophone-density"));
     }
 
     #[test]
     fn filter_by_experimental_keeps_experimental_under_wildcard() {
-        // Wildcard keeps all 27 rules in the registry: 25 Stable +
-        // F49 (real Experimental) + FakeExperimental.
+        // Wildcard keeps all 28 rules in the registry: 25 Stable +
+        // F49 + F46 (real Experimental) + FakeExperimental.
         let kept =
             filter_by_experimental(registry_with_fake_experimental(), &ExperimentalOptIn::All);
-        assert_eq!(kept.len(), 27);
+        assert_eq!(kept.len(), 28);
         assert!(kept.iter().any(|r| r.id() == "structure.fake-experimental"));
         assert!(kept.iter().any(|r| r.id() == "structure.italic-span-long"));
+        assert!(kept.iter().any(|r| r.id() == "lexicon.homophone-density"));
     }
 
     #[test]
     fn filter_by_experimental_keeps_only_opted_in_ids() {
-        // Opt-in includes the synthetic id only — F49 stays
-        // filtered out because it isn't on the list. Result: 25
+        // Opt-in includes the synthetic id only — F49 and F46 stay
+        // filtered out because neither is on the list. Result: 25
         // Stable + FakeExperimental = 26.
         let opt_in = ExperimentalOptIn::from_selectors(["structure.fake-experimental"]);
         let kept = filter_by_experimental(registry_with_fake_experimental(), &opt_in);
         assert_eq!(kept.len(), 26);
         assert!(kept.iter().any(|r| r.id() == "structure.fake-experimental"));
         assert!(kept.iter().all(|r| r.id() != "structure.italic-span-long"));
+        assert!(kept.iter().all(|r| r.id() != "lexicon.homophone-density"));
 
-        // A different id in the opt-in set leaves both experimental
+        // A different id in the opt-in set leaves all experimental
         // rules filtered out.
         let other = ExperimentalOptIn::from_selectors(["structure.does-not-exist"]);
         let kept = filter_by_experimental(registry_with_fake_experimental(), &other);

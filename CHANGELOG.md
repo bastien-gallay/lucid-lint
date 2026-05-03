@@ -15,6 +15,32 @@ released-version block.
 
 ### Added
 
+- **[2026-05-03] F46 — `lexicon.homophone-density` — paragraph-level
+  homophone density rule.** Cohort sibling of F49 under
+  [F-experimental-rule-status](ROADMAP.md#f-experimental-rule-status):
+  ships as `Status::Experimental` in v0.2.x, opt-in via
+  `--experimental lexicon.homophone-density` or
+  `[experimental] enabled = ["lexicon.homophone-density"]`. Walks each
+  paragraph once; emits a `Warning` when the share of words from the
+  per-language homophone table strictly exceeds the per-profile
+  threshold (`dev-doc` 8.0 % / `public` 5.0 % / `falc` 3.0 %).
+  Paragraphs with fewer than 20 content words are skipped — below that
+  floor a single homophone produces a misleading double-digit score.
+  Condition tags `dyslexia` (BDA grounding) + `aphasia` (FALC
+  grounding); document-level `Language::Unknown` skipped silently. New
+  `HOMOPHONE_GROUPS_FR` (15 groups, content-word-leaning to keep the
+  function-word baseline out of the signal) and `HOMOPHONE_GROUPS_EN`
+  (8 groups, mixing function-word triples and content-word pairs).
+  Wired into `default_rules`, `WEIGHTED_RULE_IDS`, `RULE_DOCS`, the
+  EN + FR `SUMMARY.md` lists, and the `RULES.md` lexicon-category row.
+  EN + FR docs pages added (`docs/src/{,fr/}rules/homophone-density.md`).
+  Touched `src/rules/lexicon/homophone_density.rs`,
+  `src/rules/lexicon/mod.rs`, `src/rules/mod.rs`,
+  `src/language/{en,fr}.rs`, `src/scoring.rs`, `src/explain.rs`,
+  `RULES.md`, `docs/src/SUMMARY.md`,
+  `docs/src/rules/homophone-density.md`,
+  `docs/src/fr/rules/homophone-density.md`.
+
 - **[2026-05-03] F-repo-config-hardening closed — GitHub repo
   config hardening pass complete.** Tag ruleset on `v*` pattern
   created today (block deletion + force-push, *Active*; covers

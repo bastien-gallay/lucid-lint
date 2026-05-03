@@ -243,6 +243,31 @@ pub static INTENSIFIERS: &[&str] = &[
     "super",
 ];
 
+/// English homophone groups (lowercased).
+///
+/// Each inner slice lists orthographic variants that share (or near-share)
+/// pronunciation. Used by the `lexicon.homophone-density` rule to flag
+/// paragraphs where homophones cluster: dyslexic readers decode
+/// phonologically and must spell-disambiguate in context, which raises
+/// cognitive load (BDA Dyslexia Style Guide; plainlanguage.gov on
+/// avoiding ambiguous wording).
+///
+/// The list mixes function-word triples (`their` / `there` / `they're`)
+/// — frequent enough to cluster — with content-word pairs (`affect` /
+/// `effect`, `principal` / `principle`) where the orthographic confusion
+/// also distorts meaning. Calibration happens during the v0.2.x dogfood
+/// window while the rule ships as `Status::Experimental`.
+pub static HOMOPHONE_GROUPS_EN: &[&[&str]] = &[
+    &["their", "there", "they're"],
+    &["your", "you're"],
+    &["to", "too", "two"],
+    &["its", "it's"],
+    &["affect", "effect"],
+    &["principal", "principle"],
+    &["weather", "whether"],
+    &["lose", "loose"],
+];
+
 /// English spelled-out cardinal numerals (lowercased).
 ///
 /// Used by the `mixed-numeric-format` rule to detect a sentence that
