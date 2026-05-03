@@ -221,20 +221,6 @@ released-version block.
   cut, when `v1` will be tagged and the action will move to its own
   `lucid-lint-action` repo per the F114 ROADMAP entry.
 
-- **[2026-04-28] Encoding hygiene at the engine boundary (F110 / F111 / F112).**
-  `Engine::lint_with_source` now strips a leading UTF-8 BOM
-  (`U+FEFF`) and NFC-normalizes input once at the funnel point, so
-  every rule consumes the same shape of text. F110: a Windows-edited
-  Markdown file with `EF BB BF` no longer shifts column counts by one
-  on the first character. F111: NFC `café` and NFD `café`
-  (`e + U+0301`) now hash to the same key in HashMap-using rules
-  (e.g. `low-lexical-diversity`, the stop-words detector); same prose
-  → same lint output. Adds `unicode-normalization = "0.1"` and uses
-  `is_nfc_quick` for the zero-cost path on already-normalized input.
-  F112: regression fixtures for bare `\r` line endings (classic Mac)
-  and zero-width characters (`U+200B/200C/200D`) inside words pin the
-  observed behaviour so it can't drift.
-
 - **[2026-04-28] F123 — install-route documentation surfaces the cargo-dist
   installers.** `README.md` and `docs/src/guide/installation.md`
   now lead with the `curl … | sh` (Linux / macOS / WSL) and
@@ -503,15 +489,6 @@ released-version block.
   unreachable in normal flow; initial values overwritten by the
   first slide step) — documented in the F108 / F109 ROADMAP rows.
 
-- **[2026-04-24] Strict validation of the `unexplained-abbreviation` whitelist at
-  config-load.** `[rules."lexicon.unexplained-abbreviation"].whitelist`
-  entries must now be non-empty strings of ASCII uppercase letters and
-  digits (e.g. `"WCAG"`, `"HTML5"`). The detector only ever emits
-  uppercase+digit acronym tokens, so previously a typo like `"wcag"` or
-  `"Wcag"` would silently never match. The error message names the
-  offending entry + its index so the fix is one grep away. Digits
-  inside entries remain supported (`"WCAG21"`).
-
 - **[2026-04-24] Parser / engine micro-benchmarks (`benches/parser_hotpath.rs`).**
   New `criterion` dev-dep and `just bench` recipe cover
   `split_sentences`, `parse_markdown`, and `Engine::lint_str` over two
@@ -718,23 +695,6 @@ released-version block.
   are not emitted as paragraphs today, and the rule is silent on
   over-length content inside them.
 
-- **[2026-04-29] `structure.line-length-wide` is now author-break-aware.** The rule
-  used to fire on any paragraph whose joined text exceeded the
-  per-profile ceiling, including soft-wrapped Markdown prose. That
-  conflated source mechanics with rendered width — WCAG 1.4.8 (the
-  rule's stated grounding) targets the rendered line, but the
-  Markdown parser collapses soft breaks to spaces, so a normal
-  multi-sentence paragraph written as one source line was being
-  measured as if the renderer would never reflow it. The rule now
-  only fires on paragraphs that carry an authorial line break:
-  Markdown hard breaks (`<br>` or two trailing spaces) and explicit
-  newlines in plain-text input. Soft-wrapped Markdown paragraphs are
-  exempt regardless of length — pair with
-  `structure.paragraph-too-long` to bound paragraph density.
-  Surfaced by dogfood on the FR rule pages, where 60+ false positives
-  were being emitted on prose that mdBook reflows correctly. Docs,
-  RULES.md, and unit tests updated accordingly.
-
 - **[2026-04-25] `detect_language` single-pass, alloc-light hot path (F102).**
   The stop-words ratio scan no longer materialises two intermediate
   vectors (`Vec<&str>` of words + `Vec<String>` of lowercased forms)
@@ -771,7 +731,51 @@ released-version block.
   (F95–F96 hygiene shipped earlier today; F93/F94 refuted by
   profile; F102 + F103 measured wins).
 
-- **[2026-04-24] Two library-code `.expect()` calls dropped.**
+## [0.2.3] — 2026-04-29
+
+### Added
+
+- **Encoding hygiene at the engine boundary (F110 / F111 / F112).**
+  `Engine::lint_with_source` now strips a leading UTF-8 BOM
+  (`U+FEFF`) and NFC-normalizes input once at the funnel point, so
+  every rule consumes the same shape of text. F110: a Windows-edited
+  Markdown file with `EF BB BF` no longer shifts column counts by one
+  on the first character. F111: NFC `café` and NFD `café`
+  (`e + U+0301`) now hash to the same key in HashMap-using rules
+  (e.g. `low-lexical-diversity`, the stop-words detector); same prose
+  → same lint output. Adds `unicode-normalization = "0.1"` and uses
+  `is_nfc_quick` for the zero-cost path on already-normalized input.
+  F112: regression fixtures for bare `\r` line endings (classic Mac)
+  and zero-width characters (`U+200B/200C/200D`) inside words pin the
+  observed behaviour so it can't drift.
+- **Strict validation of the `unexplained-abbreviation` whitelist at
+  config-load.** `[rules."lexicon.unexplained-abbreviation"].whitelist`
+  entries must now be non-empty strings of ASCII uppercase letters and
+  digits (e.g. `"WCAG"`, `"HTML5"`). The detector only ever emits
+  uppercase+digit acronym tokens, so previously a typo like `"wcag"` or
+  `"Wcag"` would silently never match. The error message names the
+  offending entry + its index so the fix is one grep away. Digits
+  inside entries remain supported (`"WCAG21"`).
+
+### Changed
+
+- **`structure.line-length-wide` is now author-break-aware.** The rule
+  used to fire on any paragraph whose joined text exceeded the
+  per-profile ceiling, including soft-wrapped Markdown prose. That
+  conflated source mechanics with rendered width — WCAG 1.4.8 (the
+  rule's stated grounding) targets the rendered line, but the
+  Markdown parser collapses soft breaks to spaces, so a normal
+  multi-sentence paragraph written as one source line was being
+  measured as if the renderer would never reflow it. The rule now
+  only fires on paragraphs that carry an authorial line break:
+  Markdown hard breaks (`<br>` or two trailing spaces) and explicit
+  newlines in plain-text input. Soft-wrapped Markdown paragraphs are
+  exempt regardless of length — pair with
+  `structure.paragraph-too-long` to bound paragraph density.
+  Surfaced by dogfood on the FR rule pages, where 60+ false positives
+  were being emitted on prose that mdBook reflows correctly. Docs,
+  RULES.md, and unit tests updated accordingly.
+- **Two library-code `.expect()` calls dropped.**
   `consecutive-long-sentences` and `all-caps-shouting` now use
   idiomatic `if let` / `Option::filter` patterns instead of panic
   paths. The invariants were infallible by construction but the panic
@@ -779,8 +783,7 @@ released-version block.
   `expect()` in library code"). The remaining
   `NonZeroU32::new(LITERAL).expect` sites stay — they collapse to
   compile-time-checkable invariants.
-
-- **[2026-04-24] `scoring::compute` category-cost cast now asserts the clamp
+- **`scoring::compute` category-cost cast now asserts the clamp
   invariant in debug builds.** Replaces the bare `#[allow(
   clippy::cast_possible_truncation, …)]` with an explicit safety
   contract comment plus `debug_assert!(normalized.is_finite() &&
