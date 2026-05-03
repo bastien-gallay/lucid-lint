@@ -133,7 +133,7 @@ Notes:
   exist are dropped silently, so removing a rule in a future release
   does not break older configs.
 - **Future fields.** A `reason = "..."` field on each entry is
-  tracked as F20 — when it lands it will be surfaced in reports and
+  tracked as [F-suppression-reason-field](../roadmap.md#f-suppression-reason-field) — when it lands it will be surfaced in reports and
   optionally required via config.
 
 ## Per-rule overrides

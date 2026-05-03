@@ -154,8 +154,8 @@ Les champs absents retombent sur les défauts livrés. La sous-table `[scoring.w
 
 Le brainstorm qui a façonné [F14](../roadmap.md) (voir [`brainstorm/20260420-score-semantics.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/brainstorm/20260420-score-semantics.md)) a gardé le modèle minimal. Les décorations ne seront promues que si les retours utilisateurs l'exigent :
 
-- **Notes en lettres (A–F)** — suivi par [F39](../roadmap.md). Promu si les nombres semblent bruyants ou difficiles à comparer entre documents.
-- **Affichage feu tricolore + marge réussite/échec** — suivi par [F40](../roadmap.md). Promu si les utilisateurs CI demandent un signal d'un coup d'œil plus fort.
+- **Notes en lettres (A–F)** — suivi par [F-score-letter-grade](../roadmap.md#f-score-letter-grade). Promu si les nombres semblent bruyants ou difficiles à comparer entre documents.
+- **Affichage feu tricolore + marge réussite/échec** — suivi par [F-score-traffic-light](../roadmap.md#f-score-traffic-light). Promu si les utilisateurs CI demandent un signal d'un coup d'œil plus fort.
 - **Secondes de lecture comme unité alternative** — suivi par [F41](../roadmap.md). Demande une heuristique validée et des métriques compagnes (confort, fatigue), pour ne pas monopoliser la lecture.
 - **Sous-scores par section** — suivi par [F38](../roadmap.md). Une fois les agrégats document + projet éprouvés sur le terrain.
-- **Agrégat multi-fichiers au niveau projet** — suivi par [F15](../roadmap.md). En v0.2, la CLI traite tous les chemins passés comme un seul document pour le score.
+- **Agrégat multi-fichiers au niveau projet** — suivi par [F-project-scoring-rollup](../roadmap.md#f-project-scoring-rollup). En v0.2, la CLI traite tous les chemins passés comme un seul document pour le score.

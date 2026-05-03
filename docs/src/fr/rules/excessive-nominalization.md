@@ -47,7 +47,7 @@ Le vocabulaire technique (`function`, `implementation`,
 ce qui justifie le seuil relâché de `dev-doc`. Le suffixe `-al` en
 anglais est trop large (il signale `crucial`, `horizontal`,
 `positional` alors qu'il ne s'agit pas de noms abstraits) et reste
-suivi sous **[F24](../roadmap.md)** dans la
+suivi sous **[F-excessive-nominalization-suffix-refine](../roadmap.md#f-excessive-nominalization-suffix-refine)** dans la
 [feuille de route](../roadmap.md).
 
 ## Exemple
