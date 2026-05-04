@@ -33,6 +33,7 @@ pub use lexicon::low_lexical_diversity::LowLexicalDiversity;
 pub use lexicon::redundant_intensifier::RedundantIntensifier;
 pub use lexicon::unexplained_abbreviation::UnexplainedAbbreviation;
 pub use lexicon::weasel_words::WeaselWords;
+pub use readability::large_number_unanchored::LargeNumberUnanchored;
 pub use readability::score::ReadabilityScore;
 pub use rhythm::consecutive_long_sentences::ConsecutiveLongSentences;
 pub use rhythm::repetitive_connectors::RepetitiveConnectors;
@@ -269,6 +270,9 @@ pub fn default_rules(profile: Profile) -> Vec<Box<dyn Rule>> {
         // F51 — cohort sibling of F49. Ships as Status::Experimental
         // in v0.2.x via F139; flips to Stable at v0.3 cut.
         Box::new(NumberRun::for_profile(profile)),
+        // F53 — cohort sibling of F49. Ships as Status::Experimental
+        // in v0.2.x via F139; flips to Stable at v0.3 cut.
+        Box::new(LargeNumberUnanchored::for_profile(profile)),
     ]
 }
 
@@ -304,8 +308,16 @@ mod tests {
 
     #[test]
     fn filter_by_conditions_keeps_general_rules() {
+        // 25 Stable General-tagged rules plus F53
+        // (`readability.large-number-unanchored`), which is
+        // Experimental but carries `general` alongside `dyscalculia`
+        // because its grounding (CDC CCI / plainlanguage.gov "Use
+        // Numbers Effectively") applies to every reader, not only
+        // dyscalculic ones. F53 still ships off-by-default via the
+        // experimental opt-in; the `general` tag only matters once
+        // the user has opted into the rule.
         let kept = filter_by_conditions(default_rules(Profile::Public), &[]);
-        assert_eq!(kept.len(), 25);
+        assert_eq!(kept.len(), 26);
     }
 
     #[test]
@@ -320,6 +332,7 @@ mod tests {
             experimental_rule_ids().iter().copied().collect();
         let expected = [
             "lexicon.homophone-density",
+            "readability.large-number-unanchored",
             "structure.italic-span-long",
             "structure.number-run",
         ];
@@ -399,9 +412,10 @@ mod tests {
 
     #[test]
     fn filter_by_experimental_strips_experimental_when_off() {
-        // Registry holds the 27 default rules (25 Stable + F49 + F46
-        // Experimental) plus FakeExperimental = 28 total. With the
-        // opt-in off, all three Experimental rules are stripped → 25.
+        // Registry holds the 29 default rules (25 Stable + F49 + F46
+        // + F51 + F53 Experimental) plus FakeExperimental = 30 total.
+        // With the opt-in off, all five Experimental rules are
+        // stripped → 25.
         let kept =
             filter_by_experimental(registry_with_fake_experimental(), &ExperimentalOptIn::None);
         assert_eq!(
@@ -416,11 +430,11 @@ mod tests {
 
     #[test]
     fn filter_by_experimental_keeps_experimental_under_wildcard() {
-        // Wildcard keeps all 29 rules in the registry: 25 Stable +
-        // F49 + F46 + F51 (real Experimental) + FakeExperimental.
+        // Wildcard keeps all 30 rules in the registry: 25 Stable +
+        // F49 + F46 + F51 + F53 (real Experimental) + FakeExperimental.
         let kept =
             filter_by_experimental(registry_with_fake_experimental(), &ExperimentalOptIn::All);
-        assert_eq!(kept.len(), 29);
+        assert_eq!(kept.len(), 30);
         assert!(kept.iter().any(|r| r.id() == "structure.fake-experimental"));
         assert!(kept.iter().any(|r| r.id() == "structure.italic-span-long"));
         assert!(kept.iter().any(|r| r.id() == "lexicon.homophone-density"));

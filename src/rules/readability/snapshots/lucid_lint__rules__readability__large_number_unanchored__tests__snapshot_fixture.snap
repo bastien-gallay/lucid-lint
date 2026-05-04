@@ -1,0 +1,15 @@
+---
+source: src/rules/readability/large_number_unanchored.rs
+assertion_line: 975
+expression: diags
+---
+- rule_id: readability.large-number-unanchored
+  severity: warning
+  location:
+    file: "<input>"
+    line: 3
+    column: 23
+    length: 66
+  section: ~
+  message: "Large numeral (10-digit, value ≈ 4800000000) appears with no anchor in this sentence (no unit, percentage, ratio, or comparison phrase). plain-language guidance recommends giving large numbers a comparison or denominator the reader can ground."
+  weight: 1

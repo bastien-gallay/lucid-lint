@@ -49,6 +49,7 @@
     - [`syntax.dense-punctuation-burst`](./rules/dense-punctuation-burst.md)
   - [Readability]()
     - [`readability.score`](./rules/readability-score.md)
+    - [`readability.large-number-unanchored`](./rules/large-number-unanchored.md)
 
 # Architecture
 
@@ -108,6 +109,7 @@
     - [`syntax.dense-punctuation-burst`](./fr/rules/dense-punctuation-burst.md)
   - [Lisibilité]()
     - [`readability.score`](./fr/rules/readability-score.md)
+    - [`readability.large-number-unanchored`](./fr/rules/large-number-unanchored.md)
 - [Architecture]()
   - [Vue d'ensemble](./fr/architecture/overview.md)
   - [Décisions de conception](./fr/architecture/design-decisions.md)

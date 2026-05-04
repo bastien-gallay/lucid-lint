@@ -11,3 +11,9 @@ Un autre paragraphe. Celui-ci contient plusieurs phrases courtes. Aucune n'est p
 ## Section courte
 
 Tout va bien ici.
+
+## Section grands nombres sans ancrage
+
+La proposition évoque plusieurs milliards de dépenses vagues dans plusieurs régions.
+
+La réforme des retraites coûterait 4800000000 selon la note divulguée hier.

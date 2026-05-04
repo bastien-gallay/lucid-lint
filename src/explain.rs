@@ -53,6 +53,10 @@ pub(crate) const RULE_DOCS: &[(&str, &str, &str)] = &[
         "unexplained-abbreviation"
     ),
     doc!("lexicon.weasel-words", "weasel-words"),
+    doc!(
+        "readability.large-number-unanchored",
+        "large-number-unanchored"
+    ),
     doc!("readability.score", "readability-score"),
     doc!(
         "rhythm.consecutive-long-sentences",
