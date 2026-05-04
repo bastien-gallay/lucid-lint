@@ -1,4 +1,4 @@
-<!-- en-source-sha: a5a9e52823cafc1e3a88470bcfc74ef580b083f7 -->
+<!-- en-source-sha: ece884b47f287fb7dd4817301cba49e26b543b49 -->
 # `structure.italic-span-long`
 
 *Phrase en italique trop longue.*
@@ -100,7 +100,7 @@ Une *phrase volontairement longue en italique que la règle signalerait normalem
 
 ## Références
 
-- [British Dyslexia Association — Dyslexia Style Guide (2018)](https://www.bdadyslexia.org.uk/advice/employers/creating-a-dyslexia-friendly-workplace/dyslexia-friendly-style-guide). Recommande de garder l'italique pour de courtes phrases afin de préserver la reconnaissance des formes de lettres.
+- [British Dyslexia Association — Dyslexia Style Guide (2018)](https://www.bdadyslexia.org.uk/advice/employers/creating-a-dyslexia-friendly-workplace). Recommande de garder l'italique pour de courtes phrases afin de préserver la reconnaissance des formes de lettres.
 - [Rello & Baeza-Yates (2013)](../references.md#rello-baeza-yates-2013) — contexte académique plus large sur la typographie favorable à la dyslexie.
 
 Voir [Références](../references.md) pour la bibliographie complète.

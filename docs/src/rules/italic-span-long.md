@@ -97,7 +97,7 @@ A *deliberately long italic span that the rule would normally flag* lives here.
 
 ## References
 
-- [British Dyslexia Association — Dyslexia Style Guide (2018)](https://www.bdadyslexia.org.uk/advice/employers/creating-a-dyslexia-friendly-workplace/dyslexia-friendly-style-guide). Recommends keeping italics to short phrases for letter-shape recognition.
+- [British Dyslexia Association — Dyslexia Style Guide (2018)](https://www.bdadyslexia.org.uk/advice/employers/creating-a-dyslexia-friendly-workplace). Recommends keeping italics to short phrases for letter-shape recognition.
 - [Rello & Baeza-Yates (2013)](../references.md#rello-baeza-yates-2013) — broader academic context on dyslexia-friendly typography.
 
 See [References](../references.md) for the full bibliography.

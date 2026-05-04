@@ -100,7 +100,7 @@ Their report shows there were too many decisions to make and two teams could not
 
 ## References
 
-- [British Dyslexia Association — Dyslexia Style Guide (2018)](https://www.bdadyslexia.org.uk/advice/employers/creating-a-dyslexia-friendly-workplace/dyslexia-friendly-style-guide). Flags homophones as a friction point for dyslexic readers.
+- [British Dyslexia Association — Dyslexia Style Guide (2018)](https://www.bdadyslexia.org.uk/advice/employers/creating-a-dyslexia-friendly-workplace). Flags homophones as a friction point for dyslexic readers.
 - [Falc — Information pour tous (2009)](../references.md). FALC orthographic-clarity guidelines for aphasic and plain-language audiences.
 
 See [References](../references.md) for the full bibliography.

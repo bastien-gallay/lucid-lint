@@ -1,4 +1,4 @@
-<!-- en-source-sha: 9d0836e3c64ed3730215acef4ec4ec1e1a0bcfea -->
+<!-- en-source-sha: ece884b47f287fb7dd4817301cba49e26b543b49 -->
 # `lexicon.homophone-density`
 
 *Densité d'homophones trop élevée.*
@@ -103,7 +103,7 @@ Their report shows there were too many decisions to make and two teams could not
 
 ## Références
 
-- [British Dyslexia Association — Dyslexia Style Guide (2018)](https://www.bdadyslexia.org.uk/advice/employers/creating-a-dyslexia-friendly-workplace/dyslexia-friendly-style-guide). Cite les homophones comme point de friction pour la lecture dyslexique.
+- [British Dyslexia Association — Dyslexia Style Guide (2018)](https://www.bdadyslexia.org.uk/advice/employers/creating-a-dyslexia-friendly-workplace). Cite les homophones comme point de friction pour la lecture dyslexique.
 - [FALC — Information pour tous (2009)](../references.md). Recommandations d'orthographe claire pour les publics aphasiques et « facile à lire ».
 
 Voir [Références](../references.md) pour la bibliographie complète.

@@ -51,6 +51,13 @@ released-version block.
   chosen over an open-ended NLP-style anchor detector to clear the
   deterministic-core gate.
 
+- **[2026-05-04] F-prose-audits — pre-commit + CI for `typos` (spell
+  check) and `lychee` (link check).** `_typos.toml` with 80+ bilingual
+  EN/FR whitelist entries and short-word regex ignore. `.lycheeignore`
+  for GitHub source links, brainstorm files, and academic DOIs. 4 broken
+  BDA style-guide URLs fixed in EN + FR rule docs. `typos` runs on
+  every PR push; `lychee` runs on PRs touching docs or infra.
+
 - **[2026-05-04] F51 — `structure.number-run` (experimental, cohort
   sibling of F49).** New rule that flags sentences packing more than a
   configurable number of numeric tokens together. Grounding:
