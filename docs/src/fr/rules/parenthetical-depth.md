@@ -1,4 +1,4 @@
-<!-- en-source-sha: 0000000000000000000000000000000000000000 -->
+<!-- en-source-sha: 0d3d0c82786eeda5ec667f34398e1e6db720322b -->
 # `syntax.parenthetical-depth`
 
 > *Expérimentale en v0.2.x.* Désactivée par défaut ; activée via
