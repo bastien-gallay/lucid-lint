@@ -171,11 +171,9 @@ sentence-too-long = 3
 
 ## Editor integration
 
-On the roadmap (v0.3+):
-
-- VS Code extension
-- Neovim LSP support
-- pre-commit hook
+- [pre-commit](https://pre-commit.com) — ships with this repo; run `pre-commit install` to enable locally.
+- VS Code extension — on the roadmap (v0.3+)
+- Neovim LSP support — on the roadmap (v0.3+)
 
 ## Documentation
 
