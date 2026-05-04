@@ -15,6 +15,42 @@ released-version block.
 
 ### Added
 
+- **[2026-05-04] F53 — `readability.large-number-unanchored`
+  (experimental, cohort sibling of F49).** New rule that flags a
+  single large numeral (≥ 4 digits and ≥ profile threshold) or a
+  magnitude word (`million`/`milliard`/`billion`/`trillion`) appearing
+  in a sentence with no nearby anchor — no unit, no percentage, no
+  currency symbol, no ratio, no comparator phrase. Grounding: CDC
+  Clear Communication Index (item 6 — *clear and meaningful for the
+  primary audience*) and plainlanguage.gov *"Use Numbers
+  Effectively"*. Ships as `Status::Experimental` (off by default) via
+  the F139 substrate; opt in with `--experimental
+  readability.large-number-unanchored` or `[experimental] enabled =
+  ["readability.large-number-unanchored"]` in `lucid-lint.toml`.
+  Tagged `dyscalculia` and `general` (F71): runs only when
+  `--conditions` includes one of them. Profile thresholds: `dev-doc`
+  100 000 / `public` 10 000 / `falc` 1 000 (`min_value`). Numeric
+  scanner collapses thousands separators (`,`, `.`, ASCII space,
+  NBSP, thin space, narrow NBSP) so `1 000` (FR) and `1,000` (EN)
+  both count as a 4-digit token. False-positive guards: year-shaped
+  numerals (1000–2999, no separator), ordinal-shaped tokens
+  (digit-then-letter), and figure / page / section refs (`Figure`,
+  `p.`, `§`, `tableau`, `chapitre`, `#`, …). Per-language comparator
+  lexicons (≤ 30 phrases each) live as `ANCHOR_COMPARATORS_EN` and
+  `ANCHOR_COMPARATORS_FR` in `src/language/{en,fr}.rs`. Wired into
+  `default_rules`, `WEIGHTED_RULE_IDS`, `RULE_DOCS`, the EN + FR
+  `SUMMARY.md` lists, and the `RULES.md` readability-category row.
+  EN + FR docs pages added (`docs/src/{,fr/}rules/large-number-unanchored.md`).
+  Touched `src/rules/readability/large_number_unanchored.rs`,
+  `src/rules/readability/mod.rs`, `src/rules/mod.rs`, `src/scoring.rs`,
+  `src/explain.rs`, `src/language/{en,fr}.rs`. Boundary with sibling
+  `structure.number-run`: `number-run` fires on numeric clusters
+  (≥ N tokens per sentence); this rule fires on a single unanchored
+  large numeral or magnitude word. Scoped via
+  `.personal/feature-torture/reports/F53.md` — narrow-anchor MVP
+  chosen over an open-ended NLP-style anchor detector to clear the
+  deterministic-core gate.
+
 - **[2026-05-04] F51 — `structure.number-run` (experimental, cohort
   sibling of F49).** New rule that flags sentences packing more than a
   configurable number of numeric tokens together. Grounding:

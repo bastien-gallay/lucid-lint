@@ -77,7 +77,7 @@ score is their weighted sum.
 | `lexicon` | `lexicon.low-lexical-diversity`, `lexicon.excessive-nominalization`, `lexicon.unexplained-abbreviation`, `lexicon.weasel-words`, `lexicon.jargon-undefined`, `lexicon.all-caps-shouting`, `lexicon.redundant-intensifier`, `lexicon.consonant-cluster`, `lexicon.homophone-density` *(experimental, [F-experimental-rule-status](ROADMAP.md#f-experimental-rule-status) cohort)* |
 | `syntax` | `syntax.passive-voice`, `syntax.unclear-antecedent`, `syntax.nested-negation`, `syntax.conditional-stacking`, `syntax.dense-punctuation-burst` |
 | `rhythm` | `rhythm.consecutive-long-sentences`, `rhythm.repetitive-connectors` |
-| `readability` | `readability.score` |
+| `readability` | `readability.score`, `readability.large-number-unanchored` *(experimental, [F-experimental-rule-status](ROADMAP.md#f-experimental-rule-status) cohort)* |
 
 > v0.2 remapped the v0.1 taxonomy: `length` merged into `structure`;
 > `lexical` became `lexicon`; `rhythm.repetitive-connectors` moved from

@@ -216,6 +216,42 @@ pub static SPELLED_NUMERALS: &[&str] = &[
     "milliards",
 ];
 
+/// French comparator phrases that anchor a large number in a sentence.
+///
+/// Used by the `readability.large-number-unanchored` rule. Matches
+/// case-insensitive substring; multi-word phrases must be lowercased
+/// here. Curated and short on purpose — false-negative recall is
+/// bounded but false-positive risk stays low.
+pub static ANCHOR_COMPARATORS_FR: &[&str] = &[
+    "soit environ",
+    "soit à peu près",
+    "soit la moitié",
+    "soit le double",
+    "soit le triple",
+    "soit le tiers",
+    "soit le quart",
+    "soit autant que",
+    "équivalent à",
+    "équivaut à",
+    "l'équivalent de",
+    "l'équivalent d'",
+    "à peu près",
+    "environ ",
+    "près de",
+    "presque ",
+    "moins de",
+    "plus de",
+    "au moins",
+    "au plus",
+    "jusqu'à",
+    "en moyenne",
+    "comparé à",
+    "par rapport à",
+    "représente ",
+    "représentant",
+    "atteint ",
+];
+
 #[cfg(test)]
 mod tests {
     use super::*;

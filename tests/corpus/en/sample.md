@@ -11,3 +11,9 @@ Another paragraph here. This one has several sentences. None of them are particu
 ## Short section
 
 All good here.
+
+## Unanchored large numbers section
+
+The proposal mentions several billion in vague spending across regions.
+
+The pension reform reportedly costs 4800000000 according to the latest leaked memo.
