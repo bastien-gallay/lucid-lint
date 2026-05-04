@@ -3,20 +3,8 @@ name: Coverage
 on:
   push:
     branches: [main, 'release/*']
-    paths:
-      - 'src/**/*.rs'
-      - 'tests/**/*.rs'
-      - 'Cargo.toml'
-      - 'Cargo.lock'
-      - 'rust-toolchain.toml'
   pull_request:
     branches: [main, 'release/*']
-    paths:
-      - 'src/**/*.rs'
-      - 'tests/**/*.rs'
-      - 'Cargo.toml'
-      - 'Cargo.lock'
-      - 'rust-toolchain.toml'
 
 permissions:
   contents: read
@@ -25,25 +13,50 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      rust: ${{ steps.filter.outputs.rust }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4.0.1
+        id: filter
+        with:
+          filters: |
+            rust:
+              - 'src/**/*.rs'
+              - 'tests/**/*.rs'
+              - 'Cargo.toml'
+              - 'Cargo.lock'
+              - 'rust-toolchain.toml'
+
   coverage:
+    needs: changes
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        if: needs.changes.outputs.rust == 'true'
       - uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9 # master (no semver tags upstream)
+        if: needs.changes.outputs.rust == 'true'
         with:
           toolchain: stable
           components: llvm-tools-preview
       - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2.9.1
+        if: needs.changes.outputs.rust == 'true'
 
       - name: Install cargo-llvm-cov
+        if: needs.changes.outputs.rust == 'true'
         uses: taiki-e/install-action@db5fb34fa772531a3ece57ca434f579eb334e0fb # v2.75.30
         with:
           tool: cargo-llvm-cov
 
       - name: Generate coverage
+        if: needs.changes.outputs.rust == 'true'
         run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
 
       - name: Upload to Codecov
+        if: needs.changes.outputs.rust == 'true'
         uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
         with:
           files: lcov.info

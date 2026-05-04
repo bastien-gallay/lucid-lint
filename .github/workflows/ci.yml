@@ -81,11 +81,10 @@ jobs:
   test:
     name: Test (${{ matrix.os }})
     needs: changes
-    if: needs.changes.outputs.rust == 'true' || needs.changes.outputs.docs == 'true' || needs.changes.outputs.infra == 'true'
     strategy:
       fail-fast: false
       matrix:
-        os: ${{ (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/'))) && fromJSON('["ubuntu-latest", "macos-latest", "windows-latest"]') || fromJSON('["ubuntu-latest"]') }}
+        os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     env:
       # Opt-in gate checked by `tests/rule_docs_coverage.rs`: when set,
@@ -93,15 +92,32 @@ jobs:
       # the CHANGELOG `## [Unreleased]` section.
       RULE_DOCS_GATE_GIT: "1"
     steps:
+      - name: Determine if we should run
+        id: should_run
+        run: |
+          if [[ "${{ matrix.os }}" == "ubuntu-latest" ]] || [[ "${{ github.event_name }}" == "push" ]]; then
+            if [[ "${{ needs.changes.outputs.rust }}" == "true" ]] || [[ "${{ needs.changes.outputs.docs }}" == "true" ]] || [[ "${{ needs.changes.outputs.infra }}" == "true" ]]; then
+              echo "run=true" >> $GITHUB_OUTPUT
+            else
+              echo "run=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "run=false" >> $GITHUB_OUTPUT
+          fi
+
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        if: steps.should_run.outputs.run == 'true'
         with:
           # Fetch full history so the docs-gate test can diff against origin/main.
           fetch-depth: 0
       - uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9 # master (no semver tags upstream)
+        if: steps.should_run.outputs.run == 'true'
         with:
           toolchain: stable
       - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2.9.1
+        if: steps.should_run.outputs.run == 'true'
       - name: Run tests
+        if: steps.should_run.outputs.run == 'true'
         run: cargo test --all-features --workspace
 
   msrv:
@@ -180,7 +196,7 @@ jobs:
       (needs.changes.outputs.rust == 'true' || needs.changes.outputs.docs == 'true' || needs.changes.outputs.infra == 'true') &&
       (needs.fmt.result == 'success' || needs.fmt.result == 'skipped') &&
       (needs.clippy.result == 'success' || needs.clippy.result == 'skipped') &&
-      needs.test.result == 'success'
+      (needs.test.result == 'success' || needs.test.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
