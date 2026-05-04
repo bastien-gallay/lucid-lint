@@ -14,3 +14,6 @@ https://doi\.org/10\.1167/
 https://doi\.org/10\.1207/
 https://apps\.dtic\.mil/
 https://psycnet\.apa\.org/
+
+# EU Publications Office — rate-limited, returns 403 from CI.
+https://op\.europa\.eu/
