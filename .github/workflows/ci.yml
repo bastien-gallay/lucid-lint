@@ -204,7 +204,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Run typos
-        uses: crate-ci/typos@v1.31.1
+        uses: crate-ci/typos@31978115339370fcb346e579de8f6e9ccf6913c4 # v1.31.1
         with:
           files: .
           exclude: '*.snap|examples/'
@@ -217,7 +217,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Install lychee
-        uses: lycheeverse/lychee-action@v2.1.0
+        uses: lycheeverse/lychee-action@f81112d0d2814ded911bd23e3beaa9dda9093915 # v2.1.0
         with:
           fail: true
           args: >-

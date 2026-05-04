@@ -1,4 +1,4 @@
-<!-- en-source-sha: 9d0836e3c64ed3730215acef4ec4ec1e1a0bcfea -->
+<!-- en-source-sha: ece884b47f287fb7dd4817301cba49e26b543b49 -->
 # `lexicon.homophone-density`
 
 *Densité d'homophones trop élevée.*

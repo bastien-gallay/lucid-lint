@@ -1,4 +1,4 @@
-<!-- en-source-sha: a5a9e52823cafc1e3a88470bcfc74ef580b083f7 -->
+<!-- en-source-sha: ece884b47f287fb7dd4817301cba49e26b543b49 -->
 # `structure.italic-span-long`
 
 *Phrase en italique trop longue.*
