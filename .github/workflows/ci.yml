@@ -93,6 +93,7 @@ jobs:
       RULE_DOCS_GATE_GIT: "1"
     steps:
       - name: Determine if we should run
+        shell: bash
         id: should_run
         run: |
           if [[ "${{ matrix.os }}" == "ubuntu-latest" ]] || [[ "${{ github.event_name }}" == "push" ]]; then
