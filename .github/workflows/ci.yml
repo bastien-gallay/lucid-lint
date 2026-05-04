@@ -80,18 +80,18 @@ jobs:
   test:
     name: Test (${{ matrix.os }})
     needs: changes
-    if: |
-      (needs.changes.outputs.rust == 'true' || needs.changes.outputs.docs == 'true' || needs.changes.outputs.infra == 'true') &&
-      (matrix.run_full_matrix != false)
+    if: needs.changes.outputs.rust == 'true' || needs.changes.outputs.docs == 'true' || needs.changes.outputs.infra == 'true'
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
         include:
-          - os: macos-latest
-            run_full_matrix: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) }}
-          - os: windows-latest
-            run_full_matrix: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) }}
+          - os: >-
+              ${{ (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/'))) && 'macos-latest' || '' }}
+          - os: >-
+              ${{ (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/'))) && 'windows-latest' || '' }}
+        exclude:
+          - os: ''
     runs-on: ${{ matrix.os }}
     env:
       # Opt-in gate checked by `tests/rule_docs_coverage.rs`: when set,
