@@ -8,6 +8,5 @@ pub mod italic_span_long;
 pub mod line_length_wide;
 pub mod long_enumeration;
 pub mod mixed_numeric_format;
-pub mod number_run;
 pub mod paragraph_too_long;
 pub mod sentence_too_long;

@@ -73,7 +73,7 @@ score is their weighted sum.
 
 | Category | Rules |
 |---|---|
-| `structure` | `structure.sentence-too-long`, `structure.paragraph-too-long`, `structure.deeply-nested-lists`, `structure.heading-jump`, `structure.excessive-commas`, `structure.long-enumeration`, `structure.deep-subordination`, `structure.line-length-wide`, `structure.mixed-numeric-format`, `structure.italic-span-long` *(experimental, [F-experimental-rule-status](ROADMAP.md#f-experimental-rule-status) cohort)*, `structure.number-run` *(experimental, [F-experimental-rule-status](ROADMAP.md#f-experimental-rule-status) cohort)* |
+| `structure` | `structure.sentence-too-long`, `structure.paragraph-too-long`, `structure.deeply-nested-lists`, `structure.heading-jump`, `structure.excessive-commas`, `structure.long-enumeration`, `structure.deep-subordination`, `structure.line-length-wide`, `structure.mixed-numeric-format`, `structure.italic-span-long` *(experimental, [F-experimental-rule-status](ROADMAP.md#f-experimental-rule-status) cohort)* |
 | `lexicon` | `lexicon.low-lexical-diversity`, `lexicon.excessive-nominalization`, `lexicon.unexplained-abbreviation`, `lexicon.weasel-words`, `lexicon.jargon-undefined`, `lexicon.all-caps-shouting`, `lexicon.redundant-intensifier`, `lexicon.consonant-cluster`, `lexicon.homophone-density` *(experimental, [F-experimental-rule-status](ROADMAP.md#f-experimental-rule-status) cohort)* |
 | `syntax` | `syntax.passive-voice`, `syntax.unclear-antecedent`, `syntax.nested-negation`, `syntax.conditional-stacking`, `syntax.dense-punctuation-burst` |
 | `rhythm` | `rhythm.consecutive-long-sentences`, `rhythm.repetitive-connectors` |

@@ -44,7 +44,6 @@ pub use structure::italic_span_long::ItalicSpanLong;
 pub use structure::line_length_wide::LineLengthWide;
 pub use structure::long_enumeration::LongEnumeration;
 pub use structure::mixed_numeric_format::MixedNumericFormat;
-pub use structure::number_run::NumberRun;
 pub use structure::paragraph_too_long::ParagraphTooLong;
 pub use structure::sentence_too_long::SentenceTooLong;
 pub use syntax::conditional_stacking::ConditionalStacking;
@@ -266,9 +265,6 @@ pub fn default_rules(profile: Profile) -> Vec<Box<dyn Rule>> {
         // F46 — cohort sibling of F49. Ships as Status::Experimental
         // in v0.2.x via F139; flips to Stable at v0.3 cut.
         Box::new(HomophoneDensity::for_profile(profile)),
-        // F51 — cohort sibling of F49. Ships as Status::Experimental
-        // in v0.2.x via F139; flips to Stable at v0.3 cut.
-        Box::new(NumberRun::for_profile(profile)),
     ]
 }
 
@@ -318,11 +314,7 @@ mod tests {
         // against accidentally graduating one of them too early.
         let experimental: std::collections::BTreeSet<&str> =
             experimental_rule_ids().iter().copied().collect();
-        let expected = [
-            "lexicon.homophone-density",
-            "structure.italic-span-long",
-            "structure.number-run",
-        ];
+        let expected = ["lexicon.homophone-density", "structure.italic-span-long"];
         for id in &expected {
             assert!(
                 experimental.contains(id),
@@ -416,11 +408,11 @@ mod tests {
 
     #[test]
     fn filter_by_experimental_keeps_experimental_under_wildcard() {
-        // Wildcard keeps all 29 rules in the registry: 25 Stable +
-        // F49 + F46 + F51 (real Experimental) + FakeExperimental.
+        // Wildcard keeps all 28 rules in the registry: 25 Stable +
+        // F49 + F46 (real Experimental) + FakeExperimental.
         let kept =
             filter_by_experimental(registry_with_fake_experimental(), &ExperimentalOptIn::All);
-        assert_eq!(kept.len(), 29);
+        assert_eq!(kept.len(), 28);
         assert!(kept.iter().any(|r| r.id() == "structure.fake-experimental"));
         assert!(kept.iter().any(|r| r.id() == "structure.italic-span-long"));
         assert!(kept.iter().any(|r| r.id() == "lexicon.homophone-density"));

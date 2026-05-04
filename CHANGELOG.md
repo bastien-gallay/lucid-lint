@@ -15,35 +15,6 @@ released-version block.
 
 ### Added
 
-- **[2026-05-04] F51 — `structure.number-run` (experimental, cohort
-  sibling of F49).** New rule that flags sentences packing more than a
-  configurable number of numeric tokens together. Grounding:
-  plainlanguage.gov — *"Don't put a lot of numbers together in one
-  sentence"* / *"Avoid placing too many statistics close together"*.
-  Ships as `Status::Experimental` (off by default) via the F139
-  substrate; opt in with `--experimental structure.number-run` or
-  `[experimental] enabled = ["structure.number-run"]` in
-  `lucid-lint.toml`. Tagged `dyscalculia` (F71): runs only when
-  `--conditions` includes `dyscalculia`. Profile thresholds:
-  `dev-doc` 6 / `public` 4 / `falc` 3 numeric tokens per sentence.
-  Numeric-token definition is a contiguous run of ASCII digits with
-  optional single decimal separator (`.` or `,`); hyphen, colon,
-  slash, and whitespace split tokens — so `2026-05-04` counts as
-  three tokens (a date *is* three numbers from a load standpoint).
-  Detection is language-agnostic. Wired into `default_rules`,
-  `WEIGHTED_RULE_IDS`, `RULE_DOCS`, the EN + FR `SUMMARY.md` lists,
-  and the `RULES.md` structure-category row. EN + FR docs pages
-  added (`docs/src/{,fr/}rules/number-run.md`). Touched
-  `src/rules/structure/number_run.rs`, `src/rules/structure/mod.rs`,
-  `src/rules/mod.rs`, `src/scoring.rs`, `src/explain.rs`. Atomic
-  split with sibling `structure.mixed-numeric-format`:
-  `mixed-numeric-format` cares about *form* consistency (digits vs
-  spelled-out); `number-run` cares about *count* clustering
-  regardless of form. Spec routed via
-  `.personal/brainstorm/20260504-f51-number-run-spec.md` —
-  per-sentence framing chosen over sliding-window per
-  plainlanguage.gov verbatim grounding.
-
 - **[2026-05-04] Adversarial-review wins — three landed actions from
   the 2026-05-03 Gemini adversarial review.** (1) `CODING_STANDARDS.md`
   § 2 gains a "Heuristic-rule off-ramp" subsection codifying the
