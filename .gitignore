@@ -30,6 +30,11 @@ Cargo.lock.bak
 
 # Claude Code working dir (per-clone tooling state)
 .claude/
+CLAUDE.md
+
+# Gemini CLI working dir (per-clone tooling state)
+.gemini/
+GEMINI.md
 
 # Agent-specific working files (not tracked by default)
 .agent/scratch/
