@@ -126,6 +126,18 @@ CUPID describes what good code *is*; YAGNI protects against building what you do
 
 When a refactor toward CUPID would require speculative work, stop and wait for the second use case.
 
+### Heuristic-rule off-ramp
+
+Heuristic rules in `src/rules/` (pattern, counter, window — the deterministic-core kind) accumulate exception cases over time. A rule that keeps growing exceptions for edge cases has hit its ceiling: each new exception adds complexity for diminishing precision gains, and the next class of mistake usually needs structural information the heuristic does not have.
+
+When that happens, do not add another exception. Three moves instead:
+
+1. **Freeze the rule.** Document the ceiling in the rule's rustdoc — name the class of cases the heuristic cannot reach without becoming a parser.
+2. **Queue the precise version for the NLP plugin.** POS, dependency-tree, and anaphora-grade precision belongs in `lucid-lint-nlp` (see [F-nlp-plugin](ROADMAP.md#f-nlp-plugin)). The deterministic-core stance (principle 3 in [AGENTS.md](AGENTS.md)) keeps the precise replacement out of `src/rules/`.
+3. **Ship at-risk new rules `Status::Experimental` from day one.** When proposing a rule whose exception tail is hard to bound up front, opt into the lifecycle gate (see [F-experimental-rule-status](ROADMAP.md#f-experimental-rule-status)) so users opt in and the freeze decision is cheap later.
+
+The signal is qualitative — there is no fixed exception count. If two reviewers in a row reach for "let's also exempt X," that is the cue.
+
 ---
 
 ## 3. TDD with a fourth step — Reflect

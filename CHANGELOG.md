@@ -15,6 +15,28 @@ released-version block.
 
 ### Added
 
+- **[2026-05-04] Adversarial-review wins — three landed actions from
+  the 2026-05-03 Gemini adversarial review.** (1) `CODING_STANDARDS.md`
+  § 2 gains a "Heuristic-rule off-ramp" subsection codifying the
+  `Status::Experimental` / `lucid-lint-nlp` route for heuristic rules
+  that hit their ceiling (the principle the `enumeration.rs`
+  whac-a-mole observation pointed at). (2)
+  [F-rust-doc-support](ROADMAP.md#f-rust-doc-support) added to the
+  v0.4 horizon — extract `///` / `//!` doc-comments via `syn` and feed
+  them to the engine; closes the dogfood gap where
+  `lucid-lint check src/` reports 0. (3) LSP server row in the v0.4
+  horizon strengthened as the **headline candidate** for v0.4 once the
+  v0.3 cohort closes.
+
+- **[2026-05-04] ROADMAP routing — F-report-quick-wins (🔴 Next) and
+  F-adversarial-review (🟡 Later) added; F-repo-config-hardening
+  closed out as shipped.** Quick-wins covers TTY-only post-diagnostic
+  hint blocks (acronym whitelist hint, single-rule hot-spot hint).
+  Adversarial-review tracks the bot-driven PR-review track that
+  compensates for the OSSF Scorecard `Branch-Protection` plafond on a
+  solo-maintainer repo (see [F-repo-config-hardening](ROADMAP.md#f-repo-config-hardening)
+  retro for context).
+
 - **[2026-05-03] F46 — `lexicon.homophone-density` — paragraph-level
   homophone density rule.** Cohort sibling of F49 under
   [F-experimental-rule-status](ROADMAP.md#f-experimental-rule-status):
@@ -641,6 +663,20 @@ released-version block.
   selection. Drops a P2 finding from the 2026-04-22 F35 audit.
 
 ### Changed
+
+- **[2026-05-04] CI MSRV read dynamically from `Cargo.toml`.** The
+  `msrv` job in `.github/workflows/ci.yml` no longer hard-codes the
+  toolchain version; it extracts `rust-version` from `Cargo.toml` and
+  passes it to `dtolnay/rust-toolchain`. Single source of truth — the
+  next MSRV bump touches one line, not two. Lifted from the 2026-05-03
+  Gemini adversarial review (#06).
+
+- **[2026-05-04] `just setup` warns when `uv` is missing.** Added a
+  presence check after the `cargo install` block in `justfile` —
+  `setup` now points at `https://astral.sh/uv/install.sh` if `uv` is
+  not on `$PATH`. Several scripts in `scripts/` shell out to `uv`;
+  this surfaces the dependency at install time instead of at first
+  failure.
 
 - **[2026-05-03] ROADMAP slug migration — batches A + B (81 IDs).**
   Renames every unshipped numeric F-ID to `F-<kebab-slug>` form,
