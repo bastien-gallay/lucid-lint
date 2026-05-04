@@ -15,6 +15,43 @@ released-version block.
 
 ### Added
 
+- **[2026-05-04] F57 — `syntax.parenthetical-depth` (experimental,
+  cohort sibling of F49).** New rule that flags sentences whose
+  maximum balanced-bracket nesting depth across `()` and `[]`
+  reaches the profile threshold. Grounding: plainlanguage.gov
+  ("Write short sentences"; stacked qualifiers and nested
+  parentheticals are the canonical "long sentence" symptom) and the
+  Hemingway editing tradition (nested parentheticals are the
+  cleanest mechanical reading of the "hard sentence" signal). Ships
+  as `Status::Experimental` (off by default) via the F139 substrate;
+  opt in with `--experimental syntax.parenthetical-depth` or
+  `[experimental] enabled = ["syntax.parenthetical-depth"]` in
+  `lucid-lint.toml`. Tagged `adhd` and `general` (F71): runs only
+  when `--conditions` includes one of them. Profile thresholds:
+  `dev-doc` 4 / `public` 3 / `falc` 2 (`max_depth`). Algorithm is a
+  single-pass char-by-char depth counter; a close that would push
+  depth below zero resets the running depth to zero (fail-open on
+  unbalanced markup, mirroring `parenthesised_list_comma_count` in
+  `src/rules/enumeration.rs`). One diagnostic per offending sentence,
+  anchored at the deepest opener. Em-dash pairs, curly braces, and
+  comma-flanked appositives are intentionally deferred (filed as
+  `F-syntax-appositive-depth` if dogfood demands). Wired into
+  `default_rules`, `WEIGHTED_RULE_IDS`, `RULE_DOCS`, the EN + FR
+  `SUMMARY.md` lists, and the `RULES.md` syntax-category row.
+  EN + FR docs pages added (`docs/src/{,fr/}rules/parenthetical-depth.md`;
+  FR carries placeholder `en-source-sha` — stamped in the follow-up
+  commit per the two-commit en-source-sha workflow). Touched
+  `src/rules/syntax/parenthetical_depth.rs`,
+  `src/rules/syntax/mod.rs`, `src/rules/mod.rs`, `src/scoring.rs`,
+  `src/explain.rs`. Boundary with sibling `structure.excessive-commas`:
+  `excessive-commas` already discounts flat `(A, B, C)` enumerations
+  at depth 1 via `parenthesised_list_comma_count`; this rule fires
+  only at depth ≥ 2, so the two are mechanically orthogonal. Scoped
+  via `.personal/feature-torture/reports/F57.md` — nesting-depth MVP
+  chosen over inner-span-length and per-sentence-count alternatives
+  to clear the deterministic-core gate and the F22 boundary in one
+  cut.
+
 - **[2026-05-04] F53 — `readability.large-number-unanchored`
   (experimental, cohort sibling of F49).** New rule that flags a
   single large numeral (≥ 4 digits and ≥ profile threshold) or a

@@ -51,6 +51,7 @@ pub use structure::sentence_too_long::SentenceTooLong;
 pub use syntax::conditional_stacking::ConditionalStacking;
 pub use syntax::dense_punctuation_burst::DensePunctuationBurst;
 pub use syntax::nested_negation::NestedNegation;
+pub use syntax::parenthetical_depth::ParentheticalDepth;
 pub use syntax::passive_voice::PassiveVoice;
 pub use syntax::unclear_antecedent::UnclearAntecedent;
 
@@ -273,6 +274,9 @@ pub fn default_rules(profile: Profile) -> Vec<Box<dyn Rule>> {
         // F53 — cohort sibling of F49. Ships as Status::Experimental
         // in v0.2.x via F139; flips to Stable at v0.3 cut.
         Box::new(LargeNumberUnanchored::for_profile(profile)),
+        // F57 — cohort sibling of F49. Ships as Status::Experimental
+        // in v0.2.x via F139; flips to Stable at v0.3 cut.
+        Box::new(ParentheticalDepth::for_profile(profile)),
     ]
 }
 
@@ -309,15 +313,17 @@ mod tests {
     #[test]
     fn filter_by_conditions_keeps_general_rules() {
         // 25 Stable General-tagged rules plus F53
-        // (`readability.large-number-unanchored`), which is
-        // Experimental but carries `general` alongside `dyscalculia`
-        // because its grounding (CDC CCI / plainlanguage.gov "Use
-        // Numbers Effectively") applies to every reader, not only
-        // dyscalculic ones. F53 still ships off-by-default via the
-        // experimental opt-in; the `general` tag only matters once
-        // the user has opted into the rule.
+        // (`readability.large-number-unanchored`) and F57
+        // (`syntax.parenthetical-depth`), both Experimental but
+        // carrying `general` alongside their condition tag — F53's
+        // grounding (CDC CCI / plainlanguage.gov "Use Numbers
+        // Effectively") and F57's grounding (plainlanguage.gov,
+        // Hemingway) both apply to every reader, not only the
+        // condition-tagged audience. Both still ship off-by-default
+        // via the experimental opt-in; the `general` tag only matters
+        // once the user has opted into the rule.
         let kept = filter_by_conditions(default_rules(Profile::Public), &[]);
-        assert_eq!(kept.len(), 26);
+        assert_eq!(kept.len(), 27);
     }
 
     #[test]
@@ -335,6 +341,7 @@ mod tests {
             "readability.large-number-unanchored",
             "structure.italic-span-long",
             "structure.number-run",
+            "syntax.parenthetical-depth",
         ];
         for id in &expected {
             assert!(
@@ -375,9 +382,10 @@ mod tests {
 
     #[test]
     fn filter_by_experimental_keeps_all_stable_when_off() {
-        // With F49 (cohort lead) shipping as Experimental, the
-        // default registry has 26 rules; the no-opt-in filter strips
-        // F49 → 25 Stable rules remain.
+        // With the v0.3 cohort (F46 / F49 / F51 / F53 / F57) shipping
+        // as Experimental, the default registry has 30 rules; the
+        // no-opt-in filter strips the five Experimental rules → 25
+        // Stable rules remain.
         let kept = filter_by_experimental(default_rules(Profile::Public), &ExperimentalOptIn::None);
         assert_eq!(kept.len(), 25);
     }
@@ -412,9 +420,9 @@ mod tests {
 
     #[test]
     fn filter_by_experimental_strips_experimental_when_off() {
-        // Registry holds the 29 default rules (25 Stable + F49 + F46
-        // + F51 + F53 Experimental) plus FakeExperimental = 30 total.
-        // With the opt-in off, all five Experimental rules are
+        // Registry holds the 30 default rules (25 Stable + F46 + F49
+        // + F51 + F53 + F57 Experimental) plus FakeExperimental = 31
+        // total. With the opt-in off, all six Experimental rules are
         // stripped → 25.
         let kept =
             filter_by_experimental(registry_with_fake_experimental(), &ExperimentalOptIn::None);
@@ -426,18 +434,21 @@ mod tests {
         assert!(kept.iter().all(|r| r.id() != "structure.fake-experimental"));
         assert!(kept.iter().all(|r| r.id() != "structure.italic-span-long"));
         assert!(kept.iter().all(|r| r.id() != "lexicon.homophone-density"));
+        assert!(kept.iter().all(|r| r.id() != "syntax.parenthetical-depth"));
     }
 
     #[test]
     fn filter_by_experimental_keeps_experimental_under_wildcard() {
-        // Wildcard keeps all 30 rules in the registry: 25 Stable +
-        // F49 + F46 + F51 + F53 (real Experimental) + FakeExperimental.
+        // Wildcard keeps all 31 rules in the registry: 25 Stable +
+        // F46 + F49 + F51 + F53 + F57 (real Experimental) +
+        // FakeExperimental.
         let kept =
             filter_by_experimental(registry_with_fake_experimental(), &ExperimentalOptIn::All);
-        assert_eq!(kept.len(), 30);
+        assert_eq!(kept.len(), 31);
         assert!(kept.iter().any(|r| r.id() == "structure.fake-experimental"));
         assert!(kept.iter().any(|r| r.id() == "structure.italic-span-long"));
         assert!(kept.iter().any(|r| r.id() == "lexicon.homophone-density"));
+        assert!(kept.iter().any(|r| r.id() == "syntax.parenthetical-depth"));
     }
 
     #[test]

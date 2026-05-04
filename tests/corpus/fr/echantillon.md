@@ -17,3 +17,7 @@ Tout va bien ici.
 La proposition évoque plusieurs milliards de dépenses vagues dans plusieurs régions.
 
 La réforme des retraites coûterait 4800000000 selon la note divulguée hier.
+
+## Section parenthétiques imbriquées
+
+Le module (qui dépend du noyau (chargé au démarrage [voir le manuel])) est facultatif.
