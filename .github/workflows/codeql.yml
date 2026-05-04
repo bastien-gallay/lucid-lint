@@ -10,8 +10,20 @@ name: CodeQL
 on:
   push:
     branches: [main]
+    paths:
+      - 'src/**/*.rs'
+      - 'tests/**/*.rs'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'rust-toolchain.toml'
   pull_request:
     branches: [main]
+    paths:
+      - 'src/**/*.rs'
+      - 'tests/**/*.rs'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'rust-toolchain.toml'
   schedule:
     # Weekly run catches drift in the query packs themselves: GitHub
     # ships new queries that may flag code that was already on main.
