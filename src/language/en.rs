@@ -310,6 +310,46 @@ pub static SPELLED_NUMERALS: &[&str] = &[
     "billion",
 ];
 
+/// English comparator phrases that anchor a large number in a sentence.
+///
+/// Used by the `readability.large-number-unanchored` rule. A sentence
+/// containing any of these phrases is treated as anchored, regardless
+/// of where in the sentence the comparator sits relative to the
+/// numeral. The list is curated and short on purpose — false-negative
+/// recall is bounded but false-positive risk stays low.
+///
+/// Match is case-insensitive substring; phrases that contain a space
+/// must be lowercased here.
+pub static ANCHOR_COMPARATORS_EN: &[&str] = &[
+    "out of",
+    "of every",
+    "as many as",
+    "the size of",
+    "the population of",
+    "compared to",
+    "compared with",
+    "equivalent to",
+    "the equivalent of",
+    "equal to",
+    "roughly",
+    "approximately",
+    "about ",
+    "around ",
+    "more than",
+    "less than",
+    "no more than",
+    "no less than",
+    "at least",
+    "at most",
+    "up to",
+    "averaging",
+    "an average of",
+    "translates to",
+    "amounts to",
+    "near ",
+    "nearly ",
+];
+
 #[cfg(test)]
 mod tests {
     use super::*;
