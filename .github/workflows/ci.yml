@@ -27,6 +27,7 @@ jobs:
       rust: ${{ steps.filter.outputs.rust }}
       docs: ${{ steps.filter.outputs.docs }}
       infra: ${{ steps.filter.outputs.infra }}
+      prose: ${{ steps.filter.outputs.prose }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4.0.1
@@ -48,6 +49,12 @@ jobs:
               - '.github/workflows/**'
               - 'justfile'
               - 'scripts/**'
+            prose:
+              - 'src/**/*.rs'
+              - 'docs/**/*.md'
+              - '*.md'
+              - 'scripts/**/*.py'
+              - '.github/workflows/**'
 
   fmt:
     name: Format
@@ -188,6 +195,41 @@ jobs:
           tool: cargo-audit
       - name: Run audit
         run: cargo audit
+
+  typos:
+    name: Spell check (typos)
+    needs: changes
+    if: needs.changes.outputs.prose == 'true' || needs.changes.outputs.infra == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Run typos
+        uses: crate-ci/typos@31978115339370fcb346e579de8f6e9ccf6913c4 # v1.31.1
+        with:
+          files: .
+          exclude: '*.snap|examples/'
+
+  link-check:
+    name: Link check (lychee)
+    needs: changes
+    if: needs.changes.outputs.docs == 'true' || needs.changes.outputs.infra == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Install lychee
+        uses: lycheeverse/lychee-action@8646ba30535128ac92d33dfc9133794bfdd9b411 # v2.8.0
+        with:
+          lycheeVersion: "v0.23.0"
+          fail: true
+          args: >-
+            --no-progress
+            --exclude 'localhost'
+            --exclude 'file://'
+            --exclude '\.html$'
+            --exclude-path docs/book
+            --exclude-path docs/src/SUMMARY.md
+            README.md
+            docs/src/**/*.md
 
   dogfood:
     name: Dogfood on project docs

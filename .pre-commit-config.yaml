@@ -52,3 +52,30 @@ repos:
         # output to be groomed by markdownlint. Also the large
         # `docs/book/` build artefact.
         exclude: '^(examples/|docs/book/)'
+
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.31.1
+    hooks:
+      - id: typos
+        # Snapshots and scraped examples are not source we author.
+        exclude: '\.snap$|^examples/'
+
+  - repo: https://github.com/lycheeverse/lychee.git
+    rev: lychee-v0.24.2
+    hooks:
+      - id: lychee
+        args:
+          - "--no-progress"
+          - "--exclude"
+          - "localhost"
+          - "--exclude-path"
+          - "docs/book"
+          - "--exclude-path"
+          - "docs/src/SUMMARY.md"
+          - "README.md"
+          - "docs/src/**/*.md"
+        # Lychee needs the full doc tree to resolve relative links,
+        # not just staged files. Run on pre-push instead of pre-commit.
+        always_run: true
+        pass_filenames: false
+        stages: [pre-push]

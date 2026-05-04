@@ -1,0 +1,19 @@
+# Lychee ignore patterns (regex, one per line).
+# https://github.com/lycheeverse/lychee/blob/master/docs/TROUBLESHOOTING.md
+
+# GitHub source links to our own repo — branch-dependent, work on CI/main.
+https://github\.com/bastien-gallay/lucid-lint/blob/
+
+# Brainstorm files live in .personal/ (gitignored), never on GitHub.
+https://github\.com/bastien-gallay/lucid-lint/blob/main/brainstorm/
+
+# Academic DOIs behind paywalls — 403 ≠ broken.
+https://doi\.org/10\.1037/
+https://doi\.org/10\.1145/
+https://doi\.org/10\.1167/
+https://doi\.org/10\.1207/
+https://apps\.dtic\.mil/
+https://psycnet\.apa\.org/
+
+# EU Publications Office — rate-limited, returns 403 from CI.
+https://op\.europa\.eu/
