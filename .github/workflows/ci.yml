@@ -223,6 +223,8 @@ jobs:
           args: >-
             --no-progress
             --exclude 'localhost'
+            --exclude 'file://'
+            --exclude '\.html$'
             --exclude-path docs/book
             --exclude-path docs/src/SUMMARY.md
             README.md
