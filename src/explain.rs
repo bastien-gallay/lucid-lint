@@ -77,6 +77,7 @@ pub(crate) const RULE_DOCS: &[(&str, &str, &str)] = &[
     doc!("syntax.conditional-stacking", "conditional-stacking"),
     doc!("syntax.dense-punctuation-burst", "dense-punctuation-burst"),
     doc!("syntax.nested-negation", "nested-negation"),
+    doc!("syntax.parenthetical-depth", "parenthetical-depth"),
     doc!("syntax.passive-voice", "passive-voice"),
     doc!("syntax.unclear-antecedent", "unclear-antecedent"),
 ];

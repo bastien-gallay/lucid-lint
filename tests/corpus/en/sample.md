@@ -17,3 +17,7 @@ All good here.
 The proposal mentions several billion in vague spending across regions.
 
 The pension reform reportedly costs 4800000000 according to the latest leaked memo.
+
+## Nested parenthetical section
+
+The migration tool (which now supports rollbacks (see options [tracked in #312])) is opt-in.

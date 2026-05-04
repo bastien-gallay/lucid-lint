@@ -139,6 +139,7 @@ pub const WEIGHTED_RULE_IDS: &[&str] = &[
     "lexicon.homophone-density",
     "structure.number-run",
     "readability.large-number-unanchored",
+    "syntax.parenthetical-depth",
 ];
 
 /// Default weight for a rule, keyed by `rule_id`.

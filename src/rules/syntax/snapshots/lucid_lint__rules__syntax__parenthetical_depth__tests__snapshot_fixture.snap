@@ -1,0 +1,14 @@
+---
+source: src/rules/syntax/parenthetical_depth.rs
+expression: diags
+---
+- rule_id: syntax.parenthetical-depth
+  severity: warning
+  location:
+    file: "<input>"
+    line: 1
+    column: 16
+    length: 1
+  section: ~
+  message: "Nested parentheticals reach depth 2; readers must hold 2 suspended thoughts to reach the close. Split the sentence or unnest the inner bracket (plainlanguage.gov, Hemingway)."
+  weight: 1
