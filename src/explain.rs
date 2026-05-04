@@ -67,6 +67,7 @@ pub(crate) const RULE_DOCS: &[(&str, &str, &str)] = &[
     doc!("structure.line-length-wide", "line-length-wide"),
     doc!("structure.long-enumeration", "long-enumeration"),
     doc!("structure.mixed-numeric-format", "mixed-numeric-format"),
+    doc!("structure.number-run", "number-run"),
     doc!("structure.paragraph-too-long", "paragraph-too-long"),
     doc!("structure.sentence-too-long", "sentence-too-long"),
     doc!("syntax.conditional-stacking", "conditional-stacking"),
