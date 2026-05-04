@@ -31,7 +31,7 @@
 //! | `1st` | 1 | Trailing letters are not part of the token but the digits still count |
 //!
 //! The rule walks the post-flattening `Paragraph.text` produced by
-//! [`crate::parser::MarkdownParser`], so fenced code blocks are
+//! [`crate::parser::parse_markdown`], so fenced code blocks are
 //! excluded. Inline code spans are part of paragraph text in v1; if
 //! a corpus shows real friction (technical prose with constant
 //! tables in inline code), an inline-code-stripping option can be
