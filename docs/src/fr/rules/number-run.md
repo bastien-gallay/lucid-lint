@@ -1,4 +1,4 @@
-<!-- en-source-sha: 0000000000000000000000000000000000000000 -->
+<!-- en-source-sha: 0e83a1c009194206e14ec6312a0256860d5ca0c1 -->
 # `structure.number-run`
 
 *Trop de nombres dans une seule phrase.*
