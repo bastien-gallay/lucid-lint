@@ -3,8 +3,20 @@ name: Coverage
 on:
   push:
     branches: [main, 'release/*']
+    paths:
+      - 'src/**/*.rs'
+      - 'tests/**/*.rs'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'rust-toolchain.toml'
   pull_request:
     branches: [main, 'release/*']
+    paths:
+      - 'src/**/*.rs'
+      - 'tests/**/*.rs'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'rust-toolchain.toml'
 
 permissions:
   contents: read

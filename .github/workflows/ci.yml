@@ -19,8 +19,39 @@ env:
   RUST_BACKTRACE: 1
 
 jobs:
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      rust: ${{ steps.filter.outputs.rust }}
+      docs: ${{ steps.filter.outputs.docs }}
+      infra: ${{ steps.filter.outputs.infra }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: dorny/paths-filter@de90ccad5b66d1da68c2020ef39f15c10be141a0 # v3.0.2
+        id: filter
+        with:
+          filters: |
+            rust:
+              - 'src/**/*.rs'
+              - 'tests/**/*.rs'
+              - 'Cargo.toml'
+              - 'Cargo.lock'
+              - 'rust-toolchain.toml'
+              - 'clippy.toml'
+              - 'rustfmt.toml'
+            docs:
+              - 'docs/**/*.md'
+              - '*.md'
+            infra:
+              - '.github/workflows/**'
+              - 'justfile'
+              - 'scripts/**'
+
   fmt:
     name: Format
+    needs: changes
+    if: needs.changes.outputs.rust == 'true' || needs.changes.outputs.infra == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -33,6 +64,8 @@ jobs:
 
   clippy:
     name: Clippy
+    needs: changes
+    if: needs.changes.outputs.rust == 'true' || needs.changes.outputs.infra == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -46,11 +79,18 @@ jobs:
 
   test:
     name: Test (${{ matrix.os }})
+    needs: changes
+    if: needs.changes.outputs.rust == 'true' || needs.changes.outputs.docs == 'true' || needs.changes.outputs.infra == 'true'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: >-
+          ${{
+            (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')))
+            ? fromJSON('["ubuntu-latest", "macos-latest", "windows-latest"]')
+            : fromJSON('["ubuntu-latest"]')
+          }}
     env:
       # Opt-in gate checked by `tests/rule_docs_coverage.rs`: when set,
       # any rule source modified versus `origin/main` must be mentioned in
@@ -70,6 +110,8 @@ jobs:
 
   msrv:
     name: MSRV (Minimum Supported Rust Version)
+    needs: changes
+    if: needs.changes.outputs.rust == 'true' || needs.changes.outputs.infra == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -87,6 +129,8 @@ jobs:
 
   docs:
     name: Build docs (mdBook)
+    needs: changes
+    if: needs.changes.outputs.docs == 'true' || needs.changes.outputs.rust == 'true' || needs.changes.outputs.infra == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -120,6 +164,8 @@ jobs:
 
   audit:
     name: Security audit
+    needs: changes
+    if: needs.changes.outputs.rust == 'true' || needs.changes.outputs.infra == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -132,8 +178,14 @@ jobs:
 
   dogfood:
     name: Dogfood on project docs
+    needs: [changes, fmt, clippy, test]
+    if: |
+      always() &&
+      (needs.changes.outputs.rust == 'true' || needs.changes.outputs.docs == 'true' || needs.changes.outputs.infra == 'true') &&
+      (needs.fmt.result == 'success' || needs.fmt.result == 'skipped') &&
+      (needs.clippy.result == 'success' || needs.clippy.result == 'skipped') &&
+      needs.test.result == 'success'
     runs-on: ubuntu-latest
-    needs: [fmt, clippy, test]
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9 # master (no semver tags upstream)
