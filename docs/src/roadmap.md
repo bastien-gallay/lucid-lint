@@ -84,11 +84,11 @@ need to answer "what's next?" or "what's the 0.3 shape?" in a glance.
 | <a id="f-github-action"></a>[F-github-action](#f-github-action) | Adoption channels | 🚧 | v0.3 | GitHub Action — composite scaffold internal; v0.3 first cut emits `::warning::` |
 | <a id="f-readability-formulas-extra"></a>[F-readability-formulas-extra](#f-readability-formulas-extra) | Rules refinement | ☐ | v0.3 | SMOG / Dale-Chall / Scolarius / `--readability-verbose` |
 | <a id="f-tight-list-paragraphs"></a>[F-tight-list-paragraphs](#f-tight-list-paragraphs) | Architecture | ☐ | v0.3 | Markdown parser emits paragraphs for tight list items (correctness) |
-| <a id="f46"></a>[F46](#f46) | New rules (v0.3) | ☐ | v0.3 | `lexicon.homophone-density` (slip-flag: FR corpus > 2 d → 0.3.x) |
-| <a id="f49"></a>[F49](#f49) | New rules (v0.3) | ☐ | v0.3 | `structure.italic-span-long` |
-| <a id="f51"></a>[F51](#f51) | New rules (v0.3) | ☐ | v0.3 | `structure.number-run` |
-| <a id="f53"></a>[F53](#f53) | New rules (v0.3) | ☐ | v0.3 | `readability.large-number-unanchored` |
-| <a id="f57"></a>[F57](#f57) | New rules (v0.3) | ☐ | v0.3 | `syntax.parenthetical-depth` |
+| <a id="f46"></a>[F46](#f46) | New rules (v0.3) | ✅ | v0.3 | `lexicon.homophone-density` — shipped 2026-05-03 (PR #41) as `Status::Experimental`; flips to `Stable` at v0.3 cut |
+| <a id="f49"></a>[F49](#f49) | New rules (v0.3) | ✅ | v0.3 | `structure.italic-span-long` — shipped 2026-05-02 (PR #26) as `Status::Experimental` (cohort lead); flips to `Stable` at v0.3 cut |
+| <a id="f51"></a>[F51](#f51) | New rules (v0.3) | ✅ | v0.3 | `structure.number-run` — shipped 2026-05-04 (PR #46) as `Status::Experimental`; flips to `Stable` at v0.3 cut |
+| <a id="f53"></a>[F53](#f53) | New rules (v0.3) | ✅ | v0.3 | `readability.large-number-unanchored` — shipped 2026-05-04 (PR #50) as `Status::Experimental`; flips to `Stable` at v0.3 cut |
+| <a id="f57"></a>[F57](#f57) | New rules (v0.3) | ✅ | v0.3 | `syntax.parenthetical-depth` — shipped 2026-05-04 (PR #55) as `Status::Experimental`; flips to `Stable` at v0.3 cut |
 | <a id="f-npm-wrapper"></a>[F-npm-wrapper](#f-npm-wrapper) | Adoption channels | ☐ | v0.3 | npm wrapper (`@lucid-lint/cli-{platform}` `optionalDependencies` pattern) |
 | [F-docsrs-metadata](#f-docsrs-metadata)–[F-public-api-audit](#f-public-api-audit) | Docs.rs polish | ☐ | v0.3 | `[package.metadata.docs.rs]`, logo + favicon, doctests, `cargo public-api` audit |
 
