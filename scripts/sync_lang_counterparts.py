@@ -185,8 +185,7 @@ def main(argv: list[str]) -> int:
 
     if not BOOK_DIR.is_dir():
         print(
-            f"sync_lang_counterparts: {BOOK_DIR} does not exist — run "
-            "`just docs-build` first.",
+            f"sync_lang_counterparts: {BOOK_DIR} does not exist — run `just docs-build` first.",
             file=sys.stderr,
         )
         return 2

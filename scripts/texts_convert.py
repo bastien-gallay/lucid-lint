@@ -47,9 +47,7 @@ from texts_common import (
     write_source_yaml,
 )
 
-BEFORE_AFTER_SPLIT_RE = re.compile(
-    r"(?i)^\s*#+\s*(before|after|avant|après|apres)\b"
-)
+BEFORE_AFTER_SPLIT_RE = re.compile(r"(?i)^\s*#+\s*(before|after|avant|après|apres)\b")
 
 
 def _pandoc_available() -> bool:
@@ -69,6 +67,7 @@ def _html_to_md(html: str) -> str:
             return proc.stdout
         print(f"    warn: pandoc failed ({proc.returncode}); falling back to markdownify")
     from markdownify import markdownify  # lazy import
+
     return markdownify(html, heading_style="ATX")
 
 
@@ -162,7 +161,8 @@ def _convert_one(folder: Path, force: bool) -> list[Path]:
         md_body = _html_to_md(clean.read_text(encoding="utf-8", errors="replace"))
     elif ext == "txt":
         md_body = _txt_to_md(
-            clean.read_text(encoding="utf-8", errors="replace"), title,
+            clean.read_text(encoding="utf-8", errors="replace"),
+            title,
         )
     else:
         print(f"  skip   {folder.name}: no converter for .{ext}")
@@ -253,10 +253,8 @@ def _append_sources_row(md_file: Path, meta: dict) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--force", action="store_true",
-                        help="Re-convert even if .md is present.")
-    parser.add_argument("--only", metavar="SLUG",
-                        help="Convert a single <slug>/ folder.")
+    parser.add_argument("--force", action="store_true", help="Re-convert even if .md is present.")
+    parser.add_argument("--only", metavar="SLUG", help="Convert a single <slug>/ folder.")
     args = parser.parse_args()
 
     folders = _iter_source_folders(args.only)
@@ -264,8 +262,10 @@ def main() -> int:
         print(f"No source folder named {args.only!r}", file=sys.stderr)
         return 2
 
-    print(f"Converting {len(folders)} source folder(s). "
-          f"pandoc={'yes' if _pandoc_available() else 'no (using markdownify)'}")
+    print(
+        f"Converting {len(folders)} source folder(s). "
+        f"pandoc={'yes' if _pandoc_available() else 'no (using markdownify)'}"
+    )
     total_written = 0
     failed = 0
     for folder in folders:
@@ -280,8 +280,10 @@ def main() -> int:
         for md_file in written:
             _append_sources_row(md_file, meta)
 
-    print(f"\nDone. Wrote {total_written} .md file(s) across "
-          f"{len(folders) - failed}/{len(folders)} folder(s).")
+    print(
+        f"\nDone. Wrote {total_written} .md file(s) across "
+        f"{len(folders) - failed}/{len(folders)} folder(s)."
+    )
     return 0 if failed == 0 else 1
 
 

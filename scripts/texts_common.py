@@ -106,11 +106,24 @@ def load_sources(
     surfaces read the public file directly (see AGENTS.md #10).
     """
     allowed = {
-        "url", "title", "description", "type", "polarity",
-        "languages", "redistribution", "markdownable",
-        "license_details", "rules_relevant", "conditions",
-        "use_case", "has_explanations", "bilingual_parallel",
-        "license_or_access", "interest", "confidence", "notes",
+        "url",
+        "title",
+        "description",
+        "type",
+        "polarity",
+        "languages",
+        "redistribution",
+        "markdownable",
+        "license_details",
+        "rules_relevant",
+        "conditions",
+        "use_case",
+        "has_explanations",
+        "bilingual_parallel",
+        "license_or_access",
+        "interest",
+        "confidence",
+        "notes",
     }
 
     def _load(p: Path) -> list[Source]:
@@ -140,9 +153,7 @@ def resolve_destination(src: Source) -> Path:
     """
     root = TIER_TO_ROOT.get(src.redistribution)
     if root is None:
-        raise ValueError(
-            f"Unknown redistribution tier {src.redistribution!r} for {src.url}"
-        )
+        raise ValueError(f"Unknown redistribution tier {src.redistribution!r} for {src.url}")
     return root / src.primary_lang / src.polarity_dir / src.slug
 
 
@@ -155,9 +166,7 @@ def assert_under_known_root(path: Path) -> None:
             return
         except ValueError:
             continue
-    raise RuntimeError(
-        f"Refusing to write outside examples/{{public,local}}/: {resolved}"
-    )
+    raise RuntimeError(f"Refusing to write outside examples/{{public,local}}/: {resolved}")
 
 
 def sha256_bytes(data: bytes) -> str:
