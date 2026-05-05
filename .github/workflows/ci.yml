@@ -204,11 +204,16 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Install actionlint
-        uses: taiki-e/install-action@db5fb34fa772531a3ece57ca434f579eb334e0fb # v2.75.30
-        with:
-          tool: actionlint
+        # Upstream-recommended downloader. taiki-e/install-action does
+        # not provide actionlint, and the cargo-binstall fallback fails
+        # because the upstream crate isn't published with prebuilt
+        # binaries.
+        id: install
+        run: |
+          bash <(curl -fsSL https://raw.githubusercontent.com/rhysd/actionlint/v1.7.7/scripts/download-actionlint.bash) 1.7.7
+          echo "path=$(pwd)/actionlint" >> "$GITHUB_OUTPUT"
       - name: Run actionlint
-        run: actionlint -color
+        run: ${{ steps.install.outputs.path }} -color
 
   typos:
     name: Spell check (typos)
