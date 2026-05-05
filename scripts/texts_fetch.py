@@ -20,7 +20,6 @@ Run with:
 from __future__ import annotations
 
 import argparse
-import os
 import shutil
 import subprocess
 import sys
@@ -44,7 +43,6 @@ from texts_common import (
     now_iso,
     read_source_yaml,
     resolve_destination,
-    sha256_bytes,
     sha256_file,
     source_to_metadata,
     write_source_yaml,
