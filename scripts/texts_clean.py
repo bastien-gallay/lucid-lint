@@ -69,7 +69,7 @@ def _clean_html(raw: Path, out: Path) -> bool:
     )
     if not cleaned:
         # trafilatura failed to find a main article — fall back to raw.
-        print(f"    warn: trafilatura returned empty; copying raw.")
+        print("    warn: trafilatura returned empty; copying raw.")
         out.write_text(html, encoding="utf-8")
         return True
     out.write_text(cleaned, encoding="utf-8")

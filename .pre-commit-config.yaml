@@ -53,6 +53,31 @@ repos:
         # `docs/book/` build artefact.
         exclude: '^(examples/|docs/book/)'
 
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      # Lint-only at bootstrap. `ruff-format` is intentionally
+      # deferred to a follow-up PR — adopting the formatter rewrites
+      # ~9 scripts and would mix tooling-wiring with a format
+      # rebaseline. Land the format pass on its own once this is in.
+      - id: ruff
+        args: ["--fix"]
+        types_or: [python]
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.2
+    hooks:
+      - id: mypy
+        # Scripts directory only — the repo's Python surface. Config
+        # lives in pyproject.toml [tool.mypy]; the hook walks the
+        # directory itself rather than per-file (`pass_filenames`).
+        files: ^scripts/.*\.py$
+        pass_filenames: false
+        args: ["--config-file", "pyproject.toml"]
+        additional_dependencies:
+          - types-PyYAML
+          - types-python-slugify
+
   - repo: https://github.com/crate-ci/typos
     rev: v1.31.1
     hooks:
