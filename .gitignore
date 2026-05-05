@@ -73,6 +73,9 @@ Desktop.ini
 # Linux
 *~
 
+# Vibe CLI working dir (per-clone tooling state)
+.vibe/
+
 # Env
 .env
 .env.local
