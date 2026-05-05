@@ -94,7 +94,7 @@ jobs:
           cp target/${{ matrix.target }}/release/lucid-lint dist/
           cp README.md LICENSE-MIT LICENSE-APACHE dist/
           cd dist
-          tar czf lucid-lint-${{ needs.plan.outputs.tag }}-${{ matrix.target }}.tar.gz *
+          tar czf lucid-lint-${{ needs.plan.outputs.tag }}-${{ matrix.target }}.tar.gz ./*
 
       - name: Package (Windows)
         if: matrix.os == 'windows-latest'
@@ -104,7 +104,7 @@ jobs:
           cp target/${{ matrix.target }}/release/lucid-lint.exe dist/
           cp README.md LICENSE-MIT LICENSE-APACHE dist/
           cd dist
-          7z a lucid-lint-${{ needs.plan.outputs.tag }}-${{ matrix.target }}.zip *
+          7z a lucid-lint-${{ needs.plan.outputs.tag }}-${{ matrix.target }}.zip ./*
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
