@@ -128,7 +128,7 @@ def _clean_one(folder: Path, force: bool) -> bool:
     recorded_raw_sha = meta.get("raw_sha256")
     current_raw_sha = sha256_file(raw)
 
-    if (out.exists() and not force and recorded_raw_sha == current_raw_sha):
+    if out.exists() and not force and recorded_raw_sha == current_raw_sha:
         print(f"  skip   {folder.name}: {out.name} up-to-date")
         return True
 
@@ -144,10 +144,8 @@ def _clean_one(folder: Path, force: bool) -> bool:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--force", action="store_true",
-                        help="Re-clean even if clean.* is fresh.")
-    parser.add_argument("--only", metavar="SLUG",
-                        help="Clean a single <slug>/ folder.")
+    parser.add_argument("--force", action="store_true", help="Re-clean even if clean.* is fresh.")
+    parser.add_argument("--only", metavar="SLUG", help="Clean a single <slug>/ folder.")
     args = parser.parse_args()
 
     folders = _iter_source_folders(args.only)

@@ -56,12 +56,10 @@ repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.6.9
     hooks:
-      # Lint-only at bootstrap. `ruff-format` is intentionally
-      # deferred to a follow-up PR — adopting the formatter rewrites
-      # ~9 scripts and would mix tooling-wiring with a format
-      # rebaseline. Land the format pass on its own once this is in.
       - id: ruff
         args: ["--fix"]
+        types_or: [python]
+      - id: ruff-format
         types_or: [python]
 
   - repo: https://github.com/pre-commit/mirrors-mypy

@@ -99,8 +99,9 @@ def _record_error(src: Source, reason: str) -> None:
     _append_error(f"- [{now_iso()}] `{src.slug}` — {src.url} — {reason}\n")
 
 
-def fetch_http(src: Source, dest_folder: Path, client: httpx.Client,
-               throttler: HostThrottler, force: bool) -> bool:
+def fetch_http(
+    src: Source, dest_folder: Path, client: httpx.Client, throttler: HostThrottler, force: bool
+) -> bool:
     """Download `src.url` into `dest_folder/raw.<ext>`.
 
     Returns True on success (or skip), False on failure.
@@ -133,7 +134,8 @@ def fetch_http(src: Source, dest_folder: Path, client: httpx.Client,
         return False
 
     ext = extension_for_content(
-        response.headers.get("content-type", ""), str(response.url),
+        response.headers.get("content-type", ""),
+        str(response.url),
     )
     raw_path = dest_folder / f"raw.{ext}"
 
@@ -195,8 +197,9 @@ def _license_drift_check(src: Source, dest_folder: Path, force: bool) -> bool:
     return False
 
 
-def process(src: Source, args: argparse.Namespace,
-            client: httpx.Client, throttler: HostThrottler) -> bool:
+def process(
+    src: Source, args: argparse.Namespace, client: httpx.Client, throttler: HostThrottler
+) -> bool:
     dest = resolve_destination(src)
     assert_under_known_root(dest)
 
@@ -234,16 +237,20 @@ def process(src: Source, args: argparse.Namespace,
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--dry-run", action="store_true",
-                        help="Print routing plan, no I/O.")
-    parser.add_argument("--force", action="store_true",
-                        help="Re-download even if raw.* is present.")
-    parser.add_argument("--only", metavar="SLUG",
-                        help="Fetch a single source by slug.")
-    parser.add_argument("--parallel", type=int, default=1, metavar="N",
-                        help="Run up to N sources concurrently "
-                             "(default 1). Per-host throttling stays at "
-                             "1 req/sec regardless of N.")
+    parser.add_argument("--dry-run", action="store_true", help="Print routing plan, no I/O.")
+    parser.add_argument(
+        "--force", action="store_true", help="Re-download even if raw.* is present."
+    )
+    parser.add_argument("--only", metavar="SLUG", help="Fetch a single source by slug.")
+    parser.add_argument(
+        "--parallel",
+        type=int,
+        default=1,
+        metavar="N",
+        help="Run up to N sources concurrently "
+        "(default 1). Per-host throttling stays at "
+        "1 req/sec regardless of N.",
+    )
     args = parser.parse_args()
 
     sources = [s for s in load_sources() if in_scope(s)]
@@ -254,8 +261,10 @@ def main() -> int:
             return 2
 
     workers = max(1, args.parallel)
-    print(f"Fetching {len(sources)} source(s). "
-          f"dry_run={args.dry_run} force={args.force} parallel={workers}")
+    print(
+        f"Fetching {len(sources)} source(s). "
+        f"dry_run={args.dry_run} force={args.force} parallel={workers}"
+    )
 
     throttler = HostThrottler()
     ok_count = 0
@@ -267,8 +276,7 @@ def main() -> int:
         else:
             with ThreadPoolExecutor(max_workers=workers) as pool:
                 futures = {
-                    pool.submit(process, src, args, client, throttler): src
-                    for src in sources
+                    pool.submit(process, src, args, client, throttler): src for src in sources
                 }
                 for fut in as_completed(futures):
                     src = futures[fut]
