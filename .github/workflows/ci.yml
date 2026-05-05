@@ -105,12 +105,12 @@ jobs:
         run: |
           if [[ "${{ matrix.os }}" == "ubuntu-latest" ]] || [[ "${{ github.event_name }}" == "push" ]]; then
             if [[ "${{ needs.changes.outputs.rust }}" == "true" ]] || [[ "${{ needs.changes.outputs.docs }}" == "true" ]] || [[ "${{ needs.changes.outputs.infra }}" == "true" ]]; then
-              echo "run=true" >> $GITHUB_OUTPUT
+              echo "run=true" >> "$GITHUB_OUTPUT"
             else
-              echo "run=false" >> $GITHUB_OUTPUT
+              echo "run=false" >> "$GITHUB_OUTPUT"
             fi
           else
-            echo "run=false" >> $GITHUB_OUTPUT
+            echo "run=false" >> "$GITHUB_OUTPUT"
           fi
 
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -139,7 +139,7 @@ jobs:
         id: msrv
         run: |
           VERSION=$(grep '^rust-version' Cargo.toml | cut -d'"' -f2)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
       - uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9 # master
         with:
           toolchain: ${{ steps.msrv.outputs.version }}
@@ -182,19 +182,33 @@ jobs:
         env:
           RUSTDOCFLAGS: "-D warnings"
 
-  audit:
-    name: Security audit
+  deny:
+    name: Supply-chain (cargo-deny)
     needs: changes
     if: needs.changes.outputs.rust == 'true' || needs.changes.outputs.infra == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Install cargo-audit
+      - name: Install cargo-deny
         uses: taiki-e/install-action@db5fb34fa772531a3ece57ca434f579eb334e0fb # v2.75.30
         with:
-          tool: cargo-audit
-      - name: Run audit
-        run: cargo audit
+          tool: cargo-deny
+      - name: Run cargo-deny
+        run: cargo deny --all-features check
+
+  actionlint:
+    name: Workflow lint (actionlint)
+    needs: changes
+    if: needs.changes.outputs.infra == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Install actionlint
+        uses: taiki-e/install-action@db5fb34fa772531a3ece57ca434f579eb334e0fb # v2.75.30
+        with:
+          tool: actionlint
+      - name: Run actionlint
+        run: actionlint -color
 
   typos:
     name: Spell check (typos)

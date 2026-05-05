@@ -1,0 +1,48 @@
+# cargo-deny configuration for lucid-lint.
+# Replaces the previous cargo-audit gate (advisories) and adds
+# license + crate-ban + source policy in a single tool. Tuned to
+# stay green on the current dependency graph; tighten over time.
+#
+# Run locally: `cargo deny --all-features check`
+
+[graph]
+all-features = true
+
+[output]
+feature-depth = 1
+
+[advisories]
+version = 2
+yanked = "warn"
+ignore = []
+
+[licenses]
+version = 2
+# SPDX identifiers we accept project-wide. Extend as new crates land
+# rather than pre-declaring an aspirational list (cargo-deny warns
+# on unmatched allowances). Keep alphabetised.
+allow = [
+    "Apache-2.0",
+    "ISC",
+    "MIT",
+    "Unicode-3.0",
+    "Zlib",
+]
+confidence-threshold = 0.93
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+highlight = "all"
+# `lucid-lint` first-party code prefers `std::sync::OnceLock` over
+# `lazy_static`. Transitive uses are tolerated for now (warn-only)
+# until we can prove a clean wrapper list.
+deny = []
+skip = []
+skip-tree = []
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+allow-git = []
