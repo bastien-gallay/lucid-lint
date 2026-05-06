@@ -107,6 +107,7 @@ fn every_rule_is_categorized() {
                     | "syntax.nested-negation"
                     | "syntax.conditional-stacking"
                     | "syntax.dense-punctuation-burst"
+                    | "syntax.parenthetical-depth"
             )
         {
             unmapped.push(id.clone());

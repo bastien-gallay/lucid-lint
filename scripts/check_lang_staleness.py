@@ -173,8 +173,7 @@ def check(strict: bool) -> int:
 
     if missing_stamp:
         print(
-            f"\n{len(missing_stamp)} FR page(s) missing `en-source-sha` "
-            "front-matter:",
+            f"\n{len(missing_stamp)} FR page(s) missing `en-source-sha` front-matter:",
             file=sys.stderr,
         )
         for rel in missing_stamp:

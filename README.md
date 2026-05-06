@@ -171,15 +171,23 @@ sentence-too-long = 3
 
 ## Editor integration
 
-On the roadmap (v0.3+):
-
-- VS Code extension
-- Neovim LSP support
-- pre-commit hook
+- [pre-commit](https://pre-commit.com) — ships with this repo; run `pre-commit install` to enable locally.
+- VS Code extension — on the roadmap (v0.3+)
+- Neovim LSP support — on the roadmap (v0.3+)
 
 ## Documentation
 
 Full documentation at [https://bastien-gallay.github.io/lucid-lint](https://bastien-gallay.github.io/lucid-lint) (built with mdBook).
+
+## Quality & Security
+
+[![Codecov](https://codecov.io/gh/bastien-gallay/lucid-lint/branch/main/graph/badge.svg)](https://codecov.io/gh/bastien-gallay/lucid-lint)
+[![CodeQL](https://github.com/bastien-gallay/lucid-lint/actions/workflows/codeql.yml/badge.svg)](https://github.com/bastien-gallay/lucid-lint/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/bastien-gallay/lucid-lint/badge)](https://securityscorecards.dev/viewer/?uri=github.com/bastien-gallay/lucid-lint)
+
+- **Codecov** — line coverage for the Rust workspace
+- **CodeQL** — static analysis: taint tracking, control-flow, cross-function patterns
+- **OpenSSF Scorecard** — supply-chain checks: pinned actions, branch protection, signed releases
 
 ## Contributing
 

@@ -28,6 +28,14 @@ Cargo.lock.bak
 !.vscode/extensions.json
 *.iml
 
+# Claude Code working dir (per-clone tooling state)
+.claude/
+CLAUDE.md
+
+# Gemini CLI working dir (per-clone tooling state)
+.gemini/
+GEMINI.md
+
 # Agent-specific working files (not tracked by default)
 .agent/scratch/
 .agent/local.md
@@ -64,6 +72,9 @@ Desktop.ini
 
 # Linux
 *~
+
+# Vibe CLI working dir (per-clone tooling state)
+.vibe/
 
 # Env
 .env

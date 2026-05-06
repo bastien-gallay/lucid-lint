@@ -1,0 +1,15 @@
+---
+source: src/rules/lexicon/homophone_density.rs
+assertion_line: 413
+expression: diags
+---
+- rule_id: lexicon.homophone-density
+  severity: warning
+  location:
+    file: "<input>"
+    line: 1
+    column: 1
+    length: 1
+  section: ~
+  message: "Paragraph density of homophones is 21.2% (7 of 33 content words (e.g. their, there)); maximum 5.0%. Dense homophone runs raise the phonological-decoding load for dyslexic and aphasic readers; rephrase to disambiguate."
+  weight: 1
