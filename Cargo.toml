@@ -22,6 +22,7 @@ include = [
     "Cargo.toml",
     "Cargo.lock",
     "README.md",
+    "LICENSE",
     "LICENSE-MIT",
     "LICENSE-APACHE",
     "CHANGELOG.md",
