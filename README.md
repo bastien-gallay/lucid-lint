@@ -6,7 +6,6 @@
 [![Crates.io](https://img.shields.io/crates/v/lucid-lint.svg)](https://crates.io/crates/lucid-lint)
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12748/badge)](https://www.bestpractices.dev/projects/12748)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/bastien-gallay/lucid-lint/badge)](https://scorecard.dev/viewer/?uri=github.com/bastien-gallay/lucid-lint)
 
 **Status:** v0.2.3 (2026-04-24) — patch cycle on the v0.2 line. 25 deterministic rules, bilingual EN / FR, hybrid scoring. Experimental-rule substrate ([F-experimental-rule-status](ROADMAP.md#f-experimental-rule-status)) landed 2026-05-02; the v0.3 cohort ships behind `--experimental` until the v0.3 cut. Pre-1.0 — breaking changes remain possible between minor versions. Current backlog: [ROADMAP.md — v0.2 / v0.2.x](ROADMAP.md#v02--v02x--must-ship-shipped-patch-cycle-in-progress).
 
@@ -185,7 +184,7 @@ Full documentation at [https://bastien-gallay.github.io/lucid-lint](https://bast
 
 [![Codecov](https://codecov.io/gh/bastien-gallay/lucid-lint/branch/main/graph/badge.svg)](https://codecov.io/gh/bastien-gallay/lucid-lint)
 [![CodeQL](https://github.com/bastien-gallay/lucid-lint/actions/workflows/codeql.yml/badge.svg)](https://github.com/bastien-gallay/lucid-lint/actions/workflows/codeql.yml)
-[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/bastien-gallay/lucid-lint/badge)](https://securityscorecards.dev/viewer/?uri=github.com/bastien-gallay/lucid-lint)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/bastien-gallay/lucid-lint/badge)](https://scorecard.dev/viewer/?uri=github.com/bastien-gallay/lucid-lint)
 
 - **Codecov** — line coverage for the Rust workspace
 - **CodeQL** — static analysis: taint tracking, control-flow, cross-function patterns
