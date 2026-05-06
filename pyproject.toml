@@ -1,0 +1,32 @@
+## Python tooling config for `scripts/`.
+##
+## The repo is a Rust crate; this file exists only to give ruff and
+## mypy a config home. There is no Python package to build here, no
+## dependencies to declare, no entry points — `scripts/*.py` are run
+## directly via `uv run` (see `scripts/README.md`).
+##
+## Strictness is intentionally lenient at bootstrap (Plan A,
+## 2026-05-05): the goal is "tooling green on current code". A
+## follow-up PR can dial up rule sets and `strict = true` once the
+## baseline is observable.
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+extend-exclude = [
+    "scripts/__pycache__",
+]
+
+[tool.ruff.lint]
+# Default ruff lint set (E, F) — pyflakes + pycodestyle errors. Add
+# more rule families in a follow-up once this baseline lands clean.
+select = ["E", "F"]
+
+[tool.mypy]
+python_version = "3.11"
+files = ["scripts"]
+# Lenient bootstrap — missing third-party stubs (e.g. requests,
+# tomli backports) should not block the hook from landing. Promote
+# to strict in a follow-up once the script surface stabilises.
+ignore_missing_imports = true
+warn_unused_ignores = true

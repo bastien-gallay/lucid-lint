@@ -1,0 +1,26 @@
+# typos configuration for lucid-lint.
+#
+# Centralises path exclusions so local `typos` runs match CI behaviour
+# (CI previously passed `exclude: '*.snap|examples/'` inline). Keep
+# this file as the single source of truth and let CI honour it.
+#
+# Run locally: `typos`
+
+[files]
+# Snapshot files (insta) and example corpora are intentionally
+# uncurated — they exercise the linter, not its prose. `target/` and
+# `docs/book/` are build outputs.
+extend-exclude = [
+    "*.snap",
+    "examples/",
+    "target/",
+    "docs/book/",
+]
+
+[default]
+# Project-specific allowlist. Add an entry only after confirming the
+# token is genuinely correct (e.g. domain term, proper noun, foreign
+# word) — empty by default to keep the gate honest.
+extend-ignore-identifiers-re = []
+
+[default.extend-words]

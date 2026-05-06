@@ -18,6 +18,8 @@ setup:
     rustup component add rustfmt clippy llvm-tools-preview
     @echo "Installing cargo tools..."
     cargo install --locked cargo-insta cargo-llvm-cov cargo-dist mdbook agnix-cli || true
+    @echo "Checking for uv..."
+    command -v uv >/dev/null || echo "uv not found; install it via: curl -LsSf https://astral.sh/uv/install.sh | sh"
     @echo "Installing pre-commit hooks..."
     command -v pre-commit >/dev/null && pre-commit install || echo "pre-commit not found; skipping hook install"
     @echo "Running sanity check..."

@@ -44,6 +44,7 @@ pub(crate) const RULE_DOCS: &[(&str, &str, &str)] = &[
         "lexicon.excessive-nominalization",
         "excessive-nominalization"
     ),
+    doc!("lexicon.homophone-density", "homophone-density"),
     doc!("lexicon.jargon-undefined", "jargon-undefined"),
     doc!("lexicon.low-lexical-diversity", "low-lexical-diversity"),
     doc!("lexicon.redundant-intensifier", "redundant-intensifier"),
@@ -52,6 +53,10 @@ pub(crate) const RULE_DOCS: &[(&str, &str, &str)] = &[
         "unexplained-abbreviation"
     ),
     doc!("lexicon.weasel-words", "weasel-words"),
+    doc!(
+        "readability.large-number-unanchored",
+        "large-number-unanchored"
+    ),
     doc!("readability.score", "readability-score"),
     doc!(
         "rhythm.consecutive-long-sentences",
@@ -66,11 +71,13 @@ pub(crate) const RULE_DOCS: &[(&str, &str, &str)] = &[
     doc!("structure.line-length-wide", "line-length-wide"),
     doc!("structure.long-enumeration", "long-enumeration"),
     doc!("structure.mixed-numeric-format", "mixed-numeric-format"),
+    doc!("structure.number-run", "number-run"),
     doc!("structure.paragraph-too-long", "paragraph-too-long"),
     doc!("structure.sentence-too-long", "sentence-too-long"),
     doc!("syntax.conditional-stacking", "conditional-stacking"),
     doc!("syntax.dense-punctuation-burst", "dense-punctuation-burst"),
     doc!("syntax.nested-negation", "nested-negation"),
+    doc!("syntax.parenthetical-depth", "parenthetical-depth"),
     doc!("syntax.passive-voice", "passive-voice"),
     doc!("syntax.unclear-antecedent", "unclear-antecedent"),
 ];

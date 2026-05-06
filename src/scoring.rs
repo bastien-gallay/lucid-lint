@@ -136,6 +136,10 @@ pub const WEIGHTED_RULE_IDS: &[&str] = &[
     "syntax.dense-punctuation-burst",
     "lexicon.consonant-cluster",
     "structure.italic-span-long",
+    "lexicon.homophone-density",
+    "structure.number-run",
+    "readability.large-number-unanchored",
+    "syntax.parenthetical-depth",
 ];
 
 /// Default weight for a rule, keyed by `rule_id`.

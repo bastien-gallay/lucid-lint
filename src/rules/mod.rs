@@ -27,11 +27,13 @@ pub mod syntax;
 pub use lexicon::all_caps_shouting::AllCapsShouting;
 pub use lexicon::consonant_cluster::ConsonantCluster;
 pub use lexicon::excessive_nominalization::ExcessiveNominalization;
+pub use lexicon::homophone_density::HomophoneDensity;
 pub use lexicon::jargon_undefined::JargonUndefined;
 pub use lexicon::low_lexical_diversity::LowLexicalDiversity;
 pub use lexicon::redundant_intensifier::RedundantIntensifier;
 pub use lexicon::unexplained_abbreviation::UnexplainedAbbreviation;
 pub use lexicon::weasel_words::WeaselWords;
+pub use readability::large_number_unanchored::LargeNumberUnanchored;
 pub use readability::score::ReadabilityScore;
 pub use rhythm::consecutive_long_sentences::ConsecutiveLongSentences;
 pub use rhythm::repetitive_connectors::RepetitiveConnectors;
@@ -43,11 +45,13 @@ pub use structure::italic_span_long::ItalicSpanLong;
 pub use structure::line_length_wide::LineLengthWide;
 pub use structure::long_enumeration::LongEnumeration;
 pub use structure::mixed_numeric_format::MixedNumericFormat;
+pub use structure::number_run::NumberRun;
 pub use structure::paragraph_too_long::ParagraphTooLong;
 pub use structure::sentence_too_long::SentenceTooLong;
 pub use syntax::conditional_stacking::ConditionalStacking;
 pub use syntax::dense_punctuation_burst::DensePunctuationBurst;
 pub use syntax::nested_negation::NestedNegation;
+pub use syntax::parenthetical_depth::ParentheticalDepth;
 pub use syntax::passive_voice::PassiveVoice;
 pub use syntax::unclear_antecedent::UnclearAntecedent;
 
@@ -261,6 +265,18 @@ pub fn default_rules(profile: Profile) -> Vec<Box<dyn Rule>> {
         // F143-substrate cohort lead. Ships as Status::Experimental
         // in v0.2.x via F139; flips to Stable at v0.3 cut.
         Box::new(ItalicSpanLong::for_profile(profile)),
+        // F46 — cohort sibling of F49. Ships as Status::Experimental
+        // in v0.2.x via F139; flips to Stable at v0.3 cut.
+        Box::new(HomophoneDensity::for_profile(profile)),
+        // F51 — cohort sibling of F49. Ships as Status::Experimental
+        // in v0.2.x via F139; flips to Stable at v0.3 cut.
+        Box::new(NumberRun::for_profile(profile)),
+        // F53 — cohort sibling of F49. Ships as Status::Experimental
+        // in v0.2.x via F139; flips to Stable at v0.3 cut.
+        Box::new(LargeNumberUnanchored::for_profile(profile)),
+        // F57 — cohort sibling of F49. Ships as Status::Experimental
+        // in v0.2.x via F139; flips to Stable at v0.3 cut.
+        Box::new(ParentheticalDepth::for_profile(profile)),
     ]
 }
 
@@ -296,8 +312,18 @@ mod tests {
 
     #[test]
     fn filter_by_conditions_keeps_general_rules() {
+        // 25 Stable General-tagged rules plus F53
+        // (`readability.large-number-unanchored`) and F57
+        // (`syntax.parenthetical-depth`), both Experimental but
+        // carrying `general` alongside their condition tag — F53's
+        // grounding (CDC CCI / plainlanguage.gov "Use Numbers
+        // Effectively") and F57's grounding (plainlanguage.gov,
+        // Hemingway) both apply to every reader, not only the
+        // condition-tagged audience. Both still ship off-by-default
+        // via the experimental opt-in; the `general` tag only matters
+        // once the user has opted into the rule.
         let kept = filter_by_conditions(default_rules(Profile::Public), &[]);
-        assert_eq!(kept.len(), 25);
+        assert_eq!(kept.len(), 27);
     }
 
     #[test]
@@ -310,7 +336,13 @@ mod tests {
         // against accidentally graduating one of them too early.
         let experimental: std::collections::BTreeSet<&str> =
             experimental_rule_ids().iter().copied().collect();
-        let expected = ["structure.italic-span-long"];
+        let expected = [
+            "lexicon.homophone-density",
+            "readability.large-number-unanchored",
+            "structure.italic-span-long",
+            "structure.number-run",
+            "syntax.parenthetical-depth",
+        ];
         for id in &expected {
             assert!(
                 experimental.contains(id),
@@ -350,9 +382,10 @@ mod tests {
 
     #[test]
     fn filter_by_experimental_keeps_all_stable_when_off() {
-        // With F49 (cohort lead) shipping as Experimental, the
-        // default registry has 26 rules; the no-opt-in filter strips
-        // F49 → 25 Stable rules remain.
+        // With the v0.3 cohort (F46 / F49 / F51 / F53 / F57) shipping
+        // as Experimental, the default registry has 30 rules; the
+        // no-opt-in filter strips the five Experimental rules → 25
+        // Stable rules remain.
         let kept = filter_by_experimental(default_rules(Profile::Public), &ExperimentalOptIn::None);
         assert_eq!(kept.len(), 25);
     }
@@ -387,9 +420,10 @@ mod tests {
 
     #[test]
     fn filter_by_experimental_strips_experimental_when_off() {
-        // Registry holds the 26 default rules (25 Stable + F49
-        // Experimental) plus FakeExperimental = 27 total. With the
-        // opt-in off, both Experimental rules are stripped → 25.
+        // Registry holds the 30 default rules (25 Stable + F46 + F49
+        // + F51 + F53 + F57 Experimental) plus FakeExperimental = 31
+        // total. With the opt-in off, all six Experimental rules are
+        // stripped → 25.
         let kept =
             filter_by_experimental(registry_with_fake_experimental(), &ExperimentalOptIn::None);
         assert_eq!(
@@ -399,31 +433,37 @@ mod tests {
         );
         assert!(kept.iter().all(|r| r.id() != "structure.fake-experimental"));
         assert!(kept.iter().all(|r| r.id() != "structure.italic-span-long"));
+        assert!(kept.iter().all(|r| r.id() != "lexicon.homophone-density"));
+        assert!(kept.iter().all(|r| r.id() != "syntax.parenthetical-depth"));
     }
 
     #[test]
     fn filter_by_experimental_keeps_experimental_under_wildcard() {
-        // Wildcard keeps all 27 rules in the registry: 25 Stable +
-        // F49 (real Experimental) + FakeExperimental.
+        // Wildcard keeps all 31 rules in the registry: 25 Stable +
+        // F46 + F49 + F51 + F53 + F57 (real Experimental) +
+        // FakeExperimental.
         let kept =
             filter_by_experimental(registry_with_fake_experimental(), &ExperimentalOptIn::All);
-        assert_eq!(kept.len(), 27);
+        assert_eq!(kept.len(), 31);
         assert!(kept.iter().any(|r| r.id() == "structure.fake-experimental"));
         assert!(kept.iter().any(|r| r.id() == "structure.italic-span-long"));
+        assert!(kept.iter().any(|r| r.id() == "lexicon.homophone-density"));
+        assert!(kept.iter().any(|r| r.id() == "syntax.parenthetical-depth"));
     }
 
     #[test]
     fn filter_by_experimental_keeps_only_opted_in_ids() {
-        // Opt-in includes the synthetic id only — F49 stays
-        // filtered out because it isn't on the list. Result: 25
+        // Opt-in includes the synthetic id only — F49 and F46 stay
+        // filtered out because neither is on the list. Result: 25
         // Stable + FakeExperimental = 26.
         let opt_in = ExperimentalOptIn::from_selectors(["structure.fake-experimental"]);
         let kept = filter_by_experimental(registry_with_fake_experimental(), &opt_in);
         assert_eq!(kept.len(), 26);
         assert!(kept.iter().any(|r| r.id() == "structure.fake-experimental"));
         assert!(kept.iter().all(|r| r.id() != "structure.italic-span-long"));
+        assert!(kept.iter().all(|r| r.id() != "lexicon.homophone-density"));
 
-        // A different id in the opt-in set leaves both experimental
+        // A different id in the opt-in set leaves all experimental
         // rules filtered out.
         let other = ExperimentalOptIn::from_selectors(["structure.does-not-exist"]);
         let kept = filter_by_experimental(registry_with_fake_experimental(), &other);

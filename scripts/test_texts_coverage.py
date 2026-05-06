@@ -135,11 +135,7 @@ class CellFormatters(unittest.TestCase):
 
 class Splice(unittest.TestCase):
     def test_replaces_between_markers(self):
-        old = (
-            "# Title\n\n"
-            f"{tc.BEGIN_MARKER}\nOLD\n{tc.END_MARKER}\n\n"
-            "## Next\n"
-        )
+        old = f"# Title\n\n{tc.BEGIN_MARKER}\nOLD\n{tc.END_MARKER}\n\n## Next\n"
         section = f"{tc.BEGIN_MARKER}\nNEW\n{tc.END_MARKER}"
         out = tc.splice(old, section)
         self.assertIn("NEW", out)
@@ -147,17 +143,13 @@ class Splice(unittest.TestCase):
         self.assertIn("## Next", out)
 
     def test_preserves_blank_line_before_next_heading(self):
-        old = (
-            f"before\n\n{tc.BEGIN_MARKER}\nold\n{tc.END_MARKER}\n\n## Next\n"
-        )
+        old = f"before\n\n{tc.BEGIN_MARKER}\nold\n{tc.END_MARKER}\n\n## Next\n"
         section = f"{tc.BEGIN_MARKER}\nnew\n{tc.END_MARKER}"
         out = tc.splice(old, section)
         self.assertIn(f"{tc.END_MARKER}\n\n## Next", out)
 
     def test_is_idempotent(self):
-        old = (
-            f"# T\n\n{tc.BEGIN_MARKER}\nX\n{tc.END_MARKER}\n\n## Tail\n"
-        )
+        old = f"# T\n\n{tc.BEGIN_MARKER}\nX\n{tc.END_MARKER}\n\n## Tail\n"
         section = f"{tc.BEGIN_MARKER}\nX\n{tc.END_MARKER}"
         once = tc.splice(old, section)
         twice = tc.splice(once, section)
@@ -223,6 +215,7 @@ class Integration(unittest.TestCase):
 
     def test_real_yaml_renders_without_error(self):
         import yaml
+
         data = yaml.safe_load(tc.TEXTS_YAML.read_text(encoding="utf-8"))
         sources = data.get("sources", [])
         public = tc.render_public_section(sources)

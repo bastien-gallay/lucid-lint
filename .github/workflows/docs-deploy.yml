@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'docs/**'
+      - 'scripts/**'
       - '.github/workflows/docs-deploy.yml'
   workflow_dispatch:
 
@@ -12,6 +13,9 @@ permissions:
   contents: read
   pages: write
   id-token: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 concurrency:
   group: "pages"
@@ -30,9 +34,9 @@ jobs:
           fetch-depth: 0
 
       - name: Install mdBook
-        uses: peaceiris/actions-mdbook@ee69d230fe19748b7abf22df32acaa93833fad08 # v2.0.0
+        uses: taiki-e/install-action@db5fb34fa772531a3ece57ca434f579eb334e0fb # v2.75.30
         with:
-          mdbook-version: 'latest'
+          tool: mdbook
 
       - name: Build mdBook
         run: cd docs && mdbook build

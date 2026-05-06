@@ -12,6 +12,7 @@ Replace the string in-place with Atkinson so the shipped book only
 advertises fonts the project actually endorses. Called from `just docs-build`
 right after `mdbook build`.
 """
+
 from __future__ import annotations
 
 import pathlib
@@ -79,7 +80,10 @@ def sanitize(path: pathlib.Path, replacements: dict[str, str]) -> bool:
 
 def main() -> int:
     if not CSS_DIR.exists():
-        print(f"sanitize-stock-css: {CSS_DIR} not found — run `mdbook build` first.", file=sys.stderr)
+        print(
+            f"sanitize-stock-css: {CSS_DIR} not found — run `mdbook build` first.",
+            file=sys.stderr,
+        )
         return 0  # not fatal in CI: no build, nothing to sanitize
     touched = 0
     for path in CSS_DIR.glob("general*.css"):
