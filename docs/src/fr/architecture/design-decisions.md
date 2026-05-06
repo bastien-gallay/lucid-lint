@@ -1,4 +1,4 @@
-<!-- en-source-sha: a5a9e52823cafc1e3a88470bcfc74ef580b083f7 -->
+<!-- en-source-sha: d7a95ee4bcabe7c330d96fe0e371e5002c5e79d6 -->
 # Décisions de conception
 
 Cette page consigne les décisions de conception prises pendant v0.1 qui méritent d'être revues avant tout changement.
@@ -76,6 +76,21 @@ Cette page consigne les décisions de conception prises pendant v0.1 qui mérite
 **Décision** : les profils sont `Profile::DevDoc | Public | Falc`. Ils ne peuvent pas être définis dans la configuration de l'utilisateur en v0.1.
 
 **Raison** : ajouter des profils personnalisés est une abstraction spéculative tant que personne ne le demande. Les surcharges par règle suffisent à couvrir 95 % des cas « je veux un préréglage légèrement différent ».
+
+## Pipeline de source de vérité du ROADMAP (v0.2.x+)
+
+**Décision** : `ROADMAP.md` est rétrogradé de source éditée à *artefact généré*. La source de vérité devient un ensemble structuré de fichiers sous `.roadmap/` (ignoré par git), un fichier markdown par fonctionnalité avec front-matter TOML, plus des fragments narratifs. Un petit membre de workspace Rust (`crates/roadmap-cli`) fournit les sous-commands `add` / `generate` / `validate` / `rename`. Le générateur est invoqué localement pendant la préparation de release ; le `ROADMAP.md` régénéré est committé sur la PR de préparation. La CI ne régénère pas. Cadré sous [F-roadmap-toml-source](../roadmap.md#f-roadmap-toml-source).
+
+**Raison** :
+
+- La protection de branche sur `main` (en place depuis le 2026-05-03 via [F-repo-config-hardening](../roadmap.md#f-repo-config-hardening)) force chaque modification de `ROADMAP.md` à passer par le cycle worktree → branche → PR → CI → merge → nettoyage. Le débit prévu en régime stable était de 10 à 30 modifications ROADMAP-seules par semaine. La valeur de revue PR sur ces modifications est nulle (auteur unique), donc la cérémonie n'était que pur surcoût.
+- Une dérogation de ruleset par chemin sur `ROADMAP.md` affaiblirait les signaux de protection de branche suivis par les badges OpenSSF Scorecard / Best Practices. Rétrograder le fichier hors de `main` préserve ces signaux intacts.
+- Les fichiers par fonctionnalité donnent des diffs git par fonctionnalité, suppriment le verrouillage de schéma (le front-matter est optionnel par fichier) et laissent les sections de narration vivre en markdown brut plutôt qu'en chaînes TOML.
+- Rust plutôt que Python pour le générateur : réutilise `pulldown-cmark` déjà dans les dépendances, intègre les tests dans `cargo test`, maintenance avec une seule chaîne d'outils, et reste extractible en caisse autonome si l'outil mûrit.
+- Le générateur local (pas la CI) évite d'accorder à la CI un quelconque accès à `.roadmap/` (ignoré par git et local à la machine). La cadence de release — pas le temps réel — était un compromis accepté ; l'artefact public `ROADMAP.md` se met à jour à chaque tag `v*`.
+- Bloqueurs jour 1 à la livraison : émission déterministe des ancres `<a id="…">` (pour que les liens croisés existants de la forme `[F46](#f46)` dans les PR et commits contingent de résoudre), une sous-commande `add` qui sert de gabarit (pour que créer une fonctionnalité soit une seule frappe, pas une régression), et un test de déterminisme aller-retour (régénérer l'artefact, le comparer à la version committée, échouer en cas de dérive).
+
+**Solution de repli d'urgence** : si le travail sur `crates/roadmap-cli` dépasse le budget, le fichier migre plutôt vers une branche orpheline `roadmap` avec push direct et la même forme `.md` — préserve les signaux Scorecard via un autre mécanisme, au prix d'une disposition de branches non standard. Documenté comme issue de secours mais pas comme chemin retenu.
 
 ## Références à consulter avant de changer
 
