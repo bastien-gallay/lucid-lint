@@ -773,6 +773,18 @@ released-version block.
 
 ### Changed
 
+- **[2026-05-07] F-roadmap-toml-source A9 — one-shot ROADMAP migration.**
+  ROADMAP source-of-truth moved to `.roadmap/features/<slug>.md`
+  TOML-frontmatter files (gitignored, locally a symlink to
+  `.personal/roadmap/`). `ROADMAP.md` is now the *generated artifact*,
+  produced by `cargo run -p roadmap-cli -- generate` and committed
+  on release-prep PRs. Public surface shrinks from 848 to ~168 lines
+  (catalog only — narrative chunks staged in `.roadmap/narrative/`
+  for a future renderer pass). All 160 anchors preserved; `roadmap
+  validate` clean. See ADR
+  [`docs/src/architecture/design-decisions.md`](docs/src/architecture/design-decisions.md#roadmap-source-of-truth-pipeline-v02x)
+  § ROADMAP source-of-truth pipeline.
+
 - **[2026-05-04] CI MSRV read dynamically from `Cargo.toml`.** The
   `msrv` job in `.github/workflows/ci.yml` no longer hard-codes the
   toolchain version; it extracts `rust-version` from `Cargo.toml` and

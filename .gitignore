@@ -29,6 +29,12 @@ Cargo.lock.bak
 !.vscode/extensions.json
 *.iml
 
+# `.roadmap/` source-of-truth (gitignored — generated `ROADMAP.md` is
+# the public artifact). Locally a symlink to `.personal/roadmap/`.
+# See docs/src/architecture/design-decisions.md § ROADMAP source-of-truth pipeline.
+.roadmap/
+/.roadmap
+
 # Claude Code working dir (per-clone tooling state)
 .claude/
 CLAUDE.md
