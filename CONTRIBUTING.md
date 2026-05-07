@@ -192,6 +192,29 @@ Before opening a PR:
 - Feedback is meant to improve the contribution, not criticize the contributor.
 - Once approved, a maintainer merges. Squash-merge is the default.
 
+## Maintainer release prep
+
+`ROADMAP.md` is a generated artifact — see the [design decision](docs/src/architecture/design-decisions.md) and the [F-roadmap-toml-source](ROADMAP.md#f-roadmap-toml-source) row. The source-of-truth lives under `.roadmap/` (gitignored; symlinked to the maintainer's `.personal/` repo).
+
+On the **release-prep PR** (the one that bumps `Cargo.toml` and CHANGELOG ahead of a tag), regenerate the artifact and commit it with the prep changes:
+
+```bash
+just validate-roadmap   # schema, slug uniqueness, anchor drift
+just regen-roadmap      # writes ROADMAP.md
+git add ROADMAP.md
+```
+
+Both recipes silent-pass on checkouts without a `.roadmap/` source, so they're safe to run on contributor branches and in CI — they only do work on the maintainer's machine.
+
+CI does **not** regenerate `ROADMAP.md`. The release-prep step is the only point at which the artifact is refreshed; in between, it lags by up to one release cycle (accepted trade-off, see the ADR).
+
+To use the `roadmap` binary directly instead of `cargo run -p roadmap-cli`, install it once:
+
+```bash
+cargo install --path crates/roadmap-cli
+roadmap validate
+```
+
 ## Getting help
 
 - GitHub Discussions for questions
