@@ -272,6 +272,26 @@ texts-coverage-test:
 
 # ── Release ──────────────────────────────────────────────
 
+# Regenerate ROADMAP.md from `.roadmap/` source (release-prep step).
+# `.roadmap/` is gitignored — it lives in the maintainer's `.personal/`
+# repo (typically symlinked). Skip-pass on checkouts where it's absent.
+[group('release')]
+regen-roadmap:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [[ ! -d .roadmap/features ]]; then
+        echo "regen-roadmap: skipped (no .roadmap/ source on this checkout)"
+        exit 0
+    fi
+    cargo run --quiet -p roadmap-cli -- generate > ROADMAP.md
+    echo "regen-roadmap: wrote ROADMAP.md"
+
+# Validate `.roadmap/` source (schema, slug uniqueness, anchor drift).
+# Silent-pass when no source — see `regen-roadmap` for context.
+[group('release')]
+validate-roadmap:
+    cargo run --quiet -p roadmap-cli -- validate
+
 # Release dry-run using cargo-dist
 [group('release')]
 release-check:

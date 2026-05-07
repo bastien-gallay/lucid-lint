@@ -11,6 +11,9 @@ use std::path::{Path, PathBuf};
 
 #[derive(Debug, Default)]
 pub struct ValidationReport {
+    /// `.roadmap/` source tree is absent on this checkout (e.g. CI, or a
+    /// fresh main worktree before A9 migration). Skipped, not failed.
+    pub source_missing: bool,
     pub schema_errors: Vec<SchemaError>,
     pub duplicate_ids: Vec<String>,
     pub anchor_collisions: Vec<AnchorCollision>,
@@ -36,10 +39,11 @@ pub struct AnchorCollision {
 
 impl ValidationReport {
     pub fn is_clean(&self) -> bool {
-        self.schema_errors.is_empty()
-            && self.duplicate_ids.is_empty()
-            && self.anchor_collisions.is_empty()
-            && !self.has_drift()
+        self.source_missing
+            || (self.schema_errors.is_empty()
+                && self.duplicate_ids.is_empty()
+                && self.anchor_collisions.is_empty()
+                && !self.has_drift())
     }
 
     pub fn has_drift(&self) -> bool {
@@ -55,6 +59,10 @@ impl ValidationReport {
     pub fn to_text(&self) -> String {
         use std::fmt::Write;
         let mut out = String::new();
+        if self.source_missing {
+            out.push_str("validate: skipped (no `.roadmap/` source on this checkout)\n");
+            return out;
+        }
         if self.is_clean() {
             out.push_str("validate: clean\n");
             return out;
@@ -106,7 +114,11 @@ pub fn validate(root: &Path, roadmap_md: &Path) -> Result<ValidationReport> {
 
     let features_dir = root.join("features");
     if !features_dir.is_dir() {
-        bail!("expected directory: {}", features_dir.display());
+        // No source on this checkout — silent-pass. Lets the recipe
+        // run on main (where `.roadmap/` is gitignored) and in CI
+        // without manufacturing an error.
+        report.source_missing = true;
+        return Ok(report);
     }
 
     let mut features = Vec::new();
@@ -241,6 +253,21 @@ mod tests {
         assert!(r.is_clean());
         assert!(!r.has_drift());
         assert!(!r.has_hard_errors());
+    }
+
+    #[test]
+    fn validate_skips_when_source_missing() {
+        // Pointing `root` at any non-existent `features/` parent should
+        // silent-pass — the recipe runs on main worktrees too.
+        let tmp = std::env::temp_dir().join("roadmap-cli-skip-missing");
+        let _ = std::fs::remove_dir_all(&tmp);
+        std::fs::create_dir_all(&tmp).unwrap();
+        let roadmap_md = tmp.join("ROADMAP.md");
+        std::fs::write(&roadmap_md, "").unwrap();
+        let r = validate(&tmp, &roadmap_md).unwrap();
+        assert!(r.source_missing);
+        assert!(r.is_clean());
+        assert!(r.to_text().contains("skipped"));
     }
 
     #[test]
