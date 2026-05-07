@@ -2,8 +2,9 @@
 //!
 //! Subcommand status:
 //! - `generate`: A2 (minimal first cut)
-//! - `validate`: A2.6 (this commit)
-//! - `add`, `rename`: stubs (A2.5 follows)
+//! - `validate`: A2.6
+//! - `add`: A2.5 (this commit)
+//! - `rename`: stub
 
 use anyhow::{bail, Context, Result};
 use clap::{Parser, Subcommand};
@@ -28,7 +29,16 @@ struct Cli {
 #[derive(Subcommand)]
 enum Command {
     /// Create a new feature file from a template.
-    Add { slug: String },
+    Add {
+        /// Slug for the new feature (matches the filename without `.md`).
+        /// Must be `f-<kebab-name>`. The legacy `f<digits>` form is
+        /// rejected unless `--allow-legacy-numeric` is set.
+        slug: String,
+        /// Allow the legacy `f<digits>` slug shape (e.g. `f139`).
+        /// Migration-only — emits a deprecation warning.
+        #[arg(long)]
+        allow_legacy_numeric: bool,
+    },
     /// Generate ROADMAP.md from `.roadmap/` source. Writes to stdout.
     Generate,
     /// Validate the `.roadmap/` source: schema, slug uniqueness, anchor drift.
@@ -66,7 +76,10 @@ fn run() -> Result<ExitCode> {
             roadmap_md,
             accept_drift,
         } => validate_cmd(&cli.root, &roadmap_md, accept_drift),
-        Command::Add { slug } => bail!("`add {slug}` not implemented (A2.5)"),
+        Command::Add {
+            slug,
+            allow_legacy_numeric,
+        } => add_cmd(&cli.root, &slug, allow_legacy_numeric),
         Command::Rename { from, to } => bail!("`rename {from} → {to}` not implemented"),
     }
 }
@@ -77,6 +90,19 @@ fn generate(root: &std::path::Path) -> Result<()> {
     roadmap_cli::sort_features(&mut features, &config);
     print!("{}", roadmap_cli::render(&features));
     Ok(())
+}
+
+fn add_cmd(root: &std::path::Path, slug: &str, allow_legacy_numeric: bool) -> Result<ExitCode> {
+    let outcome = roadmap_cli::add::add(root, slug, allow_legacy_numeric)?;
+    if outcome.legacy_numeric_warning {
+        eprintln!(
+            "warning: `{slug}` uses the legacy `f<digits>` slug shape — \
+             deprecated, only intended for one-shot migration. New \
+             features should use `f-<kebab-name>`."
+        );
+    }
+    println!("created {}", outcome.path.display());
+    Ok(ExitCode::SUCCESS)
 }
 
 fn validate_cmd(

@@ -3,6 +3,7 @@
 //! Wired by `main.rs`. Kept fs-free so unit tests can pass strings
 //! and snapshot the rendered output via `insta`.
 
+pub mod add;
 pub mod validate;
 
 use anyhow::{anyhow, bail, Context, Result};
