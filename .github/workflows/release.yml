@@ -85,7 +85,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y musl-tools
 
       - name: Build release
-        run: cargo build --release --locked --target ${{ matrix.target }}
+        run: cargo build --release --locked -p lucid-lint --target ${{ matrix.target }}
 
       - name: Package (Unix)
         if: matrix.os != 'windows-latest'
@@ -145,6 +145,6 @@ jobs:
         with:
           toolchain: stable
       - name: Publish to crates.io
-        run: cargo publish --locked
+        run: cargo publish --locked -p lucid-lint
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}

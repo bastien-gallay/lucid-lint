@@ -280,12 +280,12 @@ release-check:
 # Build a release binary for the local target
 [group('release')]
 release-build:
-    cargo build --release
+    cargo build --release -p lucid-lint
 
 # Publish to crates.io (requires CARGO_REGISTRY_TOKEN)
 [group('release')]
 publish:
-    cargo publish --locked
+    cargo publish --locked -p lucid-lint
 
 # Install the binary from source
 [group('release')]

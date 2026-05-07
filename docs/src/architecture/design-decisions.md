@@ -101,6 +101,21 @@ New `Diagnostic.weight` field, new `--min-score=N` CLI flag.
 
 **Rationale**: adding custom profiles is a speculative abstraction until someone asks for it. Per-rule overrides are enough to cover 95% of the "I want a slightly different preset" cases.
 
+## ROADMAP source-of-truth pipeline (v0.2.x+)
+
+**Decision**: `ROADMAP.md` is demoted from edited source to *generated artifact*. The source-of-truth becomes a structured set of files under `.roadmap/` (gitignored), one markdown file per feature with TOML front-matter, plus narrative chunks. A small Rust workspace member (`crates/roadmap-cli`) provides `add` / `generate` / `validate` / `rename` subcommands. The generator is invoked locally during release prep; the regenerated `ROADMAP.md` is committed on the release-prep PR. CI does not regenerate. Scoped under [F-roadmap-toml-source](../roadmap.md#f-roadmap-toml-source).
+
+**Rationale**:
+
+- Branch protection on `main` (in place since 2026-05-03 via [F-repo-config-hardening](../roadmap.md#f-repo-config-hardening)) forces every `ROADMAP.md` tweak through the worktree → branch → PR → CI → merge → cleanup cycle. Forecast steady-state was 10–30 ROADMAP-only edits per week. The PR review value on those edits is null (solo author), so the ceremony was pure overhead.
+- Path-scoped ruleset bypass on `ROADMAP.md` would weaken the branch-protection signals tracked by the OpenSSF Scorecard / Best Practices badges. Demoting the file from `main` source preserves those signals untouched.
+- Per-feature files give per-feature git diffs, kill schema lock-in (front-matter is per-file optional), and let narrative sections live as plain markdown rather than TOML strings.
+- Rust over Python for the generator: reuses `pulldown-cmark` already in dependencies, folds tests into `cargo test`, single-toolchain maintenance, and stays extractable as a standalone crate if the tool matures.
+- Local generator (not CI) avoids granting CI any access to `.roadmap/` (gitignored and machine-local). Release cadence — not real-time — was an accepted trade-off; the public `ROADMAP.md` artifact updates per `v*` tag.
+- Day-1 blockers on landing: deterministic `<a id="…">` anchor emission (so existing `[F46](#f46)`-style cross-links from PRs and commits keep resolving), an `add` templating subcommand (so creating a feature is one keystroke, not a regression), and a round-trip determinism test (regenerate the artifact, diff against committed, fail on drift).
+
+**Emergency fallback**: if `crates/roadmap-cli` work overruns budget, the file moves instead to a `roadmap` orphan branch with direct push and the same `.md` shape — preserves Scorecard signals via a different mechanism, at the cost of a non-standard branch layout. Documented as the escape hatch but not the chosen path.
+
 ## References to follow before changing these
 
 - [`RULES.md`](https://github.com/bastien-gallay/lucid-lint/blob/main/RULES.md) — the authoritative rule reference
