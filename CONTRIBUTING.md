@@ -215,6 +215,46 @@ cargo install --path crates/roadmap-cli
 roadmap validate
 ```
 
+## Release cadence
+
+Patch releases are **trigger-based**, not calendar-based. Cut a patch
+when **user-facing** work has landed on `main`. Chores and Experimental
+rules ride along on the same release; a quiet period without
+user-facing work is a signal to *not* cut, not to ship a noise patch.
+Rationale recorded in
+[F-release-policy-codify](ROADMAP.md#f-release-policy-codify).
+
+User-facing triggers — any one is sufficient to cut a patch:
+
+- Bug fix or correctness fix.
+- Performance win (initial threshold: ≥ 5 % wall-clock improvement on
+  the project's representative bench corpus, justified per case).
+- UX, TTY, or render/output change visible to a default-config run.
+- Security fix.
+
+Items that **do not** trigger a patch on their own — they ride along
+on the next user-facing patch:
+
+- New `Status::Experimental` rules (opt-in, dormant by default — see
+  [Rule lifecycle and SemVer](RULES.md#rule-lifecycle-and-semver)).
+- CI / pre-commit / lint / dep-bump chores.
+- Docs-only changes (including FR translations).
+- ROADMAP / CONTRIBUTING / internal-policy updates.
+- A new dependency is classified as a *chore* unless it changes
+  runtime behavior visible to a default-config run, in which case
+  it counts as the relevant user-facing trigger above.
+
+Quiet release periods are normal — no patch is better than a patch
+with nothing for users. The README states this explicitly so quiet
+periods do not read as project abandonment.
+
+The lifecycle policy that governs which rule changes are allowed in
+patch vs minor vs major releases lives in
+[`RULES.md` — Rule lifecycle and SemVer](RULES.md#rule-lifecycle-and-semver).
+The `CHANGELOG.md` "Rule lifecycle changes" subsection template
+documents the per-rule entry shape required at each `Experimental →
+Stable` flip.
+
 ## Getting help
 
 - GitHub Discussions for questions
