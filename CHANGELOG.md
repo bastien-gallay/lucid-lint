@@ -11,6 +11,25 @@ and entries are sorted **descending by date** within each subsection.
 On release, dates are dropped and entries are folded into the
 released-version block.
 
+**Rule lifecycle changes — entry template.** Every
+`Experimental → Stable` flip and every default-fire rule change gets a
+dedicated `### Rule lifecycle changes` subsection inside the release
+block (between `### Changed` and `### Removed`), with one bullet per
+rule in this shape:
+
+```markdown
+- **`<category>.<rule-id>`** — flipped `Experimental → Stable`.
+  Default severity: `Warning` (or `Suggestion`). Opt out with
+  `[disabled] rules = ["<category>.<rule-id>"]` in `lucid-lint.toml`.
+  Dogfood pass: <one-line summary of the `examples/public/` run that
+  validated the severity choice>.
+```
+
+Patch releases never carry the subsection (patches may add Experimental
+rules but never flip them — see
+[`CONTRIBUTING.md` — Release cadence](CONTRIBUTING.md#release-cadence)
+and [`RULES.md` — Rule lifecycle and SemVer](RULES.md#rule-lifecycle-and-semver)).
+
 ## [Unreleased]
 
 ### Added
