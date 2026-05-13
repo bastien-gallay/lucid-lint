@@ -20,7 +20,7 @@ rule in this shape:
 ```markdown
 - **`<category>.<rule-id>`** — flipped `Experimental → Stable`.
   Default severity: `Warning` (or `Suggestion`). Opt out with
-  `[disabled] rules = ["<category>.<rule-id>"]` in `lucid-lint.toml`.
+  [[ignore]] entry for rule_id = "<category>.<rule-id>" in lucid-lint.toml.
   Dogfood pass: <one-line summary of the `examples/public/` run that
   validated the severity choice>.
 ```
