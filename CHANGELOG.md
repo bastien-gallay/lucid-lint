@@ -19,10 +19,10 @@ rule in this shape:
 
 ```markdown
 - **`<category>.<rule-id>`** — flipped `Experimental → Stable`.
-  Default severity: `Warning` (or `Suggestion`). Opt out with
-  [[ignore]] entry for rule_id = "<category>.<rule-id>" in lucid-lint.toml.
-  Dogfood pass: <one-line summary of the `examples/public/` run that
-  validated the severity choice>.
+  Default severity: `Warning` (or `Suggestion`). Opt out by adding an
+  `[[ignore]]` entry with `rule_id = "<category>.<rule-id>"` in
+  `lucid-lint.toml`. Dogfood pass: <one-line summary of the
+  `examples/public/` run that validated the severity choice>.
 ```
 
 Patch releases never carry the subsection (patches may add Experimental

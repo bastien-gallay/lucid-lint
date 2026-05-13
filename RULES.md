@@ -1221,8 +1221,8 @@ without case-by-case debate. Rationale recorded in
   - **Dogfood pass** on `examples/public/` to validate the chosen
     severity (`Warning` vs `Suggestion`).
   - **Per-rule CHANGELOG entry** stating the rule ID, the chosen
-    severity, and the opt-out ([[ignore]] block in
-    `lucid-lint.toml`).
+    severity, and the opt-out (an `[[ignore]]` entry with
+    `rule_id = "<category>.<rule-id>"` in `lucid-lint.toml`).
 - **Major (`1.0.0+`)** — same policy. Removing a default-fire rule or
   raising its default severity to a stricter level requires a major
   bump. *Adding* new default-fire rules in a minor remains acceptable
@@ -1236,7 +1236,8 @@ Strict-CI consumers (e.g. `--deny warnings`-equivalent setups) who
 need to freeze the active default rule set against a release marker
 can track [F-config-pinning](ROADMAP.md#f-config-pinning); until that
 ships, the documented escape hatch is per-rule opt-out via the
-    [[ignore]] config block.
+`[[ignore]]` config block (see [F19 in CHANGELOG.md](CHANGELOG.md)
+for the full shape).
 
 The release cadence that surrounds these transitions
 (trigger-based — patch on user-facing work, chores ride along) lives
