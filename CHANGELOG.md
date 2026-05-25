@@ -758,9 +758,10 @@ and [`RULES.md` — Rule lifecycle and SemVer](RULES.md#rule-lifecycle-and-semve
   (2) The numeric scanner collapsed every `.` between digits, so
   dotted references such as the WCAG criterion `9.1.4.11` or the RGAA
   test `10.1.1` were read as the spurious 5-digit numeral `91411` /
-  `10101`. A quantity carries at most one decimal point, so tokens
-  with two or more `.` separators are now treated as references and
-  skipped. The dogfood run dropped from 65 to 26 hits on
+  `10101`. Tokens with two or more `.` separators are now treated as
+  references and skipped — unless the dots form valid three-digit
+  thousands grouping (`1.000.000`), which is still parsed as a number.
+  The dogfood run dropped from 65 to 26 hits on
   `examples/public/` (the 39 removed were all dotted refs). Remaining
   hits include space-grouped phone numbers — tracked separately as a
   pre-flip follow-up.

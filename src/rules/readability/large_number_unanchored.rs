@@ -29,7 +29,10 @@
 //!    value is ≥ the profile threshold. The scanner collapses common
 //!    thousands separators (`,`, `.`, ASCII space, NBSP, thin space,
 //!    narrow NBSP) between digit groups so `1 000` (FR) and `1,000`
-//!    (EN) both count as one 4-digit token with value 1000.
+//!    (EN) both count as one 4-digit token with value 1000. A `.` is
+//!    honoured for grouping only in valid three-digit runs
+//!    (`1.000.000`); two or more dots with irregular groups mark a
+//!    reference (`9.1.4.11`) and are skipped, not parsed as a number.
 //! 2. A magnitude word — `million`(s), `billion`(s), `trillion`(s) in
 //!    EN; `million`(s), `milliard`(s), `billion`(s), `trillion`(s) in
 //!    FR. Whole-word, case-insensitive.
@@ -421,11 +424,11 @@ fn first_unanchored_candidate(
                 i = token.end;
                 continue;
             }
-            // Skip dotted references: a quantity carries at most one
-            // decimal point, so two or more `.` separators mark a
-            // version / criterion / section number (`9.1.4.11`,
-            // `10.1.1`), not a magnitude.
-            if token.dot_separators >= 2 {
+            // Skip dotted references (`9.1.4.11`, `10.1.1`): two or
+            // more `.` separators with irregular digit groups mark a
+            // version / criterion / section number, not a magnitude.
+            // Valid thousands grouping (`1.000.000`) is preserved.
+            if token.is_dotted_reference {
                 i = token.end;
                 continue;
             }
@@ -476,11 +479,16 @@ struct NumericToken {
     /// True when the token contained at least one inter-digit
     /// separator — used to gate the year-shape skip.
     had_separator: bool,
-    /// Count of `.` separators collapsed between digits. A genuine
-    /// quantity carries at most one decimal point; two or more dots
-    /// (`9.1.4.11`, `10.1.1`) mark a version / criterion / section
-    /// reference, which the caller skips rather than flagging.
-    dot_separators: u32,
+    /// True when the token is a dotted reference (`9.1.4.11`,
+    /// `10.1.1`) rather than a number, so the caller skips it.
+    ///
+    /// A genuine quantity carries at most one decimal point. Two or
+    /// more `.` separators only stay a number when they form valid
+    /// thousands grouping — every group after the leading one is
+    /// exactly three digits (`1.000.000`). References have shorter,
+    /// irregular groups (`9.1.4.11` → `9 1 4 11`), so they trip this
+    /// flag and are dropped.
+    is_dotted_reference: bool,
 }
 
 /// Greedy scan of a numeric token starting at `start` (which must
@@ -491,14 +499,22 @@ fn scan_numeric_token(sentence: &str, start: usize) -> NumericToken {
     let mut digits: u32 = 0;
     let mut value: u64 = 0;
     let mut had_separator = false;
-    let mut dot_separators: u32 = 0;
     let mut end = start;
     let mut chars = sentence[start..].char_indices().peekable();
     let mut last_was_digit = false;
 
+    // Dotted-reference detection. Count `.` separators and check the
+    // digit-group sizes they delimit: valid thousands grouping has
+    // every non-leading group exactly three digits (`1.000.000`),
+    // whereas references (`9.1.4.11`) have shorter, irregular groups.
+    let mut dot_count: u32 = 0;
+    let mut group_digits: u32 = 0;
+    let mut dot_groups_are_thousands = true;
+
     while let Some((rel, ch)) = chars.peek().copied() {
         if ch.is_ascii_digit() {
             digits = digits.saturating_add(1);
+            group_digits = group_digits.saturating_add(1);
             value = value
                 .saturating_mul(10)
                 .saturating_add(u64::from(ch as u8 - b'0'));
@@ -514,8 +530,18 @@ fn scan_numeric_token(sentence: &str, start: usize) -> NumericToken {
                 if next.is_ascii_digit() {
                     had_separator = true;
                     if ch == '.' {
-                        dot_separators = dot_separators.saturating_add(1);
+                        // A non-leading dot-group must be exactly three
+                        // digits to count as thousands grouping.
+                        if dot_count >= 1 && group_digits != 3 {
+                            dot_groups_are_thousands = false;
+                        }
+                        dot_count = dot_count.saturating_add(1);
+                    } else if dot_count >= 1 {
+                        // A comma / space mixed into a dotted run breaks
+                        // clean grouping — treat the token as a reference.
+                        dot_groups_are_thousands = false;
                     }
+                    group_digits = 0;
                     last_was_digit = false;
                     continue;
                 }
@@ -526,12 +552,18 @@ fn scan_numeric_token(sentence: &str, start: usize) -> NumericToken {
         }
     }
 
+    // The trailing group (after the last dot) must also be a triple.
+    if dot_count >= 1 && group_digits != 3 {
+        dot_groups_are_thousands = false;
+    }
+    let is_dotted_reference = dot_count >= 2 && !dot_groups_are_thousands;
+
     NumericToken {
         end,
         digits,
         value,
         had_separator,
-        dot_separators,
+        is_dotted_reference,
     }
 }
 
@@ -759,6 +791,18 @@ mod tests {
             );
             assert!(diags.is_empty(), "{refnum} flagged: {diags:?}");
         }
+    }
+
+    #[test]
+    fn dot_grouped_thousands_still_flagged() {
+        // Guard the dotted-ref skip against false negatives: `.` used
+        // as a three-digit thousands separator is a real quantity and
+        // must still fire (Gemini review on PR #77).
+        let diags = lint_en(
+            "The total reached 1.000.000 in the latest count.",
+            Profile::Public,
+        );
+        assert_eq!(diags.len(), 1, "got {diags:?}");
     }
 
     #[test]
