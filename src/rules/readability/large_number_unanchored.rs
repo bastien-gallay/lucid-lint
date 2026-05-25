@@ -421,6 +421,14 @@ fn first_unanchored_candidate(
                 i = token.end;
                 continue;
             }
+            // Skip dotted references: a quantity carries at most one
+            // decimal point, so two or more `.` separators mark a
+            // version / criterion / section number (`9.1.4.11`,
+            // `10.1.1`), not a magnitude.
+            if token.dot_separators >= 2 {
+                i = token.end;
+                continue;
+            }
             // Skip figure-ref-preceded digits.
             if preceded_by_figure_ref(sentence, i, lookups.figure_refs) {
                 i = token.end;
@@ -468,6 +476,11 @@ struct NumericToken {
     /// True when the token contained at least one inter-digit
     /// separator — used to gate the year-shape skip.
     had_separator: bool,
+    /// Count of `.` separators collapsed between digits. A genuine
+    /// quantity carries at most one decimal point; two or more dots
+    /// (`9.1.4.11`, `10.1.1`) mark a version / criterion / section
+    /// reference, which the caller skips rather than flagging.
+    dot_separators: u32,
 }
 
 /// Greedy scan of a numeric token starting at `start` (which must
@@ -478,6 +491,7 @@ fn scan_numeric_token(sentence: &str, start: usize) -> NumericToken {
     let mut digits: u32 = 0;
     let mut value: u64 = 0;
     let mut had_separator = false;
+    let mut dot_separators: u32 = 0;
     let mut end = start;
     let mut chars = sentence[start..].char_indices().peekable();
     let mut last_was_digit = false;
@@ -499,6 +513,9 @@ fn scan_numeric_token(sentence: &str, start: usize) -> NumericToken {
             if let Some(&(_, next)) = chars.peek() {
                 if next.is_ascii_digit() {
                     had_separator = true;
+                    if ch == '.' {
+                        dot_separators = dot_separators.saturating_add(1);
+                    }
                     last_was_digit = false;
                     continue;
                 }
@@ -514,6 +531,7 @@ fn scan_numeric_token(sentence: &str, start: usize) -> NumericToken {
         digits,
         value,
         had_separator,
+        dot_separators,
     }
 }
 
@@ -557,7 +575,14 @@ fn is_magnitude_word(word: &str, magnitudes: &[&str]) -> bool {
 /// before `digit_offset`, separated only by whitespace or punctuation
 /// commonly seen between a ref label and its number (`.`, `:`, `°`).
 fn preceded_by_figure_ref(sentence: &str, digit_offset: usize, figure_refs: &[&str]) -> bool {
-    let lookback_start = digit_offset.saturating_sub(FIGURE_REF_LOOKBACK_BYTES);
+    let mut lookback_start = digit_offset.saturating_sub(FIGURE_REF_LOOKBACK_BYTES);
+    // Subtracting a fixed byte count can land mid-codepoint on non-ASCII
+    // prose (e.g. inside an `é`); snap forward to the next char boundary
+    // so the slice below never panics. Worst case the lookback window is
+    // a few bytes shorter, which can't change a whole-word ref match.
+    while lookback_start < digit_offset && !sentence.is_char_boundary(lookback_start) {
+        lookback_start += 1;
+    }
     // Walk backward through whitespace / connector chars to find the
     // first preceding word (or symbol).
     let prefix = &sentence[lookback_start..digit_offset];
@@ -705,6 +730,43 @@ mod tests {
         assert_eq!(Config::for_profile(Profile::DevDoc).min_value, 100_000);
         assert_eq!(Config::for_profile(Profile::Public).min_value, 10_000);
         assert_eq!(Config::for_profile(Profile::Falc).min_value, 1_000);
+    }
+
+    #[test]
+    fn no_panic_on_multibyte_in_figure_ref_lookback() {
+        // Regression: the figure-ref lookback subtracts a fixed 16
+        // bytes (`FIGURE_REF_LOOKBACK_BYTES`) from the digit offset; on
+        // accented prose that offset could land mid-`é` and panic on a
+        // non-char-boundary slice. Construct the worst case precisely:
+        // a leading `é` (2 bytes) followed by 15 ASCII bytes puts the
+        // digit at byte 17, so `digit_offset - 16 == 1` — the `é`
+        // continuation byte. Must scan without panicking.
+        let text = format!("é{}12345 dans le texte.", "x".repeat(15));
+        let diags = lint_fr(&text, Profile::Public);
+        // The bare 5-digit numeral is unanchored, so it still fires;
+        // the point of the test is that the scan does not panic.
+        assert_eq!(diags.len(), 1, "got {diags:?}");
+    }
+
+    #[test]
+    fn dotted_reference_numbers_are_not_flagged() {
+        // Regression: `9.1.4.11` collapsed into the spurious 5-digit
+        // numeral `91411`. Multi-dot tokens are references, not numbers.
+        for refnum in ["9.1.4.11", "10.1.1", "1.2.3.4.5"] {
+            let diags = lint_en(
+                &format!("See criterion {refnum} for the contrast rule."),
+                Profile::Public,
+            );
+            assert!(diags.is_empty(), "{refnum} flagged: {diags:?}");
+        }
+    }
+
+    #[test]
+    fn single_decimal_large_number_still_flagged() {
+        // Guard the fix doesn't over-skip: one decimal point is a
+        // genuine quantity and must still fire when unanchored.
+        let diags = lint_en("The figure was 12345.67 in the report.", Profile::Public);
+        assert_eq!(diags.len(), 1, "got {diags:?}");
     }
 
     // -------- numeric candidate detection --------
