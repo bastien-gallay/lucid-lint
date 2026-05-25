@@ -72,7 +72,7 @@ jobs:
         if: needs.changes.outputs.rust == 'true' || github.event_name == 'schedule'
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@68bde559dea0fdcac2102bfdf6230c5f70eb485e # v4.35.4
+        uses: github/codeql-action/init@7211b7c8077ea37d8641b6271f6a365a22a5fbfa # v4.36.0
         if: needs.changes.outputs.rust == 'true' || github.event_name == 'schedule'
         with:
           languages: rust
@@ -81,11 +81,11 @@ jobs:
       - name: Autobuild
         # CodeQL's autobuilder runs `cargo build` for Rust. Explicit
         # build steps would only matter for non-default targets.
-        uses: github/codeql-action/autobuild@68bde559dea0fdcac2102bfdf6230c5f70eb485e # v4.35.4
+        uses: github/codeql-action/autobuild@7211b7c8077ea37d8641b6271f6a365a22a5fbfa # v4.36.0
         if: needs.changes.outputs.rust == 'true' || github.event_name == 'schedule'
 
       - name: Perform analysis
-        uses: github/codeql-action/analyze@68bde559dea0fdcac2102bfdf6230c5f70eb485e # v4.35.4
+        uses: github/codeql-action/analyze@7211b7c8077ea37d8641b6271f6a365a22a5fbfa # v4.36.0
         if: needs.changes.outputs.rust == 'true' || github.event_name == 'schedule'
         with:
           category: "/language:rust"
