@@ -209,8 +209,18 @@ jobs:
         # because the upstream crate isn't published with prebuilt
         # binaries.
         id: install
+        # The downloader script is pinned to actionlint's v1.7.7 commit SHA
+        # (immutable) and its content verified against a known sha256 before
+        # execution, so we never `curl | bash` an unverified remote script
+        # (OpenSSF Scorecard Pinned-Dependencies).
+        env:
+          ACTIONLINT_SHA: 03d0035246f3e81f36aed592ffb4bebf33a03106 # v1.7.7
+          DOWNLOADER_SHA256: 221d1d16c03e4e4fcd867de34104e8d479bdce20ccdfa553b9a5c0dc29bf6af2
         run: |
-          bash <(curl -fsSL https://raw.githubusercontent.com/rhysd/actionlint/v1.7.7/scripts/download-actionlint.bash) 1.7.7
+          curl -fsSL -o download-actionlint.bash \
+            "https://raw.githubusercontent.com/rhysd/actionlint/${ACTIONLINT_SHA}/scripts/download-actionlint.bash"
+          echo "${DOWNLOADER_SHA256}  download-actionlint.bash" | sha256sum --check --status
+          bash download-actionlint.bash 1.7.7
           echo "path=$(pwd)/actionlint" >> "$GITHUB_OUTPUT"
       - name: Run actionlint
         run: ${{ steps.install.outputs.path }} -color
