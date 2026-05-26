@@ -29,27 +29,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  changes:
-    name: Detect changes
-    runs-on: ubuntu-latest
-    outputs:
-      rust: ${{ steps.filter.outputs.rust }}
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4.0.1
-        id: filter
-        with:
-          filters: |
-            rust:
-              - 'src/**/*.rs'
-              - 'tests/**/*.rs'
-              - 'Cargo.toml'
-              - 'Cargo.lock'
-              - 'rust-toolchain.toml'
-
   analyze:
     name: Analyze (Rust)
-    needs: changes
+    # Runs on every push/PR to main (no path gate) so SAST covers all
+    # commits on the default branch — OpenSSF Scorecard's SAST check
+    # measures the fraction of commits scanned, and a `paths-filter`
+    # gate left doc/chore commits unscanned.
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -59,21 +44,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        if: needs.changes.outputs.rust == 'true' || github.event_name == 'schedule'
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9 # master (no semver tags upstream)
-        if: needs.changes.outputs.rust == 'true' || github.event_name == 'schedule'
         with:
           toolchain: stable
 
       - name: Cache cargo
         uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2.9.1
-        if: needs.changes.outputs.rust == 'true' || github.event_name == 'schedule'
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@7211b7c8077ea37d8641b6271f6a365a22a5fbfa # v4.36.0
-        if: needs.changes.outputs.rust == 'true' || github.event_name == 'schedule'
         with:
           languages: rust
           queries: security-and-quality
@@ -82,10 +63,8 @@ jobs:
         # CodeQL's autobuilder runs `cargo build` for Rust. Explicit
         # build steps would only matter for non-default targets.
         uses: github/codeql-action/autobuild@7211b7c8077ea37d8641b6271f6a365a22a5fbfa # v4.36.0
-        if: needs.changes.outputs.rust == 'true' || github.event_name == 'schedule'
 
       - name: Perform analysis
         uses: github/codeql-action/analyze@7211b7c8077ea37d8641b6271f6a365a22a5fbfa # v4.36.0
-        if: needs.changes.outputs.rust == 'true' || github.event_name == 'schedule'
         with:
           category: "/language:rust"
