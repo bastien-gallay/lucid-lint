@@ -1,10 +1,9 @@
 ---
 source: src/rules/lexicon/homophone_density.rs
-assertion_line: 413
 expression: diags
 ---
 - rule_id: lexicon.homophone-density
-  severity: warning
+  severity: info
   location:
     file: "<input>"
     line: 1

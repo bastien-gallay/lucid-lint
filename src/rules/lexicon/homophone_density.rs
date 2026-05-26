@@ -190,7 +190,15 @@ fn build_diagnostic(
     let message = format!(
         "Paragraph density of homophones is {density:.1}% ({hits} of {total} content words{example_clause}); maximum {max:.1}%. Dense homophone runs raise the phonological-decoding load for dyslexic and aphasic readers; rephrase to disambiguate."
     );
-    Diagnostic::new(HomophoneDensity::ID, Severity::Warning, location, message)
+    // `Info`, not `Warning`: the rule flags that a paragraph *contains*
+    // many homophones, not that any specific one is misused. The
+    // pre-flip dogfood pass on `examples/public/` (2026-05-26) showed
+    // the density is dominated by unavoidable function words (`to`,
+    // `your`, `their`) and fires on deliberately-good prose, so a
+    // CI-failing `Warning` would be a false-positive magnet. Until the
+    // rule can reason about *which* homophone is contextually wrong
+    // (see F-homophone-context-precision), it stays an advisory signal.
+    Diagnostic::new(HomophoneDensity::ID, Severity::Info, location, message)
 }
 
 #[cfg(test)]
@@ -280,7 +288,9 @@ mod tests {
         let diags = lint(text, Profile::Public, Language::En);
         assert_eq!(diags.len(), 1);
         assert_eq!(diags[0].rule_id, HomophoneDensity::ID);
-        assert_eq!(diags[0].severity, Severity::Warning);
+        // Advisory severity: the rule flags homophone *density*, not a
+        // confirmed misuse, so it must not fail CI (see build_diagnostic).
+        assert_eq!(diags[0].severity, Severity::Info);
         assert!(diags[0].message.contains("homophones"));
         assert!(diags[0].message.contains("maximum 5.0%"));
     }
