@@ -289,7 +289,7 @@ mod tests {
         assert_eq!(diags.len(), 1);
         assert_eq!(diags[0].rule_id, HomophoneDensity::ID);
         // Advisory severity: the rule flags homophone *density*, not a
-        // confirmed misuse, so it must not fail CI (see `make_diagnostic`).
+        // confirmed misuse, so it must not fail CI (see build_diagnostic).
         assert_eq!(diags[0].severity, Severity::Info);
         assert!(diags[0].message.contains("homophones"));
         assert!(diags[0].message.contains("maximum 5.0%"));
