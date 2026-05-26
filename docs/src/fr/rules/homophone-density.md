@@ -21,7 +21,7 @@ Les paragraphes dont la part d'homophones — des mots qui se prononcent pareil 
 | | |
 |---|---|
 | **Catégorie** | `lexicon` |
-| **Sévérité par défaut** | `warning` |
+| **Sévérité par défaut** | `info` |
 | **Poids par défaut** | `1` |
 | **Statut** | `experimental` (v0.2.x) → `stable` au tag v0.3 |
 | **Tags de condition** | `dyslexia`, `aphasia` (gouvernés ; ne s'exécute qu'avec `--conditions` correspondant) |
@@ -60,7 +60,7 @@ max_density_percent = 4.0
 Ce que `lucid-lint check --profile public --experimental lexicon.homophone-density --conditions dyslexia` rapporte :
 
 ```text
-warning input.md:1:1 Paragraph density of homophones is 21.2% (7 of 33 content words (e.g. their, there)); maximum 5.0%. Dense homophone runs raise the phonological-decoding load for dyslexic and aphasic readers; rephrase to disambiguate. [lexicon.homophone-density]
+info input.md:1:1 Paragraph density of homophones is 21.2% (7 of 33 content words (e.g. their, there)); maximum 5.0%. Dense homophone runs raise the phonological-decoding load for dyslexic and aphasic readers; rephrase to disambiguate. [lexicon.homophone-density]
 ```
 
 **Après** (réécriture proposée) :
@@ -78,7 +78,7 @@ La réécriture remplace `their` / `there` / `to` / `too` / `two` par des tournu
 Ce que `lucid-lint check --profile public --experimental lexicon.homophone-density --conditions dyslexia` rapporte :
 
 ```text
-warning input.md:1:1 Paragraph density of homophones is 11.8% (4 of 34 content words (e.g. cours, foie)); maximum 5.0%. Dense homophone runs raise the phonological-decoding load for dyslexic and aphasic readers; rephrase to disambiguate. [lexicon.homophone-density]
+info input.md:1:1 Paragraph density of homophones is 11.8% (4 of 34 content words (e.g. cours, foie)); maximum 5.0%. Dense homophone runs raise the phonological-decoding load for dyslexic and aphasic readers; rephrase to disambiguate. [lexicon.homophone-density]
 ```
 
 **Après** (réécriture proposée) :
