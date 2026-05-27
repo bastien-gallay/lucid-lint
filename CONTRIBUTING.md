@@ -209,7 +209,7 @@ Before opening a PR:
 
 - **Default: don't split** — keep one ROADMAP row with a checklist.
 - Split only when sub-items ship on independent timelines, get cited from elsewhere, or get prioritised differently in MoSCoW.
-- When a split is warranted, coin sub-slugs as `<parent-slug>-<descriptor>` (e.g. `F-fix-mode-redundant-intensifier` under `F-fix-mode`). The parent stays as the umbrella narrative entry with cross-refs to children; each child gets its own `<a id="f-…">` anchor and the standard surface contract (ROADMAP row + CHANGELOG entry on land).
+- When a split is warranted, coin sub-slugs as `<parent-slug>-<descriptor>` (e.g. `F-fix-mode-redundant-intensifier` under `F-fix-mode`). The parent stays as the umbrella narrative entry with cross-refs to children; each child gets its own `<a id="f-<sub-slug>"></a>` anchor and the standard surface contract (ROADMAP row + CHANGELOG entry on land).
 - Legacy numeric splits (`F35a` / `F35b` / `F78b` / `F105b`) are grandfathered — the letter-suffix form is closed for new entries.
 
 Regenerating the artifact is a release-prep step — see [Maintainer release prep](#maintainer-release-prep).
