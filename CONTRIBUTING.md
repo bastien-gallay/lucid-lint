@@ -192,9 +192,31 @@ Before opening a PR:
 - Feedback is meant to improve the contribution, not criticize the contributor.
 - Once approved, a maintainer merges. Squash-merge is the default.
 
+## Roadmap conventions
+
+`ROADMAP.md` is a **generated artifact** — never edit it by hand. The source of truth lives under `.roadmap/` (gitignored; symlinked to the maintainer's `.personal/` repo): one Markdown file per feature in `.roadmap/features/<slug>.md`, plus a `config.toml` defining the version-bucket order. See the [design decision](docs/src/architecture/design-decisions.md) and the [F-roadmap-toml-source](ROADMAP.md#f-roadmap-toml-source) row for *why* the file is generated.
+
+### Feature IDs
+
+- New entries use `F-<kebab-slug>` (e.g. `F-roadmap-slug-ids`).
+- Slugs are coined locally — **no central counter, no reservation**.
+- Uniqueness is enforced by [`tests/roadmap_id_uniqueness.rs`](tests/roadmap_id_uniqueness.rs) (runs offline in `cargo test`, re-runs in CI as a backstop).
+- Each ID gets an HTML anchor on first definition: `<a id="f-<slug>"></a>`.
+- The `F-` prefix is **optional** in branch names and commit subjects — prefer plain `feat/<slug>` for branches and Conventional-Commit scope syntax (`feat(parser): …`) for commits.
+- Legacy `F<number>` IDs (F1–F146) are unchanged.
+
+### Splitting a feature into sub-features
+
+- **Default: don't split** — keep one ROADMAP row with a checklist.
+- Split only when sub-items ship on independent timelines, get cited from elsewhere, or get prioritised differently in MoSCoW.
+- When a split is warranted, coin sub-slugs as `<parent-slug>-<descriptor>` (e.g. `F-fix-mode-redundant-intensifier` under `F-fix-mode`). The parent stays as the umbrella narrative entry with cross-refs to children; each child gets its own `<a id="f-<sub-slug>"></a>` anchor and the standard surface contract (ROADMAP row + CHANGELOG entry on land).
+- Legacy numeric splits (`F35a` / `F35b` / `F78b` / `F105b`) are grandfathered — the letter-suffix form is closed for new entries.
+
+Regenerating the artifact is a release-prep step — see [Maintainer release prep](#maintainer-release-prep).
+
 ## Maintainer release prep
 
-`ROADMAP.md` is a generated artifact — see the [design decision](docs/src/architecture/design-decisions.md) and the [F-roadmap-toml-source](ROADMAP.md#f-roadmap-toml-source) row. The source-of-truth lives under `.roadmap/` (gitignored; symlinked to the maintainer's `.personal/` repo).
+`ROADMAP.md` is regenerated only at release-prep time (source layout and ID rules: [Roadmap conventions](#roadmap-conventions)).
 
 On the **release-prep PR** (the one that bumps `Cargo.toml` and CHANGELOG ahead of a tag), regenerate the artifact and commit it with the prep changes:
 
