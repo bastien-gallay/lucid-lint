@@ -18,7 +18,7 @@ Paragraphs whose share of homophones — words that sound alike but spell differ
 | | |
 |---|---|
 | **Category** | `lexicon` |
-| **Default severity** | `warning` |
+| **Default severity** | `info` |
 | **Default weight** | `1` |
 | **Status** | `experimental` (v0.2.x) → `stable` at v0.3 cut |
 | **Condition tags** | `dyslexia`, `aphasia` (gated; runs only under matching `--conditions`) |
@@ -57,7 +57,7 @@ max_density_percent = 4.0
 What `lucid-lint check --profile public --experimental lexicon.homophone-density --conditions dyslexia` reports:
 
 ```text
-warning input.md:1:1 Paragraph density of homophones is 21.2% (7 of 33 content words (e.g. their, there)); maximum 5.0%. Dense homophone runs raise the phonological-decoding load for dyslexic and aphasic readers; rephrase to disambiguate. [lexicon.homophone-density]
+info input.md:1:1 Paragraph density of homophones is 21.2% (7 of 33 content words (e.g. their, there)); maximum 5.0%. Dense homophone runs raise the phonological-decoding load for dyslexic and aphasic readers; rephrase to disambiguate. [lexicon.homophone-density]
 ```
 
 **After** (your rewrite):
@@ -75,7 +75,7 @@ The rephrase swaps `their` / `there` / `to` / `too` / `two` for context-anchored
 What `lucid-lint check --profile public --experimental lexicon.homophone-density --conditions dyslexia` reports:
 
 ```text
-warning input.md:1:1 Paragraph density of homophones is 11.8% (4 of 34 content words (e.g. cours, foie)); maximum 5.0%. Dense homophone runs raise the phonological-decoding load for dyslexic and aphasic readers; rephrase to disambiguate. [lexicon.homophone-density]
+info input.md:1:1 Paragraph density of homophones is 11.8% (4 of 34 content words (e.g. cours, foie)); maximum 5.0%. Dense homophone runs raise the phonological-decoding load for dyslexic and aphasic readers; rephrase to disambiguate. [lexicon.homophone-density]
 ```
 
 **After** (your rewrite):
