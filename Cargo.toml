@@ -55,7 +55,7 @@ toml = "1.1"
 
 # Parsing
 pulldown-cmark = { version = "0.13", default-features = false }
-unicode-segmentation = "1.12"
+unicode-segmentation = "1.13"
 unicode-normalization = "0.1"
 
 # Path matching
