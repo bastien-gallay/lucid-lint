@@ -17,3 +17,6 @@ https://psycnet\.apa\.org/
 
 # EU Publications Office — rate-limited, returns 403 from CI.
 https://op\.europa\.eu/
+
+# CDC — bot-blocks the CI runner (403 Forbidden), link resolves in a browser.
+https://www\.cdc\.gov/ccindex/
