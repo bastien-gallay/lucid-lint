@@ -1,4 +1,4 @@
-<!-- en-source-sha: a3e9313b09cbd0cb92944f71695df4f1f8ac27dd -->
+<!-- en-source-sha: dfbecadb7f4f44af332d00514172975a924181cc -->
 # `lexicon.weasel-words`
 
 *Mots évasifs.*
