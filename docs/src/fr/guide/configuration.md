@@ -142,3 +142,42 @@ max_commas = 2
 Surcharge le plafond de virgules par phrase (défaut : 4 / 3 / 2 pour `dev-doc` / `public` / `falc`). La valeur doit être un entier positif — `0` ou une valeur négative est refusée au chargement. La surcharge remplace le préréglage du profil ; elle n'est pas additive.
 
 Les tables pour les autres règles se lisent sans erreur, mais n'ont pas d'effet à l'exécution. Étendre cette liste est un changement mécanique par règle, qui se poursuivra pendant le cycle v0.2.x.
+
+## Restreindre l'audit avec `--severity-floor`
+
+`--severity-floor` est une option de la ligne de commande (pas une clé
+de configuration) qui écarte les diagnostics en dessous d'une gravité
+choisie de **toutes** les sorties — `tty`, `json` et `sarif` — ainsi
+que du score. Elle accepte `info` (défaut), `warning` ou `error`. Le
+filtre s'applique après l'exécution de toutes les règles mais avant le
+calcul du score : les diagnostics écartés ne comptent donc pas dans le
+score, et la barrière `--min-score` voit le même ensemble filtré.
+
+```console
+lucid-lint check --severity-floor=warning chemin/vers/docs
+```
+
+- `info` (défaut) — tout garder. Identique au comportement d'avant
+  l'option ; sans valeur, l'option est sans effet.
+- `warning` — écarter les diagnostics `info` (signaux d'observabilité
+  comme `readability.score`), garder `warning` et au-dessus.
+- `error` — ne garder que les diagnostics `error`.
+
+**Exemple concret — un audit ciblé sur le dépôt de quelqu'un d'autre.**
+Vous relisez un dépôt qui ne vous appartient pas et voulez une passe à
+fort signal : uniquement les diagnostics sur lesquels agir, rien qui
+ressemblerait à du bruit dans vos notes de relecture. Relevez le seuil
+à `warning` et produisez du JSON pour l'outillage :
+
+```console
+lucid-lint check --severity-floor=warning --format=json chemin/vers/leur-depot/docs
+```
+
+Comme le seuil s'applique avant le calcul du score, le score que vous
+rapportez ne reflète que les constats de gravité `warning` et
+au-dessus — la ligne `readability.score` de niveau `info` ne le gonfle
+ni ne le diminue jamais. Combinez-le avec `--min-score` pour verrouiller
+la relecture sur cette même vue restreinte. Contrairement à `[[ignore]]`,
+le seuil ne nécessite aucun fichier de configuration : il convient donc
+parfaitement à un audit ponctuel d'un dépôt dont vous préférez ne pas
+toucher le `lucid-lint.toml`.

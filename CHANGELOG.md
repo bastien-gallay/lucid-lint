@@ -34,6 +34,15 @@ and [`RULES.md` — Rule lifecycle and SemVer](RULES.md#rule-lifecycle-and-semve
 
 ### Added
 
+- **[2026-07-10] F-severity-floor-flag — `--severity-floor` CLI
+  flag.** New `check` option accepting `info` (default), `warning`, or
+  `error`. Drops diagnostics below the chosen severity from every
+  output surface (`tty` / `json` / `sarif`) and from the score. The
+  filter runs post-rule, pre-scoring — mirroring the `[[ignore]]`
+  (F19) code path — so dropped diagnostics do not count toward the
+  score and `--min-score` sees the same filtered set. Default `info`
+  is a no-op, preserving pre-flag behaviour. Useful for a narrow,
+  high-signal audit of a repo you do not own, with no config file.
 - **[2026-05-04] F57 — `syntax.parenthetical-depth` (experimental,
   cohort sibling of F49).** New rule that flags sentences whose
   maximum balanced-bracket nesting depth across `()` and `[]`

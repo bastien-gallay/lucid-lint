@@ -168,3 +168,40 @@ max_commas = 2
 Overrides the per-sentence comma ceiling (default: 4 / 3 / 2 for `dev-doc` / `public` / `falc`). Must be a positive integer — `0` or negative values are rejected at load time. The override replaces the profile preset; it is not additive.
 
 Tables for other rules parse without error but have no runtime effect. Extending this list is a mechanical per-rule change and will continue through the v0.2.x cycle.
+
+## Narrowing the audit with `--severity-floor`
+
+`--severity-floor` is a CLI flag (not a config key) that drops
+diagnostics below a chosen severity from **every** output surface —
+`tty`, `json`, and `sarif` — and from the score. It accepts `info`
+(default), `warning`, or `error`. The filter runs after all rules but
+before scoring, so dropped diagnostics do not count toward the score
+and the `--min-score` gate sees the same filtered set.
+
+```console
+lucid-lint check --severity-floor=warning path/to/docs
+```
+
+- `info` (default) — keep everything. Identical to the pre-flag
+  behaviour; the flag is a no-op when unset.
+- `warning` — drop `info` diagnostics (observability signals like
+  `readability.score`), keep `warning` and above.
+- `error` — keep only `error` diagnostics.
+
+**Worked example — a narrow audit on someone else's repo.** You are
+reviewing a repository you do not own and want a high-signal pass:
+only the diagnostics worth acting on, nothing that would look like
+noise in your review notes. Raise the floor to `warning` and emit
+JSON for tooling:
+
+```console
+lucid-lint check --severity-floor=warning --format=json path/to/their-repo/docs
+```
+
+Because the floor is applied before scoring, the score you report
+reflects only the warning-and-above findings — the info-level
+`readability.score` line never inflates or deflates it. Pair it with
+`--min-score` to gate the review on that same narrowed view. Unlike
+`[[ignore]]`, the floor needs no config file, so it is well suited to
+a one-off audit of a repo whose `lucid-lint.toml` you would rather not
+touch.
