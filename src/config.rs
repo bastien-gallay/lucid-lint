@@ -163,10 +163,7 @@ impl Config {
             if current.join(".git").exists() {
                 return None;
             }
-            match current.parent() {
-                Some(parent) => current = parent,
-                None => return None,
-            }
+            current = current.parent()?;
         }
     }
 
