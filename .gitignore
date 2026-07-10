@@ -50,6 +50,9 @@ GEMINI.md
 # Python (scripts/)
 __pycache__/
 *.pyc
+# uv lockfile for the dev scripts — pyproject.toml is tracked, but the
+# lock regenerates on every `uv`/`uvx` run and we don't pin script deps.
+uv.lock
 
 # Local-only scratch space (see examples/local/README.md)
 /examples/local/*
