@@ -34,6 +34,12 @@ and [`RULES.md` — Rule lifecycle and SemVer](RULES.md#rule-lifecycle-and-semve
 
 ### Added
 
+- **[2026-07-10] F-repo-discoverability-polish — docs badge and social
+  preview card.** Added a `docs / mdBook` badge to the README top badge
+  row linking to the published mdBook site, and a 1280×640
+  brand-card social-preview asset (`assets/social-preview.png`, source
+  `assets/social-preview.svg`) for GitHub link unfurls.
+
 - **[2026-05-04] F57 — `syntax.parenthetical-depth` (experimental,
   cohort sibling of F49).** New rule that flags sentences whose
   maximum balanced-bracket nesting depth across `()` and `[]`

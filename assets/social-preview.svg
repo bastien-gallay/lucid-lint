@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640" role="img" aria-label="lucid-lint — a cognitive accessibility linter for prose, bilingual EN/FR">
+  <title>lucid-lint social preview</title>
+  <desc>Brand card: a messy wave passing through an aurora lens and exiting as a clean line, above the wordmark "lucid-lint" and its tagline, on warm off-white paper.</desc>
+
+  <defs>
+    <linearGradient id="aurora" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2E5EAA"/>
+      <stop offset="100%" stop-color="#8B5FBF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Paper background (warm off-white) -->
+  <rect x="0" y="0" width="1280" height="640" fill="#FAFAF7"/>
+
+  <!-- Safe zone begins ~54px from each edge (>40pt). All content within. -->
+
+  <!-- Lens metaphor: messy wave -> lens -> clean line. Centered horizon at y=232. -->
+  <!-- Messy "before" wave on the left -->
+  <path d="M 210 232 Q 246 196, 282 232 T 354 232 T 426 232 T 498 232"
+        fill="none" stroke="#6B7280" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- Aurora lens -->
+  <circle cx="640" cy="232" r="72"
+          fill="none" stroke="url(#aurora)" stroke-width="12"/>
+
+  <!-- Focal dot -->
+  <circle cx="640" cy="232" r="10" fill="#8B5FBF"/>
+
+  <!-- Clean "after" line on the right -->
+  <line x1="728" y1="232" x2="1070" y2="232"
+        stroke="#1A1D24" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- Wordmark -->
+  <text x="640" y="452"
+        text-anchor="middle"
+        font-family="'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', 'Helvetica Neue', Arial, sans-serif"
+        font-size="104"
+        font-weight="700"
+        letter-spacing="-2"
+        fill="#1A1D24">lucid-lint</text>
+
+  <!-- Tagline -->
+  <text x="640" y="522"
+        text-anchor="middle"
+        font-family="'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', 'Helvetica Neue', Arial, sans-serif"
+        font-size="34"
+        font-weight="400"
+        fill="#2E5EAA">A cognitive accessibility linter for prose</text>
+
+  <!-- Sub-tagline -->
+  <text x="640" y="568"
+        text-anchor="middle"
+        font-family="'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', 'Helvetica Neue', Arial, sans-serif"
+        font-size="27"
+        font-weight="400"
+        fill="#6B7280">Bilingual EN / FR &#183; built on cognitive load research</text>
+</svg>
