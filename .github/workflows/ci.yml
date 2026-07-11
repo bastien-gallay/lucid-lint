@@ -243,10 +243,11 @@ jobs:
     name: Spell check (typos)
     needs: changes
     if: needs.changes.outputs.prose == 'true' || needs.changes.outputs.infra == 'true'
-    # Signal, not a gate: a typo should surface as a red annotation on the PR
-    # but never block a merge. Excluded from `ci-success`; `continue-on-error`
-    # keeps the workflow run green so branch protection is unaffected.
-    continue-on-error: true
+    # Signal, not a gate. A typo fails this job (visible red check) but never
+    # blocks a merge, because branch protection requires only `ci-success` and
+    # this job is deliberately excluded from its `needs`. We do NOT use
+    # `continue-on-error` here: that can render the check green and hide the
+    # signal — a plain non-required failing job is the reliably-visible one.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -260,10 +261,11 @@ jobs:
     needs: changes
     if: needs.changes.outputs.docs == 'true' || needs.changes.outputs.infra == 'true'
     # Signal, not a gate: link rot is time-based, not caused by the PR, and even
-    # with retry (F-lychee-retry) a host can be down. A broken link shows as a
-    # red annotation but never blocks a merge. Excluded from `ci-success`;
-    # `continue-on-error` keeps the workflow run green.
-    continue-on-error: true
+    # with retry (F-lychee-retry) a host can be down. A broken link fails this
+    # job (visible red check) but never blocks a merge — branch protection
+    # requires only `ci-success`, from which this job is excluded. No
+    # `continue-on-error` (it can hide the failure as green); a plain
+    # non-required failing job is the reliably-visible signal.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0

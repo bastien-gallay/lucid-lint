@@ -200,12 +200,14 @@ passes only when every real gate (format, clippy, Ubuntu tests, MSRV, docs,
 jobs without editing branch protection, which matches required checks by exact
 name.
 
-Some checks are **signals, not gates** — they can show a red annotation on a PR
-but never block a merge:
+Some checks are **signals, not gates** — they run on the PR and show a red check
+if they fail, but never block a merge, because branch protection requires only
+`CI success` and these jobs are excluded from it (they are *not* required
+checks):
 
-- **Spell check (typos)** and **Link check (lychee)** — `continue-on-error`;
-  fix the annotation when it's a real typo or a genuinely broken internal link,
-  otherwise it's noise (external rot, a flaky host).
+- **Spell check (typos)** and **Link check (lychee)** — a failure is a visible
+  red check you can merge past. Fix it when it's a real typo or a genuinely
+  broken internal link; otherwise it's noise (external rot, a flaky host).
 - **Cross-platform tests (macOS/Windows)** run only *after* merge on `main` and
   on `release/*` branches — never on PRs. A red run there flags a platform
   regression to the maintainer without slowing PRs.

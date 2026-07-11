@@ -840,8 +840,9 @@ and [`RULES.md` — Rule lifecycle and SemVer](RULES.md#rule-lifecycle-and-semve
   and `release/*` branches, never on PRs. **CodeQL** drops its `pull_request` trigger
   (kept on `main` + weekly cron) so the slow SAST build never gates a PR;
   Scorecard's default-branch SAST coverage is unaffected. **Spell check
-  (typos)** and **Link check (lychee)** are now `continue-on-error` signals —
-  visible but non-blocking. A new weekly **`link-health.yml`** cron sweeps
+  (typos)** and **Link check (lychee)** are now non-required signal checks —
+  they show a visible red check on failure but are excluded from `CI success`,
+  so they never block a merge. A new weekly **`link-health.yml`** cron sweeps
   external links for rot independently of any PR. Push→main and release-tag runs
   are no longer cancelled by newer runs (`cancel-in-progress` now applies to
   PRs only).
