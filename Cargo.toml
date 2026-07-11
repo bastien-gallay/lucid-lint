@@ -1,3 +1,8 @@
+# Single-package repo, but an explicit (empty) `[workspace]` table is kept
+# so the `[workspace.metadata.dist]` config below is unambiguously parsed by
+# Cargo and cargo-dist. Members default to the root package.
+[workspace]
+
 [package]
 name = "lucid-lint"
 version = "0.2.3"
