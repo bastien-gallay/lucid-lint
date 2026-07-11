@@ -20,3 +20,7 @@ https://op\.europa\.eu/
 
 # CDC — bot-blocks the CI runner (403 Forbidden), link resolves in a browser.
 https://www\.cdc\.gov/ccindex/
+
+# Cambridge Core — academic host, times out from the CI runner; link
+# resolves in a browser.
+https://www\.cambridge\.org/core/
