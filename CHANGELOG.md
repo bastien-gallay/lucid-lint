@@ -831,6 +831,21 @@ and [`RULES.md` — Rule lifecycle and SemVer](RULES.md#rule-lifecycle-and-semve
 
 ### Changed
 
+- **[2026-07-11] F-ci-restructure — faster PRs, single required gate, signal
+  checks.** CI is reorganised so a pull request runs only the fast ubuntu gates
+  and merges on one required status check, **`CI success`** (an aggregator job
+  that passes when every gate passed or was path-skipped). Renaming or adding
+  jobs no longer requires editing branch protection. Cross-platform tests
+  (macOS/Windows) split into a `cross-os` job that runs only on push to `main`
+  and `release/*` branches, never on PRs. **CodeQL** drops its `pull_request` trigger
+  (kept on `main` + weekly cron) so the slow SAST build never gates a PR;
+  Scorecard's default-branch SAST coverage is unaffected. **Spell check
+  (typos)** and **Link check (lychee)** are now non-required signal checks —
+  they show a visible red check on failure but are excluded from `CI success`,
+  so they never block a merge. A new weekly **`link-health.yml`** cron sweeps
+  external links for rot independently of any PR. Push→main and release-tag runs
+  are no longer cancelled by newer runs (`cancel-in-progress` now applies to
+  PRs only).
 - **[2026-07-10] F-weasel-words-severity-tiering — `lexicon.weasel-words`
   splits into two severity bands.** The default word lists are now sorted
   into *quantifiers* (approximate quantity or frequency — EN `some, many,

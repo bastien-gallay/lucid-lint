@@ -10,13 +10,19 @@ name: CodeQL
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
   schedule:
     # Weekly run catches drift in the query packs themselves: GitHub
     # ships new queries that may flag code that was already on main.
     - cron: '0 7 * * 1'
   workflow_dispatch:
+
+# No `pull_request` trigger by design. CodeQL's Rust extractor traces a full
+# `cargo build` (minutes; rust-cache can't shortcut extraction), so running it
+# on every PR would be the slowest gate on the board while only duplicating the
+# push→main run that lands seconds after merge. OpenSSF Scorecard's SAST check
+# measures coverage of the DEFAULT BRANCH, which push→main fully preserves — so
+# dropping the PR trigger costs no Scorecard points. CodeQL is therefore never a
+# PR gate; findings surface as code-scanning alerts on main + the weekly cron.
 
 permissions:
   contents: read
@@ -26,15 +32,19 @@ env:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # Never cancel an in-progress scan. Each push→main run is a baseline SAST
+  # scan of that commit, and Scorecard measures default-branch coverage; with
+  # the PR trigger removed there is no second run to compensate, so a cancelled
+  # run would leave a commit permanently unscanned.
+  cancel-in-progress: false
 
 jobs:
   analyze:
     name: Analyze (Rust)
-    # Runs on every push/PR to main (no path gate) so SAST covers all
-    # commits on the default branch — OpenSSF Scorecard's SAST check
-    # measures the fraction of commits scanned, and a `paths-filter`
-    # gate left doc/chore commits unscanned.
+    # Runs on every push to main (no path gate) so SAST covers all commits
+    # on the default branch — OpenSSF Scorecard's SAST check measures the
+    # fraction of default-branch commits scanned, and a `paths-filter` gate
+    # would leave doc/chore commits unscanned.
     runs-on: ubuntu-latest
     permissions:
       contents: read
