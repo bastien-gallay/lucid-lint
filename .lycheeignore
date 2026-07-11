@@ -21,18 +21,9 @@ https://op\.europa\.eu/
 # CDC — bot-blocks the CI runner (403 Forbidden), link resolves in a browser.
 https://www\.cdc\.gov/ccindex/
 
-# Vale (vale.sh) — intermittently resets the CI runner connection
-# ("Connection reset by peer"); site is live (HTTP 200 via Netlify Edge).
-https://vale\.sh/
-
-# Cambridge Core — academic host, times out from the CI runner; link
-# resolves in a browser.
-https://www\.cambridge\.org/core/
-
-# OpenSSF Scorecard viewer — our own badge target; intermittently times
-# out / resets from the CI runner. Resolves in a browser.
-https://scorecard\.dev/
-
-# CommitMono font site — intermittently resets the CI runner connection;
-# site is live in a browser.
-https://commitmono\.com/
+# NOTE: transient-flake hosts (vale.sh, cambridge.org/core, scorecard.dev,
+# commitmono.com) were removed once the lychee step gained
+# `--max-retries 3 --retry-wait-time 2 --timeout 30` (F-lychee-retry). Those
+# failures were connection resets / timeouts, which retry absorbs. Only add a
+# host back here if it returns a *deterministic* status (403/404) that retry
+# cannot fix — otherwise tune the retry/timeout args instead.
