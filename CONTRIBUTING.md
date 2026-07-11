@@ -192,6 +192,26 @@ Before opening a PR:
 - Feedback is meant to improve the contribution, not criticize the contributor.
 - Once approved, a maintainer merges. Squash-merge is the default.
 
+### Continuous integration
+
+A PR gates on a **single required check, `CI success`** — an aggregator job that
+passes only when every real gate (format, clippy, ubuntu tests, MSRV, docs,
+`cargo-deny`, actionlint) passed or was path-skipped. This lets us rename or add
+jobs without editing branch protection, which matches required checks by exact
+name.
+
+Some checks are **signals, not gates** — they can show a red annotation on a PR
+but never block a merge:
+
+- **Spell check (typos)** and **Link check (lychee)** — `continue-on-error`;
+  fix the annotation when it's a real typo or a genuinely broken internal link,
+  otherwise it's noise (external rot, a flaky host).
+- **Cross-platform tests (macOS/Windows)** run only *after* merge on `main` and
+  on release tags — never on PRs. A red run there flags a platform regression to
+  the maintainer without slowing PRs.
+- **CodeQL** (SAST) runs on `main` + weekly, never on PRs. **Coverage**
+  (Codecov) and the **dogfood** self-lint are informational.
+
 ## Roadmap conventions
 
 `ROADMAP.md` is a **generated artifact** — never edit it by hand. The source of truth lives under `.roadmap/` (gitignored; symlinked to the maintainer's `.personal/` repo): one Markdown file per feature in `.roadmap/features/<slug>.md`, plus a `config.toml` defining the version-bucket order. See the [design decision](docs/src/architecture/design-decisions.md) and the [F-roadmap-toml-source](ROADMAP.md#f-roadmap-toml-source) row for *why* the file is generated.
