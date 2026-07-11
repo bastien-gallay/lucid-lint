@@ -195,7 +195,7 @@ Before opening a PR:
 ### Continuous integration
 
 A PR gates on a **single required check, `CI success`** — an aggregator job that
-passes only when every real gate (format, clippy, ubuntu tests, MSRV, docs,
+passes only when every real gate (format, clippy, Ubuntu tests, MSRV, docs,
 `cargo-deny`, actionlint) passed or was path-skipped. This lets us rename or add
 jobs without editing branch protection, which matches required checks by exact
 name.
