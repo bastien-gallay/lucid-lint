@@ -3,6 +3,8 @@
   <title>lucid-lint</title>
   <desc>A lens flanked by a short wavy line on the left and a clean line on the right, composed as a square.</desc>
 
+  <!-- Square (128x128) logo/avatar mark. NOT the GitHub social-preview card —
+       that is the 1280x640 assets/social-preview.svg (canonical, `just regen-social`). -->
   <!-- Square social: balanced composition -->
   <!-- Wavy "before" line (shortened for square) -->
   <path d="M 16 64 Q 22 58, 28 64 T 42 64"
