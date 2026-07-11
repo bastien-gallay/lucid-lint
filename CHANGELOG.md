@@ -819,7 +819,8 @@ and [`RULES.md` — Rule lifecycle and SemVer](RULES.md#rule-lifecycle-and-semve
   Rationale: quantifiers are legitimate technical hedging, and stripping them
   all from reference prose reads as falsely precise and over-edited.
   Custom phrases (`custom_weasels_en` / `custom_weasels_fr`) default to
-  `Warning`, and per-rule TOML severity overrides still apply on top. Not a
+  `Warning`. The severity bands are fixed; to silence a diagnostic, add an
+  `[[ignore]]` entry or a `disable-next-line` comment. Not a
   lifecycle flip — the rule stays default-fire; only per-match severity
   changes. Lists split in `src/language/{en,fr}.rs`
   (`WEASEL_QUANTIFIERS` / `WEASEL_HEDGES`); routing in
