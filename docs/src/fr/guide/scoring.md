@@ -60,7 +60,7 @@ Le multiplicateur de sévérité est `info = 1`, `warning = 3`, `error = 5`.
 
 Le formateur de terminal imprime chaque diagnostic, une courte ligne de résumé, puis un bloc de score : le nombre global, suivi de chaque score de catégorie avec une barre sparkline en huit pas.
 
-![lucid-lint exécuté sur examples/sample.md — cinq diagnostics, un résumé qui compte 3 warnings et 2 info, une invite à utiliser explain, et un bloc de score qui affiche 45/100 avec des barres par catégorie pour structure, rhythm, lexicon, syntax et readability](../assets/tty/hero.gif)
+![lucid-lint exécuté sur examples/sample.md — cinq diagnostics, un résumé qui compte 3 warnings et 2 info, une invite à utiliser explain, et un bloc de score qui affiche 45/100 avec des barres par catégorie pour structure, rhythm, lexicon, syntax et readability](../../assets/tty/hero.gif)
 
 La même exécution rendue en texte brut, pour les lecteurs d'écran et le copier-coller :
 

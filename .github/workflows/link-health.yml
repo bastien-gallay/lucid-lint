@@ -35,13 +35,17 @@ jobs:
         with:
           lycheeVersion: "v0.23.0"
           # Fail the scheduled run on a broken link — that red run is the rot
-          # report. Exclusions and retry tuning mirror the PR check in `ci.yml`;
+          # report. This is the ONLY place external links are checked (the PR
+          # check in ci.yml is `--offline`). Latency is irrelevant on a weekly
+          # cron, so the retry budget is generous — 5 retries with a 10s wait
+          # over a 30s timeout — to absorb the intermittent connection resets
+          # that live-but-flaky hosts (e.g. scorecard.dev) throw at CI runners.
           # `.lycheeignore` is shared automatically.
           fail: true
           args: >-
             --no-progress
-            --max-retries 3
-            --retry-wait-time 2
+            --max-retries 5
+            --retry-wait-time 10
             --timeout 30
             --exclude 'localhost'
             --exclude 'file://'

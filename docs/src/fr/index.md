@@ -82,7 +82,7 @@ restent possibles entre versions mineures. La
 Un fichier sans diagnostic obtient le score complet 100/100 et la
 bannière du logo — le moment fort d'une analyse réussie :
 
-![Capture terminal : une analyse lucid-lint sans diagnostic, avec la bannière du logo en trois parties, le message « No issues found. », et un bloc de score 100/100 — chaque barre de catégorie pleine](./assets/tty/score-clean.gif)
+![Capture terminal : une analyse lucid-lint sans diagnostic, avec la bannière du logo en trois parties, le message « No issues found. », et un bloc de score 100/100 — chaque barre de catégorie pleine](../assets/tty/score-clean.gif)
 
 ```text
 ~~~~~ ⟨ • ⟩ ─────  lucid-lint  v0.2.0

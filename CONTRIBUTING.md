@@ -205,9 +205,14 @@ if they fail, but never block a merge, because branch protection requires only
 `CI success` and these jobs are excluded from it (they are *not* required
 checks):
 
-- **Spell check (typos)** and **Link check (lychee)** — a failure is a visible
-  red check you can merge past. Fix it when it's a real typo or a genuinely
-  broken internal link; otherwise it's noise (external rot, a flaky host).
+- **Spell check (typos)** — a failure is a visible red check you can merge past;
+  fix it when it's a real typo.
+- **Link check (internal, offline)** — runs `lychee --offline`, so it checks
+  only that local/relative link targets exist and makes no network requests. A
+  red here means a genuinely broken internal link (fix it); it can never flake
+  on a live-but-slow external host. **External** link liveness is *not* checked
+  on PRs — it's swept weekly by the `link-health.yml` cron, so external rot
+  surfaces there (one run a week) instead of on every PR.
 - **Cross-platform tests (macOS/Windows)** run only *after* merge on `main` and
   on `release/*` branches — never on PRs. A red run there flags a platform
   regression to the maintainer without slowing PRs.

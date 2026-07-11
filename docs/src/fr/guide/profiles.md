@@ -39,7 +39,7 @@ Le schéma général :
 
 Le même fichier analysé trois fois sous `dev-doc`, `public` puis `falc` — le score baisse à mesure que le profil se resserre :
 
-![Capture terminal : trois exécutions successives de lucid-lint sur examples/sample.md sous les profils dev-doc, public et falc. Le passage dev-doc remonte une poignée de diagnostics et un score moyen ; public se resserre et plus de problèmes apparaissent ; falc en signale le plus et le score chute davantage](../assets/tty/profiles.gif)
+![Capture terminal : trois exécutions successives de lucid-lint sur examples/sample.md sous les profils dev-doc, public et falc. Le passage dev-doc remonte une poignée de diagnostics et un score moyen ; public se resserre et plus de problèmes apparaissent ; falc en signale le plus et le score chute davantage](../../assets/tty/profiles.gif)
 
 ## Surcharger un profil
 
