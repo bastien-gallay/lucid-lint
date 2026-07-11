@@ -32,7 +32,11 @@ env:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # Never cancel an in-progress scan. Each push→main run is a baseline SAST
+  # scan of that commit, and Scorecard measures default-branch coverage; with
+  # the PR trigger removed there is no second run to compensate, so a cancelled
+  # run would leave a commit permanently unscanned.
+  cancel-in-progress: false
 
 jobs:
   analyze:

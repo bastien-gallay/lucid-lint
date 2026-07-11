@@ -207,8 +207,8 @@ but never block a merge:
   fix the annotation when it's a real typo or a genuinely broken internal link,
   otherwise it's noise (external rot, a flaky host).
 - **Cross-platform tests (macOS/Windows)** run only *after* merge on `main` and
-  on release tags — never on PRs. A red run there flags a platform regression to
-  the maintainer without slowing PRs.
+  on `release/*` branches — never on PRs. A red run there flags a platform
+  regression to the maintainer without slowing PRs.
 - **CodeQL** (SAST) runs on `main` + weekly, never on PRs. **Coverage**
   (Codecov) and the **dogfood** self-lint are informational.
 

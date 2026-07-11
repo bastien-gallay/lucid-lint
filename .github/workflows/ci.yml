@@ -112,24 +112,24 @@ jobs:
   cross-os:
     name: Test (${{ matrix.os }})
     needs: changes
-    # Cross-platform coverage is a post-merge signal, not a PR gate. It runs
-    # only on push→main / release branches and on release tags — never on PRs —
-    # and is deliberately excluded from `ci-success`. A red run here surfaces a
-    # platform-specific regression on main without slowing day-to-day PRs
-    # (mirrors the `cross-os` split in the faceto/termherd sibling repos).
+    # Cross-platform coverage is a post-merge signal, not a PR gate. It runs on
+    # push to `main` and to `release/*` branches — never on PRs — and is
+    # deliberately excluded from `ci-success`. The release process cuts tags
+    # from a `release/*` branch, so the pre-release run happens when those
+    # commits are pushed to the branch (ci.yml has no `tags:` trigger; tags are
+    # handled by release.yml). A red run here surfaces a platform-specific
+    # regression without slowing day-to-day PRs (mirrors the `cross-os` split in
+    # the faceto/termherd sibling repos).
     if: >-
       github.event_name != 'pull_request' &&
       (needs.changes.outputs.rust == 'true' ||
        needs.changes.outputs.docs == 'true' ||
-       needs.changes.outputs.infra == 'true' ||
-       github.ref_type == 'tag')
+       needs.changes.outputs.infra == 'true')
     strategy:
       fail-fast: false
       matrix:
         os: [macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
-    env:
-      RULE_DOCS_GATE_GIT: "1"
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:

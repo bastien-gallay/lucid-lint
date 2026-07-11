@@ -836,8 +836,8 @@ and [`RULES.md` — Rule lifecycle and SemVer](RULES.md#rule-lifecycle-and-semve
   and merges on one required status check, **`CI success`** (an aggregator job
   that passes when every gate passed or was path-skipped). Renaming or adding
   jobs no longer requires editing branch protection. Cross-platform tests
-  (macOS/Windows) split into a `cross-os` job that runs only on push→main and
-  release tags, never on PRs. **CodeQL** drops its `pull_request` trigger
+  (macOS/Windows) split into a `cross-os` job that runs only on push to `main`
+  and `release/*` branches, never on PRs. **CodeQL** drops its `pull_request` trigger
   (kept on `main` + weekly cron) so the slow SAST build never gates a PR;
   Scorecard's default-branch SAST coverage is unaffected. **Spell check
   (typos)** and **Link check (lychee)** are now `continue-on-error` signals —
