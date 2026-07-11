@@ -49,8 +49,10 @@ distincte :
   par un langage concret ou supprimés.
 
 Les phrases personnalisées ajoutées via `custom_weasels_en` /
-`custom_weasels_fr` se déclenchent à `warning`. Une surcharge de sévérité par
-règle dans `lucid-lint.toml` s'applique par-dessus les deux bandes.
+`custom_weasels_fr` se déclenchent à `warning`. Les bandes de sévérité sont
+fixes ; pour désactiver la règle, ajoutez une entrée `[[ignore]]` pour
+`lexicon.weasel-words` dans `lucid-lint.toml`, ou utilisez une directive
+`disable-next-line` en ligne.
 
 <aside class="since-version" aria-label="Nouveauté en v0.2">
 

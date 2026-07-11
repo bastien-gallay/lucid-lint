@@ -40,8 +40,9 @@ list into two bands and fires each at a different severity:
   concrete language or removed.
 
 Custom phrases added via `custom_weasels_en` / `custom_weasels_fr` fire at
-`warning`. A per-rule severity override in `lucid-lint.toml` still applies on
-top of both bands.
+`warning`. The severity bands are fixed; to silence the rule, add an
+`[[ignore]]` entry for `lexicon.weasel-words` in `lucid-lint.toml`, or use an
+inline `disable-next-line` directive.
 
 <aside class="since-version" aria-label="New in v0.2">
 
