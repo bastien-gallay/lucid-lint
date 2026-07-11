@@ -763,6 +763,13 @@ and [`RULES.md` — Rule lifecycle and SemVer](RULES.md#rule-lifecycle-and-semve
 
 ### Fixed
 
+- **[2026-07-11] FR docs — broken terminal-GIF image links.** Four French pages
+  referenced `../assets/tty/*.gif` (and `fr/index.md` used `./assets/…`), copied
+  verbatim from their English counterparts — but the FR pages sit one directory
+  deeper (`fr/guide/…`), so those relative paths resolved to a non-existent
+  `fr/assets/…` and rendered as broken images. Corrected to `../../assets/…`
+  (and `../assets/…` for `fr/index.md`). Surfaced by the new offline internal
+  link check dogfooding the repo's own docs.
 - **[2026-07-11] F-lychee-retry — link check no longer fails on transient
   network flakes.** The lychee step now passes `--max-retries 3
   --retry-wait-time 2 --timeout 30`, so a single connection reset or timeout

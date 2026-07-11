@@ -269,6 +269,12 @@ jobs:
     # non-required signal (excluded from `ci-success`); since it is now
     # deterministic it could be promoted to a gate by adding it to
     # `ci-success`'s `needs`.
+    #
+    # Do NOT add `--exclude 'file://'` here: in offline mode lychee resolves
+    # every relative link to a `file://` URL, so that pattern would exclude all
+    # local links and silently turn this job into a no-op (0 checked). The
+    # `file://` exclude lives only in `link-health.yml`, whose job is the
+    # opposite — check *external* links and skip the local ones.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -280,7 +286,6 @@ jobs:
           args: >-
             --no-progress
             --offline
-            --exclude 'file://'
             --exclude '\.html$'
             --exclude-path docs/book
             --exclude-path docs/src/SUMMARY.md

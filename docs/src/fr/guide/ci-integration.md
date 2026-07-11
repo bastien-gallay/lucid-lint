@@ -136,7 +136,7 @@ Les deux gardes s'empilent — l'exécution échoue si *l'une ou l'autre* se dé
 
 Une exécution bloquée qui échoue — lucid-lint imprime son résumé habituel, puis le shell expose le code de sortie non nul :
 
-![Capture terminal : une exécution lucid-lint sur examples/sample.md avec --min-score=85, qui produit trois warnings, deux diagnostics info, un score de 45/100, et une ligne « exit: 1 » écrite par la commande echo qui suit](../assets/tty/score-fail.gif)
+![Capture terminal : une exécution lucid-lint sur examples/sample.md avec --min-score=85, qui produit trois warnings, deux diagnostics info, un score de 45/100, et une ligne « exit: 1 » écrite par la commande echo qui suit](../../assets/tty/score-fail.gif)
 
 ```text
 $ lucid-lint check --min-score=85 examples/sample.md
