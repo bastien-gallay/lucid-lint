@@ -206,6 +206,44 @@ pub(crate) struct CheckArgs {
     /// to `auto`.
     #[arg(long, value_enum)]
     pub(crate) readability_formula: Option<CliFormulaChoice>,
+
+    /// Drop diagnostics below this severity from every output surface
+    /// (F-severity-floor-flag).
+    ///
+    /// `info` (default) keeps the full view — identical to the pre-flag
+    /// behaviour. `warning` drops `info` diagnostics; `error` drops
+    /// `info` and `warning`. The filter runs after all rules but before
+    /// scoring, so the score, every format (`tty` / `json` / `sarif`),
+    /// and the `--min-score` gate all see the same filtered set —
+    /// dropped diagnostics do not count toward the score. Useful for a
+    /// narrow, high-signal audit of a repo you do not own.
+    #[arg(long, value_enum, default_value = "info")]
+    pub(crate) severity_floor: CliSeverityFloor,
+}
+
+/// Severity-floor values accepted on the command line
+/// (F-severity-floor-flag).
+///
+/// Mirror of the library [`Severity`](lucid_lint::Severity) kept inside
+/// the binary crate so the library stays independent of `clap`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
+pub(crate) enum CliSeverityFloor {
+    /// Keep everything (default — no change from pre-flag behaviour).
+    Info,
+    /// Drop `info`; keep `warning` and `error`.
+    Warning,
+    /// Drop `info` and `warning`; keep `error`.
+    Error,
+}
+
+impl From<CliSeverityFloor> for lucid_lint::Severity {
+    fn from(value: CliSeverityFloor) -> Self {
+        match value {
+            CliSeverityFloor::Info => Self::Info,
+            CliSeverityFloor::Warning => Self::Warning,
+            CliSeverityFloor::Error => Self::Error,
+        }
+    }
 }
 
 /// Banner policy values accepted on the command line.
@@ -379,6 +417,51 @@ mod tests {
             Command::Check(a) => assert!(matches!(a.format, CliFormat::Json)),
             Command::Explain(_) => unreachable!("expected Check, got Explain"),
         }
+    }
+
+    #[test]
+    fn check_args_severity_floor_defaults_to_info() {
+        let args = Cli::try_parse_from(["lucid-lint", "check", "file.md"]).unwrap();
+        let Command::Check(a) = args.command else {
+            unreachable!()
+        };
+        assert!(matches!(a.severity_floor, CliSeverityFloor::Info));
+    }
+
+    #[test]
+    fn severity_floor_maps_to_library_severity() {
+        use lucid_lint::Severity;
+        assert_eq!(Severity::from(CliSeverityFloor::Info), Severity::Info);
+        assert_eq!(Severity::from(CliSeverityFloor::Warning), Severity::Warning);
+        assert_eq!(Severity::from(CliSeverityFloor::Error), Severity::Error);
+    }
+
+    #[test]
+    fn check_args_parse_severity_floor() {
+        let args = Cli::try_parse_from([
+            "lucid-lint",
+            "check",
+            "--severity-floor",
+            "warning",
+            "file.md",
+        ])
+        .unwrap();
+        let Command::Check(a) = args.command else {
+            unreachable!()
+        };
+        assert!(matches!(a.severity_floor, CliSeverityFloor::Warning));
+    }
+
+    #[test]
+    fn check_args_reject_unknown_severity_floor() {
+        assert!(Cli::try_parse_from([
+            "lucid-lint",
+            "check",
+            "--severity-floor",
+            "critical",
+            "file.md",
+        ])
+        .is_err());
     }
 
     #[test]

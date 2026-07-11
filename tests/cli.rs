@@ -542,6 +542,56 @@ fn corpus_public_plainlanguage_intro_flags_dense_prose() {
     );
 }
 
+// ---------------------------------------------------------------
+// F-severity-floor-flag — `--severity-floor` drops diagnostics below
+// the chosen level from every output surface AND from the score.
+//
+// The two snapshots share one input that emits both `warning` and
+// `info` diagnostics. The default run keeps the info lines; the
+// `--severity-floor=warning` run drops them and the score rises
+// (dropped diagnostics do not count toward scoring).
+// ---------------------------------------------------------------
+
+/// Deterministic input: a long, weasel-worded, demonstrative-opening
+/// sentence. Emits `structure.sentence-too-long` + `lexicon.weasel-words`
+/// (warning) alongside `readability.score` + `syntax.unclear-antecedent`
+/// (info). Fed via stdin so no absolute path leaks into the snapshot.
+const SEVERITY_FLOOR_INPUT: &str =
+    "This is a rather long sentence that keeps adding more and more words until it \
+     exceeds the public profile threshold by a comfortable margin. Short one.";
+
+#[test]
+fn check_severity_floor_default_keeps_info_diagnostics() {
+    let output = Command::cargo_bin("lucid-lint")
+        .unwrap()
+        .arg("check")
+        .arg("--profile")
+        .arg("public")
+        .arg("-")
+        .write_stdin(SEVERITY_FLOOR_INPUT)
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+    insta::assert_snapshot!("severity_floor_default", stdout);
+}
+
+#[test]
+fn check_severity_floor_warning_drops_info_diagnostics() {
+    let output = Command::cargo_bin("lucid-lint")
+        .unwrap()
+        .arg("check")
+        .arg("--profile")
+        .arg("public")
+        .arg("--severity-floor")
+        .arg("warning")
+        .arg("-")
+        .write_stdin(SEVERITY_FLOOR_INPUT)
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+    insta::assert_snapshot!("severity_floor_warning", stdout);
+}
+
 #[test]
 fn corpus_public_vikidia_fr_stays_clean_under_falc() {
     // Vikidia targets 8–13-year-olds; the "Accueil" passage should pass

@@ -1,0 +1,16 @@
+---
+source: tests/cli.rs
+expression: stdout
+---
+warning <stdin>:1:1 Sentence is 24 words long (maximum 22). Consider splitting it into shorter sentences. [structure.sentence-too-long]
+warning <stdin>:1:11 Weasel phrase "rather" weakens the statement. Replace with concrete language or remove it. [lexicon.weasel-words]
+
+summary: 2 warnings.
+→ run 'lucid-lint explain <rule-id>' — seen here: structure.sentence-too-long, lexicon.weasel-words
+────────────────────────────────────────────────────────────
+score: 70/100
+       structure    █▎░░░  5/20
+       rhythm       █████  20/20
+       lexicon      █▎░░░  5/20
+       syntax       █████  20/20
+       readability  █████  20/20

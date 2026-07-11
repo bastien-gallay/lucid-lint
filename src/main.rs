@@ -155,6 +155,12 @@ fn run_check(args: CheckArgs) -> Result<ExitCode> {
     // and exit-code logic all see the filtered view.
     apply_config_ignores(&mut all_diagnostics, file_config.as_ref());
 
+    // F-severity-floor-flag: drop diagnostics below `--severity-floor`.
+    // Same insertion point as F19 (post-engine, pre-scoring) so scoring,
+    // every output surface, and the `--min-score` gate see the same
+    // filtered set. `info` (default) is a no-op.
+    apply_severity_floor(&mut all_diagnostics, args.severity_floor.into());
+
     // Aggregate across all inputs as a single document for v0.2 scoring.
     // Per-file and project-level roll-ups are tracked as F15 (ROADMAP).
     let scorecard = scoring::compute(&all_diagnostics, total_words, &scoring_config);
@@ -341,6 +347,24 @@ fn apply_config_ignores(diagnostics: &mut Vec<Diagnostic>, file: Option<&FileCon
     let silenced: std::collections::HashSet<&str> =
         config.ignores.iter().map(|i| i.rule_id.as_str()).collect();
     diagnostics.retain(|d| !silenced.contains(d.rule_id.as_str()));
+}
+
+/// Drop diagnostics whose severity is below `floor`
+/// (F-severity-floor-flag). Applied post-engine, pre-scoring — mirroring
+/// [`apply_config_ignores`] — so scoring, rendering, and the
+/// `--min-score` / exit-code logic all see the filtered view.
+///
+/// `floor == Severity::Info` is a no-op (the default), matching the
+/// pre-flag behaviour exactly.
+///
+/// NOTE: no rule in this release emits `Severity::Error`, so
+/// `floor == Severity::Error` drops every diagnostic and yields score
+/// 100. `Error` is kept as a legitimate severity for future rules.
+fn apply_severity_floor(diagnostics: &mut Vec<Diagnostic>, floor: Severity) {
+    if floor == Severity::Info {
+        return;
+    }
+    diagnostics.retain(|d| d.severity >= floor);
 }
 
 /// Build a [`GlobSet`] from CLI and TOML `exclude` lists (F78).

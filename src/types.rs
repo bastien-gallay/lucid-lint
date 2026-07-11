@@ -91,7 +91,12 @@ impl Diagnostic {
 /// Severity of a [`Diagnostic`].
 ///
 /// `error` is reserved for future use. v0.1 emits only `info` and `warning`.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+///
+/// The variants are declared in ascending order of severity, so the
+/// derived [`Ord`] gives `Info < Warning < Error`. The
+/// `--severity-floor` flag (F-severity-floor-flag) relies on that
+/// ordering to drop diagnostics below a chosen level.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Severity {
     /// Signal worth knowing about. Does not fail CI by default.
@@ -307,6 +312,14 @@ mod tests {
         assert_eq!(Severity::Info.to_string(), "info");
         assert_eq!(Severity::Warning.to_string(), "warning");
         assert_eq!(Severity::Error.to_string(), "error");
+    }
+
+    #[test]
+    fn severity_orders_ascending() {
+        // `--severity-floor` (F-severity-floor-flag) relies on this ordering.
+        assert!(Severity::Info < Severity::Warning);
+        assert!(Severity::Warning < Severity::Error);
+        assert!(Severity::Info < Severity::Error);
     }
 
     #[test]
