@@ -1,4 +1,4 @@
-<!-- en-source-sha: a5a9e52823cafc1e3a88470bcfc74ef580b083f7 -->
+<!-- en-source-sha: 2cbbed14ab2122d7d49c1c192b44dc48a8a86b1b -->
 # Configuration
 
 `lucid-lint` se configure par un fichier `lucid-lint.toml` à la racine du projet (facultatif) et par des options en ligne de commande (qui priment sur le fichier).
@@ -142,3 +142,58 @@ max_commas = 2
 Surcharge le plafond de virgules par phrase (défaut : 4 / 3 / 2 pour `dev-doc` / `public` / `falc`). La valeur doit être un entier positif — `0` ou une valeur négative est refusée au chargement. La surcharge remplace le préréglage du profil ; elle n'est pas additive.
 
 Les tables pour les autres règles se lisent sans erreur, mais n'ont pas d'effet à l'exécution. Étendre cette liste est un changement mécanique par règle, qui se poursuivra pendant le cycle v0.2.x.
+
+## Restreindre l'audit avec `--severity-floor`
+
+`--severity-floor` est une option de la ligne de commande (pas une clé
+de configuration) qui écarte les diagnostics en dessous d'une gravité
+choisie de **toutes** les sorties — `tty`, `json` et `sarif` — ainsi
+que du score. Elle accepte `info` (défaut), `warning` ou `error`. Le
+filtre s'applique après l'exécution de toutes les règles mais avant le
+calcul du score : les diagnostics écartés ne comptent donc pas dans le
+score, et la barrière `--min-score` voit le même ensemble filtré.
+
+```console
+lucid-lint check --severity-floor=warning chemin/vers/docs
+```
+
+- `info` (défaut) — tout garder. Identique au comportement d'avant
+  l'option ; lorsqu'elle est omise, l'option est sans effet.
+- `warning` — écarter les diagnostics `info` (signaux d'observabilité
+  comme `readability.score`), garder `warning` et au-dessus.
+- `error` — ne garder que les diagnostics `error`.
+
+**Exemple concret — un audit ciblé sur le dépôt de quelqu'un d'autre.**
+Vous relisez un dépôt qui ne vous appartient pas et voulez une passe à
+fort signal : uniquement les diagnostics sur lesquels agir, rien qui
+ressemblerait à du bruit dans vos notes de relecture. Relevez le seuil
+à `warning` et produisez du JSON pour l'outillage :
+
+```console
+lucid-lint check --severity-floor=warning --format=json chemin/vers/leur-depot/docs
+```
+
+Comme le seuil s'applique avant le calcul du score, le score que vous
+rapportez ne reflète que les constats de gravité `warning` et
+au-dessus — la ligne `readability.score` de niveau `info` ne le gonfle
+ni ne le diminue jamais. Combinez-le avec `--min-score` pour verrouiller
+la relecture sur cette même vue restreinte. Contrairement à `[[ignore]]`,
+le seuil ne nécessite aucun fichier de configuration : il convient donc
+parfaitement à un audit ponctuel d'un dépôt dont vous préférez ne pas
+toucher le `lucid-lint.toml`.
+
+**Les sous-scores par catégorie suivent le seuil actif.** Un sous-score
+de catégorie ne compte que les diagnostics de gravité égale ou
+supérieure au seuil actif. Sous un seuil relevé, une catégorie peut
+afficher un sous-score parfait — par exemple `20/20` — simplement parce
+que ses diagnostics de niveau `info` ont été filtrés, et non parce que
+la prose est irréprochable. Un sous-score élevé sous un seuil relevé
+n'implique donc pas que la catégorie est exempte de problèmes ;
+revenez au seuil `info` par défaut pour avoir une vue complète.
+
+**Limitation connue — `--severity-floor=error` masque actuellement
+tout.** Aucune règle de cette version n'émet de diagnostic de niveau
+`error` : `--severity-floor=error` écarte donc tous les constats et
+rapporte toujours un score de 100. Le niveau `error` est une gravité
+légitime réservée à de futures règles ; tant qu'aucune n'émet à ce
+niveau, `error` n'est pas un seuil utile.
