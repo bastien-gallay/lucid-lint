@@ -5,6 +5,10 @@
 set shell := ["bash", "-uc"]
 set dotenv-load := true
 
+# Install command for the external `roadmap` binary, single-sourced here
+# and referenced by the release recipes below.
+roadmap_install := "cargo install --git https://github.com/bastien-gallay/roadmap-cli"
+
 # Default: list recipes
 default:
     @just --list
@@ -298,7 +302,7 @@ regen-roadmap:
     fi
     if ! command -v roadmap >/dev/null 2>&1; then
         echo "regen-roadmap: 'roadmap' not found — install with:" >&2
-        echo "  cargo install --git https://github.com/bastien-gallay/roadmap-cli" >&2
+        echo "  {{roadmap_install}}" >&2
         exit 1
     fi
     roadmap generate > ROADMAP.md
@@ -316,7 +320,7 @@ validate-roadmap:
     fi
     if ! command -v roadmap >/dev/null 2>&1; then
         echo "validate-roadmap: 'roadmap' not found — install with:" >&2
-        echo "  cargo install --git https://github.com/bastien-gallay/roadmap-cli" >&2
+        echo "  {{roadmap_install}}" >&2
         exit 1
     fi
     roadmap validate

@@ -81,6 +81,8 @@ Cette page consigne les décisions de conception prises pendant v0.1 qui mérite
 
 **Décision** : `ROADMAP.md` est rétrogradé de source éditée à *artefact généré*. La source de vérité devient un ensemble structuré de fichiers sous `.roadmap/` (ignoré par git), un fichier markdown par fonctionnalité avec front-matter TOML, plus des fragments narratifs. Un petit membre de workspace Rust (`crates/roadmap-cli`) fournit les sous-commands `add` / `generate` / `validate` / `rename`. Le générateur est invoqué localement pendant la préparation de release ; le `ROADMAP.md` régénéré est committé sur la PR de préparation. La CI ne régénère pas. Cadré sous [F-roadmap-toml-source](../roadmap.md#f-roadmap-toml-source).
 
+> **Mise à jour (2026-07-11)** : le générateur a depuis été extrait dans son propre dépôt — [bastien-gallay/roadmap-cli](https://github.com/bastien-gallay/roadmap-cli) — et est désormais consommé comme binaire installé (`cargo install --git …`) plutôt que comme membre de workspace interne (anticipé dans la raison « extractible en crate autonome » ci-dessous). Le design du pipeline est inchangé ; les références à `crates/roadmap-cli` décrivent la disposition d'origine.
+
 **Raison** :
 
 - La protection de branche sur `main` (en place depuis le 2026-05-03 via [F-repo-config-hardening](../roadmap.md#f-repo-config-hardening)) force chaque modification de `ROADMAP.md` à passer par le cycle worktree → branche → PR → CI → merge → nettoyage. Le débit prévu en régime stable était de 10 à 30 modifications ROADMAP-seules par semaine. La valeur de revue PR sur ces modifications est nulle (auteur unique), donc la cérémonie n'était que pur surcoût.
