@@ -653,7 +653,7 @@ Common FR/EN : `PDF, SMS, GPS, ID, OK, FAQ`
 #### `lexicon.weasel-words`
 
 **Category** : `lexicon`
-**Severity** : `warning`
+**Severity** : `warning` (hedges) · `info` (quantifiers)
 **Bilingual** : yes, FR/EN lists differ
 
 **Intent** : detect vague words that weaken a statement. A weasel word adds an invisible cognitive load: the reader must decide whether it matters, is true, or measurable.
@@ -676,22 +676,33 @@ Trivial implementation. HashSet lookup.
 | `custom_weasels_en` | list | `[]` |
 | `disable_weasels` | list | `[]` |
 
-**Default lists (v0.1)**
+**Default lists**
+
+The default words are split into two severity bands: *quantifiers* (approximate quantity or frequency — legitimate technical hedging) fire at `info`, and *hedges* (under-confident prose) fire at `warning`.
 
 🇫🇷
 
-- *quelques*, *certains*, *parfois*, *plutôt*, *assez*
-- *globalement*, *généralement*, *souvent*, *en général*, *la plupart*
-- *il semble que*, *il semblerait que*, *on pourrait dire que*, *on dit souvent*
+*Quantifiers* (`info`):
+
+- *quelques*, *certains*, *parfois*, *souvent*, *la plupart*
 - *beaucoup de*, *peu de*, *presque*, *quasiment*, *environ*, *à peu près*
+
+*Hedges* (`warning`):
+
+- *plutôt*, *assez*, *globalement*, *généralement*, *en général*
+- *il semble que*, *il semblerait que*, *on pourrait dire que*, *on dit souvent*
 
 🇬🇧
 
-- *some*, *many*, *often*, *just*, *simply*
-- *clearly*, *obviously*, *seemingly*, *arguably*
-- *basically*, *essentially*, *virtually*, *various*, *numerous*
-- *sort of*, *kind of*, *a bit*, *rather*, *quite*
-- *fairly*, *relatively*, *mostly*, *generally*
+*Quantifiers* (`info`):
+
+- *some*, *many*, *often*, *various*, *numerous*
+
+*Hedges* (`warning`):
+
+- *just*, *simply*, *clearly*, *obviously*, *seemingly*, *arguably*
+- *basically*, *essentially*, *virtually*, *rather*, *quite*
+- *sort of*, *kind of*, *a bit*
 
 **All profiles** : active. Use `<!-- lucid-lint disable-next-line lexicon.weasel-words -->` to opt out when usage is intentional (legitimate subset reference, quotation, etc.). See [Suppressing diagnostics](#suppressing-diagnostics).
 
