@@ -1,4 +1,4 @@
-<!-- en-source-sha: a3e9313b09cbd0cb92944f71695df4f1f8ac27dd -->
+<!-- en-source-sha: 286ffe7791a601904657de2f0913276036d4a132 -->
 # `lexicon.weasel-words`
 
 *Mots évasifs.*
@@ -15,7 +15,7 @@ style Wikipédia (*Avoid weasel words*), Strunk & White, FALC.
 | | |
 |---|---|
 | **Catégorie** | `lexicon` |
-| **Sévérité par défaut** | `warning` |
+| **Sévérité par défaut** | `warning` (atténuations) · `info` (quantificateurs) |
 | **Poids par défaut** | `1` |
 | **Langues** | EN · FR (listes distinctes) |
 | **Source** | [`src/rules/weasel_words.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/weasel_words.rs) |
@@ -24,6 +24,35 @@ style Wikipédia (*Avoid weasel words*), Strunk & White, FALC.
 
 Correspondance sur frontière de mot contre une liste par langue.
 Insensible à la casse. Un diagnostic par occurrence.
+
+## Bandes de sévérité
+
+Tous les mots fuyants ne méritent pas la même correction. La règle répartit
+sa liste par défaut en deux bandes et déclenche chacune à une sévérité
+distincte :
+
+- **Quantificateurs → `info`.** Marqueurs approximatifs de quantité ou de
+  fréquence — FR : *quelques, certains, parfois, souvent, la plupart,
+  beaucoup de, peu de, presque, quasiment, environ, à peu près* ; EN : *some,
+  many, often, various, numerous*. Ce sont des atténuations techniques
+  légitimes : une spécification peut honnêtement dire « certains pilotes » ou
+  « échoue souvent sous charge ». Les signaler comme avertissements pousse à
+  les supprimer, et une prose dont tous les quantificateurs ont disparu paraît
+  faussement précise — les relecteurs la rejettent comme sur-éditée. `info`
+  les garde visibles sans exiger de correction.
+- **Atténuations → `warning`.** Qualificatifs sous-assurés qui affaiblissent
+  une affirmation sans informer le lecteur — FR : *plutôt, assez, globalement,
+  généralement, en général, il semble que, il semblerait que, on pourrait dire
+  que, on dit souvent* ; EN : *just, simply, clearly, obviously, seemingly,
+  arguably, basically, essentially, virtually, rather, quite, sort of, kind
+  of, a bit*. Ils n'apportent aucun contenu mesurable et doivent être remplacés
+  par un langage concret ou supprimés.
+
+Les phrases personnalisées ajoutées via `custom_weasels_en` /
+`custom_weasels_fr` se déclenchent à `warning`. Les bandes de sévérité sont
+fixes ; pour désactiver la règle, ajoutez une entrée `[[ignore]]` pour
+`lexicon.weasel-words` dans `lucid-lint.toml`, ou utilisez une directive
+`disable-next-line` en ligne.
 
 <aside class="since-version" aria-label="Nouveauté en v0.2">
 

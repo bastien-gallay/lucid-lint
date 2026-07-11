@@ -40,27 +40,22 @@ pub static STOPWORDS: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     .collect()
 });
 
-/// Default French weasel words and phrases (lowercased).
+/// French weasel *quantifiers* (lowercased): approximate quantity,
+/// frequency, or proportion markers.
 ///
-/// See [`RULES.md`](../../RULES.md#weasel-words). Phrases are matched at
-/// word boundaries, so `beaucoup` as a standalone token is not flagged —
-/// only `beaucoup de` is.
-pub static WEASELS: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
+/// Like their English counterparts these are legitimate technical
+/// hedging, so the rule fires them at [`Severity::Info`] rather than
+/// `Warning`. Phrases are matched at word boundaries, so `beaucoup` as a
+/// standalone token is not flagged — only `beaucoup de` is.
+///
+/// [`Severity::Info`]: crate::types::Severity::Info
+pub static WEASEL_QUANTIFIERS: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
     vec![
         "quelques",
         "certains",
         "parfois",
-        "plutôt",
-        "assez",
-        "globalement",
-        "généralement",
         "souvent",
-        "en général",
         "la plupart",
-        "il semble que",
-        "il semblerait que",
-        "on pourrait dire que",
-        "on dit souvent",
         "beaucoup de",
         "peu de",
         "presque",
@@ -68,6 +63,40 @@ pub static WEASELS: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
         "environ",
         "à peu près",
     ]
+});
+
+/// French weasel *hedges* (lowercased): under-confident qualifiers.
+///
+/// Includes attribution-dodging turns of phrase that weaken a statement
+/// without informing the reader. Fired at [`Severity::Warning`].
+///
+/// [`Severity::Warning`]: crate::types::Severity::Warning
+pub static WEASEL_HEDGES: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
+    vec![
+        "plutôt",
+        "assez",
+        "globalement",
+        "généralement",
+        "en général",
+        "il semble que",
+        "il semblerait que",
+        "on pourrait dire que",
+        "on dit souvent",
+    ]
+});
+
+/// Default French weasel words and phrases (lowercased).
+///
+/// The union of [`WEASEL_QUANTIFIERS`] and [`WEASEL_HEDGES`]. Callers
+/// that need the severity band route through the two sub-lists; this
+/// combined view is kept for matching. See
+/// [`RULES.md`](../../RULES.md#weasel-words).
+pub static WEASELS: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
+    WEASEL_QUANTIFIERS
+        .iter()
+        .chain(WEASEL_HEDGES.iter())
+        .copied()
+        .collect()
 });
 
 /// French standalone negation markers (lowercased word forms).
