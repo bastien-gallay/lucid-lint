@@ -1,6 +1,3 @@
-[workspace]
-members = [".", "crates/roadmap-cli"]
-
 [package]
 name = "lucid-lint"
 version = "0.2.3"
