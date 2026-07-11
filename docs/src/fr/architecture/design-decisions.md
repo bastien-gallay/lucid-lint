@@ -1,4 +1,4 @@
-<!-- en-source-sha: d7a95ee4bcabe7c330d96fe0e371e5002c5e79d6 -->
+<!-- en-source-sha: 430b0f03f44a52a673cd8c79fd2dcbf46a8a3871 -->
 # Décisions de conception
 
 Cette page consigne les décisions de conception prises pendant v0.1 qui méritent d'être revues avant tout changement.
