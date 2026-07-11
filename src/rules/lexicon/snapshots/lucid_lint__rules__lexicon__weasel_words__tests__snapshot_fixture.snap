@@ -23,7 +23,7 @@ expression: diags
   message: "Weasel phrase \"basically\" weakens the statement. Replace with concrete language or remove it."
   weight: 1
 - rule_id: lexicon.weasel-words
-  severity: warning
+  severity: info
   location:
     file: "<input>"
     line: 1

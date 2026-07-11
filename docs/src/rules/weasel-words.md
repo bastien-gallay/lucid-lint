@@ -9,7 +9,7 @@ Vague qualifiers that weaken a statement. A weasel word adds an invisible cognit
 | | |
 |---|---|
 | **Category** | `lexicon` |
-| **Default severity** | `warning` |
+| **Default severity** | `warning` (hedges) · `info` (quantifiers) |
 | **Default weight** | `1` |
 | **Languages** | EN · FR (separate lists) |
 | **Source** | [`src/rules/weasel_words.rs`](https://github.com/bastien-gallay/lucid-lint/blob/main/src/rules/weasel_words.rs) |
@@ -17,6 +17,32 @@ Vague qualifiers that weaken a statement. A weasel word adds an invisible cognit
 ## Detection
 
 Word-boundary match against a per-language list. Case-insensitive. One diagnostic per occurrence.
+
+## Severity bands
+
+Not every weasel word is equally worth changing. The rule sorts its default
+list into two bands and fires each at a different severity:
+
+- **Quantifiers → `info`.** Approximate quantity and frequency markers —
+  EN: *some, many, often, various, numerous*; FR: *quelques, certains,
+  parfois, souvent, la plupart, beaucoup de, peu de, presque, quasiment,
+  environ, à peu près*. These are legitimate technical hedging: a spec may
+  honestly say "some drivers" or "fails often under load". Reporting them as
+  warnings pressures authors to strip them, and prose with every quantifier
+  removed reads as falsely precise — reviewers reject it as over-edited. `info`
+  keeps them visible without demanding a fix.
+- **Hedges → `warning`.** Under-confident qualifiers that weaken a claim
+  without informing the reader — EN: *just, simply, clearly, obviously,
+  seemingly, arguably, basically, essentially, virtually, rather, quite, sort
+  of, kind of, a bit*; FR: *plutôt, assez, globalement, généralement, en
+  général, il semble que, il semblerait que, on pourrait dire que, on dit
+  souvent*. These carry no measurable content and should be replaced with
+  concrete language or removed.
+
+Custom phrases added via `custom_weasels_en` / `custom_weasels_fr` fire at
+`warning`. The severity bands are fixed; to silence the rule, add an
+`[[ignore]]` entry for `lexicon.weasel-words` in `lucid-lint.toml`, or use an
+inline `disable-next-line` directive.
 
 <aside class="since-version" aria-label="New in v0.2">
 
