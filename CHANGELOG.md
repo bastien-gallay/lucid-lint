@@ -763,6 +763,13 @@ and [`RULES.md` — Rule lifecycle and SemVer](RULES.md#rule-lifecycle-and-semve
 
 ### Fixed
 
+- **[2026-07-11] FR docs — broken terminal-GIF image links.** Four French pages
+  referenced `../assets/tty/*.gif` (and `fr/index.md` used `./assets/…`), copied
+  verbatim from their English counterparts — but the FR pages sit one directory
+  deeper (`fr/guide/…`), so those relative paths resolved to a non-existent
+  `fr/assets/…` and rendered as broken images. Corrected to `../../assets/…`
+  (and `../assets/…` for `fr/index.md`). Surfaced by the new offline internal
+  link check dogfooding the repo's own docs.
 - **[2026-07-11] F-lychee-retry — link check no longer fails on transient
   network flakes.** The lychee step now passes `--max-retries 3
   --retry-wait-time 2 --timeout 30`, so a single connection reset or timeout
@@ -831,6 +838,15 @@ and [`RULES.md` — Rule lifecycle and SemVer](RULES.md#rule-lifecycle-and-semve
 
 ### Changed
 
+- **[2026-07-11] Link checking split: internal-offline on PRs, external weekly.**
+  The PR/push `link-check` job now runs `lychee --offline` — it verifies only
+  that local/relative link targets exist and makes no network requests, so it is
+  deterministic and can never flake on a live-but-intermittent host (the earlier
+  crates.io and scorecard.dev failures). **External** link liveness moved
+  entirely to the weekly `link-health.yml` cron, whose retry budget was raised
+  to `--max-retries 5 --retry-wait-time 10` to absorb transient CI-runner
+  connection resets. Ends the per-PR link-check noise while still catching
+  external rot weekly; internal-link integrity stays enforced on every PR.
 - **[2026-07-11] F-ci-restructure — faster PRs, single required gate, signal
   checks.** CI is reorganised so a pull request runs only the fast ubuntu gates
   and merges on one required status check, **`CI success`** (an aggregator job
