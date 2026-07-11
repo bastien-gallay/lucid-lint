@@ -763,6 +763,14 @@ and [`RULES.md` — Rule lifecycle and SemVer](RULES.md#rule-lifecycle-and-semve
 
 ### Fixed
 
+- **[2026-07-11] F-lychee-retry — link check no longer fails on transient
+  network flakes.** The lychee step now passes `--max-retries 3
+  --retry-wait-time 2 --timeout 30`, so a single connection reset or timeout
+  from a cloud runner retries instead of failing the whole job. The four
+  transient-flake hosts previously pinned in `.lycheeignore` (vale.sh,
+  cambridge.org/core, scorecard.dev, commitmono.com) were removed — retry now
+  absorbs their resets/timeouts. Only deterministic 403/404 hosts (paywalled
+  DOIs, bot-blocked CDC) stay ignored.
 - **[2026-05-24] F53 — `readability.large-number-unanchored` (experimental):
   panic on non-ASCII prose + dotted-reference false positives.** Two
   defects surfaced by a pre-flip dogfood pass on `examples/public/`.
