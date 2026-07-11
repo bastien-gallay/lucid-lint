@@ -105,6 +105,8 @@ New `Diagnostic.weight` field, new `--min-score=N` CLI flag.
 
 **Decision**: `ROADMAP.md` is demoted from edited source to *generated artifact*. The source-of-truth becomes a structured set of files under `.roadmap/` (gitignored), one markdown file per feature with TOML front-matter, plus narrative chunks. A small Rust workspace member (`crates/roadmap-cli`) provides `add` / `generate` / `validate` / `rename` subcommands. The generator is invoked locally during release prep; the regenerated `ROADMAP.md` is committed on the release-prep PR. CI does not regenerate. Scoped under [F-roadmap-toml-source](../roadmap.md#f-roadmap-toml-source).
 
+> **Update (2026-07-11):** the generator was later extracted into its own repository — [bastien-gallay/roadmap-cli](https://github.com/bastien-gallay/roadmap-cli) — and is now consumed as an installed binary (`cargo install --git …`) rather than an in-repo workspace member (foreseen in the "extractable as a standalone crate" rationale below). The pipeline design is unchanged; references to `crates/roadmap-cli` describe the original in-repo layout.
+
 **Rationale**:
 
 - Branch protection on `main` (in place since 2026-05-03 via [F-repo-config-hardening](../roadmap.md#f-repo-config-hardening)) forces every `ROADMAP.md` tweak through the worktree → branch → PR → CI → merge → cleanup cycle. Forecast steady-state was 10–30 ROADMAP-only edits per week. The PR review value on those edits is null (solo author), so the ceremony was pure overhead.

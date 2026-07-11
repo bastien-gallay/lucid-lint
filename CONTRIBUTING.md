@@ -257,10 +257,10 @@ Both recipes silent-pass on checkouts without a `.roadmap/` source, so they're s
 
 CI does **not** regenerate `ROADMAP.md`. The release-prep step is the only point at which the artifact is refreshed; in between, it lags by up to one release cycle (accepted trade-off, see the ADR).
 
-To use the `roadmap` binary directly instead of `cargo run -p roadmap-cli`, install it once:
+The `just regen-roadmap` / `just validate-roadmap` recipes call the `roadmap` binary, which lives in its own repository — [bastien-gallay/roadmap-cli](https://github.com/bastien-gallay/roadmap-cli). Install it once:
 
 ```bash
-cargo install --path crates/roadmap-cli
+cargo install --git https://github.com/bastien-gallay/roadmap-cli
 roadmap validate
 ```
 

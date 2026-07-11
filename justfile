@@ -5,6 +5,10 @@
 set shell := ["bash", "-uc"]
 set dotenv-load := true
 
+# Install command for the external `roadmap` binary, single-sourced here
+# and referenced by the release recipes below.
+roadmap_install := "cargo install --git https://github.com/bastien-gallay/roadmap-cli"
+
 # Default: list recipes
 default:
     @just --list
@@ -296,14 +300,30 @@ regen-roadmap:
         echo "regen-roadmap: skipped (no .roadmap/ source on this checkout)"
         exit 0
     fi
-    cargo run --quiet -p roadmap-cli -- generate > ROADMAP.md
+    if ! command -v roadmap >/dev/null 2>&1; then
+        echo "regen-roadmap: 'roadmap' not found — install with:" >&2
+        echo "  {{roadmap_install}}" >&2
+        exit 1
+    fi
+    roadmap generate > ROADMAP.md
     echo "regen-roadmap: wrote ROADMAP.md"
 
 # Validate `.roadmap/` source (schema, slug uniqueness, anchor drift).
 # Silent-pass when no source — see `regen-roadmap` for context.
 [group('release')]
 validate-roadmap:
-    cargo run --quiet -p roadmap-cli -- validate
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [[ ! -d .roadmap/features ]]; then
+        echo "validate-roadmap: skipped (no .roadmap/ source on this checkout)"
+        exit 0
+    fi
+    if ! command -v roadmap >/dev/null 2>&1; then
+        echo "validate-roadmap: 'roadmap' not found — install with:" >&2
+        echo "  {{roadmap_install}}" >&2
+        exit 1
+    fi
+    roadmap validate
 
 # Release dry-run using cargo-dist
 [group('release')]
