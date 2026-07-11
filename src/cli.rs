@@ -429,6 +429,14 @@ mod tests {
     }
 
     #[test]
+    fn severity_floor_maps_to_library_severity() {
+        use lucid_lint::Severity;
+        assert_eq!(Severity::from(CliSeverityFloor::Info), Severity::Info);
+        assert_eq!(Severity::from(CliSeverityFloor::Warning), Severity::Warning);
+        assert_eq!(Severity::from(CliSeverityFloor::Error), Severity::Error);
+    }
+
+    #[test]
     fn check_args_parse_severity_floor() {
         let args = Cli::try_parse_from([
             "lucid-lint",
