@@ -1,0 +1,52 @@
+name: Link health
+
+# Weekly external-rot sweep. The PR-time lychee check (in `ci.yml`) is a
+# non-blocking signal scoped to changed docs; this catches links that rot
+# *after* they were last touched — a dead external host, a moved page — without
+# adding noise to any PR. A red scheduled run here IS the report: it surfaces in
+# the Actions tab (and to watchers) so the maintainer can fix or ignore the link.
+# Never gates a PR; not a required check.
+
+on:
+  schedule:
+    # Thursday 08:00 UTC — offset from the Monday CodeQL (07:00) and Scorecard
+    # (06:00) crons so the week's scheduled runs are spread out.
+    - cron: '0 8 * * 4'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  link-check:
+    name: Link check (lychee)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Install lychee
+        uses: lycheeverse/lychee-action@8646ba30535128ac92d33dfc9133794bfdd9b411 # v2.8.0
+        with:
+          lycheeVersion: "v0.23.0"
+          # Fail the scheduled run on a broken link — that red run is the rot
+          # report. Exclusions and retry tuning mirror the PR check in `ci.yml`;
+          # `.lycheeignore` is shared automatically.
+          fail: true
+          args: >-
+            --no-progress
+            --max-retries 3
+            --retry-wait-time 2
+            --timeout 30
+            --exclude 'localhost'
+            --exclude 'file://'
+            --exclude '\.html$'
+            --exclude-path docs/book
+            --exclude-path docs/src/SUMMARY.md
+            README.md
+            docs/src/**/*.md

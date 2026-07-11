@@ -841,8 +841,10 @@ and [`RULES.md` — Rule lifecycle and SemVer](RULES.md#rule-lifecycle-and-semve
   (kept on `main` + weekly cron) so the slow SAST build never gates a PR;
   Scorecard's default-branch SAST coverage is unaffected. **Spell check
   (typos)** and **Link check (lychee)** are now `continue-on-error` signals —
-  visible but non-blocking. Push→main and release-tag runs are no longer
-  cancelled by newer runs (`cancel-in-progress` now applies to PRs only).
+  visible but non-blocking. A new weekly **`link-health.yml`** cron sweeps
+  external links for rot independently of any PR. Push→main and release-tag runs
+  are no longer cancelled by newer runs (`cancel-in-progress` now applies to
+  PRs only).
 - **[2026-07-10] F-weasel-words-severity-tiering — `lexicon.weasel-words`
   splits into two severity bands.** The default word lists are now sorted
   into *quantifiers* (approximate quantity or frequency — EN `some, many,
