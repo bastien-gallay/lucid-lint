@@ -155,16 +155,28 @@ pub static STOPWORDS: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     .collect()
 });
 
-/// Default English weasel words and phrases (lowercased).
+/// English weasel *quantifiers* (lowercased): approximate quantity or
+/// frequency markers.
 ///
-/// A weasel word weakens a statement without informing the reader: the
-/// reader must silently decide whether the qualification matters. See
-/// [`RULES.md`](../../RULES.md#weasel-words).
-pub static WEASELS: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
+/// These are legitimate technical hedging — a spec may honestly say
+/// "some drivers" or "often fails under load" — so the rule fires them
+/// at [`Severity::Info`] rather than `Warning`. Stripping every
+/// quantifier from reference prose yields text reviewers reject as
+/// over-edited and falsely precise.
+///
+/// [`Severity::Info`]: crate::types::Severity::Info
+pub static WEASEL_QUANTIFIERS: LazyLock<Vec<&'static str>> =
+    LazyLock::new(|| vec!["some", "many", "often", "various", "numerous"]);
+
+/// English weasel *hedges* (lowercased): under-confident qualifiers.
+///
+/// These weaken a statement without informing the reader, who must
+/// silently decide whether the qualification matters. Fired at
+/// [`Severity::Warning`].
+///
+/// [`Severity::Warning`]: crate::types::Severity::Warning
+pub static WEASEL_HEDGES: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
     vec![
-        "some",
-        "many",
-        "often",
         "just",
         "simply",
         "clearly",
@@ -174,14 +186,26 @@ pub static WEASELS: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
         "basically",
         "essentially",
         "virtually",
-        "various",
-        "numerous",
         "rather",
         "quite",
         "sort of",
         "kind of",
         "a bit",
     ]
+});
+
+/// Default English weasel words and phrases (lowercased).
+///
+/// The union of [`WEASEL_QUANTIFIERS`] and [`WEASEL_HEDGES`]. Callers
+/// that need the severity band route through the two sub-lists; this
+/// combined view is kept for matching. See
+/// [`RULES.md`](../../RULES.md#weasel-words).
+pub static WEASELS: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
+    WEASEL_QUANTIFIERS
+        .iter()
+        .chain(WEASEL_HEDGES.iter())
+        .copied()
+        .collect()
 });
 
 /// English negation markers (lowercased word forms).

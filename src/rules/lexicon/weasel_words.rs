@@ -101,6 +101,7 @@ impl Rule for WeaselWords {
         for (paragraph, section_title) in document.paragraphs_with_section() {
             let lowered = paragraph.text.to_lowercase();
             for phrase in &phrases {
+                let severity = severity_for(phrase, language);
                 for byte_offset in find_word_bounded(&lowered, phrase) {
                     if is_inside_inline_code(&paragraph.text, byte_offset) {
                         continue;
@@ -118,6 +119,7 @@ impl Rule for WeaselWords {
                         line,
                         column,
                         phrase,
+                        severity,
                         section_title,
                     ));
                 }
@@ -196,11 +198,30 @@ fn is_directional_pair(lowered: &str, offset: usize, phrase: &str, language: Lan
         .map_or(true, |b| !(b.is_ascii_alphabetic() || b == b'\''))
 }
 
+/// Severity band for a matched phrase. Quantifiers (approximate quantity
+/// or frequency — legitimate technical hedging) fire at [`Severity::Info`];
+/// hedges (under-confident prose) fire at [`Severity::Warning`]. Custom
+/// user phrases are not in either default list, so they fall through to
+/// `Warning`.
+fn severity_for(phrase: &str, language: Language) -> Severity {
+    let quantifiers = match language {
+        Language::En => &en::WEASEL_QUANTIFIERS,
+        Language::Fr => &fr::WEASEL_QUANTIFIERS,
+        Language::Unknown => return Severity::Warning,
+    };
+    if quantifiers.contains(&phrase) {
+        Severity::Info
+    } else {
+        Severity::Warning
+    }
+}
+
 fn build_diagnostic(
     source: &SourceFile,
     line: u32,
     column: u32,
     phrase: &str,
+    severity: Severity,
     section: Option<&str>,
 ) -> Diagnostic {
     let length = u32::try_from(phrase.chars().count()).unwrap_or(u32::MAX);
@@ -209,7 +230,7 @@ fn build_diagnostic(
         "Weasel phrase \"{phrase}\" weakens the statement. Replace with concrete language or \
          remove it."
     );
-    let diag = Diagnostic::new(WeaselWords::ID, Severity::Warning, location, message);
+    let diag = Diagnostic::new(WeaselWords::ID, severity, location, message);
     match section {
         Some(title) => diag.with_section(title),
         None => diag,
@@ -411,6 +432,44 @@ mod tests {
         let diags = lint("Le résultat est plutôt décevant.", Language::Fr);
         assert_eq!(diags.len(), 1);
         assert!(diags[0].message.contains("plutôt"));
+    }
+
+    #[test]
+    fn quantifier_fires_at_info_severity() {
+        // "some" and "often" are quantifiers — legitimate technical hedging.
+        let diags = lint("The build often fails for some users.", Language::En);
+        assert_eq!(diags.len(), 2);
+        assert!(diags.iter().all(|d| d.severity == Severity::Info));
+    }
+
+    #[test]
+    fn hedge_fires_at_warning_severity() {
+        let diags = lint("This is basically fine and rather slow.", Language::En);
+        assert_eq!(diags.len(), 2);
+        assert!(diags.iter().all(|d| d.severity == Severity::Warning));
+    }
+
+    #[test]
+    fn french_quantifier_is_info_hedge_is_warning() {
+        let quant = lint("La plupart des tests passent.", Language::Fr);
+        assert_eq!(quant.len(), 1);
+        assert_eq!(quant[0].severity, Severity::Info);
+
+        let hedge = lint("Il semble que le test échoue.", Language::Fr);
+        assert_eq!(hedge.len(), 1);
+        assert_eq!(hedge[0].severity, Severity::Warning);
+    }
+
+    #[test]
+    fn custom_weasel_defaults_to_warning() {
+        let cfg = Config {
+            custom_weasels_en: vec!["possibly".to_string()],
+            ..Config::default()
+        };
+        let doc = parse_plain("This is possibly true.", SourceFile::Anonymous);
+        let diags = WeaselWords::new(cfg).check(&doc, Language::En);
+        assert_eq!(diags.len(), 1);
+        assert_eq!(diags[0].severity, Severity::Warning);
     }
 
     #[test]

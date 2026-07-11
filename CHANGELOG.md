@@ -815,6 +815,22 @@ and [`RULES.md` — Rule lifecycle and SemVer](RULES.md#rule-lifecycle-and-semve
 
 ### Changed
 
+- **[2026-07-10] F-weasel-words-severity-tiering — `lexicon.weasel-words`
+  splits into two severity bands.** The default word lists are now sorted
+  into *quantifiers* (approximate quantity or frequency — EN `some, many,
+  often, various, numerous`; FR `quelques, certains, parfois, souvent, la
+  plupart, beaucoup de, peu de, presque, quasiment, environ, à peu près`)
+  and *hedges* (under-confident prose — the remaining EN/FR entries).
+  Quantifiers now fire at `Severity::Info`; hedges keep `Severity::Warning`.
+  Rationale: quantifiers are legitimate technical hedging, and stripping them
+  all from reference prose reads as falsely precise and over-edited.
+  Custom phrases (`custom_weasels_en` / `custom_weasels_fr`) default to
+  `Warning`, and per-rule TOML severity overrides still apply on top. Not a
+  lifecycle flip — the rule stays default-fire; only per-match severity
+  changes. Lists split in `src/language/{en,fr}.rs`
+  (`WEASEL_QUANTIFIERS` / `WEASEL_HEDGES`); routing in
+  `src/rules/lexicon/weasel_words.rs`. EN + FR docs pages updated.
+
 - **[2026-05-07] F-roadmap-toml-source A9 — one-shot ROADMAP migration.**
   ROADMAP source-of-truth moved to `.roadmap/features/<slug>.md`
   TOML-frontmatter files (gitignored, locally a symlink to
