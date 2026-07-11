@@ -229,6 +229,19 @@ tapes:
         vhs "$tape"
     done
 
+# Rasterize the canonical GitHub social-preview card (requires `rsvg-convert`).
+# Keeps assets/social-preview.png in lock-step with the hand-edited SVG.
+[group('docs')]
+regen-social:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if ! command -v rsvg-convert >/dev/null; then
+        echo "rsvg-convert not found — install via 'brew install librsvg'" >&2
+        exit 1
+    fi
+    rsvg-convert --width 1280 --height 640 assets/social-preview.svg -o assets/social-preview.png
+    echo "regen-social: wrote assets/social-preview.png (1280x640)"
+
 # ── Text fixtures ────────────────────────────────────────
 
 # Fetch + clean + convert examples/texts.yaml into Markdown fixtures (dev-only).
