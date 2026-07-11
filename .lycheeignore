@@ -21,6 +21,13 @@ https://op\.europa\.eu/
 # CDC — bot-blocks the CI runner (403 Forbidden), link resolves in a browser.
 https://www\.cdc\.gov/ccindex/
 
+# crates.io — the crate page is a JS SPA whose CDN returns non-2xx to every
+# non-browser client (observed 503 from CI, 404/500 from curl), while a real
+# browser gets 200. The link is valid — the crate is published (verified via
+# `https://crates.io/api/v1/crates/lucid-lint`). This is a deterministic
+# bot-block, not a transient blip, so retry cannot fix it → ignore.
+https://crates\.io/crates/
+
 # NOTE: transient-flake hosts (vale.sh, cambridge.org/core, scorecard.dev,
 # commitmono.com) were removed once the lychee step gained
 # `--max-retries 3 --retry-wait-time 2 --timeout 30` (F-lychee-retry). Those
