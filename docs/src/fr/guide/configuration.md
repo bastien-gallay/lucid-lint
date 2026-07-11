@@ -181,3 +181,19 @@ la relecture sur cette même vue restreinte. Contrairement à `[[ignore]]`,
 le seuil ne nécessite aucun fichier de configuration : il convient donc
 parfaitement à un audit ponctuel d'un dépôt dont vous préférez ne pas
 toucher le `lucid-lint.toml`.
+
+**Les sous-scores par catégorie suivent le seuil actif.** Un sous-score
+de catégorie ne compte que les diagnostics de gravité égale ou
+supérieure au seuil actif. Sous un seuil relevé, une catégorie peut
+afficher un sous-score parfait — par exemple `20/20` — simplement parce
+que ses diagnostics de niveau `info` ont été filtrés, et non parce que
+la prose est irréprochable. Un sous-score élevé sous un seuil relevé
+n'implique donc pas que la catégorie est exempte de problèmes ;
+revenez au seuil `info` par défaut pour avoir une vue complète.
+
+**Limitation connue — `--severity-floor=error` masque actuellement
+tout.** Aucune règle de cette version n'émet de diagnostic de niveau
+`error` : `--severity-floor=error` écarte donc tous les constats et
+rapporte toujours un score de 100. Le niveau `error` est une gravité
+légitime réservée à de futures règles ; tant qu'aucune n'émet à ce
+niveau, `error` n'est pas un seuil utile.

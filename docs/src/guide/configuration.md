@@ -205,3 +205,18 @@ reflects only the warning-and-above findings — the info-level
 `[[ignore]]`, the floor needs no config file, so it is well suited to
 a one-off audit of a repo whose `lucid-lint.toml` you would rather not
 touch.
+
+**Category subscores follow the active floor.** A category subscore
+counts only the diagnostics at or above the active floor. Under a
+raised floor a category can show a perfect subscore — for example
+`20/20` — simply because its info-tier diagnostics were filtered out,
+not because the prose is clean. A high subscore under a raised floor
+therefore does not imply the category is issue-free; drop back to the
+default `info` floor when you want the full picture.
+
+**Known limitation — `--severity-floor=error` currently silences
+everything.** No rule in this release emits `error`-tier diagnostics,
+so `--severity-floor=error` filters out every finding and always
+reports score 100. The `error` tier is a legitimate severity reserved
+for future rules; until one emits at that tier, `error` is not a useful
+floor.

@@ -356,6 +356,10 @@ fn apply_config_ignores(diagnostics: &mut Vec<Diagnostic>, file: Option<&FileCon
 ///
 /// `floor == Severity::Info` is a no-op (the default), matching the
 /// pre-flag behaviour exactly.
+///
+/// NOTE: no rule in this release emits `Severity::Error`, so
+/// `floor == Severity::Error` drops every diagnostic and yields score
+/// 100. `Error` is kept as a legitimate severity for future rules.
 fn apply_severity_floor(diagnostics: &mut Vec<Diagnostic>, floor: Severity) {
     if floor == Severity::Info {
         return;
