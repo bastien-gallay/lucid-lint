@@ -257,15 +257,18 @@ jobs:
         uses: crate-ci/typos@bee27e3a4fd1ea2111cf90ab89cd076c870fce14 # v1.48.0
 
   link-check:
-    name: Link check (lychee)
+    name: Link check (internal, offline)
     needs: changes
     if: needs.changes.outputs.docs == 'true' || needs.changes.outputs.infra == 'true'
-    # Signal, not a gate: link rot is time-based, not caused by the PR, and even
-    # with retry (F-lychee-retry) a host can be down. A broken link fails this
-    # job (visible red check) but never blocks a merge — branch protection
-    # requires only `ci-success`, from which this job is excluded. No
-    # `continue-on-error` (it can hide the failure as green); a plain
-    # non-required failing job is the reliably-visible signal.
+    # Internal links only, and deterministic (never flaky): `--offline` verifies
+    # that local/relative link targets exist and makes ZERO network requests, so
+    # a live-but-intermittent host can never redden this job. External link
+    # liveness is time-based rot handled by the weekly `link-health.yml` cron —
+    # the only place that touches the network. A broken *internal* link is a
+    # real, PR-caused defect: it fails here as a visible red check. Currently a
+    # non-required signal (excluded from `ci-success`); since it is now
+    # deterministic it could be promoted to a gate by adding it to
+    # `ci-success`'s `needs`.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -276,10 +279,7 @@ jobs:
           fail: true
           args: >-
             --no-progress
-            --max-retries 3
-            --retry-wait-time 2
-            --timeout 30
-            --exclude 'localhost'
+            --offline
             --exclude 'file://'
             --exclude '\.html$'
             --exclude-path docs/book
