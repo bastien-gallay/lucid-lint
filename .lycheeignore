@@ -28,3 +28,11 @@ https://vale\.sh/
 # Cambridge Core — academic host, times out from the CI runner; link
 # resolves in a browser.
 https://www\.cambridge\.org/core/
+
+# OpenSSF Scorecard viewer — our own badge target; intermittently times
+# out / resets from the CI runner. Resolves in a browser.
+https://scorecard\.dev/
+
+# CommitMono font site — intermittently resets the CI runner connection;
+# site is live in a browser.
+https://commitmono\.com/
