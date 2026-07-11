@@ -158,7 +158,7 @@ lucid-lint check --severity-floor=warning chemin/vers/docs
 ```
 
 - `info` (défaut) — tout garder. Identique au comportement d'avant
-  l'option ; sans valeur, l'option est sans effet.
+  l'option ; lorsqu'elle est omise, l'option est sans effet.
 - `warning` — écarter les diagnostics `info` (signaux d'observabilité
   comme `readability.score`), garder `warning` et au-dessus.
 - `error` — ne garder que les diagnostics `error`.

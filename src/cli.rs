@@ -226,7 +226,7 @@ pub(crate) struct CheckArgs {
 ///
 /// Mirror of the library [`Severity`](lucid_lint::Severity) kept inside
 /// the binary crate so the library stays independent of `clap`.
-#[derive(Debug, Clone, Copy, ValueEnum)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
 pub(crate) enum CliSeverityFloor {
     /// Keep everything (default — no change from pre-flag behaviour).
     Info,
