@@ -1,0 +1,1 @@
+Our survey reached 1,240 residents in the district, and 62 percent of them supported the new bus route. The council will vote on the proposal on March 3. The vote requires a two-thirds majority to pass.

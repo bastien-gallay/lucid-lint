@@ -1,0 +1,1 @@
+La bibliothèque prête des livres, des revues et des jeux. L'inscription est gratuite pour les habitants de la commune. Un animateur propose des ateliers de lecture chaque mercredi. Les enfants adorent découvrir de nouvelles histoires.

@@ -1,0 +1,1 @@
+La Maison Départementale des Personnes Handicapées (MDPH) étudie votre dossier. La MDPH vous envoie ensuite une réponse par courrier. Si vous avez besoin d'aide pour remplir le dossier, une assistante sociale peut vous accompagner.

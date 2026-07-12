@@ -1,0 +1,1 @@
+Pour faire cette recette, il faut 200 g de farine, 3 œufs et 25 cl de lait. Mélangez tous les ingrédients dans un saladier. Laissez reposer la pâte pendant une heure. Faites cuire chaque crêpe 2 minutes de chaque côté.

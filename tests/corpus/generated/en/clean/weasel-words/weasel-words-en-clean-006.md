@@ -1,0 +1,1 @@
+The update reduces startup time from 8.2 seconds to 1.4 seconds on the reference laptop. It also removes the two deprecated configuration keys listed in the changelog. Users on version 2.1 must migrate before installing it.

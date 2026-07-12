@@ -1,0 +1,1 @@
+Le programme enregistre vos données au même endroit à chaque fois. Vous pouvez relancer l'opération sans risque : le résultat sera toujours le même. Si un problème arrive, l'équipe vous prévient par courriel.

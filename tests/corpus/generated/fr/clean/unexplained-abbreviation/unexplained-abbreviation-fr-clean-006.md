@@ -1,0 +1,1 @@
+La Caisse d'Allocations Familiales (CAF) verse certaines aides chaque mois. Pour recevoir ces aides, vous devez déclarer vos revenus. La CAF met à jour votre dossier après chaque déclaration. En cas de question, appelez le numéro indiqué sur votre courrier ou allez à l'accueil le plus proche de chez vous.

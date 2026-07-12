@@ -1,0 +1,1 @@
+Pour toucher cette aide, vous devez solliciter la caisse. Chaque ayant droit remplit un formulaire. La délibération du conseil fixe le montant. Vous recevrez une réponse sous trois semaines. Gardez bien le numéro de votre demande.

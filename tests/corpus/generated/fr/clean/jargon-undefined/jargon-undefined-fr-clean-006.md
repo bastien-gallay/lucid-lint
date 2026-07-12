@@ -1,0 +1,1 @@
+L'hôpital a mis en place de nouvelles règles d'hygiène pour éviter que les patients attrapent une infection pendant leur séjour. Le personnel se lave les mains avant chaque soin. Les chambres sont nettoyées deux fois par jour.

@@ -1,0 +1,1 @@
+The museum opened a new exhibit about ocean life. Visitors can touch real coral, watch films about deep-sea creatures, and follow a glowing map of global currents. Children especially enjoy the giant squid model hanging from the ceiling.

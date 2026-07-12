@@ -1,0 +1,1 @@
+The submission of the application depends on the verification of your documentation. Any omission will result in the rejection of the registration. The administration will send a confirmation after the examination of the file.

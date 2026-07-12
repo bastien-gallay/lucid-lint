@@ -1,0 +1,1 @@
+Cooking soup is simple. Chop an onion, slice two carrots, and peel a potato. Warm some oil in a large pot, add the vegetables, then pour in water with a pinch of salt. Let everything simmer gently for thirty minutes before serving.

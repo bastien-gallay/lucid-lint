@@ -1,0 +1,1 @@
+The train left the station at dawn. Fog covered the valley, hiding farms and rivers below the tracks. Passengers read, slept, or watched the hills drift past. When sunlight finally broke through, the whole carriage seemed brighter and warmer.

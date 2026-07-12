@@ -1,0 +1,1 @@
+Pour demander cette aide, envoyez les documents demandés à la mairie. Un agent regarde votre demande. Ensuite, vous recevez une réponse sous quinze jours. Si la réponse est non, vous pouvez demander pourquoi.

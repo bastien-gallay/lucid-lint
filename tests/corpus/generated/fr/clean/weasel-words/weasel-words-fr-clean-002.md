@@ -1,0 +1,1 @@
+La bibliothèque ouvre du mardi au samedi, de 10 h à 18 h. Vous pouvez emprunter 5 livres pour 3 semaines. Le prêt est gratuit pour les habitants de la commune. Une carte d'identité suffit pour s'inscrire.

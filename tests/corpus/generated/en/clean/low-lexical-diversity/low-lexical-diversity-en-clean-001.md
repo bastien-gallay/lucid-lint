@@ -1,0 +1,1 @@
+The garden changed quickly after the spring rain. New shoots appeared between the stones, and bright petals opened along the fence. Birds gathered near the pond every morning. By June, the whole yard felt alive with color and quiet motion.

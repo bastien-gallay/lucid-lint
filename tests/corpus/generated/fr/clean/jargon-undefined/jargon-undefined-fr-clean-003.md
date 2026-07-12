@@ -1,0 +1,1 @@
+Le médecin a examiné le patient et posé des questions sur son passé de santé. Il a expliqué la cause de la maladie avec des mots simples. Le traitement dure trois semaines. Un rendez-vous de contrôle est prévu ensuite.
