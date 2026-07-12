@@ -29,7 +29,7 @@ opencode = true
 gemini_md = true
 codex = true
 roo_code = true
-windsurf = true
+windsurf = false      # never targeted (sole contributor uses amp/cursor)
 kiro_steering = true
 kiro_agents = true
 amp_checks = true
@@ -38,7 +38,7 @@ generic_instructions = true
 frontmatter_validation = true
 xml_balance = true
 import_references = true
-disabled_rules = ["CDX-AG-005"]  # i18n broken in agnix 0.20.0; re-enable when fixed upstream
+disabled_rules = ["CDX-AG-005", "AGM-003", "PE-001"]  # CDX-AG-005: i18n broken in agnix 0.20.0 (re-enable when fixed). AGM-003: Windsurf 12k char cap — never targeted. PE-001: "lost in the middle" keyword-position heuristic — crude for a solo-maintained instruction file.
 disabled_validators = []
 
 [tool_versions]
