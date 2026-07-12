@@ -10,6 +10,7 @@
 //! is enough to extend coverage — no per-file test to hand-wire. Fixtures are
 //! promoted from the Fable harness staging (`.personal/fable-harness/`), each
 //! already validated by this same oracle before landing here.
+#![allow(clippy::panic)] // A broken fixture or unreadable dir must fail the test loudly, naming the culprit.
 
 use std::fs;
 use std::path::{Path, PathBuf};
