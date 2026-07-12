@@ -1,0 +1,1 @@
+Our discussion covered the reduction of pollution, the protection of biodiversity, and the transformation of consumption habits. The presentation ended with a demonstration of the measurement equipment.

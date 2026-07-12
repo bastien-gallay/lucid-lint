@@ -1,0 +1,1 @@
+N'oubliez pas votre rendez-vous de demain matin. Apportez votre carte vitale et votre ordonnance. Si vous avez un empêchement, appelez le secrétariat. Le numéro est écrit sur votre convocation. Merci.

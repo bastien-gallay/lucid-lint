@@ -1,0 +1,1 @@
+The museum opened a new room this summer. It shows tools and pots made by early people. Many visitors come each week to see them. The guide gives a short talk at noon, and kids love the models of old boats.

@@ -1,0 +1,1 @@
+Notre équipe a réécrit une partie du code pour le rendre plus facile à lire. Les tests passent toujours. La nouvelle version sera publiée la semaine prochaine, avec un guide pour vous aider à changer de version.

@@ -1,0 +1,1 @@
+Maya fixed her bicycle before the trip. She pumped the tires, oiled the chain, and tightened both brakes. A quick ride around the block confirmed everything worked. The next morning she packed light and rode toward the coast, feeling ready for anything.

@@ -1,0 +1,1 @@
+La direction a validé la réorganisation du service, la mutualisation des équipements et la suppression des doublons. Cette transformation vise la réduction des coûts et l'harmonisation des procédures. Les représentants du personnel demandent une clarification sur la répartition des postes.

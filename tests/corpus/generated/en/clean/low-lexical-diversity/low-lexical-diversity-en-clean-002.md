@@ -1,0 +1,1 @@
+Our team finished the report on Friday. Marta checked the figures, Diego wrote the summary, and Lena prepared the slides. Each person handled a different part, so nothing was rushed. The client received everything two days early.

@@ -1,0 +1,1 @@
+Before the migration, the team spent two weeks on refactoring. The new data model is immutable, which simplifies auditing. Serialization of records now happens in a background job. Nothing changes for end users.

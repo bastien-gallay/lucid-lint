@@ -1,0 +1,1 @@
+L'atelier cuisine commence à dix heures dans la salle commune. Chaque participant prépare une recette facile avec des ingrédients de saison. À la fin, tout le monde goûte les plats ensemble et repart avec les fiches imprimées.
