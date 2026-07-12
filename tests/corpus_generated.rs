@@ -33,7 +33,14 @@ fn rule_ids_fired(fixture: &Path, profile: &str) -> Vec<String> {
         .arg(fixture)
         .output()
         .unwrap();
-    let parsed: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
+    let parsed: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap_or_else(|err| {
+        panic!(
+            "lucid-lint did not emit JSON for {}: {err}\nstdout: {}\nstderr: {}",
+            fixture.display(),
+            String::from_utf8_lossy(&output.stdout),
+            String::from_utf8_lossy(&output.stderr),
+        )
+    });
     parsed["diagnostics"]
         .as_array()
         .unwrap()
@@ -44,11 +51,12 @@ fn rule_ids_fired(fixture: &Path, profile: &str) -> Vec<String> {
 
 /// Collect every `.md` under `dir`, recursively.
 fn walk_md(dir: &Path, out: &mut Vec<PathBuf>) {
-    let Ok(entries) = fs::read_dir(dir) else {
-        return;
-    };
-    for entry in entries.flatten() {
-        let path = entry.path();
+    let entries =
+        fs::read_dir(dir).unwrap_or_else(|err| panic!("cannot read {}: {err}", dir.display()));
+    for entry in entries {
+        let path = entry
+            .unwrap_or_else(|err| panic!("cannot read an entry under {}: {err}", dir.display()))
+            .path();
         if path.is_dir() {
             walk_md(&path, out);
         } else if path.extension().is_some_and(|e| e == "md") {
