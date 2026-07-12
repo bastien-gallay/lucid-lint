@@ -1,8 +1,8 @@
 //! Data-driven regression over the Fable-generated corpus.
 //!
-//! Walks `tests/corpus/generated/<lang>/<expect>/<rule>/*.md` and, for each
-//! fixture, runs the CLI under the `falc` profile and asserts the path-encoded
-//! expectation:
+//! Walks `tests/corpus/generated/<lang>/<expect>/<category>/<rule>/*.md` and,
+//! for each fixture, runs the CLI under the `falc` profile and asserts the
+//! path-encoded expectation:
 //!   - `fire`  → the target rule MUST be among the fired diagnostics,
 //!   - `clean` → the target rule must NOT fire.
 //!
@@ -10,6 +10,12 @@
 //! is enough to extend coverage — no per-file test to hand-wire. Fixtures are
 //! promoted from the Fable harness staging (`.personal/fable-harness/`), each
 //! already validated by this same oracle before landing here.
+//!
+//! The oracle runs with `--experimental '*'` and every condition tag enabled,
+//! so fixtures targeting experimental or condition-gated rules reproduce their
+//! firing here exactly as the harness validated them. Enabling a rule cannot
+//! make a `clean` fixture spuriously fire — a clean fixture is, by definition,
+//! one that stays silent under the widest lens.
 #![allow(clippy::panic)] // A broken fixture or unreadable dir must fail the test loudly, naming the culprit.
 
 use std::fs;
@@ -18,17 +24,26 @@ use std::process::Command;
 
 use assert_cmd::prelude::*;
 
+/// Every condition tag in the F72 ontology — mirrors the harness oracle so
+/// condition-gated rules (e.g. `lexicon.homophone-density`) can fire.
+const ALL_CONDITION_TAGS: &str = "a11y-markup,dyslexia,dyscalculia,aphasia,adhd,non-native,general";
+
 fn generated_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/corpus/generated")
 }
 
-/// Rule ids fired by `fixture` under `profile` (mirrors the helper in cli.rs).
+/// Rule ids fired by `fixture` under `profile`, with every experimental rule
+/// and condition tag enabled (mirrors the Fable harness oracle).
 fn rule_ids_fired(fixture: &Path, profile: &str) -> Vec<String> {
     let output = Command::cargo_bin("lucid-lint")
         .unwrap()
         .arg("check")
         .arg("--profile")
         .arg(profile)
+        .arg("--experimental")
+        .arg("*")
+        .arg("--conditions")
+        .arg(ALL_CONDITION_TAGS)
         .arg("--format")
         .arg("json")
         .arg(fixture)
@@ -82,18 +97,18 @@ fn generated_corpus_matches_path_encoded_expectation() {
 
     let mut failures = Vec::new();
     for path in &fixtures {
-        // .../generated/<lang>/<expect>/<rule>/<id>.md
+        // .../generated/<lang>/<expect>/<category>/<rule>/<id>.md
         let rel = path.strip_prefix(&root).unwrap();
         let parts: Vec<_> = rel
             .iter()
             .map(|c| c.to_string_lossy().into_owned())
             .collect();
         assert!(
-            parts.len() >= 4,
-            "unexpected layout for {}; want <lang>/<expect>/<rule>/<file>.md",
+            parts.len() >= 5,
+            "unexpected layout for {}; want <lang>/<expect>/<category>/<rule>/<file>.md",
             rel.display()
         );
-        let (lang, expect, rule_name) = (&parts[0], &parts[1], &parts[2]);
+        let (lang, expect, category, rule_name) = (&parts[0], &parts[1], &parts[2], &parts[3]);
         assert!(
             matches!(lang.as_str(), "en" | "fr"),
             "bad lang segment in {}",
@@ -104,7 +119,7 @@ fn generated_corpus_matches_path_encoded_expectation() {
             "bad expect segment in {}",
             rel.display()
         );
-        let rule_id = format!("lexicon.{rule_name}");
+        let rule_id = format!("{category}.{rule_name}");
 
         let fired = rule_ids_fired(path, "falc");
         let hit = fired.iter().any(|r| r == &rule_id);
