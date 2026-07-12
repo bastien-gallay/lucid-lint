@@ -23,10 +23,18 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use assert_cmd::prelude::*;
+use lucid_lint::condition::ConditionTag;
 
-/// Every condition tag in the F72 ontology — mirrors the harness oracle so
-/// condition-gated rules (e.g. `lexicon.homophone-density`) can fire.
-const ALL_CONDITION_TAGS: &str = "a11y-markup,dyslexia,dyscalculia,aphasia,adhd,non-native,general";
+/// The `--conditions` argument that enables every rule, derived from the
+/// canonical F72 ontology (`ConditionTag::ALL`) so it can never drift from the
+/// enum the CLI actually parses. Mirrors the Fable harness oracle.
+fn all_condition_tags() -> String {
+    ConditionTag::ALL
+        .iter()
+        .map(|t| t.as_str())
+        .collect::<Vec<_>>()
+        .join(",")
+}
 
 fn generated_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/corpus/generated")
@@ -43,7 +51,7 @@ fn rule_ids_fired(fixture: &Path, profile: &str) -> Vec<String> {
         .arg("--experimental")
         .arg("*")
         .arg("--conditions")
-        .arg(ALL_CONDITION_TAGS)
+        .arg(all_condition_tags())
         .arg("--format")
         .arg("json")
         .arg(fixture)
@@ -117,6 +125,14 @@ fn generated_corpus_matches_path_encoded_expectation() {
         assert!(
             matches!(expect.as_str(), "fire" | "clean"),
             "bad expect segment in {}",
+            rel.display()
+        );
+        assert!(
+            matches!(
+                category.as_str(),
+                "lexicon" | "structure" | "syntax" | "readability" | "rhythm"
+            ),
+            "bad category segment in {}; a misfiled fixture would build a phantom rule_id",
             rel.display()
         );
         let rule_id = format!("{category}.{rule_name}");
