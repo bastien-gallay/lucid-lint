@@ -1,0 +1,1 @@
+First, unplug the router and wait ten seconds. Plug it back in and watch the front panel. The lights should settle into a steady green within a minute. If they keep blinking, press the reset pin gently with a paper clip. Finally, reconnect your devices one at a time.

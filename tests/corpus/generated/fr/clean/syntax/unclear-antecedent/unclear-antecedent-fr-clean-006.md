@@ -1,0 +1,1 @@
+L'équipe a testé la nouvelle version du logiciel pendant deux semaines. Les testeurs ont trouvé trois erreurs importantes. Les développeurs ont corrigé ces erreurs avant la sortie. La version finale fonctionne bien sur tous les ordinateurs du bureau.

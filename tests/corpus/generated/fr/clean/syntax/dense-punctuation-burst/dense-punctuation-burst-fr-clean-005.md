@@ -1,0 +1,1 @@
+Avant de prendre ce médicament, lisez bien la notice. Prenez un comprimé le matin avec un grand verre d'eau. Ne prenez jamais deux doses le même jour. Si vous vous sentez mal, appelez votre médecin ou allez à la pharmacie la plus proche.

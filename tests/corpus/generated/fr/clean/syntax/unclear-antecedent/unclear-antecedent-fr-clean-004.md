@@ -1,0 +1,1 @@
+La mairie ouvre du lundi au vendredi. Cette information figure sur la porte d'entrée. Les habitants peuvent aussi appeler la mairie par téléphone. Le numéro est écrit sur le site internet de la ville.

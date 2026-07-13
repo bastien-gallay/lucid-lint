@@ -1,0 +1,1 @@
+Depuis son départ la maison paraissait silencieuse et chaque pièce gardait son souvenir. Je relisais parfois les vieilles lettres qu'elle m'avait écrites pendant ces longues années. Le temps passait mais la douleur restait vive comme un feu jamais éteint.

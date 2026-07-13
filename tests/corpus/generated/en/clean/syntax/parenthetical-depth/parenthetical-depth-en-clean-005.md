@@ -1,0 +1,1 @@
+The committee approved the new parking policy on Tuesday. Residents may request a permit online, and the fee (currently 40 euros per year) is waived for households without off-street parking. Enforcement begins in March.

@@ -1,0 +1,1 @@
+L'hospitalisation ambulatoire postopératoire requiert une surveillance cardiovasculaire personnalisée. Les complications anesthésiologiques exceptionnelles justifient l'hospitalisation conventionnelle immédiate.

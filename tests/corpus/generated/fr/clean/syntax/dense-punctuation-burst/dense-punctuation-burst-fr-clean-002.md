@@ -1,0 +1,1 @@
+Pour faire une soupe de légumes, lavez d'abord les carottes et les poireaux. Coupez ensuite les légumes en petits morceaux. Mettez-les dans une grande casserole avec de l'eau. Laissez cuire pendant trente minutes environ. Ajoutez un peu de sel à la fin.

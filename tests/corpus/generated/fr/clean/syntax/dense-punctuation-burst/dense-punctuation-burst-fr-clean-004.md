@@ -1,0 +1,1 @@
+Marie travaille dans une ferme depuis dix ans. Elle s'occupe des vaches et des poules chaque matin. L'après-midi, elle répare les clôtures ou prépare le foin pour l'hiver. Elle aime beaucoup son métier même quand il pleut.

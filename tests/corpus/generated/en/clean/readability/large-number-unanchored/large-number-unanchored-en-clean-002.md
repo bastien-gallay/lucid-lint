@@ -1,0 +1,1 @@
+About 3 million people, more than the population of the entire region, visited the coastline last summer. That is roughly 9 out of 10 local hotel beds filled every night. Tourism officials expect the numbers to stay flat next year.

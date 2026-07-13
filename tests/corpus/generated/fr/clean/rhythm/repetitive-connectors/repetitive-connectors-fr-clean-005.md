@@ -1,0 +1,1 @@
+Marc apprend à cuisiner le pain. Il pèse la farine avec soin. Il ajoute l'eau tiède, le sel et la levure. La pâte repose une heure sous un torchon. Pendant ce temps, il nettoie son plan de travail. Le four chauffe fort, car la croûte doit être dorée. À la sortie, le pain croustille et sent bon.

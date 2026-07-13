@@ -1,0 +1,1 @@
+Conformément à la réglementation environnementale communautaire, l'exploitation agricole intensive nécessite une autorisation préfectorale spécifique. Les propriétaires contrevenants s'exposent à des sanctions administratives proportionnelles à la gravité des manquements constatés.

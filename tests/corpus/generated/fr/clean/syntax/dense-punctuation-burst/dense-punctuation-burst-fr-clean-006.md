@@ -1,0 +1,1 @@
+Le musée de la ville présente une nouvelle exposition sur les trains anciens. L'entrée est gratuite pour les enfants de moins de douze ans. Des visites guidées sont proposées le samedi après-midi. Il faut réserver sa place par téléphone au moins deux jours avant la visite.

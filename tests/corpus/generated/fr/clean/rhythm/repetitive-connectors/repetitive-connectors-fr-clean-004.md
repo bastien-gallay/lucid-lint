@@ -1,0 +1,1 @@
+La bibliothèque a changé ses horaires. Elle ouvre maintenant le samedi matin. Beaucoup de familles viennent avec leurs enfants. Donc l'équipe a ajouté un coin lecture avec des coussins. Les prêts durent trois semaines. Un rappel est envoyé par courriel avant la date de retour.

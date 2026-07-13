@@ -1,0 +1,1 @@
+Vous devez renouveler votre carte. Prenez rendez-vous à la mairie. Apportez une photo récente et un justificatif de domicile daté de moins de trois mois. La carte arrive sous trois semaines. C'est gratuit.

@@ -1,0 +1,1 @@
+Our train leaves from platform four. Please arrive fifteen minutes early so you have time to find your seat. The conductor will check your ticket after the first stop, and then you can rest until we reach the coast.

@@ -1,0 +1,1 @@
+Our field guide covers three habitats: wetlands, grasslands, and coastal dunes. Each chapter lists the common species (herons, voles, plovers) and the best months to observe them. Photographs appear at the end of every section, and a short glossary explains the technical terms. Readers who want more depth can follow the references listed in the appendix.

@@ -1,0 +1,1 @@
+Le bus numéro 12 passe devant la mairie toutes les vingt minutes. Le premier départ a lieu à six heures et demie. Le ticket coûte deux euros. Vous pouvez aussi acheter une carte pour le mois entier. Cette carte est moins chère si vous prenez souvent le bus.

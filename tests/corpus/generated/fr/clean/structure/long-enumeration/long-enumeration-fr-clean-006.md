@@ -1,0 +1,1 @@
+Avant le voyage, vérifiez votre billet et votre carte d'identité. Pensez aussi à prendre vos médicaments. Le train part à neuf heures du quai numéro deux. Arrivez un peu en avance pour trouver votre place.

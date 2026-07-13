@@ -1,0 +1,1 @@
+The migrating geese gathered along the shallow lake shore just before the first frost arrived. They rested there for several days while feeding on the last remaining seeds and grasses. When the temperature finally dropped the entire flock rose together into the pale morning sky.

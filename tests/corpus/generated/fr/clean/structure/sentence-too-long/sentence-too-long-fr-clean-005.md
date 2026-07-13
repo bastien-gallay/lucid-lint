@@ -1,0 +1,1 @@
+Le nouveau pipeline de requêtes traite les demandes plus vite qu'avant, selon nos mesures. L'enquête a demandé plusieurs rondes de profilage. Chaque ronde a duré deux jours. Les résultats sont publiés sur le site interne.

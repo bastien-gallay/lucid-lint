@@ -1,0 +1,1 @@
+L'entreprise a décidé de réorganiser ses équipes pour améliorer la communication entre services. Chaque responsable devait présenter un plan détaillé pour répartir les tâches importantes. Les premiers résultats semblaient encourageants même si certains collaborateurs restaient un peu méfiants.

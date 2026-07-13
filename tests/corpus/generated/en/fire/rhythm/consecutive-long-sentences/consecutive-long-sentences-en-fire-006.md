@@ -1,0 +1,1 @@
+The young runner trained every morning before dawn along the quiet paths beside the old canal. Her coach believed that consistent early practice would build the endurance she needed for the marathon. After months of steady effort she finally crossed the finish line ahead of every other competitor.

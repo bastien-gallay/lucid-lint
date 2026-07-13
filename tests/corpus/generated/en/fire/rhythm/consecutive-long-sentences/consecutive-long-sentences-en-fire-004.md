@@ -1,0 +1,1 @@
+Our department spent almost the entire quarter preparing for a product launch that kept getting delayed. Every meeting seemed to raise more questions than it managed to answer for the anxious team. By the end of the month everyone was exhausted and desperate for a proper weekend break.

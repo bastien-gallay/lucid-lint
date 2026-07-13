@@ -1,0 +1,1 @@
+The report covers five regions. It compares sales, costs, staffing, delivery times, customer complaints, and returns. Each section ends with a short summary. Managers should read it before the meeting.

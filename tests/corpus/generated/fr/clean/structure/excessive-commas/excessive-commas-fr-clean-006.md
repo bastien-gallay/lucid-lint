@@ -1,0 +1,1 @@
+Avant de signer le contrat, lisez chaque page avec attention. Vous avez le droit de poser des questions. Le conseiller doit répondre avec des mots simples. Vous pouvez aussi demander un délai de réflexion de quatorze jours.

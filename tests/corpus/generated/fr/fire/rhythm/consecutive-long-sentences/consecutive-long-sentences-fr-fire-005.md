@@ -1,0 +1,1 @@
+Les astronomes observent ces galaxies lointaines pour comprendre comment l'univers a évolué. Chaque nouvelle image révèle des détails surprenants sur la formation des jeunes étoiles. Les chercheurs partagent ensuite leurs découvertes avec le monde entier sans tarder.
