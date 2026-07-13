@@ -644,7 +644,7 @@ Experimental rule status substrate — gates the v0.3 cohort, opens dogfood wind
 **Three rule mechanics surfaced by the run (now encoded as `RULE_GEN_HINTS`):**
 
 - `structure.line-length-wide` **exempts paragraphs without an authorial hard break** (`src/rules/structure/line_length_wide.rs:113`) — a fire fixture needs a real markdown hard break (two trailing spaces + `\n`) around a 90+ char line, not a single long line. Initial diagnosis was inverted; corrected empirically.
-- `rhythm.consecutive-long-sentences` needs **≥3 consecutive sentences of 12+ words** (falc `word_threshold` 10, `max_run` 2), not just one long sentence.
+- `rhythm.consecutive-long-sentences` needs **≥3 consecutive sentences of 11+ words** (falc `word_threshold` 10, fires on `word_count > threshold`, `max_run` 2), not just one long sentence. The generation hint targets 12+ words for a safe firing margin.
 - `readability.score` **cannot have a `clean` fixture** — `always_report: true` (`src/rules/readability/score.rs:99`) makes it emit a diagnostic unconditionally; fire/clean is a *severity* distinction (Info vs Warning) that the presence-based oracle and path runner don't test. Fire-only coverage is correct here, not a gap. Would need a severity-aware test to close — a possible runner evolution, not a bug.
 
 Complements [F-cohort-corpus-coverage](#f-cohort-corpus-coverage) (real-corpus dogfood evidence) and unblocks [F-rule-fixture-coverage-map](#f-rule-fixture-coverage-map) with a now-complete rule × fire/clean matrix. Harness lives in the maintainer's gitignored `.personal/fable-harness/`; only the promoted `tests/corpus/generated/` fixtures land in the repo.
