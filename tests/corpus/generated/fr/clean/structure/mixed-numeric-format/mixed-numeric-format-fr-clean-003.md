@@ -1,0 +1,1 @@
+La recette est simple. Vous prenez 500 grammes de farine. Vous ajoutez 3 œufs et 25 centilitres de lait. Vous mélangez pendant cinq minutes. Ensuite, vous laissez reposer la pâte pendant une heure dans un endroit frais.

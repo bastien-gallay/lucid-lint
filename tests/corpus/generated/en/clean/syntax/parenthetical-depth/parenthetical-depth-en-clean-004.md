@@ -1,0 +1,1 @@
+Preheat the oven to 180 degrees. Mix the flour and butter until the dough feels sandy [about two minutes]. Add the sugar, then the eggs, and rest the dough in the fridge for an hour before rolling it out.

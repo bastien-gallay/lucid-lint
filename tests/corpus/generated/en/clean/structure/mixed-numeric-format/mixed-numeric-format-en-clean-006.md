@@ -1,0 +1,1 @@
+The museum welcomed 12,480 visitors in March, up from 9,315 in February, and the gift shop sold 1,027 postcards over the same period. Staff attributed the rise to the new dinosaur exhibit, which opened on 3 March and runs until 28 June.

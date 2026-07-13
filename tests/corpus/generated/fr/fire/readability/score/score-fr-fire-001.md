@@ -1,0 +1,1 @@
+L'administration départementale conditionne l'attribution des indemnités compensatoires à la vérification préalable des justificatifs socioprofessionnels. Toute irrégularité constatée entraîne automatiquement la suspension provisoire du versement. Les bénéficiaires disposent néanmoins d'une possibilité de régularisation contradictoire.

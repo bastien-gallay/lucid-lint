@@ -1,0 +1,1 @@
+Nous avons planté des tomates. Le jardin demande beaucoup de travail au printemps car il faut arroser chaque plante, enlever les mauvaises herbes et surveiller les limaces chaque soir. Les récoltes arrivent en été.

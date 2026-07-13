@@ -1,0 +1,1 @@
+Le vieux chêne du jardin abritait des oiseaux qui chantaient dès le lever du jour. Les enfants grimpaient sur les branches basses pour observer les nids cachés. En automne le sol se couvrait de feuilles rousses emportées par le vent.

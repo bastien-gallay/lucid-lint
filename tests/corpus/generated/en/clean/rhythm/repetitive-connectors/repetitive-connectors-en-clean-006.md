@@ -1,0 +1,1 @@
+Version 2.3 ships a faster parser and a quieter default output. Startup time dropped from 90 to 40 milliseconds on our reference corpus. The old flag remains available, but it now prints a deprecation notice. Documentation has been rewritten page by page, notably the configuration guide. Upgrading requires no changes to existing config files.

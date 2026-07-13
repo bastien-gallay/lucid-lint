@@ -1,0 +1,1 @@
+L'atelier informatique aide les débutants. Chaque séance dure une heure. On apprend à écrire un courriel simple. On apprend aussi à ranger ses photos. Les animateurs répètent calmement les gestes. Personne n'est jugé sur sa vitesse. À la fin, chaque participant repart avec une fiche mémo.

@@ -1,0 +1,1 @@
+The old warehouse near the river had been standing empty for almost thirty years without repair. Every winter the wind would tear another set of shingles from the sagging wooden roof. Local children still whispered stories about the ghosts that supposedly wandered its dark and dusty halls.

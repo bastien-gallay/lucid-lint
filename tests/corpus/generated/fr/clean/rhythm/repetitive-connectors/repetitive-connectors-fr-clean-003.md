@@ -1,0 +1,1 @@
+Pour demander la carte de transport, vous remplissez un formulaire. Vous joignez une photo récente. Ensuite, vous déposez le dossier à la mairie. La réponse arrive en deux semaines environ. Si le dossier est incomplet, un agent vous appelle. Vous pouvez aussi poser vos questions au guichet.

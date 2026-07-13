@@ -1,0 +1,1 @@
+Le club de lecture se réunit chaque premier mardi du mois. Chaque personne peut proposer un livre. Nous votons ensemble pour choisir le livre du mois suivant. La bibliothèque prête les exemplaires gratuitement. Vous pouvez venir même si vous n'avez pas fini le livre.

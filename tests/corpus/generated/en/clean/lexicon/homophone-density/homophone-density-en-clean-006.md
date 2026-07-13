@@ -1,0 +1,1 @@
+Bees collect nectar from flowers and carry it back home in a special stomach. Inside the hive, worker bees pass the nectar between themselves, fan it with rapid wing beats until much of the water evaporates, and then seal the honey inside wax cells for the winter months.

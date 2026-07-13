@@ -1,0 +1,1 @@
+Le contrat prévoit trois conditions pour le remboursement. Première condition : vous gardez le ticket de caisse. Deuxième condition : le produit reste dans son emballage. Troisième condition : la demande arrive sous trente jours.

@@ -1,0 +1,1 @@
+Chaque dimanche ma grand-mère préparait une grande soupe de légumes pour la famille. Elle coupait les carottes les poireaux et les pommes de terre sans se presser. Le parfum du bouillon envahissait la maison bien avant l'arrivée des premiers invités.

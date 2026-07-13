@@ -1,0 +1,1 @@
+Every morning the baker opens the shop at six, lights the ovens, and starts kneading dough for the first batch of bread. Regular customers arrive around seven, order coffee with a warm roll, and read the newspaper by the window while the street outside slowly fills with people heading toward the station.

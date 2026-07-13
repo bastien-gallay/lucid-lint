@@ -1,0 +1,1 @@
+Le jardin partagé ouvre au printemps. Les habitants plantent des tomates, des salades et des herbes. Par exemple, madame Lopez s'occupe du carré des fraises. L'eau de pluie est récupérée dans un grand bac. Mais l'été, il faut arroser tous les soirs. Chacun vient quand il peut, sans obligation.

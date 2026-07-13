@@ -1,0 +1,1 @@
+Le bateau jette l'ancre près du port. La mère du capitaine regarde la mer depuis le quai. Elle garde la foi et raconte un conte aux enfants du village. Sa voix porte loin, et chaque saint du calendrier reçoit une prière pour un retour sain et sauf.

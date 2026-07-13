@@ -1,0 +1,1 @@
+The committee reviewed the proposal on Tuesday, and the committee approved the proposal without changes. This decision surprised the architects, because earlier drafts of the proposal had been rejected twice. The architects now plan to start construction in the spring, once the city issues the building permit.

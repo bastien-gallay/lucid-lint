@@ -1,0 +1,1 @@
+The inspection team reached the bridge at dawn. Corrosion was visible on three of the northern cables, although the deck itself remained sound. Engineers logged each defect with photographs and grid references. Repairs were scheduled within the month, since winter storms would soon make access difficult. A follow-up visit is planned in early spring.

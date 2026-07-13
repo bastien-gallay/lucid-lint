@@ -1,0 +1,1 @@
+L'atelier de cuisine a lieu le mardi. Vous apprenez à préparer un plat simple, comme des pâtes à la tomate ou une salade de riz. L'animatrice vous aide à chaque étape. Le repas est partagé ensemble à la fin.

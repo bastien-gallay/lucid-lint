@@ -1,0 +1,1 @@
+The linter walks each paragraph once, counts the words, and compares the density against a threshold defined in the configuration file. When the count stays below the limit, the checker prints nothing and moves on quietly.

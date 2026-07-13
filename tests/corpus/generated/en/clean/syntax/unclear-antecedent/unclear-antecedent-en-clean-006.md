@@ -1,0 +1,1 @@
+Sleep matters for memory. During deep sleep, the brain replays the events of the day, and the replay strengthens new connections between neurons. Students who sleep well after studying remember more than students who stay up late. This finding has been repeated in many laboratories, and the finding holds across age groups.

@@ -1,0 +1,1 @@
+The ancient trading city flourished for centuries because it controlled the only pass through the mountains. Merchants from distant lands brought silk and spices in exchange for salt and polished stone. Its wealth eventually attracted powerful enemies who besieged the walls for many long and bitter years.

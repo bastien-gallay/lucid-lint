@@ -1,0 +1,1 @@
+The committee approved the budget after a long discussion. Members agreed that the new funds should support the library, the sports hall, and the after-school program, with a small reserve kept aside for urgent repairs.

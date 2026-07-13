@@ -1,0 +1,1 @@
+The pharmaceutical formulation exhibited statistically significant bioavailability improvements during preliminary evaluation. Cardiovascular complications were nevertheless documented among immunocompromised participants receiving concurrent anticoagulation therapy.
