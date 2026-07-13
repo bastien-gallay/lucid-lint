@@ -1,0 +1,1 @@
+Au printemps, le jardinier prépare la parcelle du potager, plante des graines de carottes et de radis, arrose chaque rangée avec soin, puis installe un filet léger pour protéger les jeunes plantes contre les oiseaux.

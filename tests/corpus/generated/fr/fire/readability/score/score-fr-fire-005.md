@@ -1,0 +1,1 @@
+La copropriété délibère annuellement sur l'individualisation des consommations énergétiques. L'installation de répartiteurs thermostatiques homologués conditionne l'éligibilité aux subventions gouvernementales. Le syndicat professionnel centralise ensuite les demandes d'indemnisation. Les contestations éventuelles relèvent exclusivement de la juridiction compétente.

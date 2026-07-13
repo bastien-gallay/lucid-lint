@@ -1,0 +1,1 @@
+Nous avons préparé la réunion. D'abord, nous avons relu le dossier. Puis nous avons choisi les questions importantes. La salle a été réservée pour dix heures. Enfin, chaque personne a reçu une invitation claire.

@@ -1,0 +1,1 @@
+Update the client library before calling the new endpoint. The old authentication path still works, but it is deprecated and will be removed in the next major release. See the changelog for the full timeline, and note that sandbox keys [issued after January] already use the new flow.

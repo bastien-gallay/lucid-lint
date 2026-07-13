@@ -1,0 +1,1 @@
+The survey went out to 5,000 households. Roughly 62% of them replied within the first month. Most respondents said they wanted clearer bus timetables, better lighting at the main stops, and shelters that actually keep the rain out.

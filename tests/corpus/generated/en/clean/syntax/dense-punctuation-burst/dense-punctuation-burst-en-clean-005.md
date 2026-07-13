@@ -1,0 +1,1 @@
+Every winter the harbour freezes over and the fishing boats stay tied to the dock. The crews spend those months repairing their nets in the warm sheds near the water, and by spring the ice breaks apart again.

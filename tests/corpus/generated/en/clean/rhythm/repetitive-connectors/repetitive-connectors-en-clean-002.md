@@ -1,0 +1,1 @@
+The bread rose overnight in a cool corner of the kitchen. By morning the whole flat smelled of yeast. I shaped two loaves, scored them, and slid them into a hot oven. Forty minutes later they came out golden and crackling. We ate the first one before it had fully cooled.

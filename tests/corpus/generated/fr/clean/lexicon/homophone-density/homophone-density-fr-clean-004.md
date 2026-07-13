@@ -1,0 +1,1 @@
+La bibliothèque du quartier ouvre le samedi matin. Les enfants viennent écouter une histoire, les adultes empruntent des romans, et une bénévole aide les visiteurs à trouver les documents qu'ils cherchent dans les rayons.

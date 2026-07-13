@@ -1,0 +1,1 @@
+Maria watered the tomato plants every morning. The tomato plants grew quickly. By July, the plants were taller than the fence, and Maria had to tie the stems to wooden stakes. The stakes kept the fruit off the ground. This routine took only ten minutes a day, but the routine made the whole garden thrive.

@@ -1,0 +1,1 @@
+Nous avons pris le train de nuit pour traverser les montagnes enneigées. Le paysage défilait derrière la vitre pendant que les voyageurs dormaient dans leurs couchettes. À l'aube nous sommes descendus sur un quai désert balayé par le vent.

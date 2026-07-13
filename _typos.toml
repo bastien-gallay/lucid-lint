@@ -5,6 +5,11 @@
 extend-exclude = [
   "*.snap",
   "examples/",
+  # Machine-generated fire/clean fixtures (Fable harness). Bilingual EN/FR
+  # prose that exercises the linter, not curated prose — same rationale as
+  # `examples/`. French words (installe, chambre, plantes…) and intentional
+  # EN anti-patterns would otherwise trip typos' English-biased dictionary.
+  "tests/corpus/generated/",
 ]
 
 [default]

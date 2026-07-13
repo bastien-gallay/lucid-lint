@@ -1,0 +1,1 @@
+The museum recorded 18,500 visitors in March. Attendance grew by 12% compared with February. Curators credit the new photography exhibit, the extended evening hours, and a partnership with local schools that brought entire classes through the galleries on weekday mornings.

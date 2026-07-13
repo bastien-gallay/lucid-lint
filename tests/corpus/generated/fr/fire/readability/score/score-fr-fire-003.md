@@ -1,0 +1,1 @@
+L'interopérabilité des infrastructures numériques gouvernementales représente un investissement technologique considérable. La sécurisation cryptographique des télécommunications institutionnelles demeure prioritaire. Les vulnérabilités identifiées seront systématiquement documentées. Une certification indépendante interviendra ultérieurement.

@@ -1,0 +1,1 @@
+La bibliothèque du quartier ouvre tous les matins à neuf heures. Vous pouvez emprunter trois livres à la fois. Le prêt dure quatre semaines. Une personne de l'accueil peut vous aider à choisir. Les livres faciles à lire sont rangés près de l'entrée.

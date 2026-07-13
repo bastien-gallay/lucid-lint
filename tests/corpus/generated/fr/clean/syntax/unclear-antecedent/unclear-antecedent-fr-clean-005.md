@@ -1,0 +1,1 @@
+Le médecin explique le traitement au patient. Le patient pose des questions sur les médicaments. Le médecin répond avec des mots simples. Cette méthode rassure le patient et rend le traitement plus facile à suivre.

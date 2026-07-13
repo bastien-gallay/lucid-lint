@@ -1,0 +1,1 @@
+The company reported revenue of $2.4 billion, more than double last year's figure and roughly 15 % of the sector's total. Analysts had expected growth, but not at this pace. Most of the gain came from overseas sales, which now account for 60 % of the business.

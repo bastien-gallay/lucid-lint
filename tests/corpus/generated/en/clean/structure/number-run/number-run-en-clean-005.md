@@ -1,0 +1,1 @@
+Marathon training is going well. I ran 42 kilometers this week. My longest single run was on Sunday, and I finished it feeling strong, with enough energy left to cook dinner and stretch properly afterwards.

@@ -1,0 +1,1 @@
+L'eau du robinet est contrôlée chaque semaine par la mairie. Elle est bonne à boire. Si vous remarquez un goût inhabituel, appelez le service des eaux au numéro indiqué sur votre facture. Un technicien viendra vérifier votre installation dans les plus brefs délais.

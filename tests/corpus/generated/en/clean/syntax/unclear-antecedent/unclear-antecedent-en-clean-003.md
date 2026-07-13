@@ -1,0 +1,1 @@
+The report describes three problems with the old billing system. This report was written by the finance team. The finance team recommends replacing the billing system before the end of the year. The recommendation is based on cost data from the last two years.

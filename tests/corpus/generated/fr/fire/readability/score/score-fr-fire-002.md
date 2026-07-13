@@ -1,0 +1,1 @@
+La restructuration organisationnelle nécessite une harmonisation méthodologique des procédures interministérielles. Cette rationalisation budgétaire s'accompagne d'une redistribution équitable des responsabilités administratives.

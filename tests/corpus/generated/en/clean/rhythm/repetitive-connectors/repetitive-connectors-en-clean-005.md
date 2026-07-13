@@ -1,0 +1,1 @@
+Maya waters the garden every evening. The tomatoes are ripening well this year. Her neighbour trades a box of eggs against a basket of vegetables. On Sundays the two families share a long lunch under the fig tree. Nobody checks the time.

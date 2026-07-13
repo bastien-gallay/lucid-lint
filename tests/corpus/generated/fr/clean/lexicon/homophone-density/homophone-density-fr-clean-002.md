@@ -1,0 +1,1 @@
+L'équipe se réunit chaque lundi matin pour organiser la semaine. Chaque personne décrit l'avancement du projet, signale les difficultés rencontrées, puis le groupe choisit ensemble les actions prioritaires pour les jours suivants.

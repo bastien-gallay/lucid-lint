@@ -1,0 +1,1 @@
+Cet été, la famille a passé quinze jours dans un petit village de montagne. Chaque matin, les enfants partaient marcher sur les sentiers avec leurs parents, ramassaient des framboises le long du chemin, puis rentraient déjeuner sur la terrasse ombragée de la maison louée pour les vacances.

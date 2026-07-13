@@ -1,0 +1,1 @@
+Le serveur redémarre chaque nuit à deux heures. Cette fenêtre de maintenance permet d'appliquer les correctifs de sécurité sans gêner les utilisateurs actifs. Les journaux restent disponibles. Une alerte part en cas d'échec. L'astreinte la reçoit aussitôt.

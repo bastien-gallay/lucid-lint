@@ -1,0 +1,1 @@
+Votre médecin peut vous prescrire ce médicament. Prenez un comprimé le matin, pendant le repas. Si vous avez mal au ventre, parlez-en au pharmacien. Ne donnez jamais ce médicament à une autre personne.

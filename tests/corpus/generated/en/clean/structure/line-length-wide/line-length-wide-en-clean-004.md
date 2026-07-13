@@ -1,0 +1,1 @@
+The ferry to the island leaves twice a day, once at dawn and once in the late afternoon, and on calm days the crossing takes about forty minutes past the lighthouse and the seal colony on the outer rocks.

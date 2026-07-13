@@ -1,0 +1,1 @@
+Le nouvel horaire des autobus entre en application lundi prochain. Les passagers trouveront les informations détaillées sur les panneaux d'affichage des arrêts ainsi que sur la page internet de la commune.

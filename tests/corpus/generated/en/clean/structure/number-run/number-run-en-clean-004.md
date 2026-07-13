@@ -1,0 +1,1 @@
+Version 2.1 of the library shipped on schedule. The release notes highlight faster startup and a smaller memory footprint. Early adopters report that the migration from the previous release took less than an afternoon for a typical project.

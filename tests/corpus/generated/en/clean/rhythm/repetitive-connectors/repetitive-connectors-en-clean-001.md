@@ -1,0 +1,1 @@
+We analysed the survey data over two weeks. A working model came together shortly afterwards. Validation followed once the pipeline stabilised. The final report went out to reviewers in March. The raw files now live in cold storage.

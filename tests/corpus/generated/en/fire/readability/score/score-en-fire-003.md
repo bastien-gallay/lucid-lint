@@ -1,0 +1,1 @@
+Contractual obligations pertaining to intellectual property indemnification shall survive termination indefinitely. Unauthorized dissemination of proprietary documentation constitutes actionable infringement. Arbitration proceedings supersede conventional litigation whenever jurisdictional ambiguities materialize.

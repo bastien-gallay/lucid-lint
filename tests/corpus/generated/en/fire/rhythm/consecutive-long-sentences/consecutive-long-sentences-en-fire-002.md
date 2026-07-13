@@ -1,0 +1,1 @@
+My grandmother always insisted that a proper stew needed at least four hours of slow simmering. She would add the carrots and potatoes only after the meat had turned perfectly tender. The whole kitchen filled with a rich aroma that drifted through the house every single Sunday.
